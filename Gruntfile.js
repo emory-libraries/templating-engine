@@ -15,7 +15,7 @@ module.exports = function(grunt) {
     watch: {
        config: {
         files: ['Gruntfile.js', 'composer.json', 'package.json'],
-        tasks: [],
+        tasks: ['build'],
         options: {
           reload: true
         }
@@ -25,8 +25,12 @@ module.exports = function(grunt) {
         tasks: ['phplint', 'copy:php']
       },
       data: {
-        files: [`${SRC}/data/**/*`],
+        files: [`${SRC}/data/**/*`, `${SRC}/meta/**/*`, `${SRC}/patterns/**/*`, `${SRC}/.htaccess`],
         tasks: ['copy:data']
+      }, 
+      engine: {
+        files: [`${SRC}/*.{html,php}`],
+        tasks: ['copy:engine']
       }
     },
     
@@ -35,15 +39,26 @@ module.exports = function(grunt) {
     },
     
     copy: {
+      options: {
+        mode: true
+      },
       php: {
         files: [
           {expand: true, cwd: `${SRC}/`, src: ['php/**/*'], dest: `${DEST}/`},
-          {expand: true, cwd: 'vendor/', src: ['**/*', '!composer/**'], dest: `${DEST}/php/dependencies/`},
+          {expand: true, cwd: 'vendor/', src: ['**/*'], dest: `${DEST}/php/dependencies/`},
         ]
       },
       data: {
         files: [
-          {expand: true, cwd: `${SRC}/`, src: ['data/**/*'], dest: `${DEST}/`}
+          {expand: true, cwd: `${SRC}/`, src: ['data/**/*'], dest: `${DEST}/`},
+          {expand: true, cwd: `${SRC}/`, src: ['data/**/*'], dest: `${DEST}/`},
+          {expand: true, cwd: `${SRC}/`, src: ['patterns/**/*'], dest: `${DEST}/`},
+          {expand: true, cwd: `${SRC}/`, src: ['*', '!*.{html,php}'], dest: `${DEST}/`, dot: true}
+        ]
+      },
+      engine: {
+        files: [
+          {expand: true, cwd: `${SRC}/`, src: ['*.{html,php}'], dest: `${DEST}/`}
         ]
       }
     },
