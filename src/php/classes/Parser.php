@@ -19,8 +19,9 @@ class Parser {
   protected $handlebars;
   protected $serializer;
   
-  // Load helpers.
+  // Load compiler options.
   private $helpers = [];
+  private $partials = [];
   
   // Constructor
   function __construct( Config $config ) {
@@ -32,8 +33,9 @@ class Parser {
     $this->handlebars = new LightnCandy();
     $this->serializer = new Serializer();
     
-    // Load helpers.
-    $this->helpers = $this->load(dirname(__DIR__)."/helpers/autoload.php")(); 
+    // Get helpers and partials.
+    $this->getHelpers(); 
+    $this->getPartials();
    
   }
   
@@ -41,7 +43,8 @@ class Parser {
   private function options() {
     
     return [
-      'helpers' => $this->helpers
+      'helpers' => $this->helpers,
+      'partials'  => $this->partials
     ];
     
   }
@@ -119,7 +122,41 @@ class Parser {
     
   }
   
-  // Save helpers.
+  // Get partials.
+  private function getPartials() {
+    
+    // Get paths to partials.
+    $paths = $this->config->PARTIALS;
+    
+    // Look for partials.
+    foreach( $paths as $type => $path ) {
+      
+      // Deep scan the contents of the directory.
+      $partials = scandir_recursive($path); 
+      
+      // Build all partials.
+      foreach( $partials as $partial ) {
+        
+        // Get the name of the partial.
+        $name = basename($partial, $this->config->EXT['template']);
+        
+        // Read the partial.
+        $this->partials["$type-$name"] = $this->read("$path/$partial");
+        
+      }
+      
+    }
+    
+  }
+  
+  // Get helpers.
+  private function getHelpers() {
+    
+    $this->helpers = $this->load(dirname(__DIR__)."/helpers/autoload.php")();
+    
+  }
+  
+  // Load helpers from cache.
   private function loadHelpers() {
     
     // Read the helper data.
@@ -137,7 +174,7 @@ class Parser {
     
   }
   
-  // Load helpers.
+  // Save helpers to cache.
   private function saveHelpers() {
     
     // Localize the helpers.

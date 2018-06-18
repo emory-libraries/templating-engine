@@ -13,7 +13,11 @@ class Config {
     $this->data['ROOT'] = dirname(dirname(__DIR__)); 
     $this->data['ROOT_PATH'] = str_replace($_SERVER['DOCUMENT_ROOT'], '', $this->ROOT); 
     $this->data['CACHE'] = dirname(__DIR__).'/cache';
-    $this->data['TEMPLATES'] = "{$this->ROOT}/patterns/templates";
+    $this->data['PATTERNS'] = "{$this->ROOT}/patterns";
+    $this->data['ATOMS'] = "{$this->PATTERNS}/atoms";
+    $this->data['MOLECULES'] = "{$this->PATTERNS}/molecules";
+    $this->data['ORGANISMS'] = "{$this->PATTERNS}/organisms";
+    $this->data['TEMPLATES'] = "{$this->PATTERNS}/templates";
     $this->data['DATA'] = "{$this->ROOT}/data";
     $this->data['EXT'] = [
       'template'  => '.handlebars',
@@ -21,6 +25,12 @@ class Config {
       'cache'     => '.php'
     ];
     $this->data['HELPERS'] = "{$this->CACHE}/.helpers.json";
+    $this->data['PARTIALS'] = [
+      'atoms'     => $this->ATOMS,
+      'molecules' => $this->MOLECULES,
+      'organisms' => $this->ORGANISMS,
+      'templates' => $this->TEMPLATES
+    ];
     
     // Load meta data.
     $this->meta();
