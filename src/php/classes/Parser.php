@@ -23,6 +23,11 @@ class Parser {
   private $helpers = [];
   private $partials = [];
   
+  // Set flags.
+  protected $useCached = false;
+  protected $newHelpers = false;
+  protected $newPartials = false;
+  
   // Constructor
   function __construct( Config $config ) {
     
@@ -36,6 +41,9 @@ class Parser {
     // Get helpers and partials.
     $this->getHelpers(); 
     $this->getPartials();
+    
+    // Initialize the cache.
+    $this->cache();
    
   }
   
@@ -46,6 +54,23 @@ class Parser {
       'helpers' => $this->helpers,
       'partials'  => $this->partials
     ];
+    
+  }
+  
+  // Initialize the cache.
+  private function cache() {
+    
+    // Get the cache paths.
+    $paths = [
+      'templates' => $this->config->CACHED_TEMPLATES,
+      'partials'  => $this->config->CACHED_PARTIALS
+    ];
+    
+    // Make the template directory if it doesn't already exist.
+    if( !file_exists($paths['templates']) ) mkdir($paths['templates']);
+    
+    // Make the partial directory if it doesn't already exist.
+    if( !file_exists($paths['partials']) ) mkdir($paths['partials']);
     
   }
   
@@ -117,8 +142,9 @@ class Parser {
     // Save the compiled template to the cache.
     $this->save($paths['cached'], "<?php $php ?>");
     
-    // Save the helper data.
+    // Save the helpers and partials.
     $this->saveHelpers();
+    $this->savePartials();
     
   }
   
@@ -144,6 +170,50 @@ class Parser {
         $this->partials["$type-$name"] = $this->read("$path/$partial");
         
       }
+      
+    }
+    
+  }
+  
+  // Load partials from cache.
+  private function loadPartials() {
+    
+    // Get the path to the partials.
+    $path = $this->config->CACHED_PARTIALS;
+    
+    // Get the cached partials.
+    $partials = scandir_clean($path);
+    
+    // Read all cached partials.
+    foreach( $partials as $key => $partial ) {
+      
+      // Get the name of the partial.
+      $name = basename($partial, $this->config->EXT['template']);
+      
+      // Read the partial.
+      $partials[$name] = $this->read("$path/$partial");
+      
+      // Delete the old key.
+      unset($partials[$key]);
+      
+    }
+    
+    // Return partials.
+    return $partials;
+    
+  }
+  
+  // Save helpers to cache.
+  private function savePartials() {
+    
+    // Localize the partials.
+    $partials = $this->partials;
+    
+    // Save each partial.
+    foreach( $partials as $name => $partial ) {
+      
+      // Save the partial.
+      $this->save("{$this->config->CACHED_PARTIALS}/{$name}{$this->config->EXT['template']}", $partial);
       
     }
     
@@ -205,7 +275,7 @@ class Parser {
     // Determine the file paths.
     $paths = [
       'template'  => "{$this->config->TEMPLATES}/$template",
-      'cached'    => "{$this->config->CACHE}/{$dirname}{$basename}"
+      'cached'    => "{$this->config->CACHED_TEMPLATES}/{$dirname}{$basename}"
     ];
 
     // Verify that the template exists.
@@ -215,26 +285,29 @@ class Parser {
       
     }
     
-    // Initialize the flags.
-    $useCached = false;
-    $newHelpers = false;
-    
     // Check whether or not the cached file can be used.
     if( file_exists($paths['cached']) ) {
       
-      $useCached = $this->newest($paths['template'], $paths['cached'])['path'] == $paths['cached'];
+      $this->useCached = $this->newest($paths['template'], $paths['cached'])['path'] == $paths['cached'];
       
     }
   
     // Check whether or not new helpers were added.
     if( file_exists($this->config->HELPERS) ) {
       
-      $newHelpers = !array_equiv($this->loadHelpers(), $this->helpers);
+      $this->newHelpers = !array_equiv($this->loadHelpers(), $this->helpers);
+      
+    }
+    
+    // Check whether or not cached partials exist.
+    if( count(scandir_clean($this->config->CACHED_PARTIALS)) > 0 ) {
+      
+      $this->newPartials = !array_equiv($this->loadPartials(), $this->partials);
       
     }
 
     // Compile the template if no cached file is available.
-    if( !$useCached or $newHelpers ) $this->compile($paths);
+    if( !$this->useCached or $this->newHelpers or $this->newPartials ) $this->compile($paths);
     
     // Load the renderer.
     $renderer = $this->load($paths['cached']); 

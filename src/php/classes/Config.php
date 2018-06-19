@@ -28,9 +28,10 @@ class Config {
     $this->data['PARTIALS'] = [
       'atoms'     => $this->ATOMS,
       'molecules' => $this->MOLECULES,
-      'organisms' => $this->ORGANISMS,
-      'templates' => $this->TEMPLATES
+      'organisms' => $this->ORGANISMS
     ];
+    $this->data['CACHED_PARTIALS'] = "{$this->CACHE}/partials";
+    $this->data['CACHED_TEMPLATES'] = "{$this->CACHE}/templates";
     
     // Load meta data.
     $this->meta();

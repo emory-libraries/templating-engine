@@ -1,13 +1,19 @@
 <?php
 
+function scandir_clean( $path ) {
+  
+  return array_values(array_filter(scandir($path), function($file) {
+        
+    return !in_array($file, ['.', '..']);
+
+  }));
+  
+}
+
 function scandir_recursive( $path, $prefix = '' ) {
   
   // Scan the contents of the directory.
-  $contents = array_values(array_filter(scandir($path), function($file) {
-        
-      return !in_array($file, ['.', '..']);
-
-    }));
+  $contents = scandir_clean($path);
 
   // Recursively, scan subdirectories.
   foreach( $contents as $key => $file ) { 
