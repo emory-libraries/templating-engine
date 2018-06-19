@@ -12,6 +12,7 @@ class Config {
     // Set initial configuration data.
     $this->data['ROOT'] = dirname(dirname(__DIR__)); 
     $this->data['ROOT_PATH'] = str_replace($_SERVER['DOCUMENT_ROOT'], '', $this->ROOT); 
+    $this->data['META'] = "{$this->ROOT}/meta";
     $this->data['CACHE'] = dirname(__DIR__).'/cache';
     $this->data['PATTERNS'] = "{$this->ROOT}/patterns";
     $this->data['ATOMS'] = "{$this->PATTERNS}/atoms";
@@ -34,28 +35,24 @@ class Config {
     $this->data['CACHED_TEMPLATES'] = "{$this->CACHE}/templates";
     
     // Load meta data.
-    $this->meta();
+    $this->loadMeta();
     
   }
   
   // Load meta data.
-  private function meta() {
+  private function loadMeta() {
     
     // Scan the contents of the meta directory.
-    $metas = array_filter(scandir("{$this->ROOT}/meta/"), function($meta) {
-      
-      return !in_array($meta, ['.', '..']);
-      
-    });
+    $metas = scandir_clean($this->META);
     
     // Load meta data.
     foreach( $metas as $meta ) {
       
       // Extract the base name.
-      $basename = basename($meta);
+      $name = strtoupper(basename($meta, '.json'));
       
       // Read the meta data.
-      $this->data[strtoupper($basename)] = json_decode(file_get_contents($meta));
+      $this->data[$name] = json_decode(file_get_contents("{$this->META}/{$meta}"), true);
       
     }
     

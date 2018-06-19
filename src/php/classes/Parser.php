@@ -89,39 +89,26 @@ class Parser {
   }
   
   // Save a file.
-  private function save( $path, $data ) {
+  private function save( $path, $data ) { 
     
     return file_put_contents($path, $data);
     
   }
   
-  // Get the date a file was modified.
-  private function modified( $path ) {
-    
-    return filemtime($path);
-    
-  }
-  
   // Determine which file is newer given two or more paths.
-  private function newest() {
+  private function newest( array $paths ) {
     
-    // Initialize the result.
+    // Initialize result.
     $newest = [
       'path' => null,
       'modified' => -1
     ];
     
-    // Get the file paths.
-    $paths = func_get_args();
-    
     // Check the date modified for each file.
     foreach( $paths as $path ) { 
       
-      // Get the date modified.
-      $modified = $this->modified($path);
-      
       // Update the result.
-      if( $modified >= $newest['modified'] ) $newest = ['path' => $path, 'modified' => $modified];
+      if( $path['modified'] >= $newest['modified'] ) $newest = $path;
       
     }
     
@@ -134,13 +121,13 @@ class Parser {
   private function compile( $paths ) {
     
     // Get the contents of the template file.
-    $template = $this->read($paths['template']);
+    $template = $this->read($paths['template']['path']);
       
     // Compile the template.
     $php = $this->handlebars->compile($template, $this->options());
       
     // Save the compiled template to the cache.
-    $this->save($paths['cached'], "<?php $php ?>");
+    $this->save($paths['cache']['path'], "<?php $php ?>");
     
     // Save the helpers and partials.
     $this->saveHelpers();
@@ -265,30 +252,10 @@ class Parser {
   // Render some data.
   public function render( $template, $data ) {
     
-    // Get extension data.
-    $ext = $this->config->EXT;
-    
-    // Get template file data.
-    $dirname = dirname($template) == '.' ? '' : dirname($template).'/';
-    $basename = basename($template, $ext['template']).$ext['cache'];
-   
-    // Determine the file paths.
-    $paths = [
-      'template'  => "{$this->config->TEMPLATES}/$template",
-      'cached'    => "{$this->config->CACHED_TEMPLATES}/{$dirname}{$basename}"
-    ];
-
-    // Verify that the template exists.
-    if( !file_exists($paths['template']) ) {
-      
-      throw new Exception("Unable to load template `$template`. Please verify that the template exists and try again." );
-      
-    }
-    
     // Check whether or not the cached file can be used.
-    if( file_exists($paths['cached']) ) {
+    if( $template['cache']['active'] ) {
       
-      $this->useCached = $this->newest($paths['template'], $paths['cached'])['path'] == $paths['cached'];
+      $this->useCached = $this->newest($template)['path'] == $template['cache']['path'];
       
     }
   
@@ -307,13 +274,13 @@ class Parser {
     }
 
     // Compile the template if no cached file is available.
-    if( !$this->useCached or $this->newHelpers or $this->newPartials ) $this->compile($paths);
+    if( !$this->useCached or $this->newHelpers or $this->newPartials ) $this->compile($template);
     
     // Load the renderer.
-    $renderer = $this->load($paths['cached']); 
+    $renderer = $this->load($template['cache']['path']); 
     
     // Render the template with the given data.
-    return $renderer($data);
+    return $renderer($data['data']);
     
   }
   

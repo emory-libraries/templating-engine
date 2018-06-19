@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/",
+    "template": ["index", "home"]
+  },
+  {
+    "path": "/about",
+    "template": "primary"
+  },
+  {
+    "path": "/services",
+    "template": "secondary"
+  }
+]

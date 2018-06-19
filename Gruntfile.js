@@ -51,7 +51,7 @@ module.exports = function(grunt) {
       data: {
         files: [
           {expand: true, cwd: `${SRC}/`, src: ['data/**/*'], dest: `${DEST}/`},
-          {expand: true, cwd: `${SRC}/`, src: ['data/**/*'], dest: `${DEST}/`},
+          {expand: true, cwd: `${SRC}/`, src: ['meta/**/*'], dest: `${DEST}/`},
           {expand: true, cwd: `${SRC}/`, src: ['patterns/**/*'], dest: `${DEST}/`},
           {expand: true, cwd: `${SRC}/`, src: ['*', '!*.{html,php}'], dest: `${DEST}/`, dot: true}
         ]
