@@ -169,7 +169,7 @@ class Route {
     if( $filename !== '' ) array_unshift($lookups, "{$filename}{$ext['data']}");
     
     // Get the contents of the data folder.
-    $contents = scandir_recursive($this->config->DATA);
+    $contents = scandir_recursive($this->config->DATA); 
     
     // Filter the data files for potential matches.
     $filtered = array_values(array_filter($contents, function($file) use ($lookups) {
@@ -183,9 +183,39 @@ class Route {
     
     // Sort the filtered data files.
     foreach( $filtered as $file ) { $files[array_search($file, $lookups)] = $file; }
+    
+    // Identify the base file and all other data files. 
+    $result = [
+      'base' => ($file = (count($files) > 0 ? array_values($files)[0] : false)),
+      'other' => array_filter($contents, function($path) use ($file) {
+        
+          return $path !== $file;
+        
+      })
+    ];
 
     // Return the data file.
-    return (count($files) > 0 ? array_values($files)[0] : false);
+    return $result;
+    
+  }
+  
+  // Read and parse a data file given its path.
+  private function readData( $path ) {
+    
+    // Extract extension data.
+    $ext = $this->config->EXT;
+    
+    // Get the data.
+    $data = file_get_contents($path);
+
+    // Parse the data as JSON.
+    if( in_array($ext['data'], ['.json', '.js']) ) $data = json_decode($data, true);
+
+    // Or, parse the data as YAML.
+    else if( in_array($ext['data'], ['.yml', '.yaml']) ) $data = Yaml::parse($data);
+    
+    // Return the parsed data.
+    return $data;
     
   }
   
@@ -197,38 +227,50 @@ class Route {
       'path' => null,
       'data' => []
     ];
-
-    // Extract extensions data.
-    $ext = $this->config->EXT;
     
     // Get the data file name.
     $file = $this->findData($this->route);
     
     // Load data if a valid file name is given.
-    if( $file ) {
+    if( isset($file['base']) ) {
     
       // Get the data path.
-      $result['path'] = cleanpath($this->config->DATA."/".$file); 
+      $result['path'] = cleanpath($this->config->DATA."/".$file['base']); 
 
       // Check if the data exists.
       if( file_exists($result['path']) ) {
 
         // Get the data.
-        $result['data'] = file_get_contents($result['path']);
+        $result['data'] = $this->readData($result['path']);
 
-        // Parse the data as JSON.
-        if( in_array($ext['data'], ['.json', '.js']) ) $result['data'] = json_decode($result['data'], true);
-
-        // Or, parse the data as YAML.
-        else if( in_array($ext['data'], ['.yml', '.yaml']) ) $result['data'] = Yaml::parse($result['data']);
-
+      }
+      
+    }
+    
+    // Load all other data.
+    if( isset($file['other']) and !empty($file['other']) ) {
+      
+      // Merge all other data as supplemental data.
+      foreach( $file['other'] as $src ) {
+        
+        // Build the path.
+        $path = cleanpath($this->config->DATA."/".$src);
+        
+        // Check if the data exists.
+        if( file_exists($path) ) {
+          
+          // Get the data.
+          $result['data'][$src] = $this->readData($path);
+          
+        }
+        
       }
       
     }
     
     // Merge any query data.
     $result['data'] = array_merge($result['data'], $this->query);
-    
+
     // Return the result.
     return $result;
     

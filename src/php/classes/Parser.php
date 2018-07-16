@@ -47,10 +47,23 @@ class Parser {
    
   }
   
+  // Get flags.
+  private function flag( $name ) {
+    
+    return constant(LightnCandy::class."::FLAG_{$name}");
+    
+  }
+  
   // Build the options array for the compiler.
   private function options() {
     
     return [
+      'flags' =>  $this->flag('THIS') | 
+                  $this->flag('ELSE') |
+                  $this->flag('RUNTIMEPARTIAL') | 
+                  $this->flag('NAMEDARG') |
+                  $this->flag('PARENT') |
+                  $this->flag('ADVARNAME'),
       'helpers' => $this->helpers,
       'partials'  => $this->partials
     ];
