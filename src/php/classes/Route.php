@@ -154,7 +154,7 @@ class Route {
   private function globalData() {
     
     // Get the path to the global data folder.
-    $path = cleanpath($this->config->DATA."/global");
+    $path = cleanpath($this->config->DATA."/_global");
     
     // Scan the contents of the global data folder.
     $globals = file_exists($path ) ? scandir_recursive($path) : [];
@@ -166,7 +166,7 @@ class Route {
     foreach( $globals as $src ) {
       
       // Determine the global file path.
-      $path = cleanpath($this->config->DATA."/global/$src");
+      $path = cleanpath($this->config->DATA."/_global/$src");
       
       // Read and save the data.
       $data = array_merge($data, $this->readData($path));
