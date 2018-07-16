@@ -1,5 +1,9 @@
 <header>
 
+  {{#with (lookup this 'header.json')}}
+    This is the <strong>{{title}}</strong>.
+  {{/with}}
+  
   {{> organisms-nav}}
   
 </header>

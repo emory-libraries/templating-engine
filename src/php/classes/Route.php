@@ -150,6 +150,34 @@ class Route {
     
   }
   
+  // Retrieve gloabl data if it exists.
+  private function globalData() {
+    
+    // Get the path to the global data folder.
+    $path = cleanpath($this->config->DATA."/global");
+    
+    // Scan the contents of the global data folder.
+    $globals = file_exists($path ) ? scandir_recursive($path) : [];
+    
+    // Initialize a result array.
+    $data = [];
+    
+    // Load all the global data.
+    foreach( $globals as $src ) {
+      
+      // Determine the global file path.
+      $path = cleanpath($this->config->DATA."/global/$src");
+      
+      // Read and save the data.
+      $data = array_merge($data, $this->readData($path));
+      
+    }
+    
+    // Return the result.
+    return $data;
+    
+  }
+  
   // Find the corresponding data file.
   private function findData( $route ) {
     
@@ -170,6 +198,13 @@ class Route {
     
     // Get the contents of the data folder.
     $contents = scandir_recursive($this->config->DATA); 
+    
+    // Ignore all global data.
+    $contents = array_filter($contents, function($file) {
+      
+      return (strpos($file, 'global') === false);
+      
+    });
     
     // Filter the data files for potential matches.
     $filtered = array_values(array_filter($contents, function($file) use ($lookups) {
@@ -206,7 +241,7 @@ class Route {
     $ext = $this->config->EXT;
     
     // Get the data.
-    $data = file_get_contents($path);
+    $data = file_get_contents($path); 
 
     // Parse the data as JSON.
     if( in_array($ext['data'], ['.json', '.js']) ) $data = json_decode($data, true);
@@ -231,17 +266,27 @@ class Route {
     // Get the data file name.
     $file = $this->findData($this->route);
     
+    // Retrieve any global data.
+    $global = $this->globalData();
+    
+    // Load any global data if available.
+    if( isset($global) and !empty($global) ) {
+      
+      $result['data'] = array_merge($result['data'], $global);
+      
+    }
+    
     // Load data if a valid file name is given.
     if( isset($file['base']) ) {
     
       // Get the data path.
-      $result['path'] = cleanpath($this->config->DATA."/".$file['base']); 
+      $result['path'] = cleanpath($this->config->DATA."/{$file['base']}"); 
 
       // Check if the data exists.
       if( file_exists($result['path']) ) {
 
         // Get the data.
-        $result['data'] = $this->readData($result['path']);
+        $result['data'] = array_merge($result['data'], $this->readData($result['path']));
 
       }
       
@@ -254,7 +299,7 @@ class Route {
       foreach( $file['other'] as $src ) {
         
         // Build the path.
-        $path = cleanpath($this->config->DATA."/".$src);
+        $path = cleanpath($this->config->DATA."/$src");
         
         // Check if the data exists.
         if( file_exists($path) ) {

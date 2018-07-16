@@ -1,11 +1,9 @@
 <nav>
-{{#with (lookup this 'nav.json')}}
 
   <ul>
-    {{#each menu}}
+    {{#each nav.menu}}
       <li><a href="{{url}}">{{name}}</a></li>
     {{/each}}
   </ul>
   
-{{/with}}
 </nav>
