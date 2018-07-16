@@ -95,7 +95,7 @@ class Route {
       $result['cache']['active'] = true;
       
     }
-
+ 
     // Return the result.
     return $result;
     
@@ -293,7 +293,7 @@ class Route {
     }
     
     // Load all other data.
-    if( isset($file['other']) and !empty($file['other']) ) {
+    /*if( isset($file['other']) and !empty($file['other']) ) {
       
       // Merge all other data as supplemental data.
       foreach( $file['other'] as $src ) {
@@ -311,7 +311,7 @@ class Route {
         
       }
       
-    }
+    }*/
     
     // Merge any query data.
     $result['data'] = array_merge($result['data'], $this->query);
