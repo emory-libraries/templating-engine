@@ -1,5 +1,5 @@
 {
   "title": "Home",
   "description": "This is a description of the home page.",
-  "content": "It can also import **markdown** from its `.json` file."
+  "content": "It can also import **markdown** from its `.json` file.\n\nThis page is also capable of interpolating Mustache variables like the page's title: **{{title}}**.\n\n"
 }

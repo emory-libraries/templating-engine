@@ -3,6 +3,7 @@
         "erusev/parsedown": "^1.7",
         "zordius/lightncandy": "dev-master",
         "symfony/yaml": "^4.1",
-        "jeremeamia/SuperClosure": "^2.4"
+        "jeremeamia/SuperClosure": "^2.4",
+        "mustache/mustache": "^2.12"
     }
 }

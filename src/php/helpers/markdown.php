@@ -5,8 +5,17 @@ return function( $template ) {
   // Initialize the markdown engine.
   $markdown = new Parsedown();
   
+  // Initialize the mustache engine.
+  $mustache = new Mustache_Engine();
+  
+  // Get context.
+  $context = is_array($template) ? $template['_this'] : $options['_this'];
+  
+  // Render any mustache.
+  $rendered = $mustache->render((is_array($template) ? $template['fn']() : $template), $context);
+  
   // Render the markdown.
-  return $markdown->text( (is_array($template) ? $template['fn']() : $template) );
+  return $markdown->text($rendered);
   
 };
 
