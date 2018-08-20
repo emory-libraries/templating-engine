@@ -31,7 +31,7 @@ class Md extends ParsedownExtra {
       if( property_exists($this, $key) ) {
         
         // Set the configuration's value.
-        $this->{$key} = $value;
+        $this->{$key} = isset($value) ? $value : $this->{$key};
         
       }
       

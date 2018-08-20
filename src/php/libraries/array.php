@@ -52,4 +52,29 @@ function array_equiv( array $a, array $b, $deep = true ) {
   
 }
 
+// Retrieve a value from an array or return its literal interpretation (`null`).
+function array_get( array $array, $keys ) {
+  
+  // Permit dot-notation in key values.
+  $keys = explode('.', $keys);
+  
+  // Initialize the result.
+  $result = $array;
+  
+  // Narrow down the values.
+  foreach( $keys as $key ) {
+    
+    // Narrow down multi-dimensional arrays.
+    if( is_array($result) and array_key_exists($key, $result) ) $result = $result[$key];
+      
+    // Otherwise, no value exists.
+    else return null;
+    
+  }
+  
+  // Return the result.
+  return $result;
+  
+}
+
 ?>
