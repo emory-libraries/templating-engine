@@ -3,7 +3,7 @@
 return function( $template, $options = [] ) {
   
   // Initialize the markdown engine.
-  $markdown = new Parsedown(); 
+  $markdown = new Md(); 
   
   // Initialize the mustache engine.
   $mustache = new Mustache_Engine();

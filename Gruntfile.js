@@ -40,7 +40,7 @@ module.exports = function(grunt) {
     
     copy: {
       options: {
-        mode: true
+        mode: '0777'
       },
       php: {
         files: [
