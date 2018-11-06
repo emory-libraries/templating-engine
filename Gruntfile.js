@@ -13,7 +13,7 @@ module.exports = function(grunt) {
     composer: grunt.file.readJSON('composer.json'),
     
     watch: {
-       config: {
+      config: {
         files: ['Gruntfile.js', 'composer.json', 'package.json'],
         tasks: ['build'],
         options: {
@@ -39,16 +39,19 @@ module.exports = function(grunt) {
     },
     
     copy: {
-      options: {
-        mode: '0777'
-      },
       php: {
+        options: {
+          mode: '0777'
+        },
         files: [
           {expand: true, cwd: `${SRC}/`, src: ['php/**/*'], dest: `${DEST}/`},
           {expand: true, cwd: 'vendor/', src: ['**/*'], dest: `${DEST}/php/dependencies/`},
         ]
       },
       data: {
+        options: {
+          mode: '0777'
+        },
         files: [
           {expand: true, cwd: `${SRC}/`, src: ['data/**/*'], dest: `${DEST}/`},
           {expand: true, cwd: `${SRC}/`, src: ['meta/**/*'], dest: `${DEST}/`},
@@ -57,6 +60,9 @@ module.exports = function(grunt) {
         ]
       },
       engine: {
+        options: {
+          mode: '0777'
+        },
         files: [
           {expand: true, cwd: `${SRC}/`, src: ['*.{html,php}'], dest: `${DEST}/`}
         ]
