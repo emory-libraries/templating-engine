@@ -1,9 +1,0 @@
-{
-  "title": "Services",
-  "description": "This is a description about the Services page.",
-  "content": "#Services Page\n\nHere, we could insert some information about the services we offer.",
-  "list": [
-    "Faculty Services",
-    "Student Services"
-  ]
-}

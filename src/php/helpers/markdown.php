@@ -7,7 +7,7 @@ return function( $template ) {
   
   // Initialize the markdown engine.
   // Initialize the markdown engine.
-  $markdown = new Md([
+  $markdown = new Markdown([
     'useSafeMode'         => array_get($context, '__config__.useSafeMode'),
     'headerLevelStart'    => array_get($context, '__config__.headerLevelStart'),
     'enabledHeaderIds'    => array_get($context, '__config__.enableHeaderIds'),

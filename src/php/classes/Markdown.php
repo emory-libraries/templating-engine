@@ -1,7 +1,7 @@
 <?php
 
 // Build the templating engines custom markdown parser.
-class Md extends ParsedownExtra {
+class Markdown extends ParsedownExtra {
   
   // Enables safe mode to prevent the use of HTML within markdown.
   public $useSafeMode = true;

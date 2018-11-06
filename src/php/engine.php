@@ -4,6 +4,6 @@
 require "init.php";
 
 // Load the templating engine.
-$parser = new Engine($config);
+$engine = new Engine($config);
 
 ?>

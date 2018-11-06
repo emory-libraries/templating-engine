@@ -1,6 +1,6 @@
 <?php
 
 // Load the templating engine.
-require "php/template.php";
+require "php/engine.php";
 
 ?>
