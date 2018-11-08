@@ -6,13 +6,7 @@ return function( $template, $options = [] ) {
   $context = is_array($template) ? $template['_this'] : $options['_this'];
  
   // Initialize the markdown engine.
-  $markdown = new Markdown([
-    'useSafeMode'         => array_get($context, '__config__.useSafeMode'),
-    'headerLevelStart'    => array_get($context, '__config__.headerLevelStart'),
-    'enabledHeaderIds'    => array_get($context, '__config__.enableHeaderIds'),
-    'overwriteHeaderIds'  => array_get($context, '__config__.overwriteHeaderIds'),
-    'disableImages'       => array_get($context, '__config__.disableImages')
-  ]);
+  $markdown = new Markdown(array_get($context, '__config__.markdown'));
   
   // Initialize the mustache engine.
   $mustache = new Mustache_Engine();
