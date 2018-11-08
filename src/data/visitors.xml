@@ -1,0 +1,537 @@
+<system-index-block current-time="1541625023954" name="current page xml" type="folder">
+  <calling-page>
+    <system-page current="true" id="e68a8e4eaa8cca9113459d2c595fd81d">
+      <name>visitors</name>
+      <is-published>true</is-published>
+      <last-published-on>1541572605925</last-published-on>
+      <last-published-by>system</last-published-by>
+      <title>Visitors</title>
+      <path>/using-the-library/visiting-the-library/visitors</path>
+      <site>Library - Woodruff</site>
+      <link>site://Library - Woodruff/using-the-library/visiting-the-library/visitors</link>
+      <created-by>cpollet</created-by>
+      <created-on>1382552341950</created-on>
+      <last-modified-by>kserra3</last-modified-by>
+      <last-modified>1512674731671</last-modified>
+      <dynamic-metadata>
+        <name>layout-columns</name>
+      </dynamic-metadata>
+      <dynamic-metadata>
+        <name>alt-subnav-title</name>
+      </dynamic-metadata>
+      <dynamic-metadata>
+        <name>override-title</name>
+      </dynamic-metadata>
+      <dynamic-metadata>
+        <name>section-listing</name>
+      </dynamic-metadata>
+      <dynamic-metadata>
+        <name>subnav-exclude</name>
+      </dynamic-metadata>
+      <dynamic-metadata>
+        <name>exclude-sitemaps</name>
+      </dynamic-metadata>
+      <dynamic-metadata>
+        <name>theme</name>
+        <value>Site default</value>
+      </dynamic-metadata>
+      <system-data-structure definition-path="interior-pages/interior-page">
+        <thumbnail>
+          <image type="file">
+            <content></content>
+            <path>/images/index-primary-images/visitors.jpg</path>
+            <link>site://Library - Woodruff/images/index-primary-images/visitors.jpg</link>
+            <site>Library - Woodruff</site>
+            <name>visitors.jpg</name>
+          </image>
+          <section-icon>---</section-icon>
+          <summary></summary>
+          <selected-links>
+            <link>
+            <path>/</path>
+            </link>
+          </selected-links>
+        </thumbnail>
+        <main-content>
+          <main-images>
+            <type>Do Not Display</type>
+            <display>Before</display>
+            <image>
+              <path>/</path>
+            </image><code></code>
+            <slideshow-block>
+              <path>/</path>
+            </slideshow-block>
+            <caption></caption>
+          </main-images>
+          <main><span id="docs-internal-guid-39e59bec-dc32-e2d1-47ca-26056563d7a5">Woodruff Library welcomes all non-Emory visitors. Please sign in at the security desk with a picture ID for library access.</span></main>
+          <figure>
+            <align>Right</align>
+            <image>
+              <path>/</path>
+            </image>
+            <caption></caption>
+            <link>
+            <page>
+              <path>/</path>
+            </page>
+            <external />
+            <file>
+              <path>/</path>
+            </file>
+            </link>
+          </figure>
+        </main-content>
+        <page-options>
+          <layout>Standard</layout>
+        </page-options>
+        <section-content>
+          <expanded />
+          <section-heading>
+            <heading>Planning Your Visit</heading>
+            <section-heading-level>Heading 2</section-heading-level>
+          </section-heading>
+          <section-images>
+            <type>Do Not Display</type>
+            <display>Before</display>
+            <image>
+              <path>/</path>
+            </image><code></code>
+            <caption></caption>
+          </section-images>
+          <main></main>
+          <figure>
+            <align>Right</align>
+            <image>
+              <path>/</path>
+            </image>
+            <caption></caption>
+            <link>
+            <page>
+              <path>/</path>
+            </page>
+            <external />
+            <file>
+              <path>/</path>
+            </file>
+            </link>
+          </figure>
+          <section-content-boxes>
+            <distinguish />
+            <component>
+              <path>/</path>
+            </component>
+          </section-content-boxes>
+        </section-content>
+        <section-content>
+          <expanded />
+          <section-heading>
+            <heading>Library Hours</heading>
+            <section-heading-level>Heading 3</section-heading-level>
+          </section-heading>
+          <section-images>
+            <type>Do Not Display</type>
+            <display>Before</display>
+            <image>
+              <path>/</path>
+            </image><code></code>
+            <caption></caption>
+          </section-images>
+          <main>
+            <p>There is no visitor access after 9pm. All visitors must sign in before this time. Please refer to our table of <a href="/entity/open.act?type=page&amp;id=c9735064aa8cca92127fe8ac1f840827&amp;confId=77bf0979aa8cca913e02f94e4e7f24f0" target="_parent">Woodruff Library hours</a>.</p>
+          </main>
+          <figure>
+            <align>Right</align>
+            <image>
+              <path>/</path>
+            </image>
+            <caption></caption>
+            <link>
+            <page>
+              <path>/</path>
+            </page>
+            <external />
+            <file>
+              <path>/</path>
+            </file>
+            </link>
+          </figure>
+          <section-content-boxes>
+            <distinguish />
+            <component>
+              <path>/</path>
+            </component>
+          </section-content-boxes>
+        </section-content>
+        <section-content>
+          <expanded />
+          <section-heading>
+            <heading>Parking</heading>
+            <section-heading-level>Heading 3</section-heading-level>
+          </section-heading>
+          <section-images>
+            <type>Do Not Display</type>
+            <display>Before</display>
+            <image>
+              <path>/</path>
+            </image><code></code>
+            <caption></caption>
+          </section-images>
+          <main>
+            <p>The nearest visitor parking is the Fishburne parking deck located off Fishburne Drive behind Woodruff Library. For maps and more information, please visit the&#160;<a href="http://transportation.emory.edu/parking/visitors.html">Emory Transportation and Parking Services visitor parking page</a>.</p>
+          </main>
+          <figure>
+            <align>Right</align>
+            <image>
+              <path>/</path>
+            </image>
+            <caption></caption>
+            <link>
+            <page>
+              <path>/</path>
+            </page>
+            <external />
+            <file>
+              <path>/</path>
+            </file>
+            </link>
+          </figure>
+          <section-content-boxes>
+            <distinguish />
+            <component>
+              <path>/</path>
+            </component>
+          </section-content-boxes>
+        </section-content>
+        <section-content>
+          <expanded />
+          <section-heading>
+            <heading>Finding Your Way in Woodruff Library</heading>
+            <section-heading-level>Heading 2</section-heading-level>
+          </section-heading>
+          <section-images>
+            <type>Do Not Display</type>
+            <display>Before</display>
+            <image>
+              <path>/</path>
+            </image><code></code>
+            <caption></caption>
+          </section-images>
+          <main>
+            <p dir="ltr"></p>
+            <ul>
+              <li dir="ltr"><a href="/renderfile/c4ac7b4baa8cca910a393641c8fc18dd/documents/map+guide.pdf" title="Map + Guide">Map + Guide</a></li>
+              <li dir="ltr"><a href="/renderfile/c4ac7b4baa8cca910a393641c8fc18dd/documents/ALLWalkingTour0416_web.pdf">Walking Tour</a></li>
+              <li><a href="/entity/open.act?type=page&amp;id=ca36cc54aa8cca92127fe8ac6b25938f&amp;confId=c4ad4e93aa8cca910a3936411aaeb863" target="_parent"><span>Call number guide</span></a></li>
+              <li dir="ltr"><a href="/entity/open.act?type=page&amp;id=832033d6aa8cca923f437b82b76ae15e&amp;confId=0c2a4862aa8cca910a393641ba042bf7" target="_parent"><span>Other Emory Libraries</span></a></li>
+            </ul>
+          </main>
+          <figure>
+            <align>Right</align>
+            <image>
+              <path>/</path>
+            </image>
+            <caption></caption>
+            <link>
+            <page>
+              <path>/</path>
+            </page>
+            <external />
+            <file>
+              <path>/</path>
+            </file>
+            </link>
+          </figure>
+          <section-content-boxes>
+            <distinguish />
+            <component>
+              <path>/</path>
+            </component>
+          </section-content-boxes>
+        </section-content>
+        <section-content>
+          <expanded />
+          <section-heading>
+            <heading>Borrowing Privileges for Visitors</heading>
+            <section-heading-level>Heading 2</section-heading-level>
+          </section-heading>
+          <section-images>
+            <type>Do Not Display</type>
+            <display>Before</display>
+            <image>
+              <path>/</path>
+            </image><code></code>
+            <caption></caption>
+          </section-images>
+          <main>
+            <p>Visitors from <a href="http://www.atlantahighered.org/Members/tabid/400/Default.aspx">ARCHE schools</a> may be eligible for library privileges at Woodruff Library. Members of the public may purchase privileges.</p>
+            <p>See our <a href="/entity/open.act?type=page&amp;id=ca346c20aa8cca92127fe8ac16e5db86&amp;confId=c4ad4e93aa8cca910a3936411aaeb863" target="_parent">Borrowing Privileges</a> page for more information.</p>
+          </main>
+          <figure>
+            <align>Right</align>
+            <image>
+              <path>/</path>
+            </image>
+            <caption></caption>
+            <link>
+            <page>
+              <path>/</path>
+            </page>
+            <external />
+            <file>
+              <path>/</path>
+            </file>
+            </link>
+          </figure>
+          <section-content-boxes>
+            <distinguish />
+            <component>
+              <path>/</path>
+            </component>
+          </section-content-boxes>
+        </section-content>
+        <section-content>
+          <expanded />
+          <section-heading>
+            <heading>Computer Services and Resources</heading>
+            <section-heading-level>Heading 2</section-heading-level>
+          </section-heading>
+          <section-images>
+            <type>Do Not Display</type>
+            <display>Before</display>
+            <image>
+              <path>/</path>
+            </image><code></code>
+            <caption></caption>
+          </section-images>
+          <main></main>
+          <figure>
+            <align>Right</align>
+            <image>
+              <path>/</path>
+            </image>
+            <caption></caption>
+            <link>
+            <page>
+              <path>/</path>
+            </page>
+            <external />
+            <file>
+              <path>/</path>
+            </file>
+            </link>
+          </figure>
+          <section-content-boxes>
+            <distinguish />
+            <component>
+              <path>/</path>
+            </component>
+          </section-content-boxes>
+        </section-content>
+        <section-content>
+          <expanded />
+          <section-heading>
+            <heading>EmoryGuest Wi-Fi Network</heading>
+            <section-heading-level>Heading 3</section-heading-level>
+          </section-heading>
+          <section-images>
+            <type>Do Not Display</type>
+            <display>Before</display>
+            <image>
+              <path>/</path>
+            </image><code></code>
+            <caption></caption>
+          </section-images>
+          <main>
+            <p dir="ltr" id="docs-internal-guid-39e59bec-dc36-cf37-07b3-fcf8a5f4d363">EmoryGuest wireless access is provided for visitors of Emory University who have not been granted a Network ID and password for access to the Internet. Users must have an active wireless card that is set up to detect new networks and should select the EmoryGuest network from the list of the available networks.</p>
+            <p>EmoryGuest wireless network users are automatically logged off after 4 hours and do not have full bandwidth or privileges to Emory users. Also, EmoryGuest does not have access to Emory University's electronic resources that are restricted to Emory University faculty, staff, and students.</p>
+          </main>
+          <figure>
+            <align>Right</align>
+            <image>
+              <path>/</path>
+            </image>
+            <caption></caption>
+            <link>
+            <page>
+              <path>/</path>
+            </page>
+            <external />
+            <file>
+              <path>/</path>
+            </file>
+            </link>
+          </figure>
+          <section-content-boxes>
+            <distinguish />
+            <component>
+              <path>/</path>
+            </component>
+          </section-content-boxes>
+        </section-content>
+        <section-content>
+          <expanded />
+          <section-heading>
+            <heading>Accessing Electronic Resources</heading>
+            <section-heading-level>Heading 3</section-heading-level>
+          </section-heading>
+          <section-images>
+            <type>Do Not Display</type>
+            <display>Before</display>
+            <image>
+              <path>/</path>
+            </image><code></code>
+            <caption></caption>
+          </section-images>
+          <main>
+            <p><span>To access electronic resources, such as databases, eJournals, eBooks, etc., please visit the Library Service Desk on Level 2 and ask staff to log you into a Visitor Workstation.&#160; While many eResources are available to visitors, some are restricted.&#160; Before visiting Woodruff Library, please contact the Library Service Desk (404-727-6873) to verify the accessibility of particular items.</span></p>
+          </main>
+          <figure>
+            <align>Right</align>
+            <image>
+              <path>/</path>
+            </image>
+            <caption></caption>
+            <link>
+            <page>
+              <path>/</path>
+            </page>
+            <external />
+            <file>
+              <path>/</path>
+            </file>
+            </link>
+          </figure>
+          <section-content-boxes>
+            <distinguish />
+            <component>
+              <path>/</path>
+            </component>
+          </section-content-boxes>
+        </section-content>
+        <section-content>
+          <expanded />
+          <section-heading>
+            <heading>Visitor Workstations</heading>
+            <section-heading-level>Heading 3</section-heading-level>
+          </section-heading>
+          <section-images>
+            <type>Do Not Display</type>
+            <display>Before</display>
+            <image>
+              <path>/</path>
+            </image><code></code>
+            <caption></caption>
+          </section-images>
+          <main><span>There are two Visitor Computer Workstations on the entrance floor of the library (Level 2) that are available to visitors.&#160; Please ask library staff to assist you in signing into a Visitor Workstation.&#160; There is a 30 minute time limit on these computers when other guests are waiting.&#160; Access is on a first come-first served basis.&#160;</span></main>
+          <figure>
+            <align>Right</align>
+            <image>
+              <path>/</path>
+            </image>
+            <caption></caption>
+            <link>
+            <page>
+              <path>/</path>
+            </page>
+            <external />
+            <file>
+              <path>/</path>
+            </file>
+            </link>
+          </figure>
+          <section-content-boxes>
+            <distinguish />
+            <component>
+              <path>/</path>
+            </component>
+          </section-content-boxes>
+        </section-content>
+        <section-content>
+          <expanded />
+          <section-heading>
+            <heading>Printing, Copying, and Scanning</heading>
+            <section-heading-level>Heading 3</section-heading-level>
+          </section-heading>
+          <section-images>
+            <type>Do Not Display</type>
+            <display>Before</display>
+            <image>
+              <path>/</path>
+            </image><code></code>
+            <caption></caption>
+          </section-images>
+          <main>
+            <p>Visitors must purchase a guest copy card to print or copy in Woodruff Library. Cards can be purchased at the Emory Card deposit machine or at the Woodruff Library Service Desk on level 2.</p>
+            <p>For more information on computing in Woodruff Library, please see our <a href="http://it.emory.edu/studentdigitallife/spaces/learning-commons/technology.html">Learning Commons page</a>.</p>
+          </main>
+          <figure>
+            <align>Right</align>
+            <image>
+              <path>/</path>
+            </image>
+            <caption></caption>
+            <link>
+            <page>
+              <path>/</path>
+            </page>
+            <external />
+            <file>
+              <path>/</path>
+            </file>
+            </link>
+          </figure>
+          <section-content-boxes>
+            <distinguish />
+            <component>
+              <path>/</path>
+            </component>
+          </section-content-boxes>
+        </section-content>
+        <books>
+          <heading />
+          <heading-level>Heading 2</heading-level>
+          <overview />
+          <book>
+            <isbn />
+            <call-number />
+            <hard-copy-link />
+            <ebook-link />
+            <featured>
+              <featured />
+              <faculty />
+              <summary></summary>
+            </featured>
+            <manual-entry>
+              <title></title>
+              <authors>
+                <author />
+              </authors>
+              <cover>
+                <path>/</path>
+              </cover>
+              <preview-link />
+            </manual-entry>
+            <subjects>
+              <category-page>
+                <path>/</path>
+              </category-page>
+            </subjects>
+          </book>
+        </books>
+        <side>
+          <item>
+            <type2>Select an option</type2>
+            <item-priority>Additional</item-priority>
+            <block>
+              <path>/</path>
+            </block>
+            <callout-page>
+              <path>/</path>
+            </callout-page>
+          </item>
+        </side>
+      </system-data-structure>
+    </system-page>
+  </calling-page>
+</system-index-block>

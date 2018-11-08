@@ -1,7 +1,7 @@
 <?php
 
 // Converts a string into its attribute-friendly version.
-function str_attr( $string, $delimiter = '-', $regex = "/[^A-Za-z0-9\/\ ]/" ) {
+function strtoattr( string $string, $delimiter = '-', $regex = "/[^A-Za-z0-9\/\ ]/" ) {
   
   // Force the string to be lowercase.
   $string = strtolower($string);
@@ -20,6 +20,26 @@ function str_attr( $string, $delimiter = '-', $regex = "/[^A-Za-z0-9\/\ ]/" ) {
   
   // Return the cleaned string.
   return $string;
+  
+}
+
+// Converts a string to a camelcase format, removing any delimiters and spaces.
+function strtocamel( string $string, $delimiters = '-_ ' ) {
+  
+  // Convert the delimiters to a regex-friendly format.
+  $delimiters = implode('|', array_map('preg_quote', str_split($delimiters)));
+
+  // Extract the delimiters.
+  $string = preg_split('/'.$delimiters.'/', $string);
+
+  // Pull out the first part of the string.
+  $first = array_pop($string);
+  
+  // Capitalize all remaining parts of the string.
+  $string = array_map('ucfirst', $string);
+  
+  // Recombine and return string.
+  return $first.implode('', $string);
   
 }
 

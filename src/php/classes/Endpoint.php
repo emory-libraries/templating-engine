@@ -65,7 +65,7 @@ class Endpoint {
     $this->router = new Router();
     
     // Capture the endpoint.
-    $this->endpoint = $this->__getEndpointClean(); 
+    $this->endpoint = $this->__getEndpointClean();
   
     // Get the endpoint's data and template.
     $this->data = new Data($this->endpoint); 

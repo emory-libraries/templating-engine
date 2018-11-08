@@ -10,5 +10,9 @@
   {
     "path": "/services",
     "template": "secondary"
+  },
+  {
+    "path": "/visitors",
+    "template": "xmltest"
   }
 ]

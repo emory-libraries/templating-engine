@@ -53,10 +53,10 @@ function array_equiv( array $a, array $b, $deep = true ) {
 }
 
 // Retrieve a value from an array or return its literal interpretation (`null`).
-function array_get( array $array, $keys ) {
+function array_get( array $array, $keys, $delimiter = '.' ) {
   
   // Permit dot-notation in key values.
-  $keys = explode('.', $keys);
+  $keys = explode($delimiter, $keys);
   
   // Initialize the result.
   $result = $array;
@@ -163,6 +163,39 @@ function array_expand( array $flattened, $delimiter = '.' ) {
   
   // Return the result.
   return $result;
+  
+}
+
+// Determine if an array is an associative array.
+function is_associative_array( array $array ) {
+  
+  // Check empty array.
+  if( [] === $array ) return false;
+  
+  // Otherwise, check arrays with items.
+  return array_keys($array) !== range(0, count($array) - 1);
+  
+}
+
+// Map array keys instead of values.
+function array_map_keys( callable $callback, array &$array ) {
+  
+  // Loop through the array, and call the callback with the key.
+  foreach( $array as $key => $value ) {
+    
+    // Pass the key to the callback and capture the result.
+    $result = $callback($key);
+    
+    // Remove the old array key.
+    unset($array[$key]);
+    
+    // Use the new array key instead.
+    $array[$result] = $value;
+    
+  }
+  
+  // Return the array.
+  return $array;
   
 }
 

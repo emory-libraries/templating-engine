@@ -60,7 +60,7 @@ class Markdown extends ParsedownExtra {
     }
 
     // Generate a header ID from the header text.
-    $header['element']['attributes']['id'] = str_attr($header['element']['handler']['argument']);
+    $header['element']['attributes']['id'] = strtoattr($header['element']['handler']['argument']);
     
   }
   

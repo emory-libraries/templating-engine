@@ -162,7 +162,8 @@ trait Data_Parsers {
   // Register parser methods with their recognized extensions in their order of precedence.
   private $parsers = [
     '__parseJSON' => ['.json', '.js'],
-    '__parseYAML' => ['.yaml', '.yml']
+    '__parseYAML' => ['.yaml', '.yml'],
+    '__parseXML'  => ['.xml']
   ];
   
   // Initialize the JSON parser.
@@ -170,6 +171,40 @@ trait Data_Parsers {
   
   // Initialize the YAML parser.
   private function __parseYAML( $data ) { return Yaml::parse($data); }
+  
+  // Initialize the XML parser.
+  private function __parseXML( $data ) { 
+    
+    // Convert the XML data to an object.
+    $xml = new SimpleXMLElement($data);
+    
+    // Retrieve the XML data models.
+    $model = json_decode(file_get_contents("{$this->config->DATA_META}/xml.json"), true);
+    
+    // Initialize the result.
+    $result = [];
+    
+    // Reformat the XML meta data according to the data model to make it more user friendly.
+    foreach( array_flatten($model['meta']) as $key => $path ) { $result[$key] = object_get($xml, $path); }
+    
+    // Then, reformat the XML data according to the data model to make it more user friendly.
+    $result = array_merge($result, object_get($xml, $model['data']));
+   
+    // Remove any values from the data that should be excluded.
+    $result = array_filter($result, function($value, $key) use ($model) {
+      
+      // Remove the item if the key matches an excluded key.
+      return !in_array($key, $model['exclude']);
+      
+    }, ARRAY_FILTER_USE_BOTH);
+    
+    // Convert any dash-delimited keys to camelcase.
+    $result = array_map_keys('strtocamel', $result);
+    
+    // Expand and return the result.
+    return array_expand($result);
+  
+  }
   
 }
 
