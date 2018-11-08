@@ -107,7 +107,7 @@ trait Parser_Partials {
     $result = [];
     
     // Get relative pattern path.
-    $relative = trim(str_replace($this->config->PATTERNS, '', $path), '/');
+    $relative = trim(str_replace($this->config->PARTIALS, '', $path), '/');
     
     // Get the partial's extension.
     $ext = pathinfo($relative, PATHINFO_EXTENSION);
@@ -142,7 +142,7 @@ trait Parser_Partials {
     $result = [];
     
     // Get the partials path.
-    $path = $this->config->PATTERNS;
+    $path = $this->config->PARTIALS;
     
     // Verify that the partials path exists.
     if( file_exists($path) ) {
@@ -151,7 +151,7 @@ trait Parser_Partials {
       $result = array_values(array_filter(scandir_recursive($path), function($pattern) {
 
         // Get the templates directory.
-        $templates = trim(str_replace($this->config->PATTERNS, '', $this->config->TEMPLATES), '/');
+        $templates = trim(str_replace($this->config->PARTIALS, '', $this->config->TEMPLATES), '/');
 
         // Exclude template patterns from partials.
         return strpos($pattern, $templates) !== 0;
@@ -175,7 +175,7 @@ trait Parser_Partials {
     $partials = $this->__findPartials();
     
     // Import all partials.
-    foreach( $partials as $path ) { $result = array_merge($result, $this->__importPartial("{$this->config->PATTERNS}/{$path}")); }
+    foreach( $partials as $path ) { $result = array_merge($result, $this->__importPartial("{$this->config->PARTIALS}/{$path}")); }
     
     // Return the results.
     return $result;

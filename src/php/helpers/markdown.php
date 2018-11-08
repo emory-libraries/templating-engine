@@ -6,7 +6,6 @@ return function( $template ) {
   $context = is_array($template) ? $template['_this'] : $options['_this'];
   
   // Initialize the markdown engine.
-  // Initialize the markdown engine.
   $markdown = new Markdown([
     'useSafeMode'         => array_get($context, '__config__.useSafeMode'),
     'headerLevelStart'    => array_get($context, '__config__.headerLevelStart'),

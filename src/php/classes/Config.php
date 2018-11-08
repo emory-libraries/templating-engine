@@ -9,11 +9,11 @@ class Config {
   // Constructor
   function __construct() {
     
-    // Set initial configuration data.
+    // Configure root paths.
     $this->data['ROOT'] = dirname(dirname(__DIR__)); 
     $this->data['ROOT_PATH'] = str_replace($_SERVER['DOCUMENT_ROOT'], '', $this->ROOT); 
     
-    // Set cache configuration data.
+    // Configure the cache.
     $this->data['CACHE'] = dirname(__DIR__).'/cache';
     $this->data['CACHE_PATH'] = [
       
@@ -28,28 +28,41 @@ class Config {
       
     ];
     
-    // Set preferred extension configurations. This is mostly used for caching.
+    // Configure default file extensions used for generated files.
     $this->data['EXT'] = [
       'template'  => '.handlebars',
       'data'      => '.json',
       'cache'     => '.php'
     ];
     
-    // Set data file configurations.
+    // Configure the data stores.
     $this->data['DATA'] = "{$this->ROOT}/data";
     $this->data['DATA_GLOBAL'] = "{$this->DATA}/_global";
     $this->data['DATA_META'] = "{$this->DATA}/_meta";
     
-    // Set template file configurations.
-    $this->data['PATTERNS'] = "{$this->ROOT}/patterns";
-    $this->data['TEMPLATES'] = "{$this->PATTERNS}/templates";
-    
-    // Set parser configurations.
+    // Configure the handlebars processor.
+    $this->data['PARTIALS'] = "{$this->ROOT}/patterns";
+    $this->data['TEMPLATES'] = "{$this->PARTIALS}/templates";
     $this->data['HELPERS'] = dirname(__DIR__)."/helpers";
-    $this->data['PARTIALS'] = [
-      'atoms'     => $this->PATTERNS_ATOMS,
-      'molecules' => $this->PATTERNS_MOLECULES,
-      'organisms' => $this->PATTERNS_ORGANISMS
+    
+    // Configure the markdown processor.
+    $this->data['MARKDOWN'] = [
+      
+      // Enables safe mode to prevent the use of HTML within markdown.
+      'useSafeMode' => true,
+      
+      // Enables automatic header IDs by default.
+      'enabledHeaderIds' => true,
+      
+      // Overwrite existing IDs when automatically generating header IDs.
+      'overwriteHeaderIds' => true,
+      
+      // Sets default header level to start with the given value.
+      'headerLevelStart' => 2,
+      
+      // Disables the use of images within markdown.
+      'disableImages' => true
+      
     ];
     
   }
