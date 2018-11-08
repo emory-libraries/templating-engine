@@ -234,9 +234,9 @@ class Data {
   }
   
   // Get query parameter data.
-  public function getQueryData() {
+  public function getQueryData() { 
     
-    return (new Cast(isset($_GET) and !empty($_GET) ? $_GET : []))->castAll();
+    return ((isset($_GET) and !empty($_GET)) ? (new Cast($_GET))->castAll() : []);
     
   }
   
@@ -285,42 +285,44 @@ class Data {
   }
   
   // Get data for an endpoint.
-  public function getData( $endpoint = null ) {
+  public function getData( $endpoint = null, $merge = [] ) {
     
     // Set the endpoint if not set.
     if( !isset($endpoint) and isset($this->endpoint) ) $endpoint = $this->endpoint;
-    
-    // Initialize the result.
-    $result = [
-      '__file__' => [
-        'path' => null,
-        'filename' => null,
-        'extension' => null
-      ],
+  
+    // Initialize the result, and merge any supplemental data.
+    $result = array_merge([
       '__global__' => $this->getGlobalData(),
-      '__params__' => $this->getQueryData()
-    ];
-    
+      '__params__' => $this->getQueryData(),
+      '__data__' => [
+        'path' => null,
+        'extension' => null,
+        'filename' => null,
+        'basename' => null
+      ]
+    ], $merge);
+
     // Get endpoint data if available.
     if( isset($endpoint) ) {
     
       // Get the data file name.
-      $filename = $this->__getDataFilePaths($endpoint);
+      $filename = $this->__getDataFilePaths($endpoint); 
 
       // Load data if available.
       if( isset($filename['base']) ) {
 
         // Get the data file path.
-        $path = cleanpath($this->config->DATA."/{$filename['base']}");
+        $path = cleanpath($this->config->DATA."/{$filename['base']}"); 
 
         // Verify that the file exists.
         if( file_exists($path) ) {
 
           // Save the path and the data.
-          $result['__file__'] = [
+          $result['__data__'] = [
             'path' => $path,
+            'extension' => ($ext = pathinfo($path, PATHINFO_EXTENSION)),
             'filename' => basename($path),
-            'extension' => pathinfo($path, PATHINFO_EXTENSION)
+            'basename' => basename($path, ".{$ext}")
           ];
           $result = array_merge($result, $this->__readDataFile($path));
 

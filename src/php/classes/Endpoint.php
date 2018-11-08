@@ -80,7 +80,7 @@ class Endpoint {
   public function getTemplate() { return $this->template->getTemplate(); }
   
   // Get the endpoint's data.
-  public function getData() { return $this->data->getData(); }
+  public function getData( $merge = [] ) { return $this->data->getData(null, $merge); }
   
 }
 

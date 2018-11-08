@@ -35,8 +35,23 @@ class Engine {
   // Parse the route.
   private function run() {
     
+    // Get the template.
+    $template = $this->endpoint->getTemplate();
+    
+    // Get the data.
+    $data = $this->endpoint->getData([
+      '__template__' => [
+        'path' => ($path = $template['template']),
+        'extension' => ($ext = pathinfo($path, PATHINFO_EXTENSION)),
+        'filename' => basename($path),
+        'basename' => basename($path, ".{$ext}"),
+        'cache' => $template['cache']
+      ],
+      '__endpoint__' => $this->endpoint->getEndpoint()
+    ]); var_dump($data);
+    
     // Render the template.
-    echo $this->parser->render($this->endpoint->getTemplate(), $this->endpoint->getData());
+    echo $this->parser->render($template, $data);
     
   }
   
