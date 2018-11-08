@@ -13,7 +13,7 @@ function scandir_clean( $path ) {
 function scandir_recursive( $path, $prefix = '' ) {
   
   // Scan the contents of the directory.
-  $contents = scandir_clean($path); 
+  $contents = scandir_clean($path);
   
   // Initialize results.
   $results = [];
@@ -21,14 +21,18 @@ function scandir_recursive( $path, $prefix = '' ) {
   // Recursively, scan subdirectories.
   foreach( $contents as $key => $file ) {  
 
-    $subpath = "$path/$file";
+    // Get the subdirectory path.
+    $subdir = "$path/$file"; 
 
-    if( is_dir($subpath) ) {
+    // Determine if the subdirectory exists.
+    if( is_dir($subdir) ) {
 
-      $results = array_merge($results, scandir_recursive($subpath, "$file/"));
+      // Continue scanning the subdirectory for files.
+      $results = array_merge($results, scandir_recursive($subdir, "$file/"));
 
     }
     
+    // Otherwise, a file was found.
     else {
       
       $results[] = "{$prefix}{$file}";
@@ -37,7 +41,7 @@ function scandir_recursive( $path, $prefix = '' ) {
 
   }
     
-  // Return.
+  // Return the results.
   return $results;
   
 }

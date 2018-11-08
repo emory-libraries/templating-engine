@@ -6,23 +6,26 @@ class Engine {
   // Capture configurations.
   protected $config;
   
-  // Load the route.
-  protected $route;
+  // Load the endpoint.
+  protected $endpoint;
   
   // Load utilities.
   protected $parser;
   
   // Constructor
-  function __construct( Config $config ) {
+  function __construct() {
+    
+    // Use global configurations.
+    global $config;
     
     // Save the configurations.
     $this->config = $config;
     
-    // Load the route.
-    $this->route = new Route($config); 
+    // Get the current endpoint.
+    $this->endpoint = new Endpoint(); 
     
     // Load utilities.
-    $this->parser = new Parser($config);
+    $this->parser = new Parser();
     
     // Run the templating engine.
     $this->run();
@@ -33,7 +36,7 @@ class Engine {
   private function run() {
     
     // Render the template.
-    echo $this->parser->render($this->route->getTemplate(), $this->route->getData());
+    echo $this->parser->render($this->endpoint->getTemplate(), $this->endpoint->getData());
     
   }
   

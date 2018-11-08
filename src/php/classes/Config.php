@@ -12,65 +12,53 @@ class Config {
     // Set initial configuration data.
     $this->data['ROOT'] = dirname(dirname(__DIR__)); 
     $this->data['ROOT_PATH'] = str_replace($_SERVER['DOCUMENT_ROOT'], '', $this->ROOT); 
-    $this->data['META'] = "{$this->ROOT}/meta";
+    
+    // Set cache configuration data.
     $this->data['CACHE'] = dirname(__DIR__).'/cache';
-    $this->data['PATTERNS'] = "{$this->ROOT}/patterns";
-    $this->data['ATOMS'] = "{$this->PATTERNS}/atoms";
-    $this->data['MOLECULES'] = "{$this->PATTERNS}/molecules";
-    $this->data['ORGANISMS'] = "{$this->PATTERNS}/organisms";
-    $this->data['TEMPLATES'] = "{$this->PATTERNS}/templates";
-    $this->data['DATA'] = "{$this->ROOT}/data";
+    $this->data['CACHE_PATH'] = [
+      
+      // Specify a subdirectory for partials to be stored, or use an empty string to store files at the cache's root directory.
+      "partials" => "/partials",
+      
+      // Specify a subdirectory for templates to be stored, or use an empty string to store files at the cache's root directory.
+      "templates" => "/templates",
+      
+      // Specify a filename for helper data to be stored. This file will be encoded as JSON.
+      "helpers" => ".helpers.json"
+      
+    ];
+    
+    // Set preferred extension configurations. This is mostly used for caching.
     $this->data['EXT'] = [
       'template'  => '.handlebars',
       'data'      => '.json',
       'cache'     => '.php'
     ];
-    $this->data['HELPERS'] = "{$this->CACHE}/.helpers.json";
+    
+    // Set data file configurations.
+    $this->data['DATA'] = "{$this->ROOT}/data";
+    $this->data['DATA_GLOBAL'] = "{$this->DATA}/_global";
+    $this->data['DATA_META'] = "{$this->DATA}/_meta";
+    
+    // Set template file configurations.
+    $this->data['PATTERNS'] = "{$this->ROOT}/patterns";
+    $this->data['TEMPLATES'] = "{$this->PATTERNS}/templates";
+    
+    // Set parser configurations.
+    $this->data['HELPERS'] = dirname(__DIR__)."/helpers";
     $this->data['PARTIALS'] = [
-      'atoms'     => $this->ATOMS,
-      'molecules' => $this->MOLECULES,
-      'organisms' => $this->ORGANISMS
+      'atoms'     => $this->PATTERNS_ATOMS,
+      'molecules' => $this->PATTERNS_MOLECULES,
+      'organisms' => $this->PATTERNS_ORGANISMS
     ];
-    $this->data['CACHED_PARTIALS'] = "{$this->CACHE}/partials";
-    $this->data['CACHED_TEMPLATES'] = "{$this->CACHE}/templates";
-    
-    // Load meta data.
-    $this->loadMeta();
-    
-  }
-  
-  // Load meta data.
-  private function loadMeta() {
-    
-    // Scan the contents of the meta directory.
-    $metas = scandir_clean($this->META);
-    
-    // Load meta data.
-    foreach( $metas as $meta ) {
-      
-      // Extract the base name.
-      $name = strtoupper(basename($meta, '.json'));
-      
-      // Read the meta data.
-      $this->data[$name] = json_decode(file_get_contents("{$this->META}/{$meta}"), true);
-      
-    }
     
   }
   
   // Getter
-  function __get( $key ) {
-    
-    return $this->data[$key];
-    
-  }
+  function __get( $key ) { return array_get($this->data, $key); }
   
   // Setter
-  function __set( $key, $value ) {
-    
-    $this->data[$key] = $value;
-    
-  }
+  function __set( $key, $value ) { $this->data[$key] = $value; }
   
 }
 

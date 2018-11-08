@@ -4,8 +4,244 @@
 use LightnCandy\LightnCandy;
 use SuperClosure\Serializer;
 
+// Initialize utility methods.
+trait Parser_Utilities {
+  
+  // Determines if a passed value is a reference.
+  private function __isReference( $value ) {
+    
+    // Place the value inside an array.
+    $array = [$value];
+    
+    // Get the value as it was passed into the function.
+    $arg = func_get_arg(0); 
+    
+    // Determine if the two values match.
+    return isset($arg[0]) and $arg === [$array[0]];
+    
+  }
+  
+  // Get flags by name from the Handlebars engine.
+  private function __flag( $name ) { return constant(LightnCandy::class."::FLAG_{$name}"); }
+  
+  // Build the options array for the Handlebars engine's compiler.
+  private function __options() {
+    
+    return [
+      'flags' =>  $this->__flag('THIS') | 
+                  $this->__flag('ELSE') |
+                  $this->__flag('RUNTIMEPARTIAL') | 
+                  $this->__flag('NAMEDARG') |
+                  $this->__flag('PARENT') |
+                  $this->__flag('ADVARNAME'),
+      'helpers' => isset($this->helpers) ? $this->helpers : [],
+      'partials'  => isset($this->partials) ? $this->partials : []
+    ];
+    
+  }
+  
+}
+
+// Initialize helper methods.
+trait Parser_Helpers {
+  
+  // Initialize helpers.
+  private $helpers = [];
+  
+  // Get helpers.
+  private function __getHelpers() {
+    
+    // Autload the helpers.
+    return (include cleanpath($this->config->HELPERS."/autoload.php"))();
+    
+  }
+  
+  // Get helpers from the cache.
+  private function __getCachedHelpers() {
+    
+    // Initialize the result.
+    $result = [];
+    
+    // Get the helpers path.
+    $path = $this->config->CACHE_PATH['helpers'];
+    
+    // Verify that the path exists.
+    if( $this->cache->has($path) ) {
+    
+      // Read the helper data.
+      $result = json_decode($this->cache->get($path), true);
+
+      // Unserialize closures.
+      foreach( $result as $key => $helper ) { $result[$key] = $this->serializer->unserialize($helper); }
+      
+    }
+    
+    // Return the result.
+    return $result;
+    
+  }
+  
+  // Add helpers to the cache.
+  private function __addCachedHelpers( $helpers ) {
+    
+    // Serialize closures.
+    foreach( $helpers as $key => $helper ) { $helpers[$key] = $this->serializer->serialize($helper); }
+
+    // Save serialized.
+    return $this->cache->add($this->config->CACHE_PATH['helpers'], json_encode($helpers));
+    
+  }
+  
+}
+
+// Initialize partial methods.
+trait Parser_Partials {
+  
+  // Initialize partials.
+  private $partials = [];
+  
+  // Import a partial.
+  private function __importPartial( $path ) {
+    
+    // Initialize the result.
+    $result = [];
+    
+    // Get relative pattern path.
+    $relative = trim(str_replace($this->config->PATTERNS, '', $path), '/');
+    
+    // Get the partial's extension.
+    $ext = pathinfo($relative, PATHINFO_EXTENSION);
+    
+    // Get the partial's basename.
+    $basename = basename($relative, ".$ext");
+    
+    // Get the partial's root directory.
+    $root = explode('/', $relative)[0];
+    
+    // Derive the partial's type from it's root directory.
+    $type = preg_replace('/^[0-9]+\-/', '', $root);
+    
+    // Get the partial's contents.
+    $contents = file_get_contents($path);
+    
+    // Save the default include path.
+    $default = $result[$relative] = $contents;
+    
+    // Add references for any complimentary include paths.
+    $result["{$type}-{$basename}"] = &$default;
+    
+    // Return the result.
+    return $result;
+    
+  }
+  
+  // Find partial patterns.
+  private function __findPartials() {
+    
+    // Initialize the results.
+    $result = [];
+    
+    // Get the partials path.
+    $path = $this->config->PATTERNS;
+    
+    // Verify that the partials path exists.
+    if( file_exists($path) ) {
+    
+      // Find all partial patterns.
+      $result = array_values(array_filter(scandir_recursive($path), function($pattern) {
+
+        // Get the templates directory.
+        $templates = trim(str_replace($this->config->PATTERNS, '', $this->config->TEMPLATES), '/');
+
+        // Exclude template patterns from partials.
+        return strpos($pattern, $templates) !== 0;
+
+      }));
+  
+    }
+    
+    // Return the result.
+    return $result;
+    
+  }
+  
+  // Get all partials.
+  private function __getPartials() {
+    
+    // Initialize the results.
+    $result = [];
+    
+    // Find all partial patterns.
+    $partials = $this->__findPartials();
+    
+    // Import all partials.
+    foreach( $partials as $path ) { $result = array_merge($result, $this->__importPartial("{$this->config->PATTERNS}/{$path}")); }
+    
+    // Return the results.
+    return $result;
+    
+  }
+  
+  // Get all partials from the cache.
+  private function __getCachedPartials() {
+    
+    // Initialize the result.
+    $result = [];
+    
+    // Get the partial path.
+    $path = $this->config->CACHE_PATH['partials'];
+    
+    // Verify that partials exist.
+    if( $this->cache->has($path) ) {
+    
+      // Get all cached partials.
+      $partials = $this->cache->scan($path);
+    
+      // Import all cached partials.
+      foreach( $partials as $path ) { $result = array_merge($result, $this->__importPartial($this->cache->path($path))); }
+      
+    }
+    
+    // Return the result.
+    return $result;
+    
+  }
+  
+  // Add partials to the cache.
+  private function __addCachedPartials( $partials ) {
+    
+    // Remove any references.
+    foreach( $partials as $key => $partial ) {
+      
+      // Remove the partial if it's a reference.
+      if( $this->__isReference($partial) ) unset($partials[$key]);
+      
+    }
+    
+    // Save each partial to the cache.
+    foreach( $partials as $path => $partial ) { $this->cache->add("{$this->config->CACHE_PATH['partials']}/{$path}", $partial);  }
+    
+  }
+  
+}
+
+// Initialize cache methods.
+trait Parser_Cache {
+  
+  // Initialize the cache.
+  private $cache;
+  
+  // Initialize the cache.
+  private function __initCache() { $this->cache = new Cache($this->config->CACHE); }
+  
+}
+
+
 // Build the templating engine's `Parser` class.
 class Parser {
+  
+  // Load traits.
+  use Parser_Utilities, Parser_Helpers, Parser_Partials, Parser_Cache;
   
   // Capture data.
   private $data;
@@ -19,17 +255,16 @@ class Parser {
   protected $handlebars;
   protected $serializer;
   
-  // Load compiler options.
-  private $helpers = [];
-  private $partials = [];
-  
   // Set flags.
   protected $useCached = false;
   protected $newHelpers = false;
   protected $newPartials = false;
   
   // Constructor
-  function __construct( Config $config ) {
+  function __construct() {
+    
+    // Use global configurations.
+    global $config;
     
     // Save the configurations.
     $this->config = $config;
@@ -38,262 +273,69 @@ class Parser {
     $this->handlebars = new LightnCandy();
     $this->serializer = new Serializer();
     
-    // Get helpers and partials.
-    $this->getHelpers(); 
-    $this->getPartials();
-    
     // Initialize the cache.
-    $this->cache();
+    $this->__initCache();
+    
+    // Get helpers and partials.
+    $this->helpers = $this->__getHelpers(); 
+    $this->partials = $this->__getPartials();
    
-  }
-  
-  // Get flags.
-  private function flag( $name ) {
-    
-    return constant(LightnCandy::class."::FLAG_{$name}");
-    
-  }
-  
-  // Build the options array for the compiler.
-  private function options() {
-    
-    return [
-      'flags' =>  $this->flag('THIS') | 
-                  $this->flag('ELSE') |
-                  $this->flag('RUNTIMEPARTIAL') | 
-                  $this->flag('NAMEDARG') |
-                  $this->flag('PARENT') |
-                  $this->flag('ADVARNAME'),
-      'helpers' => $this->helpers,
-      'partials'  => $this->partials
-    ];
-    
-  }
-  
-  // Initialize the cache.
-  private function cache() {
-    
-    // Get the cache paths.
-    $paths = [
-      'templates' => $this->config->CACHED_TEMPLATES,
-      'partials'  => $this->config->CACHED_PARTIALS
-    ];
-    
-    // Make the template directory if it doesn't already exist.
-    if( !file_exists($paths['templates']) ) mkdir($paths['templates']);
-    
-    // Make the partial directory if it doesn't already exist.
-    if( !file_exists($paths['partials']) ) mkdir($paths['partials']);
-    
-  }
-  
-  // Read a file.
-  private function read( $path ) {
-    
-    return file_get_contents($path);
-    
-  }
-  
-  // Load a file.
-  private function load( $path ) {
-    
-    return (include $path);
-    
-  }
-  
-  // Save a file.
-  private function save( $path, $data ) { 
-    
-    return file_put_contents($path, $data);
-    
-  }
-  
-  // Determine which file is newer given two or more paths.
-  private function newest( array $paths ) {
-    
-    // Initialize result.
-    $newest = [
-      'path' => null,
-      'modified' => -1
-    ];
-    
-    // Check the date modified for each file.
-    foreach( $paths as $path ) { 
-      
-      // Update the result.
-      if( $path['modified'] >= $newest['modified'] ) $newest = $path;
-      
-    }
-    
-    // Return.
-    return $newest;
-    
   }
   
   // Compile template data.
   private function compile( $paths ) {
     
     // Get the contents of the template file.
-    $template = $this->read($paths['template']['path']);
-      
+    $template = file_get_contents($paths['template']);
+
     // Compile the template.
-    $php = $this->handlebars->compile($template, $this->options());
-      
+    $php = $this->handlebars->compile($template, $this->__options());
+
     // Save the compiled template to the cache.
-    $this->save($paths['cache']['path'], "<?php $php ?>");
+    $this->cache->add($paths['cache'], "<?php $php ?>");
     
-    // Save the helpers and partials.
-    $this->saveHelpers();
-    $this->savePartials();
-    
-  }
-  
-  // Get partials.
-  private function getPartials() {
-    
-    // Get paths to partials.
-    $paths = $this->config->PARTIALS;
-    
-    // Look for partials.
-    foreach( $paths as $type => $path ) {
-      
-      // Deep scan the contents of the directory.
-      $partials = scandir_recursive($path); 
-      
-      // Build all partials.
-      foreach( $partials as $partial ) {
-        
-        // Get the name of the partial.
-        $name = basename($partial, $this->config->EXT['template']);
-        
-        // Read the partial.
-        $this->partials["$type-$name"] = $this->read("$path/$partial");
-        
-      }
-      
-    }
-    
-  }
-  
-  // Load partials from cache.
-  private function loadPartials() {
-    
-    // Get the path to the partials.
-    $path = $this->config->CACHED_PARTIALS;
-    
-    // Get the cached partials.
-    $partials = scandir_clean($path);
-    
-    // Read all cached partials.
-    foreach( $partials as $key => $partial ) {
-      
-      // Get the name of the partial.
-      $name = basename($partial, $this->config->EXT['template']);
-      
-      // Read the partial.
-      $partials[$name] = $this->read("$path/$partial");
-      
-      // Delete the old key.
-      unset($partials[$key]);
-      
-    }
-    
-    // Return partials.
-    return $partials;
-    
-  }
-  
-  // Save helpers to cache.
-  private function savePartials() {
-    
-    // Localize the partials.
-    $partials = $this->partials;
-    
-    // Save each partial.
-    foreach( $partials as $name => $partial ) {
-      
-      // Save the partial.
-      $this->save("{$this->config->CACHED_PARTIALS}/{$name}{$this->config->EXT['template']}", $partial);
-      
-    }
-    
-  }
-  
-  // Get helpers.
-  private function getHelpers() {
-    
-    $this->helpers = $this->load(dirname(__DIR__)."/helpers/autoload.php")();
-    
-  }
-  
-  // Load helpers from cache.
-  private function loadHelpers() {
-    
-    // Read the helper data.
-    $helpers = json_decode($this->read($this->config->HELPERS), true);
-
-    // Unserialize closures.
-    foreach( $helpers as $key => $helper ) {
-      
-      $helpers[$key] = $this->serializer->unserialize($helper);
-      
-    }
-    
-    // Return unserialized.
-    return $helpers;
-    
-  }
-  
-  // Save helpers to cache.
-  private function saveHelpers() {
-    
-    // Localize the helpers.
-    $helpers = $this->helpers;
-    
-    // Serialize closures.
-    foreach( $helpers as $key => $helper ) {
-      
-      $helpers[$key] = $this->serializer->serialize($helper);
-      
-    }
-
-    // Save serialized.
-    return $this->save($this->config->HELPERS, json_encode($helpers));
-    
-  }
+  } 
   
   // Render some data.
   public function render( $template, $data ) {
     
-    // Check whether or not the cached file can be used.
-    if( $template['cache']['active'] ) {
-      
-      $this->useCached = $this->newest($template)['path'] == $template['cache']['path'];
+    // Initialize flags.
+    $flag = [
+      'USE_CACHE'     => false,
+      'NEW_HELPERS'   => false,
+      'NEW_PARTIALS'  => false
+    ];
+    
+    // Determine if a cached template file can be used.
+    if( $this->cache->has($template['cache']) ) {
+     
+      // Determine whether or not the cache file should be used.
+      $flag['USE_CACHE'] = $this->cache->newer(...array_values($template));
       
     }
   
-    // Check whether or not new helpers were added.
+    // Determine if any new helpers were added.
     if( file_exists($this->config->HELPERS) ) {
       
-      $this->newHelpers = !array_equiv($this->loadHelpers(), $this->helpers);
+      $flag['NEW_HELPERS'] = !array_equiv($this->__getCachedHelpers(), $this->helpers);
       
     }
     
-    // Check whether or not cached partials exist.
-    if( count(scandir_clean($this->config->CACHED_PARTIALS)) > 0 ) {
+    // Determine if any new partials were added.
+    if( count($this->__findPartials()) > 0 ) {
       
-      $this->newPartials = !array_equiv($this->loadPartials(), $this->partials);
+      $flag['NEW_PARTIALS'] = !array_equiv($this->__getCachedPartials(), $this->partials);
       
     }
 
-    // Compile the template if no cached file is available.
-    if( !$this->useCached or $this->newHelpers or $this->newPartials ) $this->compile($template);
+    // Recompile the template if there's no cached file or new helpers or partials were detected.
+    if( !$flag['USE_CACHE'] or $flag['NEW_HELPERS'] or $flag['NEW_PARTIALS'] ) $this->compile($template);
     
-    // Load the renderer.
-    $renderer = $this->load($template['cache']['path']); 
+    // Load the file's renderer from the cache.
+    $render = include $this->cache->path($template['cache']); 
     
     // Render the template with the given data.
-    return $renderer($data['data']);
+    return $render($data);
     
   }
   
