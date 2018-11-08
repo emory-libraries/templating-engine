@@ -48,7 +48,7 @@ class Engine {
         'cache' => $template['cache']
       ],
       '__endpoint__' => $this->endpoint->getEndpoint()
-    ]); var_dump($data);
+    ]);
     
     // Render the template.
     echo $this->parser->render($template, $data);
