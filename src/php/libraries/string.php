@@ -30,16 +30,16 @@ function strtocamel( string $string, $delimiters = '-_ ' ) {
   $delimiters = implode('|', array_map('preg_quote', str_split($delimiters)));
 
   // Extract the delimiters.
-  $string = preg_split('/'.$delimiters.'/', $string);
+  $new = preg_split('/'.$delimiters.'/', $string);
 
   // Pull out the first part of the string.
-  $first = array_pop($string);
+  $first = array_shift($new); 
   
   // Capitalize all remaining parts of the string.
-  $string = array_map('ucfirst', $string);
+  $new = array_map('ucfirst', $new); 
   
   // Recombine and return string.
-  return $first.implode('', $string);
+  return $first.implode('', $new);
   
 }
 

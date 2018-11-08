@@ -188,7 +188,7 @@ trait Data_Parsers {
     foreach( array_flatten($model['meta']) as $key => $path ) { $result[$key] = object_get($xml, $path); }
     
     // Then, reformat the XML data according to the data model to make it more user friendly.
-    $result = array_merge($result, object_get($xml, $model['data']));
+    $result = array_merge($result, array_flatten(object_get($xml, $model['data'])));
    
     // Remove any values from the data that should be excluded.
     $result = array_filter($result, function($value, $key) use ($model) {
@@ -197,10 +197,10 @@ trait Data_Parsers {
       return !in_array($key, $model['exclude']);
       
     }, ARRAY_FILTER_USE_BOTH);
-    
+   
     // Convert any dash-delimited keys to camelcase.
     $result = array_map_keys('strtocamel', $result);
-    
+   
     // Expand and return the result.
     return array_expand($result);
   
