@@ -22,5 +22,5 @@
     "published": "calling-page.system-page.is-published"
   },
   "data": "calling-page.system-page.system-data-structure",
-  "exclude": ["@attributes"]
+  "exclude": []
 }
