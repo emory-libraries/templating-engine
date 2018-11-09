@@ -10,6 +10,7 @@ trait Router_Utilities {
     $result = [];
     
     // Get the router file's path.
+    // NOTE: If router file is `.xml`, will need to create `XMLParser` class to use here and with `Data::__parseXML`
     $path = "{$this->config->DATA_META}/router.json";
     
     // Verify that the router file exists.
