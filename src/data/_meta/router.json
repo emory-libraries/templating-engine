@@ -13,6 +13,6 @@
   },
   {
     "path": "/visitors",
-    "template": "xmltest"
+    "template": "xml"
   }
 ]
