@@ -1,7 +1,7 @@
 <?php
 
 // Build number casts.
-trait __Number {
+trait Cast_Number {
   
   private function int() { return (int) $this->data; }
 
@@ -14,7 +14,7 @@ trait __Number {
 }
 
 // Build date casts.
-trait __Date {
+trait Cast_Date {
   
   private function date() {
     
@@ -25,7 +25,7 @@ trait __Date {
 }
 
 // Build boolean casts.
-trait __Boolean {
+trait Cast_Boolean {
   
   private function bool() {
     
@@ -42,7 +42,7 @@ trait __Boolean {
 }
 
 // Build array casts.
-trait __List {
+trait Cast_List {
   
   private function array() {
     
@@ -101,7 +101,7 @@ trait __List {
 }
 
 // Build text casts.
-trait __Text {
+trait Cast_Text {
   
   private function string() { return $this->data; }
   
@@ -109,11 +109,18 @@ trait __Text {
   
 }
 
+// Build null casts.
+trait Cast_Null {
+  
+  private function null() { return null; }
+  
+}
+
 // Creates a `Cast` class for easy typification.
 class Cast {
   
   // Use helpers.
-  use __Number, __Date, __Boolean, __List, __Text;
+  use Cast_Number, Cast_Date, Cast_Boolean, Cast_List, Cast_Text, Cast_Null;
   
   // Determine input data type.
   private $is_array = false;
@@ -126,7 +133,8 @@ class Cast {
   
   // Define regular expressions.
   private $regex = [
-    'array' => '/^((?:\S|\ )+?,)+?(\S|\ )+?$/'
+    'array' => '/^((?:\S|\ )+?,)+?(\S|\ )+?$/',
+    'list' => '/^([^.?!]+?[,;] ?)+([^.?!]+)$/'
   ];
   
   // Constructor
@@ -145,7 +153,7 @@ class Cast {
   }
   
   // Check data type.
-  private function type() {
+  private function type() { 
     
     // Check numeric types.
     if( is_numeric($this->data) ) $this->type = strpos($this->data, '.') !== false ? 'float' : 'int';
@@ -155,6 +163,15 @@ class Cast {
     
     // Check for array types.
     else if( preg_match($this->regex['array'], $this->data) ) $this->type = 'array';
+    
+    // Check for boolean types.
+    else if( in_array(((string) $this->data), ['true', 'false']) ) $this->type = 'bool';
+    
+    // Check for list types.
+    else if( preg_match($this->regex['list'], $this->data) ) $this->type = 'list';
+    
+    // Check for null types.
+    else if( in_array($this->data, ['null', null]) ) $this->type = 'null';
     
   }
   
@@ -208,19 +225,22 @@ class Cast {
   
   // Cast the value to its data type for arrays.
   public function castAll( $deep = true ) {
-    
+
     // Neatly handle non-arrays.
     if( !$this->is_array ) return $this->cast($deep);
       
     // Otherwise, handle arrays.
     else {
     
-      foreach( $this->data as $key => $cast ) {
-
-        $this->data[$key] = $cast->cast($deep);
-
+      // Cast all values within the array.
+      foreach( $this->data as $key => $value ) {
+        
+        // Save the casted array value.
+        $this->data[$key] = $value->cast($deep); 
+      
       }
 
+      // Return the casted array.
       return $this->data;
       
     }

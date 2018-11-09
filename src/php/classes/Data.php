@@ -200,9 +200,12 @@ trait Data_Parsers {
    
     // Convert any dash-delimited keys to camelcase.
     $result = array_map_keys('strtocamel', $result);
+    
+    // Cast all results to appropriate values.
+    $result = new Cast($result);
    
     // Expand and return the result.
-    return array_expand($result);
+    return array_expand($result->castAll());
   
   }
   
