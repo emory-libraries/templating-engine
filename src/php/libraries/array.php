@@ -199,4 +199,17 @@ function array_map_keys( callable $callback, array &$array ) {
   
 }
 
+// Quickly filter an associate array by key based on a given value.
+function array_filter_key( $key, $value, array $array ) {
+  
+  // Filter the array by key and value.
+  return array_values(array_filter($array, function($item) use ($key, $value) {
+      
+    // Find the route path that matches the given path.
+    return $item[$key] == $value;
+
+  }));
+  
+}
+
 ?>

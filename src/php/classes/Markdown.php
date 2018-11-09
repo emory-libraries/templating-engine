@@ -9,6 +9,9 @@ class Markdown extends ParsedownExtra {
   // Constructor
   function __construct( $overrides = [] ) {
     
+    // Set overrides if not set.
+    if( !isset($overrides) ) $overrides = [];
+    
     // Initialize the parent constructor per usual.
     parent::__construct();
     
@@ -17,7 +20,7 @@ class Markdown extends ParsedownExtra {
     
     // Save the configurations.
     $this->config = $config->MARKDOWN;
-    
+
     // Override any default configurations with the ones that are passed in.
     foreach( $overrides as $key => $value ) {
       

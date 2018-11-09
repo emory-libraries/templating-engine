@@ -46,8 +46,7 @@ class Engine {
         'filename' => basename($path),
         'basename' => basename($path, ".{$ext}"),
         'cache' => $template['cache']
-      ],
-      '__endpoint__' => $this->endpoint->getEndpoint()
+      ]
     ]);
     
     // Render the template.

@@ -33,7 +33,8 @@ trait Parser_Utilities {
                   $this->__flag('RUNTIMEPARTIAL') | 
                   $this->__flag('NAMEDARG') |
                   $this->__flag('PARENT') |
-                  $this->__flag('ADVARNAME'),
+                  $this->__flag('ADVARNAME') |
+                  $this->__flag('JSLENGTH'),
       'helpers' => isset($this->helpers) ? $this->helpers : [],
       'partials'  => isset($this->partials) ? $this->partials : []
     ];
@@ -330,10 +331,10 @@ class Parser {
 
     // Recompile the template if there's no cached file or new helpers or partials were detected.
     if( !$flag['USE_CACHE'] or $flag['NEW_HELPERS'] or $flag['NEW_PARTIALS'] ) $this->compile($template);
-    
+   
     // Load the file's renderer from the cache.
     $render = include $this->cache->path($template['cache']); 
-    
+  
     // Render the template with the given data.
     return $render($data);
     

@@ -1,7 +1,7 @@
 <?php
 
 // Converts a string into its attribute-friendly version.
-function strtoattr( string $string, $delimiter = '-', $regex = "/[^A-Za-z0-9\/\ ]/" ) {
+function strtoattr( string $string, $delimiter = '-', $regex = "/[^A-Za-z0-9\/\-\ ]/" ) {
   
   // Force the string to be lowercase.
   $string = strtolower($string);
@@ -11,15 +11,23 @@ function strtoattr( string $string, $delimiter = '-', $regex = "/[^A-Za-z0-9\/\ 
   
   // Replace all spaces and forward slashes in the string with a dash.
   $string = preg_replace('/[\/\ ]/', $delimiter, $string);
-  
+
   // Eliminate all duplicate delimiters within the string.
   $string = preg_replace("/{$delimiter}+/", $delimiter, $string);
-  
+
   // Remove numbers from the start of the string.
   $string = preg_replace('/^[0-9]+/', '', $string);
   
   // Return the cleaned string.
   return $string;
+  
+}
+
+// Converts a string into its slug equivalent.
+function strtoslug( string $string, $delimiter = '-', $regex = "/[^A-Za-z0-9\/\-\ ]/" ) {
+  
+  // Alias for `strtoattr`.
+  return strtoattr($string, $delimiter, $regex);
   
 }
 

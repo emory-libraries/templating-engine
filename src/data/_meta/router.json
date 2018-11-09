@@ -14,5 +14,10 @@
   {
     "path": "/visitors",
     "template": "xml"
+  },
+  {
+    "path": "/staff",
+    "template": "staff",
+    "dynamic": true
   }
 ]

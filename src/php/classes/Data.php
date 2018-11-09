@@ -4,7 +4,7 @@
 trait Data_Utilities {
   
   // Convert an endpoint to a potential set of file names.
-  private function __getDataFileNames( $endpoint ) {
+  protected function __getDataFileNames( $endpoint ) {
     
     // Initialize the results.
     $filenames = [];
@@ -70,7 +70,7 @@ trait Data_Utilities {
   }
   
   // Get the real paths for a data file.
-  private function __getDataFilePaths( $endpoint ) {
+  protected function __getDataFilePaths( $endpoint ) {
     
     // Get the potential data file names.
     $filenames = $this->__getDataFileNames($endpoint);
@@ -111,7 +111,7 @@ trait Data_Utilities {
   }
   
   // Read and parse the contents of a data file.
-  private function __readDataFile( $path ) {
+  protected function __readDataFile( $path ) {
     
     // Initialize the result.
     $result = [];
@@ -134,8 +134,44 @@ trait Data_Utilities {
     
   }
   
+  // Read and parse all data files within a directory.
+  protected function __readDataDirectory( $path ) {
+    
+    // Initialize the result.
+    $result = [];
+    
+    // Ensure that the path is a valid directory.
+    if( file_exists($path) and is_dir($path) ) {
+      
+      // Get the contents of the directory.
+      $files = scandir_clean($path);
+      
+      // Read and save the contents of each file within the directory.
+      foreach( $files as $file ) { 
+        
+        // Get the file's extension.
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+      
+        // Use the filename as an ID/slug.
+        $id = strtoslug(basename($file, ".{$ext}"));
+        
+        // Read the file's contents.
+        $contents = $this->__readDataFile(cleanpath("{$path}/{$file}"));
+     
+        // Save the file contents.
+        $result[] = array_merge((isset($contents) ? $contents : []), ['id' => $id]);
+        
+      }
+      
+    }
+    
+    // Return the result.
+    return $result;
+    
+  }
+  
   // Generate an array key from a data file name.
-  private function __keygen( $filename ) {
+  protected function __keygen( $filename ) {
     
     // Get the file's extension.
     $ext = pathinfo($filename, PATHINFO_EXTENSION);
@@ -160,20 +196,20 @@ trait Data_Utilities {
 trait Data_Parsers {
   
   // Register parser methods with their recognized extensions in their order of precedence.
-  private $parsers = [
+  protected $parsers = [
     '__parseJSON' => ['.json', '.js'],
     '__parseYAML' => ['.yaml', '.yml'],
     '__parseXML'  => ['.xml']
   ];
   
   // Initialize the JSON parser.
-  private function __parseJSON( $data ) { return json_decode($data, true); }
+  protected function __parseJSON( $data ) { return json_decode($data, true); }
   
   // Initialize the YAML parser.
-  private function __parseYAML( $data ) { return Yaml::parse($data); }
+  protected function __parseYAML( $data ) { return Yaml::parse($data); }
   
   // Initialize the XML parser.
-  private function __parseXML( $data ) { 
+  protected function __parseXML( $data ) { 
     
     // Convert the XML data to an object.
     $xml = new SimpleXMLElement($data);
@@ -220,20 +256,37 @@ class Data {
   // Capture configurations.
   protected $config;
   
-  // Capture the endpoint.
-  private $endpoint;
+  // Capture the route.
+  protected $route;
+  
+  // Capture data to be merged.
+  protected $merge = [];
+  
+  // Determine if dynamic data exists.
+  private $dynamic = false;
   
   // Constructor
-  function __construct( $endpoint = null ) {
-    
+  function __construct( $route = null, $merge = [] ) {
+
     // Use global configurations.
     global $config;
     
     // Save the configurations.
     $this->config = $config;
     
-    // Capture the endpoint.
-    $this->endpoint = $endpoint;
+    // Capture the route.
+    $this->route = $route;
+    
+    // Determine if dynamic data exists.
+    if( isset($this->route['dynamic']) and in_array($this->route['dynamic'], [true, false]) ) {
+      
+      // Capture the dynamic setting.
+      $this->dynamic = $this->route['dynamic'];
+      
+    }
+    
+    // Capture any data that should be merged.
+    $this->merge = $merge;
     
   }
   
@@ -322,14 +375,54 @@ class Data {
     
   }
   
-  // Get data for an endpoint.
-  public function getData( $endpoint = null, $merge = [] ) {
+  // Get dynamic route-specific data.
+  public function getDynamicData( $route ) { 
     
-    // Set the endpoint if not set.
-    if( !isset($endpoint) and isset($this->endpoint) ) $endpoint = $this->endpoint;
+    // Get the route's dynamic data.
+    return (new DynamicData($route))->getData();
+    
+  }
   
+  // Get route-specific data.
+  protected function getRouteData( $route ) {
+    
+    // Initialize the result.
+    $result = [];
+      
+    // Get the data file name.
+    $filename = $this->__getDataFilePaths($route['path']); 
+
+    // Get the data file path.
+    $path = cleanpath("{$this->config->DATA}/{$filename['base']}"); 
+
+    // Verify that the file exists.
+    if( file_exists($path) ) {
+
+      // Save the path and the data.
+      $result['__data__'] = [
+        'path' => $path,
+        'extension' => ($ext = pathinfo($path, PATHINFO_EXTENSION)),
+        'filename' => basename($path),
+        'basename' => basename($path, ".{$ext}")
+      ];
+      $result = array_merge($result, $this->__readDataFile($path));
+
+    }
+    
+    // Return the result.
+    return $result;
+    
+  }
+  
+  // Get data for a route.
+  public function getData( $route = null, $merge = [] ) {
+   
+    // Set the route if not set.
+    if( !isset($route) and isset($this->route) ) $route = $this->route;
+
     // Initialize the result, and merge any supplemental data.
     $result = array_merge([
+      '__route__' => $route,
       '__global__' => $this->getGlobalData(),
       '__params__' => $this->getQueryData(),
       '__data__' => [
@@ -338,38 +431,19 @@ class Data {
         'filename' => null,
         'basename' => null
       ]
-    ], $merge);
-
-    // Get endpoint data if available.
-    if( isset($endpoint) ) {
+    ], $this->merge, $merge);
     
-      // Get the data file name.
-      $filename = $this->__getDataFilePaths($endpoint); 
-
-      // Load data if available.
-      if( isset($filename['base']) ) {
-
-        // Get the data file path.
-        $path = cleanpath($this->config->DATA."/{$filename['base']}"); 
-
-        // Verify that the file exists.
-        if( file_exists($path) ) {
-
-          // Save the path and the data.
-          $result['__data__'] = [
-            'path' => $path,
-            'extension' => ($ext = pathinfo($path, PATHINFO_EXTENSION)),
-            'filename' => basename($path),
-            'basename' => basename($path, ".{$ext}")
-          ];
-          $result = array_merge($result, $this->__readDataFile($path));
-
-        }
-
-      }
+    // Verify that a route was set.
+    if( isset($route) ) {
+    
+      // Get the route-specific data.
+      $result = array_merge($result, $this->getRouteData($route));
+      
+      // Get any dynamic data for dynamic routes.
+      if( $this->dynamic === true ) $result['data'] = $this->getDynamicData($route);
       
     }
-    
+
     // Return the result.
     return $result;
     
