@@ -22,5 +22,9 @@
     "published": "calling-page.system-page.is-published"
   },
   "data": "calling-page.system-page.system-data-structure",
-  "exclude": []
+  "exclude": [],
+  "array": [
+    "section-content",
+    "book"
+  ]
 }

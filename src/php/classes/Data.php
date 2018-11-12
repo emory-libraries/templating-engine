@@ -220,11 +220,57 @@ trait Data_Parsers {
     // Initialize the result.
     $result = [];
     
+    // Initialize a helper method for forcing certain elements into a non-associative array.
+    $forceArrays = function( array $array ) use ( $model, &$forceArrays ) {
+      
+      // Initialize the result.
+      $result = $array;
+      
+      // Get the list of fields that should be a non-associative array from the data model.
+      $fields = isset($model['array']) ? $model['array'] : [];
+        
+      // Recursively find each field within the array and convert it to be non-associative.
+      foreach( $result as $key => $value ) {
+
+        // Determine if our key matches a field.
+        if( in_array($key, $fields) ) {
+          
+          // Only handle non-associative arrays.
+          if( is_array($value) and is_associative_array($value) ) {
+            
+            // Convert the array into a non-associative array.
+            $result[$key] = [$value];
+            
+          }
+          
+        }
+        
+        // Otherwise, look inside nested arrays.
+        else if( is_array($value) ) {
+          
+          // Force any targeted nested arrays into a non-associative array.
+          $result[$key] = $forceArrays($value);
+          
+        }
+
+      }
+      
+      // Return the result.
+      return $result;
+      
+    };
+    
     // Reformat the XML meta data according to the data model to make it more user friendly.
     foreach( array_flatten($model['meta']) as $key => $path ) { $result[$key] = object_get($xml, $path); }
     
+    // Convert the XML data into an array.
+    $data = object_get($xml, $model['data']); 
+    
+    // Force certain elements into a non-associative array format.
+    $data = $forceArrays($data); echo "<pre>"; print_r($data); echo "</pre>";
+    
     // Then, reformat the XML data according to the data model to make it more user friendly.
-    $result = array_merge($result, array_flatten(object_get($xml, $model['data'])));
+    $result = array_merge($result, array_flatten($data));
    
     // Remove any values from the data that should be excluded.
     $result = array_filter($result, function($value, $key) use ($model) {
