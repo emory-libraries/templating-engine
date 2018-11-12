@@ -26,5 +26,8 @@
   "array": [
     "section-content",
     "book"
+  ],
+  "html": [
+    "main"
   ]
 }

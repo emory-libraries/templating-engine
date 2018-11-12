@@ -211,11 +211,46 @@ trait Data_Parsers {
   // Initialize the XML parser.
   protected function __parseXML( $data ) { 
     
-    // Convert the XML data to an object.
-    $xml = new SimpleXMLElement($data);
-    
     // Retrieve the XML data models.
     $model = json_decode(file_get_contents("{$this->config->DATA_META}/xml.json"), true);
+    
+    // Initialize a helper method to escape HTML data.
+    $escapeHtml = function( string $data ) use ( $model ) {
+      
+      // Initialize the result.
+      $result = $data;
+      
+      // Look for tags containing HTML.
+      foreach( $model['html'] as $tag ) {
+        
+        // Build the regex for the tag.
+        $regex = "/(?:\<{$tag}\>)((?:(?:\n\r?)*?|.*?)*?)(?:\<\/{$tag}\>)/";
+        
+        // Capture any contents that should be escaped.
+        if( preg_match_all($regex, $result, $matches, PREG_SET_ORDER) ) {
+          
+          // Escape the contents of each match one by one.
+          foreach( $matches as $match ) {
+            
+            // Escape the contents.
+            $result = str_replace($match[0], "<{$tag}>".htmlspecialchars($match[1])."</{$tag}>", $result);
+            
+          }
+          
+        }
+        
+      }
+      
+      // Return the result.
+      return $result;
+      
+    };
+    
+    // Escape any HTML within the data.
+    $data = $escapeHtml($data);
+    
+    // Convert the XML data to an object.
+    $xml = new SimpleXMLElement($data);
     
     // Initialize the result.
     $result = [];
@@ -264,13 +299,13 @@ trait Data_Parsers {
     foreach( array_flatten($model['meta']) as $key => $path ) { $result[$key] = object_get($xml, $path); }
     
     // Convert the XML data into an array.
-    $data = object_get($xml, $model['data']); 
+    $array = object_get($xml, $model['data']); 
     
     // Force certain elements into a non-associative array format.
-    $data = $forceArrays($data);
+    $array = $forceArrays($array);
     
     // Then, reformat the XML data according to the data model to make it more user friendly.
-    $result = array_merge($result, array_flatten($data));
+    $result = array_merge($result, array_flatten($array));
    
     // Remove any values from the data that should be excluded.
     $result = array_filter($result, function($value, $key) use ($model) {
