@@ -267,7 +267,7 @@ trait Data_Parsers {
     $data = object_get($xml, $model['data']); 
     
     // Force certain elements into a non-associative array format.
-    $data = $forceArrays($data); echo "<pre>"; print_r($data); echo "</pre>";
+    $data = $forceArrays($data);
     
     // Then, reformat the XML data according to the data model to make it more user friendly.
     $result = array_merge($result, array_flatten($data));
