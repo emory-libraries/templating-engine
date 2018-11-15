@@ -214,115 +214,14 @@ trait Data_Parsers {
     // Retrieve the XML data models.
     $model = json_decode(file_get_contents("{$this->config->DATA_META}/xml.json"), true);
     
-    // Initialize a helper method to escape HTML data.
-    $escapeHtml = function( string $data ) use ( $model ) {
-      
-      // Initialize the result.
-      $result = $data;
-      
-      // Look for tags containing HTML.
-      foreach( $model['html'] as $tag ) {
-        
-        // Build the regex for the tag.
-        $regex = "/(?:\<{$tag}\>)((?:(?:\n\r?)*?|.*?)*?)(?:\<\/{$tag}\>)/";
-        
-        // Capture any contents that should be escaped.
-        if( preg_match_all($regex, $result, $matches, PREG_SET_ORDER) ) {
-          
-          // Escape the contents of each match one by one.
-          foreach( $matches as $match ) {
-            
-            // Escape the contents.
-            $result = str_replace($match[0], "<{$tag}>".htmlspecialchars($match[1])."</{$tag}>", $result);
-            
-          }
-          
-        }
-        
-      }
-      
-      // Return the result.
-      return $result;
-      
-    };
-    
-    // Escape any HTML within the data.
-    $data = $escapeHtml($data);
-    
-    // Convert the XML data to an object.
-    $xml = new SimpleXMLElement($data);
-    
-    // Initialize the result.
-    $result = [];
-    
-    // Initialize a helper method for forcing certain elements into a non-associative array.
-    $forceArrays = function( array $array ) use ( $model, &$forceArrays ) {
-      
-      // Initialize the result.
-      $result = $array;
-      
-      // Get the list of fields that should be a non-associative array from the data model.
-      $fields = isset($model['array']) ? $model['array'] : [];
-        
-      // Recursively find each field within the array and convert it to be non-associative.
-      foreach( $result as $key => $value ) {
+    // Determine the XML fields that contain HTML and should be escaped.
+    $escape = (isset($model['config']) and isset($model['config']['html'])) ? $model['config']['html'] : [];
 
-        // Determine if our key matches a field.
-        if( in_array($key, $fields) ) {
-          
-          // Only handle non-associative arrays.
-          if( is_array($value) and is_associative_array($value) ) {
-            
-            // Convert the array into a non-associative array.
-            $result[$key] = [$value];
-            
-          }
-          
-        }
-        
-        // Otherwise, look inside nested arrays.
-        else if( is_array($value) ) {
-          
-          // Force any targeted nested arrays into a non-associative array.
-          $result[$key] = $forceArrays($value);
-          
-        }
-
-      }
-      
-      // Return the result.
-      return $result;
-      
-    };
-    
-    // Reformat the XML meta data according to the data model to make it more user friendly.
-    foreach( array_flatten($model['meta']) as $key => $path ) { $result[$key] = object_get($xml, $path); }
-    
-    // Convert the XML data into an array.
-    $array = object_get($xml, $model['data']); 
-    
-    // Force certain elements into a non-associative array format.
-    $array = $forceArrays($array);
-    
-    // Then, reformat the XML data according to the data model to make it more user friendly.
-    $result = array_merge($result, array_flatten($array));
+    // Convert the XML data to an array.
+    $data = object_to_array((new XML($data, $escape))->xml);
    
-    // Remove any values from the data that should be excluded.
-    $result = array_filter($result, function($value, $key) use ($model) {
-      
-      // Remove the item if the key matches an excluded key.
-      return !in_array($key, $model['exclude']);
-      
-    }, ARRAY_FILTER_USE_BOTH);
-   
-    // Convert any dash-delimited keys to camelcase.
-    $result = array_map_keys('strtocamel', $result);
-    
-    // Cast all results to appropriate values.
-    $result = new Cast($result);
-   
-    // Expand and return the result.
-    return array_expand($result->castAll());
+    // Transform and return the data.
+    return (new Transformer($data, $model, 'XML'))->getTransformation(['case' => 'strtocamel']);
   
   }
   
