@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "A PHP templating engine for powering a dynamic website",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "author": "Lauren Hamel",
   "license": "MIT",
   "devDependencies": {
