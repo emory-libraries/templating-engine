@@ -71,10 +71,16 @@ class Endpoint {
       
     }
     
-    // Determine the template that should be used default.
+    // Determine which template should be used by default.
     $template = isset($this->route) ? array_get($this->route, 'template') : 'error';
     
-    // Define any data that should be merged.
+    // Get the route's base data.
+    $data = (new Data($this->route))->getData();
+    
+    // Verify that a dynamic route is valid by checking it's base data.
+    if( $this->dynamic and $data['data'] === false ) $template = 'error';
+ 
+    // Load any data that should be merged.
     $data = $template == 'error' ? (new ErrorPage(404))->getData() : [];
 
     // Get the route's template.
@@ -83,7 +89,7 @@ class Endpoint {
     // Get the route's data.
     $this->data = new Data($this->route, array_merge($data, [
       '__endpoint__' => $this->endpoint
-    ]));
+    ])); 
     
   }
   

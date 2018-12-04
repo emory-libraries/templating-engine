@@ -34,7 +34,7 @@ trait DynamicData_Utilities {
   }
   
   // Get source data.
-  private function __getSourceData( $path, array $sources ) {
+  private function __getSourceData( $path, array $sources ) { 
     
     // Initialize the result.
     $result = [];
@@ -130,6 +130,29 @@ trait DynamicData_Utilities {
     
   }
   
+  // Check if a route is a valid dynamic endpoint.
+  private function __isValid( $route ) {
+    
+    // Get data about the route.
+    $data = $this->getRouteData($route);
+    
+    // Make sure a source was given.
+    if( !isset($data['source']) or empty($data['source']) ) return false;
+    
+    // Make sure that endpoints exists.
+    if( !isset($data['endpoints']) or empty($data['endpoints']) ) return false;
+    
+    // Capture the endpoint.
+    $endpoint = $this->__getEndpointData($route['endpoint'], $data['endpoints']);
+    
+    // Make sure that the endpoints is configured.
+    if( !isset($endpoint) or empty($endpoint) ) return false;
+    
+    // Otherwise, assume that it's valid.
+    return true;
+    
+  }
+  
 }
 
 // Creates a `DynamicData` class for handling data for dynamic endpoints.
@@ -161,24 +184,32 @@ class DynamicData extends Data {
     // Get the dynamic data file path.
     $path = cleanpath("{$this->config->DATA}/{$directory}");
     
-    // Get source data.
-    $result['source'] = $this->__getSourceData($path, $default['source']);
- 
-    // Get endpoint data.
-    $result['endpoint'] =  $this->__getEndpointData($route['endpoint'], $default['endpoints']);
-
-    // Get the data to be filtered.
-    $data = $result['source'][$result['endpoint']['source']]['data'];
- 
-    // Apply filters sequentially.
-    $result = array_merge($result, $this->__applyFilters(
-      $data, 
-      $result['endpoint']['filter'],
-      array_get($result['endpoint'], 'params')
-    ));
+    // Ensure that the route exists as a valid dynamic endpoint 
+    if( $this->__isValid($route) ) {
     
-    // Return the result.
-    return $result;
+      // Get source data.
+      $result['source'] = $this->__getSourceData($path, $default['source']);
+
+      // Get endpoint data.
+      $result['endpoint'] =  $this->__getEndpointData($route['endpoint'], $default['endpoints']);
+
+      // Get the data to be filtered.
+      $data = $result['source'][$result['endpoint']['source']]['data'];
+
+      // Apply filters sequentially.
+      $result = array_merge($result, $this->__applyFilters(
+        $data, 
+        $result['endpoint']['filter'],
+        array_get($result['endpoint'], 'params')
+      ));
+      
+      // Return the result.
+      return $result;
+      
+    }
+    
+    // Otherwise, the page doesn't exists.
+    return false;
     
   }
   
@@ -195,6 +226,12 @@ class DynamicData extends Data {
     if( isset($route) ) {
     
       // Get the dynamic route-specific data.
+      $data = $this->getDynamicRouteData($route);
+      
+      // Exit immediately for invalid endpoints.
+      if( !$data ) return false;
+      
+      // Save the data.
       $result = array_merge($result, $this->getDynamicRouteData($route));
       
     }
