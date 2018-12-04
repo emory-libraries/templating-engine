@@ -126,7 +126,7 @@ trait DynamicData_Utilities {
     }
     
     // Return the filtered data.
-    return $single ? $data[0] : $data;
+    return $single ? (empty($data) ? $data : $data[0]) : $data;
     
   }
   
