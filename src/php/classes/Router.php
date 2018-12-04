@@ -76,15 +76,18 @@ trait Router_GET {
         // Extract endpoint data for the path(s).
         foreach( $result as &$route ) {
           
+          // Define a regex.
+          $regex = '/^'.preg_quote($route['path'], '/').'/';
+          
           // Identify the dynamic portion of the path.
-          $route['endpoint'] = str_replace($route['path'], '', $path);
+          $route['endpoint'] = preg_replace($regex, '/', $path);
           
         }
         
       }
       
     }
-  
+
     // Return the route or nothing otherwise.
     return (!empty($result) ? $result[0] : null);
     

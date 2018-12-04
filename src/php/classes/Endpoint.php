@@ -10,7 +10,7 @@ trait Endpoint_Utilities {
   
   // Get the current endpoint.
   private function __getEndpoint() {
-    
+
     return explode('?', str_replace($this->config->ROOT_PATH, '', $_SERVER['REQUEST_URI']), 2);
     
   }
@@ -61,7 +61,7 @@ class Endpoint {
     $this->router = new Router();
     
     // Find the endpoint's route, if one exists.
-    $this->route = $this->router->getRouteByPath($this->endpoint);
+    $this->route = $this->router->getRouteByPath($this->endpoint); 
     
     // Determine if the endpoint is dynamic.
     if( isset($this->route['dynamic']) and in_array($this->route['dynamic'], [true, false]) ) {
