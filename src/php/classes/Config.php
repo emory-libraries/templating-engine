@@ -30,7 +30,7 @@ class Config {
     
     // Configure default file extensions used for generated files.
     $this->data['EXT'] = [
-      'template'  => '.handlebars',
+      'template'  => '.hbs',
       'data'      => '.json',
       'cache'     => '.php'
     ];
