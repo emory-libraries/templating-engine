@@ -2,7 +2,10 @@
 
 // Retrieve a value from an object (converting any objects to an array) or return its literal interpretation (`null`).
 // NOTE: Type hinting for `Object` will fail on PHP <7.2.
-function object_get( Object $object, $keys, $delimiter = '.' ) {
+function object_get( $object, $keys, $default = null ) {
+  
+  // Set delimiter.
+  $delimiter = '.';
   
   // Get the path to the target value.
   $path = explode($delimiter, $keys);
@@ -28,7 +31,7 @@ function object_get( Object $object, $keys, $delimiter = '.' ) {
     else if( is_array($pointer) ) return array_get($pointer, implode($delimiter, array_slice($path, $index)), $delimiter);
     
     // Otherwise, the path doesn't exist.
-    else return null;
+    else return $default;
     
   }
   
@@ -52,6 +55,6 @@ function object_get( Object $object, $keys, $delimiter = '.' ) {
 }
 
 // Cast an object to an array.
-function object_to_array( Object $object ) { return json_decode(json_encode($object), true); }
+function object_to_array( $object ) { return json_decode(json_encode($object), true); }
 
 ?>

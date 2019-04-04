@@ -50,7 +50,7 @@ trait Transformer_Transforms {
     
     // Initialize the result.
     $result = [];
-    
+
     // Extract any XML meta data.
     foreach( array_flatten($this->model['meta']) as $key => $path ) {
       

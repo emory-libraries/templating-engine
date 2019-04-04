@@ -1,59 +1,10 @@
 <?php
 
-// Checks whether or not all values within an array meet some criteria.
-function array_every( array $array, callable $callback ) {
-  
-  foreach( $array as $key => $value ) {
-    
-    if( $callback($value, $key) === false ) return false;
-    
-  }
-  
-  return true;
-  
-}
-
-// Compares two arrays for equivalence.
-function array_equiv( array $a, array $b, $deep = true ) {
-  
-  $result = [];
-  
-  foreach( $a as $key => $a_value ) {
-    
-    if( !array_key_exists($key, $b) ) return false;
-    
-    $b_value = $b[$key];
-    $a_type = gettype($a_value);
-    $b_type = gettype($b_value);
-    
-    if( $a_type == 'array' and $b_type != 'array' ) $result[$key] = false;
-    
-    else if( $b_type == 'array' and $a_type != 'array' ) $result[$key] = false;
-    
-    else if( $a_type == 'array' and $b_type == 'array' ) {
-      
-      if( $deep ) $result[$key] = array_equiv($a_value, $b_value, $deep);
-      
-      else $result[$key] = true;
-      
-    }
-    
-    else $result[$key] = $a_value == $b_value;
-    
-  }
- 
-  $result = array_every($result, function($value) {
-    
-    return $value === true;
-    
-  });
-    
-  return $result;
-  
-}
-
 // Retrieve a value from an array or return its literal interpretation (`null`).
-function array_get( array $array, $keys, $delimiter = '.' ) {
+function array_get( array $array, $keys, $default = null ) {
+  
+  // Set delimiter.
+  $delimiter = '.';
   
   // Permit dot-notation in key values.
   $keys = explode($delimiter, $keys);
@@ -68,7 +19,7 @@ function array_get( array $array, $keys, $delimiter = '.' ) {
     if( is_array($result) and array_key_exists($key, $result) ) $result = $result[$key];
       
     // Otherwise, no value exists.
-    else return null;
+    else return $default;
     
   }
   
@@ -77,7 +28,7 @@ function array_get( array $array, $keys, $delimiter = '.' ) {
   
 }
 
-// Flatten an array.
+// Flattens an array.
 function array_flatten( array $expanded, $delimiter = '.', $parent = null ) {
   
   // Initialize the result.
@@ -125,7 +76,7 @@ function array_flatten( array $expanded, $delimiter = '.', $parent = null ) {
   
 }
 
-// Expand a previously flattened array.
+// Expands a previously flattened array.
 function array_expand( array $flattened, $delimiter = '.' ) {
   
   // Initialize the result.
@@ -184,7 +135,7 @@ function array_map_keys( callable $callback, array &$array ) {
   foreach( $array as $key => $value ) {
     
     // Pass the key to the callback and capture the result.
-    $result = $callback($key);
+    $result = call_user_func($callback, $key);
     
     // Remove the old array key.
     unset($array[$key]);

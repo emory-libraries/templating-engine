@@ -34,7 +34,8 @@ trait Parser_Utilities {
                   $this->__flag('NAMEDARG') |
                   $this->__flag('PARENT') |
                   $this->__flag('ADVARNAME') |
-                  $this->__flag('JSLENGTH'),
+                  $this->__flag('JSLENGTH') |
+                  $this->__flag('SPVARS'),
       'helpers' => isset($this->helpers) ? $this->helpers : [],
       'partials'  => isset($this->partials) ? $this->partials : []
     ];
@@ -318,14 +319,14 @@ class Parser {
     // Determine if any new helpers were added.
     if( file_exists($this->config->HELPERS) ) {
       
-      $flag['NEW_HELPERS'] = !array_equiv($this->__getCachedHelpers(), $this->helpers);
+      $flag['NEW_HELPERS'] = !_::isEqual($this->__getCachedHelpers(), $this->helpers);
       
     }
     
     // Determine if any new partials were added.
     if( count($this->__findPartials()) > 0 ) {
       
-      $flag['NEW_PARTIALS'] = !array_equiv($this->__getCachedPartials(), $this->partials);
+      $flag['NEW_PARTIALS'] = !_::isEqual($this->__getCachedPartials(), $this->partials);
       
     }
 
