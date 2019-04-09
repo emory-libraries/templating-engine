@@ -12,4 +12,10 @@ function preg_replace_all( $pattern, $replacement, $subject ) {
   
 }
 
+function is_regex( $string ) {
+  
+  return @preg_match($string, '') !== false;
+  
+}
+
 ?>
