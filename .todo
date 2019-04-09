@@ -12,7 +12,7 @@
 	],
 	"case": false,
 	"search": {
-		"scope": "current",
+		"scope": "project",
 		"excludeFolders": [
 			"vendor",
 			"node_modules",
