@@ -21,7 +21,10 @@ module.exports = function(grunt) {
         }
       }, 
       php: {
-        files: [`${SRC}/php/**/*`],
+        files: [
+          `${SRC}/php/**/*`,
+          'vendor/**/*'
+        ],
         tasks: ['phplint', 'copy:php']
       },
       data: {
@@ -79,9 +82,23 @@ module.exports = function(grunt) {
   
   grunt.registerTask('default', ['dev']);
   grunt.registerTask('build', [
+    'unlock',
     'clean',
     'copy'
   ]);
+  grunt.registerTask('unlock', 'Unlock public directory for deletion', function () {
+    
+    // Make asynchronous.
+    const done = this.async();
+    
+    // Change owner of the directory.
+    grunt.util.spawn({
+      cmd: 'sudo',
+      args: ['chown', '-R', '$USER', 'public/'],
+      opts: {shell: true, stdio: 'inherit'}
+    }, () => done());
+    
+  });
   grunt.registerTask('dev', [
     'build', 
     'watch'
