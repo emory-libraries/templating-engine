@@ -12,4 +12,7 @@ require "classes/autoload.php";
 // Load configurations.
 $config = new Config();
 
+// Set timezone.
+date_default_timezone_set('America/New_York');
+
 ?>
