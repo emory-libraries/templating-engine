@@ -8,10 +8,13 @@ spl_autoload_register(function ( $class ) {
   
 });
 
-return function() {
+// Initialize helpers.
+$HELPERS = [];
 
-  // Initialize result.
-  $result = [];
+return function() {
+  
+  // Use global helpers.
+  global $HELPERS;
 
   // Look for helpers.
   $helpers = array_filter(scandir(__DIR__), function($helper) {
@@ -30,12 +33,12 @@ return function() {
     $methods = get_class_methods( new $class() );
     
     // Save helper methods.
-    foreach( $methods as $method ) { $result[$method] = "$class::$method"; }
+    foreach( $methods as $method ) { $HELPERS[$method] = "$class::$method"; }
 
   }
 
   // Return.
-  return $result;
+  return $HELPERS;
   
 };
 

@@ -2,6 +2,8 @@
 
 namespace HandlebarsLogging;
 
+use _;
+
 trait LogHelpers {
   
   // Helper for logging an simple message to the terminal.
@@ -31,9 +33,9 @@ trait LogHelpers {
     $messages = _::initial($messages);
     
     // Define styles.
-    $styles = implode('; ', array_css([
+    $styles = array_to_css([
       'color' => 'green'
-    ]));
+    ], false);
     
     // Format messages.
     $messages = implode("\n", array_map(function ($message) use ($styles) {
@@ -55,9 +57,9 @@ trait LogHelpers {
     $messages = _::initial($messages);
     
     // Define styles.
-    $styles = implode('; ', array_css([
+    $styles = array_to_css([
       'color' => 'green'
-    ]));
+    ], false);
     
     // Format messages.
     $messages = implode("\n", array_map(function ($message) use ($styles) {
@@ -90,7 +92,7 @@ trait LogHelpers {
     
   }
   
-  // Helper for logging a "warning" message to the console.
+  // Helper for logging a "warning" message to the console. [aliased as warn]
   public static function warning( ...$messages ) {
     
     // Extract options.
@@ -109,26 +111,14 @@ trait LogHelpers {
     
   }
   
-  // Helper for logging a "warn" message to the console. [alias]
-  public static function warn( ...$messages ) { 
+  // Helper for logging a "warn" message to the console. [alias for warning]
+  public static function warn( ...$messages ) {
     
-    // Extract options.
-    $options = _::last($messages);
-    $messages = _::initial($messages);
-    
-    // Format messages.
-    $messages = implode(", ", array_map(function ($message) {
-      
-      return json_encode($message);
-      
-    }, $messages));
-    
-    // Log messages.
-    return "<script>console.warn({$messages})</script>";
+    return forward_static_call('HandlebarsLogging\LogHelpers::warning', ...$messages);
   
   }
   
-  // Helper for logging an "error" message to the console.
+  // Helper for logging an "error" message to the console. [aliased as danger]
   public static function error( ...$messages ) {
     
     // Extract options.
@@ -147,22 +137,10 @@ trait LogHelpers {
     
   }
   
-  // Helper for logging a "danger" message to the console. [alias]
+  // Helper for logging a "danger" message to the console. [alias for error]
   public static function danger( ...$messages ) {
     
-    // Extract options.
-    $options = _::last($messages);
-    $messages = _::initial($messages);
-    
-    // Format messages.
-    $messages = implode(", ", array_map(function ($message) {
-      
-      return json_encode($message);
-      
-    }, $messages));
-    
-    // Log messages.
-    return "<script>console.error({$messages})</script>";
+    return forward_static_call('HandlebarsLogging\LogHelpers::error', ...$messages);
   
   }
   
@@ -174,9 +152,9 @@ trait LogHelpers {
     $messages = _::initial($messages);
     
     // Define styles.
-    $styles = implode('; ', array_css([
+    $styles = array_to_css([
       'font-weight' => 'bold'
-    ]));
+    ], false);
     
     // Format messages.
     $messages = implode("\n", array_map(function ($message) use ($styles) {
