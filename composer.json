@@ -6,6 +6,7 @@
     "jeremeamia/SuperClosure": "^2.4",
     "mustache/mustache": "^2.12",
     "erusev/parsedown-extra": "0.8.0-beta-1",
-    "lodash-php/lodash-php": "^0.0.6"
+    "lodash-php/lodash-php": "^0.0.6",
+    "fightbulc/moment": "^1.29"
   }
 }
