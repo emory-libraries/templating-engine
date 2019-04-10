@@ -9,17 +9,14 @@ trait FsHelpers {
   // Read a file from the file system.
   public static function read( $path, $options ) {
     
-    // Use global configurations.
-    global $config;
-    
     // Initialize the result.
     $contents = '';
     
     // Verify that the file exists.
-    if( file_exists($config->DATA.'/'.$path) and is_file($config->DATA.'/'.$path) ) {
+    if( file_exists(CONFIG['data']['site']['root'].'/'.$path) and is_file(CONFIG['data']['site']['root'].'/'.$path) ) {
       
       // Read the file,
-      $contents = file_get_contents($config->DATA.'/'.$path);
+      $contents = file_get_contents(CONFIG['data']['site']['root'].'/'.$path);
       
     }
     
@@ -37,21 +34,20 @@ trait FsHelpers {
     $filter = func_num_args() == 3 ? $filter : false;
     
     // Use global configurations.
-    global $config;
     global $HELPERS;
     
     // Initialize the result.
     $contents = [];
     
     // Verify that the directory exists.
-    if( file_exists($config->DATA.'/'.$directory) and is_dir($config->DATA.'/'.$directory) ) {
+    if( file_exists(CONFIG['data']['site']['root'].'/'.$directory) and is_dir(CONFIG['data']['site']['root'].'/'.$directory) ) {
       
       // Get directory contents.
       $contents = array_map(function($file) use ($directory) {
         
         return stripslashes($directory.'/'.$file);
         
-      }, scandir_clean($config->DATA.'/'.$directory));
+      }, scandir_clean(CONFIG['data']['site']['root'].'/'.$directory));
       
       // Apply any filters if given.
       if( $filter ) {
@@ -76,11 +72,11 @@ trait FsHelpers {
         if( is_string($filter) ) { 
           
           // Find files based on the globbing pattern.
-          $glob = array_map(function($glob) use ($config) {
+          $glob = array_map(function($glob) {
             
-            return str_replace($config->DATA.'/', '', $glob);
+            return str_replace(CONFIG['data']['site']['root'].'/', '', $glob);
             
-          }, glob($config->DATA.'/'.$directory.'/'.$filter));
+          }, glob(CONFIG['data']['site']['root'].'/'.$directory.'/'.$filter));
           
           // Filter out globbed files.
           $contents = array_filter($contents, function($file) use ($glob) {

@@ -43,20 +43,11 @@ class XML {
   // Load traits.
   use XML_Utilities;
   
-  // Capture configurations.
-  protected $config;
-  
   // Store the XML.
   public $xml;
   
   // Constructor
   function __construct( string $data, $escape = [] ) {
-    
-    // Use global configurations.
-    global $config;
-    
-    // Ssve the configurations.
-    $this->config = $config;
     
     // Escape any HTML within the XML data.
     $data = $this->__escapeHTML($data, $escape);

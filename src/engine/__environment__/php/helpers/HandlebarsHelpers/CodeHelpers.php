@@ -9,9 +9,6 @@ trait CodeHelpers {
   // Embed code from an external data file as preformatted text.
   public static function embed( $path, $language ) {
     
-    // Use configurations.
-    global $config;
-    
     // Get extension from file when not give.
     if( is_array($language) ) $language = pathinfo($path, PATHINFO_EXTENSION);
     
@@ -19,10 +16,10 @@ trait CodeHelpers {
     $code = ''; 
     
     // Verify that the file exists.
-    if( file_exists($config->DATA.'/'.$path) ) {
+    if( file_exists(CONFIG['data']['site']['root'].'/'.$path) ) {
     
       // Get the code.
-      $code = file_get_contents($config->DATA.'/'.$path);
+      $code = file_get_contents(CONFIG['data']['site']['root'].'/'.$path);
       
       // Handle extensions.
       switch( $language ) {

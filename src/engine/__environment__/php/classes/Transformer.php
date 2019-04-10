@@ -102,9 +102,6 @@ class Transformer {
   // Load traits.
   use Transformer_Utilities, Transformer_Transforms;
   
-  // Capture configurations.
-  protected $config;
-  
   // Capture the raw data.
   private $data = [];
   
@@ -116,12 +113,6 @@ class Transformer {
   
   // Constructor
   function __construct( array $data, array $model, string $type ) {
-    
-    // Use global configurations.
-    global $config;
-    
-    // Save the configurations.
-    $this->config = $config;
     
     // Save the raw data.
     $this->data = $data;

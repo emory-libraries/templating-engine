@@ -15,11 +15,8 @@ class Markdown extends ParsedownExtra {
     // Initialize the parent constructor per usual.
     parent::__construct();
     
-    // Use global configurations.
-    global $config;
-    
     // Save the configurations.
-    $this->config = $config->MARKDOWN;
+    $this->config = CONFIG['markdown'];
 
     // Override any default configurations with the ones that are passed in.
     foreach( $overrides as $key => $value ) {

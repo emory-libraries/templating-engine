@@ -11,9 +11,6 @@ trait MarkdownHelpers {
   // Inline and block helper that converts a string of markdown to HTML. [aliased as md]
   public static function markdown( $template, $options = null ) {
     
-    // Use global configurations.
-    global $config;
-    
     // Swap template and options for block contexts.
     if( is_array($template) and is_null($options) ) {
       
@@ -26,7 +23,7 @@ trait MarkdownHelpers {
     $context = $options['_this'];  
     
     // Get markdown engine settings.
-    $settings = array_merge((isset($config->MARKDOWN) ? $config->MARKDOWN : []), array_get($options, 'hash', []));
+    $settings = array_merge((isset(CONFIG['markdown']) ? CONFIG['markdown'] : []), array_get($options, 'hash', []));
     
     // Initialize the markdown and mustache engines.
     $markdown = new Markdown($settings);

@@ -112,20 +112,11 @@ class Cache {
   // Loads traits.
   use Cache_Utilities, Cache_Filesystem;
   
-  // Capture configurations.
-  protected $config;
-  
   // Capture's the cache location.
   private $location;
   
   // Constructor
   function __construct( $location ) {
-    
-    // Use global configurations.
-    global $config;
-    
-    // Save the configurations.
-    $this->config = $config;
     
     // Save the cache location.
     $this->location = $location;

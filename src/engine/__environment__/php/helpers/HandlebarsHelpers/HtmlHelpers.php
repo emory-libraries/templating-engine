@@ -17,9 +17,6 @@ trait HtmlHelpers {
   // Add an array of `<link>` tags, where relative paths are automatically resolved using `options.assets` or our global configurations.
   public static function css( array $stylesheets, $options ) {
     
-    // Use global configurations.
-    global $config;
-    
     // Get arguments.
     $arguments = func_get_args();
     $options = _::last($arguments);
@@ -29,7 +26,7 @@ trait HtmlHelpers {
     $stylesheets = is_array($stylesheets) ? $stylesheets : [$stylesheets];
     
     // Get assets path.
-    $assets = array_get($options, 'assets', false) ? array_get($options, 'assets').'/css' : (isset($config->CSS) ? $config->CSS : ''); 
+    $assets = array_get($options, 'assets', false) ? array_get($options, 'assets').'/css' : (isset(CONFIG['engine']['css']) ? CONFIG['engine']['css'] : ''); 
     
     // Return a link tag for each stylesheet.
     return implode("\n", array_map(function($stylesheet) use ($assets) {
@@ -63,9 +60,6 @@ trait HtmlHelpers {
   // Add an array of `<script>` tags, where relative paths are automatically resolved using `options.assets` or our global configurations.
   public static function js( array $scripts, $options ) {
     
-    // Use global configurations.
-    global $config;
-    
     // Get arguments.
     $arguments = func_get_args();
     $options = _::last($arguments);
@@ -75,7 +69,7 @@ trait HtmlHelpers {
     $scripts = is_array($scripts) ? $scripts : [$scripts];
     
     // Get assets path.
-    $assets = array_get($options, 'assets', false) ? array_get($options, 'assets').'/js' : (isset($config->JS) ? $config->JS : ''); 
+    $assets = array_get($options, 'assets', false) ? array_get($options, 'assets').'/js' : (isset(CONFIG['engine']['js']) ? CONFIG['engine']['js'] : ''); 
     
     // Return a script tag for each script.
     return implode("\n", array_map(function($script) use ($assets) {

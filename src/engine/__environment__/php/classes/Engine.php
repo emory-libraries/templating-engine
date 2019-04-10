@@ -3,9 +3,6 @@
 // Builds the templating engine's `Engine` class.
 class Engine {
   
-  // Capture configurations.
-  protected $config;
-  
   // Load the endpoint.
   protected $endpoint;
   
@@ -14,12 +11,6 @@ class Engine {
   
   // Constructor
   function __construct() {
-    
-    // Use global configurations.
-    global $config;
-    
-    // Save the configurations.
-    $this->config = $config;
     
     // Get the current endpoint.
     $this->endpoint = new Endpoint(); 
