@@ -13,7 +13,7 @@ require_once "classes/autoload.php";
 require_once "config.php";
 
 // Load environment variables.
-(Dotenv\Dotenv::create(dirname(__DIR__)))->load();
+(Dotenv\Dotenv::create(dirname(CONFIG['engine']['env']), basename(CONFIG['engine']['env'])))->load();
 
 // Set the timezone.
 date_default_timezone_set('America/New_York');
