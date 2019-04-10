@@ -1,0 +1,27 @@
+[
+  {
+    "path": "/",
+    "template": ["index", "home"]
+  },
+  {
+    "path": "/about",
+    "template": "primary"
+  },
+  {
+    "path": "/services",
+    "template": "secondary"
+  },
+  {
+    "path": "/visitors",
+    "template": "xml"
+  },
+  {
+    "path": "/staff",
+    "template": "staff",
+    "dynamic": true
+  },
+  {
+    "path": "/test",
+    "template": "test"
+  }
+]
