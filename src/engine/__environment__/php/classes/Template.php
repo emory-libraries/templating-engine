@@ -39,8 +39,8 @@ class Template {
     
     // Define regex parts for extracting pattern data from the file path.
     $regex = [
-      'group' => '(?:(?:(?P<groupNo>\d{1,2})-)?(?P<groupName>[a-z]+?(?=-)))?',
-      'subgroup' => '(?:\-(?:(?P<subgroupNo>\d{1,2})-)?(?P<subgroupName>[a-z]+?(?=-)))?',
+      'group' => '(?:(?:(?P<groupNo>\d{1,2})-)?(?P<groupName>[a-z-]+?(?=-)))?',
+      'subgroup' => '(?:\-(?:(?P<subgroupNo>\d{1,2})-)?(?P<subgroupName>[a-z-]+?(?=-)))?',
       'pattern' => '(?:-?(?:(?P<patternNo>\d{1,2})\-)?(?P<patternName>[a-z0-9\~\-\_]+))'
     ];
     
@@ -48,8 +48,8 @@ class Template {
     preg_match('/^'.implode('', array_values($regex)).'$/i', $this->id, $matches);
     
     // Get template data from the template file name.
-    $groupNo = array_get($matches, 'groupNo');
-    $groupName = array_get($matches, 'groupName');
+    $groupNo = array_get($matches, 'groupNo') ?: preg_replace('/-[a-z-]+$/', '', basename(dirname($path)));
+    $groupName = array_get($matches, 'groupName') ?: preg_replace('/^\d{1,2}-/', '', basename(dirname($path)));
     $subgroupNo = array_get($matches, 'subgroupNo');
     $subgroupName = array_get($matches, 'subgroupName');
     $patternNo = array_get($matches, 'patternNo');
