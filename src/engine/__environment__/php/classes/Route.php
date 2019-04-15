@@ -59,7 +59,7 @@ class Route {
       if( array_get($data->data, 'redirect', false) ) $this->redirect = array_get($data->data, 'redirect');
 
       // Get the route's template, or use the default template.
-      if( array_get($data->data, 'template', false) ) {
+      if( !$this->redirect and array_get($data->data, 'template', false) ) {
 
         // Get the template name from the data file.
         $name = array_get($data->data, 'template');
@@ -96,11 +96,11 @@ class Route {
         $this->endpoint
       ];
       
-      // Get the route's template.
-      $this->template = $route['template'];
-      
       // Determine if the route redirects, and if so, get the redirect path.
       if( array_get($route, 'redirect', false) ) $this->redirect = $route['redirect'];
+      
+      // Get the route's template.
+      if( !$this->redirect ) $this->template = $route['template'];
       
     }
     
