@@ -134,6 +134,7 @@ define('CONFIG', array_merge([
     'php' => ENGINE_ROOT.'/php',
     'classes' => ENGINE_ROOT.'/php/classes',
     'helpers' => ENGINE_ROOT.'/php/helpers',
+    'scripts' => ENGINE_ROOT.'/php/scripts',
     'css' => ENGINE_ROOT.'/css',
     'js' => ENGINE_ROOT.'/js',
     'images' => ENGINE_ROOT.'/images',
@@ -233,6 +234,40 @@ define('CONFIG', array_merge([
     
     // Read the configuration files into an array while keeping the configuration file structure. 
     return array_set($config, $key, $contents);
+    
+  }, []),
+  
+  // Get and load all icons.
+  'icons' => array_reduce(scandir_clean(ENGINE_ROOT.'/icons/svg'), function($icons, $icon) {
+    
+    // Get the icon's SVG content.
+    $svg = File::read(ENGINE_ROOT."/icons/svg/$icon");
+    
+    // Get the icon's ID.
+    $id = File::id($icon);
+    
+    // Save the icon.
+    $icons[$id] = $svg;
+    
+    // Continue merging all icons into a single array.
+    return $icons;
+    
+  }, []),
+  
+  // Get and load all logos.
+  'logos' => array_reduce(scandir_clean(ENGINE_ROOT.'/logos'), function($logos, $logo) {
+    
+    // Get the icon's SVG content.
+    $svg = File::read(ENGINE_ROOT."/logos/$logo");
+    
+    // Get the logo's ID.
+    $id = File::id($logo);
+    
+    // Save the logo.
+    $logos[$id] = $svg;
+    
+    // Continue merging all logos into a single array.
+    return $logos;
     
   }, [])
   
