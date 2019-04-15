@@ -1,13 +1,13 @@
 <?php
 
 // Configure the templating engine.
-define('CONFIG', [
+define('CONFIG', array_merge([
   
   // Stores information about the active site.
   '__site__' => [
     'domain' => DOMAIN,
     'site' => SITE,
-    'environment' => environment
+    'environment' => ENVIRONMENT
   ],
   
   // Configures document paths.
@@ -55,22 +55,73 @@ define('CONFIG', [
       'shared' => SITE_DATA.'/_shared'
     ],
     
-    'shared' => array_map(function($site) {
+    'shared' => array_map(function($path) {
+      
+      // Initialize the files.
+      $files = [];
+      
+      // Get a list of all shared data files from the sibling site.
+      if( file_exists($path) ) $files = array_map(function($file) use ($path) {
         
-        return DATA_ROOT.'/'.$site.'/_shared';
+        // Append the original path to the file.
+        return cleanpath("$path/$file");
         
-      }, array_values(array_filter(scandir_clean(DATA_ROOT), function($site) {
+      }, scandir_recursive($path));
+      
+      // Return the list of shared files.
+      return $files;
+      
+    }, array_reduce(array_map(function($site) {
         
-        return $site !== SITE;
-        
-      })))
+      // Capture the site and path to its shared folder.
+      return [
+        'site' => $site,
+        'path' => DATA_ROOT.'/'.$site.'/_shared'
+      ];
+
+    }, array_values(array_filter(scandir_clean(DATA_ROOT), function($folder) {
+     
+      // Filter out environment-level data folders, and only keep site-level folders.
+      return !in_array($folder, ['_meta', '_global', '_shared']);
+      
+      
+    }))), function($shared, $site) {
+
+      // Merge the site-specific shared files into a single array.
+      $shared[$site['site']] = $site['path'];
+
+      // Continue reducing.
+      return $shared;
+
+    }, []))
     
   ],
   
   // Configures patterns paths.
   'patterns' => [
     
-    'root' => PATTERNS_ROOT
+    'root' => PATTERNS_ROOT,
+    
+    'groups' => array_reduce(array_map(function($folder) {
+      
+      // Get the atomic group name.
+      $group = preg_replace('/^\d{1,2}-/', '', $folder);
+      
+      // Return folder data.
+      return [
+        'group' => $group,
+        'path' => cleanpath(PATTERNS_ROOT.'/'.$folder)
+      ];
+      
+    }, scandir_clean(PATTERNS_ROOT)), function($groups, $group) {
+
+      // Merge the group data into a single array.
+      $groups[$group['group']] = $group['path'];
+      
+      // Continue reducing.
+      return $groups;
+      
+    }, [])
     
   ],
   
@@ -89,29 +140,8 @@ define('CONFIG', [
     'icons' => ENGINE_ROOT.'/icons',
     'assets' => ENGINE_ROOT.'/assets',
     'fonts' => ENGINE_ROOT.'/fonts',
-    'cache' => [
-      
-      'root' => CACHE_ROOT,
-      
-      // Specify a directory within the cache where data for partials will be stored.
-      'partials' => CACHE_ROOT.'/partials',
-      
-      // Specify a directory within the cache where data for templates will stored.
-      'templates' => CACHE_ROOT.'/templates',
-      
-      // Specify a file path within the cache where data for handlebars helpers will be stored. This file will be encoded as JSON.
-      'helpers' => CACHE_ROOT.'/helpers.json'
-    ]
+    'cache' => CACHE_ROOT
     
-  ],
-  
-  // Configures cache paths.
-  // TODO: Change references to `cache` config to use `engine.cache`.
-  'cache' => [
-    'root' => CACHE_ROOT,
-    "partials" => CACHE_ROOT.'/partials',
-    "templates" => CACHE_ROOT.'/templates',
-    "helpers" => CACHE_ROOT.'/.helpers.json'
   ],
   
   // Configures default file extensions for generated files.
@@ -122,13 +152,36 @@ define('CONFIG', [
   ],
   
   // Configures the handlebars engine.
-  // TODO: Move `handlebars.helpers` config into `engine` config.
-  // TODO: Remove `handlebars.templates` and `handlebars.partials` config and use dynamic directory listings via `scandir` instead.
   'handlebars' => [
   
-    'templates' => PATTERNS_ROOT.'/'.'60-templates',
-    'partials' => PATTERNS_ROOT,
-    'helpers' => __DIR__.'/helpers'
+    'partials' => array_reduce(array_map(function($partial) {
+    
+      // Get the full path of the partial.
+      $path = PATTERNS_ROOT."/$partial";
+
+      // Treat the partial as a template in order to get needed data out of it.
+      $partial = new Template($path);
+
+      // Get the partial's contents and recognized include names.
+      return [
+        'contents' => $partial->template,
+        'includes' => [
+          $partial->id,
+          $partial->plid,
+          $partial->path
+        ]
+      ];
+
+    }, scandir_recursive(PATTERNS_ROOT)), function($partials, $partial) {
+
+      // Register the partial under its recognized include names.
+      foreach( $partial['includes'] as $include ) { $partials[$include] = $partial['contents']; }
+
+      // Continune reducing all partials into a single-level array.
+      return $partials;
+
+    }, []),
+    'helpers' => (include ENGINE_ROOT.'/php/helpers/autoload.php')()
     
   ],
   
@@ -150,8 +203,39 @@ define('CONFIG', [
     // Disables the use of images within markdown.
     'disableImages' => true
     
+  ],
+  
+  // Sets defaults for things.
+  'defaults' => [
+    
+    // Set the default template when a template cannot be found for a route.
+    'template' => 'templates-info'
+    
   ]
   
-]);
+], [
+  
+  // Get the contents of all templating engine configuration files.
+  'config' => array_reduce(scandir_recursive(ENGINE_ROOT.'/config'), function($config, $file) {
+    
+    // Get file parts.
+    $dirname = dirname($file);
+    $basename = basename($file, '.'.pathinfo($file, PATHINFO_EXTENSION));
+    
+    // Get the file's endpoint.
+    $endpoint = (isset($dirname) ? "$dirname/" : '').$basename;
+    
+    // Get the configuration file's key.
+    $key = str_replace('/', '.', trim($endpoint, '/'));
+    
+    // Get the configuration file's contents.
+    $contents = json_decode(File::read(ENGINE_ROOT."/config/".$file), true);
+    
+    // Read the configuration files into an array while keeping the configuration file structure. 
+    return array_set($config, $key, $contents);
+    
+  }, [])
+  
+]));
 
 ?>
