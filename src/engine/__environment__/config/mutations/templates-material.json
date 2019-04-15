@@ -1,0 +1,56 @@
+{
+  "alias": {},
+  "rename": {},
+  "replace": {},
+  "remove": [],
+  "add": {},
+  "repeatable": [
+    "content-block",
+    "link-contact",
+    "sidebar.link",
+    "sidebar.links-list-learn.link",
+    "sidebar.links-list-materials.link",
+    "link-research-aid"
+  ],
+  "checkbox": [
+    "add-contact",
+    "add-research-aids",
+    "sidebar.link.@.link-customizations",
+    "sidebar.links-list-learn.link.@.link-customizations",
+    "sidebar.links-list-materials.link.@.link-customizations",
+    "link-research-aid.@.customize-label"
+  ],
+  "radio": [
+    "content-block.@.block-type",
+    "sidebar.link.@.link-type",
+    "sidebar.links-list-learn.link.@.link-type",
+    "sidebar.links-list-materials.link.@.link-type"
+  ],
+  "timestamp": [
+    "system.created.datetime",
+    "system.modified.datetime",
+    "system.published.datetime"
+  ],
+  "text": [
+    "introduction",
+    "content-block.@.heading-label",
+    "content-block.@.image.caption",
+    "content-block.@.image.photo-credit",
+    "content-block.@.video-url",
+    "sidebar.link.@.external-url",
+    "sidebar.link.@.link-label",
+    "sidebar.link.@.link-description",
+    "sidebar.links-list-learn.heading",
+    "sidebar.links-list-learn.link.@.external-url",
+    "sidebar.links-list-learn.link.@.link-label",
+    "sidebar.links-list-learn.link.@.link-description",
+    "sidebar.links-list-materials.heading",
+    "sidebar.links-list-materials.link.@.external-url",
+    "sidebar.links-list-materials.link.@.link-label",
+    "sidebar.links-list-materials.link.@.link-description",
+    "link-research-aid.@.link-label"
+  ],
+  "html": [
+    "content-block.@.wysiwyg"
+  ]
+}

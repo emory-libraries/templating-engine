@@ -1,0 +1,130 @@
+<system-index-block current-time="1555269722606" name="Current Page" type="folder">
+  <calling-page>
+    <system-page current="true" id="1d49f89d0ae720980c98169090d2a8a4">
+      <name>books</name>
+      <is-published>true</is-published>
+      <title>Books</title>
+      <path>/materials/books</path>
+      <site>Emory Libraries - Main</site>
+      <link>site://Emory Libraries - Main/materials/books</link>
+      <created-by>lhamel</created-by>
+      <created-on>1555269548142</created-on>
+      <last-modified-by>lhamel</last-modified-by>
+      <last-modified>1555269703119</last-modified>
+      <dynamic-metadata>
+        <name>Goal</name>
+      </dynamic-metadata>
+      <dynamic-metadata>
+        <name>Audience</name>
+      </dynamic-metadata>
+      <system-data-structure definition-path="Page Types/Materials Page">
+        <version>1.0</version>
+        <introduction />
+        <content-block>
+          <block-type>Rich Text</block-type>
+          <heading-label />
+          <heading-level>Heading Level 2</heading-level>
+          <wysiwyg />
+          <image>
+            <version>1.0</version>
+            <image-file>
+              <path>/</path>
+            </image-file>
+            <caption />
+            <photo-credit />
+          </image>
+          <video-url />
+        </content-block>
+        <content-block>
+          <block-type>Rich Text</block-type>
+          <heading-label />
+          <heading-level>Heading Level 2</heading-level>
+          <wysiwyg />
+          <image>
+            <version>1.0</version>
+            <image-file>
+              <path>/</path>
+            </image-file>
+            <caption />
+            <photo-credit />
+          </image>
+          <video-url />
+        </content-block>
+        <sidebar>
+          <version>1.0</version>
+          <link>
+          <version>1.0</version>
+          <link-type />
+          <cascade-page>
+            <path>/</path>
+          </cascade-page>
+          <cascade-file>
+            <path>/</path>
+          </cascade-file>
+          <external-url />
+          <link-customizations />
+          <link-label />
+          <link-description />
+          </link>
+          <links-list-learn>
+            <version>1.0</version>
+            <heading />
+            <link>
+            <version>1.0</version>
+            <link-type />
+            <cascade-page>
+              <path>/</path>
+            </cascade-page>
+            <cascade-file>
+              <path>/</path>
+            </cascade-file>
+            <external-url />
+            <link-customizations />
+            <link-label />
+            <link-description />
+            </link>
+          </links-list-learn>
+          <links-list-materials>
+            <version>1.0</version>
+            <heading />
+            <link>
+            <version>1.0</version>
+            <link-type />
+            <cascade-page>
+              <path>/</path>
+            </cascade-page>
+            <cascade-file>
+              <path>/</path>
+            </cascade-file>
+            <external-url />
+            <link-customizations>
+              <value>Label</value>
+              <value>Description</value>
+            </link-customizations>
+            <link-label />
+            <link-description />
+            </link>
+          </links-list-materials>
+        </sidebar>
+        <add-contact>
+          <value>Yes</value>
+        </add-contact>
+        <link-contact>
+          <version>1.0</version>
+          <cascade-page>
+            <path>/</path>
+          </cascade-page>
+        </link-contact>
+        <add-research-aids />
+        <link-research-aid>
+          <version>1.0</version>
+          <cascade-page>
+            <path>/</path>
+          </cascade-page>
+          <customize-label />
+          <link-label />
+        </link-research-aid>
+      </system-data-structure>
+    </system-page>
+  </calling-page>
+</system-index-block>
