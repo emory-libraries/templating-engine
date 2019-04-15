@@ -1,118 +1,63 @@
 <?php
 
-// Use dependencies.
-use Symfony\Component\Yaml\Yaml;
-
-// Initialize utility methods.
-trait Endpoint_Utilities {
-  
-  // Find a route within the router by path.
-  
-  // Get the current endpoint.
-  private function __getEndpoint() {
-
-    return REQUEST['endpoint'];
-    
-  }
-  
-  // Get the current endpoint without trailing slashes.
-  private function __getEndpointClean() {
-    
-    return ($endpoint = $this->__getEndpoint())[0] == '/' ? $endpoint[0] : rtrim($endpoint[0], '/');
-    
-  }
-  
-}
-
-// Creates an `Endpoint` class for building the active endpoint.
+/*
+ * Endpoint
+ *
+ * Some data about an active endpoint within the site
+ * based on a known route.
+ */
 class Endpoint {
   
-  // Load traits.
-  use Endpoint_Utilities;
+  // The route that the endpoint inherits.
+  public $id;
   
-  // Initialize the router.
-  protected $router;
+  // The true, un-aliased URI endpoint.
+  public $eid;
   
-  // Parse the endpoint, data, and template.
-  private $endpoint = null;
-  private $route = [];
-  private $data = [];
-  private $template = [];
+  // One or more URI endpoints that the endpoint uses.
+  public $endpoint;
   
-  // Determine if the endpoint is dynamic.
-  private $dynamic = false;
+  // A location that the endpoint redirects to, if applicable.
+  public $redirect = false;
   
-  // Constructor
-  function __construct() {
+  // One or more complete URLs that the endpoint uses.
+  public $url;
+  
+  // The data file that the endpoint uses.
+  public $data;
+  
+  // The template file that the endpoint uses.
+  public $template;
+  
+  // Constructs the endpoint.
+  function __construct( Route $route, Index $index ) { 
     
-    // Capture the endpoint.
-    $this->endpoint = $this->__getEndpointClean();
-    
-    // Initialize the router.
-    $this->router = new Router();
-    
-    // Find the endpoint's route, if one exists.
-    $this->route = $this->router->getRouteByPath($this->endpoint); 
-    
-    // Determine if the endpoint is dynamic.
-    if( isset($this->route['dynamic']) and in_array($this->route['dynamic'], [true, false]) ) {
+    // Capture data about the endpoint(s).
+    $this->id = $route->id;
+    $this->eid = (isset($route->path) ? File::endpoint($route->path) : $route->endpoint);
+    $this->endpoint = $route->endpoint;
+    $this->redirect = $route->redirect;
+    $this->url = is_array($route->endpoint) ? array_map(function($endpoint) use ($route) {
       
-      // Capture the dynamic state.
-      $this->dynamic = $this->route['dynamic'];
+      // For routes with multiple endpoints, map each endpoint to a URL.
+      return $route->domain.$endpoint;
       
-    }
-    
-    // Determine which template should be used by default.
-    $template = isset($this->route) ? array_get($this->route, 'template') : 'error';
-    
-    // Get the route's base data.
-    $data = (new Data($this->route))->getData();
-    
-    // Verify that a dynamic route is valid by checking it's base data.
-    if( $this->dynamic and $data['data'] === false ) $template = 'error';
- 
-    // Load any data that should be merged.
-    $data = $template == 'error' ? (new ErrorPage(404))->getData() : [];
+    }, $route->endpoint) : $route->domain.$route->endpoint;
 
-    // Get the route's template.
-    $this->template = new Template($template);
+    // Get all data that the endpoint uses.
+    $this->data = array_merge([
+      '__meta__' => $index->getMetaData(),
+      '__global__' => $index->getGlobalData(),
+      '__shared__' => $index->getSharedData()
+    ], $index->getEndpointData($this->eid));
+    
+    // Get the template that the endpoint uses.
+    $this->template = $index->getEndpointTemplate($this->eid);
 
-    // Get the route's data.
-    $this->data = new Data($this->route, array_merge($data, [
-      '__endpoint__' => $this->endpoint
-    ])); 
+    // Mutate the data based on the template, if applicable.
+    $this->data = Mutator::mutate($this->data, $route->template);
     
   }
-  
-  // Get the endpoint.
-  public function getEndpoint() { return $this->endpoint; }
-  
-  // Get the endpoint's template.
-  public function getTemplate() { 
-    
-    // Use the dynamic template if the endpoint is dynamic.
-    if( $this->dynamic ) {
-      
-      // Get the route's dynamic data.
-      $dynamic = $this->data->getDynamicData($this->route);
-      
-      // Verify that the dynamic data has a valid endpoint.
-      if( isset($dynamic['endpoint']) ) {
-        
-        // Use the template for the dynamic endpoint.
-        return $this->template->getTemplate($dynamic['endpoint']['template']); 
-        
-      }
-      
-    }
-    
-    // Otherwise, use the default template.
-    return $this->template->getTemplate();
-  
-  }
-  
-  // Get the endpoint's data.
-  public function getData( $merge = [] ) { return $this->data->getData(null, $merge); }
   
 }
 
