@@ -1,18 +1,22 @@
 <?php
 
-// Intialize utility methods.
-trait XML_Utilities {
+/*
+ * XML
+ *
+ * Parses a string of XML data into an object or array.
+ */
+class XML {
   
-  // Escape HTML within XML.
-  private function __escapeHTML( string $data, array $escape ) {
+  // Escapes HTML within a string of XML data.
+  public static function escapeHTML( string $xml, array $escape ) {
     
     // Initialize the result.
-    $result = $data;
+    $result = $xml;
     
     // Look for HTML within the XML.
     foreach( $escape as $tag ) {
       
-      // Build the regex used to locate HTML.
+      // Build the regex used to locate the HTML.
       $regex = "/(?:\<{$tag}\>)((?:(?:\n\r?)*?|.*?)*?)(?:\<\/{$tag}\>)/";
       
       // Find any HTML that should be escaped.
@@ -35,25 +39,19 @@ trait XML_Utilities {
     
   }
   
-}
-
-// Creates an `XML` class for handling XML data.
-class XML {
-  
-  // Load traits.
-  use XML_Utilities;
-  
-  // Store the XML.
-  public $xml;
-  
-  // Constructor
-  function __construct( string $data, $escape = [] ) {
+  // Converts a string of XML data into a object.
+  public static function toObject( string $xml, $escape = [] ) {
     
-    // Escape any HTML within the XML data.
-    $data = $this->__escapeHTML($data, $escape);
+    // Return a SimpleXMLElement object.
+    return new SimpleXMLElement(self::escapeHTML($xml, $escape));
     
-    // Parse the XML data.
-    $this->xml = new SimpleXMLElement($data);
+  }
+  
+  // Converts a string of XML data into an array.
+  public static function toArray( string $xml, $escape = [] ) {
+    
+    // Return an associative array.
+    return object_to_array(new SimpleXMLElement(self::escapeHTML($xml, $escape)));
     
   }
   
