@@ -1,132 +1,69 @@
 <?php
 
-// Initialize utility methods.
-trait Transformer_Utilities {
-  
-  // Convert associative arrays to non-associative arrays.
-  private function __toNonAssociativeArray( array $array, array $keys, $recursive = true ) {
-    
-    // Initialize the result.
-    $result = [];
-    
-    // Recursively find each key within the array and convert its value to a non-associative array.
-    foreach( $result as $key => $value ) {
-      
-      // Determine if the key matches.
-      if( in_array($key, $keys) ) {
-        
-        // Confirm that the item's value is a non-associative array.
-        if( is_array($value) and is_associative_array($value) ) {
-          
-          // Convert the array to a non-associative array.
-          $result[$key] = [$value];
-          
-        }
-        
-      }
-      
-      // Otherwise, recursively convert any nested arrays.
-      else if( is_array($value) and $recursive === true ) {
-        
-        // Convert any nested arrays into non-associative arrays.
-        $result[$key] = $this->__toNonAssociativeArray($value, $keys, true);
-        
-      }
-      
-    }
-    
-    // Return the result.
-    return $result;
-    
-  }
-  
-}
-
-// Initialize transformation methods.
-trait Transformer_Transforms {
-  
-  // Transform XML data.
-  private function __transformXML( $options = [] ) {
-    
-    // Initialize the result.
-    $result = [];
-
-    // Extract any XML meta data.
-    foreach( array_flatten($this->model['meta']) as $key => $path ) {
-      
-      // Find and save the meta data.
-      $result[$key] = array_get($this->data, $path);
-      
-    }
-    
-    // Extract the XML core data.
-    $data = array_get($this->data, $this->model['data']);
-    
-    // Apply any configurations to the data.
-    if( isset($this->model['config']) ) {
-      
-      // See if some data should be formatted as non-associative arrays.
-      if( isset($this->model['config']['arrays']) ) {
-        
-        // Convert select associative arrays to non-associative arrays.
-        $data = $this->__toNonAssociativeArrays($data, $this->model['config']['arrays']);
-          
-      }
-      
-    }
-    
-    // Combine the core data and meta data.
-    $result = array_merge($result, array_flatten($data));
-    
-    // Apply any options.
-    if( !empty($options) ) {
-      
-      // Convert keys to a given syntax.
-      if( isset($options['case']) ) $result = array_map_keys($options['case'], $result);
-      
-    }
-    
-    // Cast all values to their appropriate type.
-    $result = new Cast($result);
-    
-    // Return the result.
-    return array_expand($result->CastAll());
-    
-  }
-  
-}
-
-// Creates a `Transformer` class for handling data transformations.
+/*
+ * Transformer
+ *
+ * Transforms the file contents of a data file into a
+ * user-friendly associative array based on the data
+ * file's extension.
+ */
 class Transformer {
   
-  // Load traits.
-  use Transformer_Utilities, Transformer_Transforms;
+  // Defines recognized file extensions and their respective transformer methods.
+  public static $transformers = [
+    'transformJSON'   => ['json', 'js'],
+    'transformYAML'   => ['yaml', 'yml'],
+    'transformXML'    => ['xml']
+  ];
   
-  // Capture the raw data.
-  private $data = [];
-  
-  // Capture the data model.
-  private $model = [];
-  
-  // Capture the data type.
-  private $type = null;
-  
-  // Constructor
-  function __construct( array $data, array $model, string $type ) {
+  // Transform some file contents based on the given file extension.
+  public static function transform( $contents, $ext ) {
     
-    // Save the raw data.
-    $this->data = $data;
-    
-    // Save the data model.
-    $this->model = $model;
-    
-    // Save the data type.
-    $this->type = $type;
+    // Determine the transformer method to be used based on the file extension.
+    foreach( self::$transformers as $method => $exts ) {
+      
+      // Pass the file contents to the appropriate transformer method.
+      if( in_array($ext, $exts) ) return forward_static_call("Transformer::{$method}", $contents);
+      
+    }
     
   }
   
-  // Get the transformed data.
-  public function getTransformation( $options ) { return $this->{"__transform{$this->type}"}($options); }
+  // Transform some JSON file contents.
+  public static function transformJSON( $contents ) {
+    
+    // Decode the JSON data into an associative array.
+    return json_decode($contents, true);
+    
+  }
+  
+  // Transform some YAML file contents.
+  public static function transformYAML( $contents ) {
+    
+    // Parse the YAML data into an associative array.
+    return Yaml::parse($data);
+    
+  }
+  
+  // Transform some XML file contents.
+  public static function transformXML( $contents ) {
+    
+    // Retrieve the XML data model.
+    $model = self::transformJSON(file_get_contents(CONFIG['engine']['config'].'/xml.json'));
+    
+    // Determine the XML fields that contain HTML and should be escaped.
+    $escape = array_get($model, 'config.html', []);
+    
+    // Convert the XML data to an associative array.
+    $data = XML::toArray($contents, $escape);
+    
+    // Translate the XML data based on the XML data model.
+    $data = Translator::translate($data, $model, 'xml');
+    
+    // Return the transformed XML data.
+    return $data;
+    
+  }
   
 }
 
