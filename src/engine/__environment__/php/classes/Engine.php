@@ -1,22 +1,40 @@
 <?php
 
-// Builds the templating engine's `Engine` class.
+/*
+ * Engine
+ *
+ * This is the core of the templating engine. It's responsible for processing
+ * the request, deciphering the correct data file(s) and pattern(s) to use, and
+ * finally rendering the page.
+ */
 class Engine {
   
   // Load the endpoint.
-  protected $endpoint;
+  //protected $endpoint;
   
   // Load utilities.
-  protected $parser;
+  //protected $parser;
+  
+  // Some data about the request.
+  protected $request;
+  
+  // An index of all known data and templates.
+  protected $index;
+  
+  // A router to handle page rendering, redirecting, and erroring.
+  protected $router;
   
   // Constructor
   function __construct() {
     
-    // Get the current endpoint.
-    $this->endpoint = new Endpoint(); 
+    // Get data about the request.
+    $this->request = new Request(); 
     
-    // Load utilities.
-    $this->parser = new Parser();
+    // Index all data and templates.
+    $this->index = new Index();  
+    
+    // Initialize the router.
+    $this->router = new Router($this->index);
     
     // Run the templating engine.
     $this->run();
@@ -26,22 +44,8 @@ class Engine {
   // Parse the route.
   private function run() {
     
-    // Get the template.
-    $template = $this->endpoint->getTemplate();
-    
-    // Get the data.
-    $data = $this->endpoint->getData([
-      '__template__' => [
-        'path' => ($path = $template['template']),
-        'extension' => ($ext = pathinfo($path, PATHINFO_EXTENSION)),
-        'filename' => basename($path),
-        'basename' => basename($path, ".{$ext}"),
-        'cache' => $template['cache']
-      ]
-    ]);
-    
-    // Render the template.
-    echo $this->parser->render($template, $data);
+    // Attempt to load the requested endpoint.
+    echo $this->router->render($this->request->endpoint);
     
   }
   
