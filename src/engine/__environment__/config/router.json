@@ -1,27 +1,10 @@
 [
   {
-    "path": "/",
-    "template": ["index", "home"]
+    "endpoint": "/404",
+    "template": "templates-error-404"
   },
   {
-    "path": "/about",
-    "template": "primary"
-  },
-  {
-    "path": "/services",
-    "template": "secondary"
-  },
-  {
-    "path": "/visitors",
-    "template": "xml"
-  },
-  {
-    "path": "/staff",
-    "template": "staff",
-    "dynamic": true
-  },
-  {
-    "path": "/test",
-    "template": "test"
+    "endpoint": "/materials/this-isnt-real",
+    "redirect": "/materials/books"
   }
 ]
