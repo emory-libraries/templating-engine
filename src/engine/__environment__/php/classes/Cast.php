@@ -1,89 +1,396 @@
 <?php
 
-// Build number casts.
-trait Cast_Number {
-  
-  private function int() { return (int) $this->data; }
+use _ as _;
+use Moment\Moment;
 
-  private function integer() { return $this->int(); }
+/*
+ * Cast
+ *
+ * Casts values to their native data types.
+ */
+class Cast {
   
-  private function float() { return (float) $this->data; }
+  // Defines the values recognized as being truthy.
+  public static $truthy = [
+    'true',
+    'positive',
+    'yes',
+    'aye',
+    'ok',
+    'yep',
+    'yup',
+    'yeah',
+    'yah',
+    'ya',
+    'on',
+    'enabled'
+  ];
   
-  private function double() { return $this->float(); }
+  // Defines the values recognized as being falsey.
+  public static $falsey = [
+    'false',
+    'negative',
+    'no',
+    'none',
+    'nope',
+    'nah',
+    'nay',
+    'nul',
+    'nyet',
+    'nix',
+    'nada',
+    'off',
+    'disabled'
+  ];
   
-}
-
-// Build date casts.
-trait Cast_Date {
+  // Defines the values recognized as being null.
+  public static $null = [
+    'null',
+    'nil',
+    'nul',
+    'undefined',
+    ''
+  ];
   
-  private function date() {
+  // Defines the regexes used to identify some types.
+  public static $regex = [
     
-    return (new DateTime())->setTimestamp(strtotime($this->data)); 
+    'array' => '/^((?:\S|\ )+?,)+?(\S|\ )+?$/',
+    'list' => '/^([^.?!]+?[,;] ?)+([^.?!]+)$/'
+    
+  ];
+  
+  // Cast values to their native data types.
+  public static function cast( $value, $deep = true ) {
+    
+    // Cast an array of values.
+    if( is_array($value) ) return forward_static_call('Cast::castArray', $value, $deep);
+    
+    // Get the type of the value.
+    $type = self::type($value);
+    
+    // Cast the value to its data type.
+    return forward_static_call('Cast::to'.ucfirst($type), $value);
     
   }
   
-}
-
-// Build boolean casts.
-trait Cast_Boolean {
-  
-  private function bool() {
+  // Cast an array of values to their native data types.
+  public static function castArray( array $values, $deep = true ) {
     
-    switch($this->data) {
-      case 'true': return true;
-      case 'false': return false;
-      default: return (bool) $this->data;
+    // Get the types of each item in the array.
+    $types = self::typeArray($values, $deep);
+    
+    // Cast each item in the array to its data type.
+    foreach( $types as $key => $type ) {
+      
+      // Cast non-array items.
+      if( !is_array($type) ) $values[$key] = forward_static_call('Cast::to'.ucfirst($type), $values[$key]);
+      
+      // Otherwise, recursively cast items within nested arrays if deep mode is enabled.
+      else if( $deep ) $values[$key] = self::castArray($values[$key]);
+      
     }
     
+    // Return array with casted values.
+    return $values;
+    
   }
   
-  private function boolean() { return $this->bool(); }
+  // Determine the data type to cast to for the given value.
+  public static function type( $value ) {
+    
+    // Determine the data type for an array of values.
+    if( is_array($value) ) return forward_static_call('Cast::typeArray', $value);
+    
+    // Check for array types.
+    else if( self::isArray($value) ) return 'array';
+    
+    // Check for boolean types.
+    else if( self::isBool($value) ) {
+      if( self::isTruthy($value) ) return 'truthy';
+      if( self::isFalsey($value) ) return 'falsey';
+      return 'bool';
+    }
+    
+    // Check for list types.
+    else if( self::isList($value) ) return 'list';
+    
+    // Check for null types.
+    else if( self::isNull($value) ) return 'null';
+    
+    // Check for numeric types.
+    else if( self::isNumeric($value) ) {
+      if( self::isInt($value) ) return 'int';
+      if( self::isFloat($value) ) return 'float';
+      return 'numeric';
+    }
+    
+    // Check for date types.
+    else if( self::isDate($value) ) return 'date';
+    
+    // Otherwise, assume the value is a string.
+    return 'string';
+    
+  }
   
-}
-
-// Build array casts.
-trait Cast_List {
+  // Determine the data types to be cast to for all items within the given array.
+  public static function typeArray( array $values, $deep = true ) {
+    
+    // Determine the data type for each item within the array.
+    foreach( $values as $key => $value ) {
+      
+      // Get the type of non-array values.
+      if( !is_array($value) ) $values[$key] = self::type($value);
+      
+      // Otherwise, recursively get data types for nested arrays if deep mode is enabled.
+      else if( $deep ) $values[$key] = self::typeArray($value, true);
+      
+    }
+    
+    // Return array of types.
+    return $values;
+    
+  }
   
-  private function array() {
+  // Check if a value is of type `string`.
+  public static function isString( $value ) {
     
-    // Initialize helpers for cleaning strings.
-    $trim = function( $string, $chars = [' '], $start = true, $end = true) {
-      
-      $chars = implode('|', array_map('preg_quote', $chars));
-      
-      if( $start ) $string = preg_replace_all("/^$chars/", '', $string);
-      if( $end ) $string = preg_replace_all("/$chars$/", '', $string);
-      
-      return $string;
-      
-    };
+    // Determine if the value is numeric.
+    return is_string($value);
     
-    // Strip any wrappers from the the string.
-    $string = $trim($this->data, [' ', '[', ']', '(', ')', '{', '}']);
+  }
+  
+  // Check if a value is of type `numeric`.
+  public static function isNumeric( $value ) {
     
-    // Convert to an array, and trim all values.
-    $array = array_map($trim, explode(',', $string));
+    // Determine if the value is numeric.
+    return is_numeric($value);
     
-    // Clean up array values.
+  }
+  
+  // Check if a value is of type `int`.
+  public static function isInt( $value ) {
+    
+    // Determine if the value is an integer.
+    return (self::isNumeric($value) and strpos((string) $value, '.') === false);
+    
+  }
+  
+  // Check if a value is of type `int`. [alias]
+  public static function isInteger( $value ) {
+    
+    // Determine if the value is an integer.
+    return forward_static_call('Cast::isInt', $value);
+    
+  }
+  
+  // Check if a value is of type `float`.
+  public static function isFloat( $value ) {
+    
+    // Determine if the value is an integer.
+    return (self::isNumeric($value) and strpos((string) $value, '.') !== false);
+    
+  }
+  
+  // Checks if a value is of type `float`. [alias]
+  public static function isDouble( $value ) {
+    
+    // Determine if the value is a float.
+    return forward_static_call('Cast::isFloat', $value);
+    
+  }
+  
+  // Check if a value is of type `date`.
+  public static function isDate( $value ) {
+    
+    // Initialize the result.
+    $result = false;
+    
+    // Initialize the moment flag.
+    $moment = false;
+    
+    // Try to determine if the value is a date using moment.
+    try {
+      
+      // Try to instantiate a moment.
+      new Moment($value);
+      
+      // If it works, set the moment flag.
+      $moment = true;
+      
+    } catch( Exception $e ) {
+    
+      // If it fails, make sure the moment flag is set to false.
+      $moment = false;
+      
+    }
+    
+    // Determine if the value is a date using moment.
+    if( $moment ) $result = true;
+    
+    // Otherwise, determine if the value is a date using datetime.
+    else if( strtotime((string) $value) !== false ) $result = true;
+    
+    // Otherwise, try to determine if the value is a date using our date class.
+    else if( Date::parse((string) $value) !== false ) $result = true;
+    
+    // Return the result.
+    return $result;
+    
+  }
+  
+  // Check if a value is of type `array`.
+  public static function isArray( $value ) {
+    
+    // Determine if the value is an array.
+    return preg_match(self::$regex['array'], (string) $value);
+    
+  }
+  
+  // Check if a value is of type `list`.
+  public static function isList( $value ) {
+    
+    // Determine if the value is a list.
+    return preg_match(self::$regex['list'], (string) $value);
+    
+  }
+  
+  // Check if a value is of type `bool`.
+  public static function isBool( $value ) {
+    
+    // Force the string to be lowercase.
+    $string = (string) strtolower($value);
+    
+    // Determine if the value is a boolean.
+    return ((in_array($string, self::$truthy) or $value === true) or (in_array($string, self::$falsey) or $value === false));
+    
+  }
+  
+  // Check if a value is of type `bool`. [alias]
+  public static function isBoolean( $value ) {
+    
+    // Determine if the value is a boolean.
+    return forward_static_call('Cast::isBool', $value);
+    
+  }
+  
+  // Check if a value is of type `truthy`.
+  public static function isTruthy( $value ) {
+    
+    // Determine if the value is truthy.
+    return in_array((string) $value, self::$truthy);
+    
+  }
+  
+  // Check if a value is of type `falsey`.
+  public static function isFalsey( $value ) {
+    
+    // Determine if the value is falsey.
+    return in_array((string) $value, self::$falsey);
+    
+  }
+  
+  // Check if a value is of type `null`.
+  public static function isNull( $value ) {
+    
+    // Determine if the value is null.
+    return (in_array((string) $value, self::$null) or is_null($value));
+    
+  }
+  
+  // Cast a value to type `int`.
+  public static function toInt( $value ) { return (int) $value; }
+  
+  // Cast a value to type `int`. [alias]
+  public static function toInteger( $value ) { return forward_static_call('Cast::toInt', $value); }
+  
+  // Cast a value to type `float`.
+  public static function toFloat( $value ) { return (float) $value; }
+  
+  // Cast a value to numeric.
+  public static function toNumeric( $value ) { 
+    
+    // Return integer values.
+    if( self::isInt($value) ) return forward_static_call('Cast::toInt', $value);
+    
+    // Return float values.
+    if( self::isFloat($value) ) return forward_static_call('Cast::toFloat', $value);
+  
+    // Otherwise, return a float by default just to be safe.
+    return (float) $value;
+  
+  }
+  
+  // Cast a value to type `float`. [alias]
+  public static function toDouble( $value ) { return forward_static_call('Cast::toFloat', $value); }
+  
+  // Cast a value to type `date`.
+  public static function toDate( $value ) {
+   
+    // Initialize the result.
+    $result = $value;
+    
+    // Initialize the moment flag.
+    $moment = false;
+    
+    // Try to cast the value to a date using moment.
+    try {
+      
+      // Try to instantiate a moment.
+      new Moment($value);
+      
+      // If it works, set the moment flag.
+      $moment = true;
+      
+    } catch( Exception $e ) {
+    
+      // If it fails, make sure the moment flag is set to false.
+      $moment = false;
+      
+    }
+    
+    // Determine if the value is a date using moment.
+    if( $moment ) $result = new Moment((string) $value);
+    
+    // Otherwise, determine if the value is a date using datetime.
+    else if( strtotime((string) $value) !== false ) $result = new Moment(strtotime((string) $value));
+    
+    // Otherwise, try to determine if the value is a date using our date class.
+    else if( Date::parse((string) $value) !== false ) $result = Moment::fromDateTime(Date::parse((string) $value)['datetime']);
+    
+    // Return the result.
+    return $result;
+    
+  }
+  
+  // Cast a value to type `array`.
+  public static function toArray( $value ) {
+    
+    // Strip array wrappers and whitespace from the value.
+    $value = _::trim($value, ' [](){}');
+    
+    // Convert to an array, and clean up all array items.
+    $array = array_map('trim', explode(',', $value));
+    
+    // Convert simple arrays to associative arrays whenever possible.
     foreach( $array as $key => $value ) {
       
-      // Create associative values wherever possible.
-      if( strpos(':', $value) !== false ) {
+      // Attempt to extract any key-value pairs.
+      $pair = explode(':', $value);
+      
+      // Convert key-value pairs to associative array entries.
+      if( count($pair) == 2 ) {
         
-        $split = explode(':', $value, 2);
+        // Save the key-value pair.
+        $array[_::trim($pair[0], ' "\'')] = _::trim($pair[1], ' "\'');
         
-        $array[$trim($split[0], [' ', "'", '"'])] = $trim($split[1], [' ', "'", '"']);
-        
+        // Then, unset its previous key.
         unset($array[$key]);
         
       }
       
       // Attempt to cast each array value.
-      else {
-        
-        $array[$key] = new Cast($value);
-        
-      }
+      else $array[$key] = self::cast($value);
       
     }
     
@@ -92,160 +399,40 @@ trait Cast_List {
     
   }
   
-  private function list() {
+  // Cast a value to type `list`. [alias]
+  public static function toList( $value ) { return forward_static_call('Cast::toArray', $value); }
+  
+  // Cast a value to type `bool`.
+  public static function toBool( $value ) { 
     
-    return $this->array();
+    // Return truthy values.
+    if( self::isTruthy($value) ) return forward_static_call('Cast::toTruthy', $value);
     
+    // Return falsey values.
+    if( self::isFalsey($value) ) return forward_static_call('Cast::toFalsey', $value);
+    
+    // Otherwise, literally convert the value to boolean.
+    return (bool) $value;
+  
   }
   
-}
-
-// Build text casts.
-trait Cast_Text {
+  // Cast a value to type `bool`. [alias]
+  public static function toBoolean( $value ) { return forward_static_call('Cast::toBoolean', $value); }
   
-  private function string() { return $this->data; }
+  // Cast a value to type `truthy`.
+  public static function toTruthy( $value ) { return true; }
   
-  private function text() { return $this->string(); }
+  // Cast a value to type `falsey`.
+  public static function toFalsey( $value ) { return false; }
   
-}
-
-// Build null casts.
-trait Cast_Null {
+  // Cast a value to type `null`.
+  public static function toNull( $value ) { return null; }
   
-  private function null() { return null; }
+  // Cast a value to type `string`.
+  public static function toString( $value ) { return (string) $value; }
   
-}
-
-// Creates a `Cast` class for easy typification.
-class Cast {
-  
-  // Use helpers.
-  use Cast_Number, Cast_Date, Cast_Boolean, Cast_List, Cast_Text, Cast_Null;
-  
-  // Determine input data type.
-  private $is_array = false;
-  
-  // Capture the data.
-  protected $data;
-  
-  // Determine the type.
-  protected $type = 'string';
-  
-  // Define regular expressions.
-  private $regex = [
-    'array' => '/^((?:\S|\ )+?,)+?(\S|\ )+?$/',
-    'list' => '/^([^.?!]+?[,;] ?)+([^.?!]+)$/'
-  ];
-  
-  // Constructor
-  function __construct( $data ) {
-    
-    // Set the input data type.
-    if( is_array($data) ) $this->is_array = true;
-    
-    // Save the data.
-    $this->data = $data;
-    
-    // Determine the data type.
-    if( $this->is_array ) $this->typeAll();
-    else $this->type();
-    
-  }
-  
-  // Check data type.
-  private function type() { 
-    
-    // Check numeric types.
-    if( is_numeric($this->data) ) $this->type = strpos($this->data, '.') !== false ? 'float' : 'int';
-    
-    // Check for date types.
-    else if( preg_match('/\d/', $this->data) and (bool) strtotime($this->data) ) $this->type = 'date';
-    
-    // Check for array types.
-    else if( preg_match($this->regex['array'], $this->data) ) $this->type = 'array';
-    
-    // Check for boolean types.
-    else if( in_array(((string) $this->data), ['true', 'false']) ) $this->type = 'bool';
-    
-    // Check for list types.
-    else if( preg_match($this->regex['list'], $this->data) ) $this->type = 'list';
-    
-    // Check for null types.
-    else if( in_array($this->data, ['null', null]) ) $this->type = 'null';
-    
-  }
-  
-  // Check data type for arrays.
-  private function typeAll() {
-    
-    foreach( $this->data as $key => $value ) {
-      
-      $this->data[$key] = new Cast($value);
-      
-    }
-    
-  }
-  
-  // Cast the value to its data type.
-  public function cast( $deep = true ) {
-    
-    // Neatly handle arrays.
-    if( $this->is_array ) return $this->castAll($deep);
-      
-    // Otherwise, handle non-arrays.
-    else {
-    
-      // Generate a shallow cast.
-      $cast = $this->{$this->type}();
-
-      // Initialize a helper for handling recursive casts.
-      $recursive = function( array $array ) {
-
-        foreach( $array as $key => $value ) {
-
-          if( is_array($value) ) $array[$key] = $recursive($value);
-
-          else if( $value instanceof Cast ) $array[$key] = $value->cast(true);
-
-        }
-
-        return $array;
-
-      };
-
-      // Perform a deep cast (recursive).
-      if( $deep and is_array($cast) ) $cast = $recursive($cast);
-
-      // Return the cast.
-      return $cast;
-      
-    }
-    
-  }
-  
-  // Cast the value to its data type for arrays.
-  public function castAll( $deep = true ) {
-
-    // Neatly handle non-arrays.
-    if( !$this->is_array ) return $this->cast($deep);
-      
-    // Otherwise, handle arrays.
-    else {
-    
-      // Cast all values within the array.
-      foreach( $this->data as $key => $value ) {
-        
-        // Save the casted array value.
-        $this->data[$key] = $value->cast($deep); 
-      
-      }
-
-      // Return the casted array.
-      return $this->data;
-      
-    }
-    
-  }
+  // This does nothing but is needed in order to prevent PHP from whining.
+  function __construct() {}
   
 }
 
