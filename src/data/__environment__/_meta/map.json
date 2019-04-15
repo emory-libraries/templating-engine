@@ -1,0 +1,729 @@
+{
+  "map": [
+    {
+      "id": "woodruff",
+      "name": "Robert W. Woodruff Library",
+      "alias": "Woodruff Library",
+      "placeID": "ChIJoa9vdPAG9YgRftip3eIDvd0",
+      "addressComponents": [
+        {
+          "longName": "540",
+          "shortName": "540",
+          "types": [
+            "street_number"
+          ]
+        },
+        {
+          "longName": "Asbury Circle",
+          "shortName": "Asbury Cir",
+          "types": [
+            "route"
+          ]
+        },
+        {
+          "longName": "Atlanta",
+          "shortName": "Atlanta",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "longName": "DeKalb County",
+          "shortName": "Dekalb County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "longName": "Georgia",
+          "shortName": "GA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "longName": "United States",
+          "shortName": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        },
+        {
+          "longName": "30322",
+          "shortName": "30322",
+          "types": [
+            "postal_code"
+          ]
+        }
+      ],
+      "adrAddress": "<span class=\"street-address\">540 Asbury Cir</span>, <span class=\"locality\">Atlanta</span>, <span class=\"region\">GA</span> <span class=\"postal-code\">30322</span>, <span class=\"country-name\">USA</span>",
+      "formattedAddress": "540 Asbury Cir, Atlanta, GA 30322, USA",
+      "geometry": {
+        "location": {
+          "lat": 33.7905688,
+          "lng": -84.32292009999999
+        },
+        "viewport": {
+          "northeast": {
+            "lat": 33.7918786302915,
+            "lng": -84.32159736970848
+          },
+          "southwest": {
+            "lat": 33.7891806697085,
+            "lng": -84.3242953302915
+          }
+        }
+      },
+      "plusCode": {
+        "compoundCode": "QMRG+6R Druid Hills, Georgia, United States",
+        "globalCode": "865QQMRG+6R"
+      },
+      "scope": "GOOGLE",
+      "url": "https://maps.google.com/?cid=15977931325896775806",
+      "utcOffset": -300,
+      "vicinity": "540 Asbury Circle, Atlanta",
+      "cid": "15977931325896775806"
+    },
+    {
+      "id": "rose",
+      "name": "Manuscript, Archives, and Rare Book Library",
+      "alias": "Rose Library",
+      "placeID": "ChIJwQJNdPAG9YgRWMXTLEq7CQY",
+      "addressComponents": [
+        {
+          "longName": "540",
+          "shortName": "540",
+          "types": [
+            "street_number"
+          ]
+        },
+        {
+          "longName": "Asbury Circle",
+          "shortName": "Asbury Cir",
+          "types": [
+            "route"
+          ]
+        },
+        {
+          "longName": "Atlanta",
+          "shortName": "Atlanta",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "longName": "DeKalb County",
+          "shortName": "Dekalb County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "longName": "Georgia",
+          "shortName": "GA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "longName": "United States",
+          "shortName": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        },
+        {
+          "longName": "30307",
+          "shortName": "30307",
+          "types": [
+            "postal_code"
+          ]
+        }
+      ],
+      "adrAddress": "<span class=\"street-address\">540 Asbury Cir</span>, <span class=\"locality\">Atlanta</span>, <span class=\"region\">GA</span> <span class=\"postal-code\">30307</span>, <span class=\"country-name\">USA</span>",
+      "formattedAddress": "540 Asbury Cir, Atlanta, GA 30307, USA",
+      "geometry": {
+        "location": {
+          "lat": 33.7905688,
+          "lng": -84.32292009999999
+        },
+        "viewport": {
+          "northeast": {
+            "lat": 33.79205288029149,
+            "lng": -84.3213331197085
+          },
+          "southwest": {
+            "lat": 33.7893549197085,
+            "lng": -84.3240310802915
+          }
+        }
+      },
+      "plusCode": {
+        "compoundCode": "QMRG+6R Druid Hills, Georgia, United States",
+        "globalCode": "865QQMRG+6R"
+      },
+      "scope": "GOOGLE",
+      "url": "https://maps.google.com/?cid=435084766272013656",
+      "utcOffset": -300,
+      "vicinity": "540 Asbury Circle, Atlanta",
+      "cid": "435084766272013656"
+    },
+    {
+      "id": "business",
+      "name": "Goizueta Business Library",
+      "alias": "Business Library",
+      "placeID": "ChIJwT1ZdPAG9YgRPINQzrgbst0",
+      "addressComponents": [
+        {
+          "longName": "540",
+          "shortName": "540",
+          "types": [
+            "street_number"
+          ]
+        },
+        {
+          "longName": "Asbury Circle",
+          "shortName": "Asbury Cir",
+          "types": [
+            "route"
+          ]
+        },
+        {
+          "longName": "Atlanta",
+          "shortName": "Atlanta",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "longName": "DeKalb County",
+          "shortName": "Dekalb County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "longName": "Georgia",
+          "shortName": "GA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "longName": "United States",
+          "shortName": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        },
+        {
+          "longName": "30307",
+          "shortName": "30307",
+          "types": [
+            "postal_code"
+          ]
+        }
+      ],
+      "adrAddress": "<span class=\"street-address\">540 Asbury Cir</span>, <span class=\"locality\">Atlanta</span>, <span class=\"region\">GA</span> <span class=\"postal-code\">30307</span>, <span class=\"country-name\">USA</span>",
+      "formattedAddress": "540 Asbury Cir, Atlanta, GA 30307, USA",
+      "geometry": {
+        "location": {
+          "lat": 33.7905688,
+          "lng": -84.32292009999999
+        },
+        "viewport": {
+          "northeast": {
+            "lat": 33.79205288029149,
+            "lng": -84.3213331197085
+          },
+          "southwest": {
+            "lat": 33.7893549197085,
+            "lng": -84.3240310802915
+          }
+        }
+      },
+      "plusCode": {
+        "compoundCode": "QMRG+6R Druid Hills, Georgia, United States",
+        "globalCode": "865QQMRG+6R"
+      },
+      "scope": "GOOGLE",
+      "url": "https://maps.google.com/?cid=15974861308785886012",
+      "utcOffset": -300,
+      "vicinity": "540 Asbury Circle, Atlanta",
+      "cid": "15974861308785886012"
+    },
+    {
+      "id": "health",
+      "name": "Woodruff Health Sciences Center Library",
+      "alias": "Health Sciences Library",
+      "placeID": "ChIJSSVc2fkG9YgR7PCZbN2ZK3o",
+      "addressComponents": [
+        {
+          "longName": "1462",
+          "shortName": "1462",
+          "types": [
+            "street_number"
+          ]
+        },
+        {
+          "longName": "Clifton Road",
+          "shortName": "Clifton Rd",
+          "types": [
+            "route"
+          ]
+        },
+        {
+          "longName": "Atlanta",
+          "shortName": "Atlanta",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "longName": "DeKalb County",
+          "shortName": "Dekalb County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "longName": "Georgia",
+          "shortName": "GA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "longName": "United States",
+          "shortName": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        },
+        {
+          "longName": "30322",
+          "shortName": "30322",
+          "types": [
+            "postal_code"
+          ]
+        },
+        {
+          "longName": "1000",
+          "shortName": "1000",
+          "types": [
+            "postal_code_suffix"
+          ]
+        }
+      ],
+      "adrAddress": "<span class=\"street-address\">1462 Clifton Rd</span>, <span class=\"locality\">Atlanta</span>, <span class=\"region\">GA</span> <span class=\"postal-code\">30322-1000</span>, <span class=\"country-name\">USA</span>",
+      "formattedAddress": "1462 Clifton Rd, Atlanta, GA 30322, USA",
+      "geometry": {
+        "location": {
+          "lat": 33.79615,
+          "lng": -84.32236499999999
+        },
+        "viewport": {
+          "northeast": {
+            "lat": 33.79761753029149,
+            "lng": -84.3207620197085
+          },
+          "southwest": {
+            "lat": 33.79491956970849,
+            "lng": -84.3234599802915
+          }
+        }
+      },
+      "plusCode": {
+        "compoundCode": "QMWH+F3 Druid Hills, Georgia, United States",
+        "globalCode": "865QQMWH+F3"
+      },
+      "scope": "GOOGLE",
+      "url": "https://maps.google.com/?cid=8803299072914616556",
+      "utcOffset": -300,
+      "vicinity": "1462 Clifton Road, Atlanta",
+      "cid": "8803299072914616556"
+    },
+    {
+      "id": "law",
+      "name": "Hugh F. MacMillan Law Library",
+      "alias": "Law Library",
+      "placeID": "ChIJNy79vvoG9YgR6L0rtQQ8d88",
+      "addressComponents": [
+        {
+          "longName": "1301",
+          "shortName": "1301",
+          "types": [
+            "street_number"
+          ]
+        },
+        {
+          "longName": "Clifton Road",
+          "shortName": "Clifton Rd",
+          "types": [
+            "route"
+          ]
+        },
+        {
+          "longName": "Atlanta",
+          "shortName": "Atlanta",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "longName": "DeKalb County",
+          "shortName": "Dekalb County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "longName": "Georgia",
+          "shortName": "GA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "longName": "United States",
+          "shortName": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        },
+        {
+          "longName": "30322",
+          "shortName": "30322",
+          "types": [
+            "postal_code"
+          ]
+        },
+        {
+          "longName": "1013",
+          "shortName": "1013",
+          "types": [
+            "postal_code_suffix"
+          ]
+        }
+      ],
+      "adrAddress": "<span class=\"street-address\">1301 Clifton Rd</span>, <span class=\"locality\">Atlanta</span>, <span class=\"region\">GA</span> <span class=\"postal-code\">30322-1013</span>, <span class=\"country-name\">USA</span>",
+      "formattedAddress": "1301 Clifton Rd, Atlanta, GA 30322, USA",
+      "geometry": {
+        "location": {
+          "lat": 33.7902815,
+          "lng": -84.32011109999999
+        },
+        "viewport": {
+          "northeast": {
+            "lat": 33.7916372802915,
+            "lng": -84.31915331970849
+          },
+          "southwest": {
+            "lat": 33.7889393197085,
+            "lng": -84.3218512802915
+          }
+        }
+      },
+      "plusCode": {
+        "compoundCode": "QMRH+4X Druid Hills, Georgia, United States",
+        "globalCode": "865QQMRH+4X"
+      },
+      "scope": "GOOGLE",
+      "url": "https://maps.google.com/?cid=14949483478996729320",
+      "utcOffset": -300,
+      "vicinity": "1301 Clifton Road, Atlanta",
+      "cid": "14949483478996729320"
+    },
+    {
+      "id": "music",
+      "name": "Marian K. Heilbrun Music & Media Library",
+      "alias": "Music & Media Library",
+      "placeID": "ChIJDxpNdPAG9YgRm9r6VBQstd0",
+      "addressComponents": [
+        {
+          "longName": "540",
+          "shortName": "540",
+          "types": [
+            "street_number"
+          ]
+        },
+        {
+          "longName": "Asbury Circle",
+          "shortName": "Asbury Cir",
+          "types": [
+            "route"
+          ]
+        },
+        {
+          "longName": "Atlanta",
+          "shortName": "Atlanta",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "longName": "DeKalb County",
+          "shortName": "Dekalb County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "longName": "Georgia",
+          "shortName": "GA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "longName": "United States",
+          "shortName": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        },
+        {
+          "longName": "30322",
+          "shortName": "30322",
+          "types": [
+            "postal_code"
+          ]
+        }
+      ],
+      "adrAddress": "<span class=\"street-address\">540 Asbury Cir</span>, <span class=\"locality\">Atlanta</span>, <span class=\"region\">GA</span> <span class=\"postal-code\">30322</span>, <span class=\"country-name\">USA</span>",
+      "formattedAddress": "540 Asbury Cir, Atlanta, GA 30322, USA",
+      "geometry": {
+        "location": {
+          "lat": 33.7905688,
+          "lng": -84.32292009999999
+        },
+        "viewport": {
+          "northeast": {
+            "lat": 33.79205288029149,
+            "lng": -84.3213331197085
+          },
+          "southwest": {
+            "lat": 33.7893549197085,
+            "lng": -84.3240310802915
+          }
+        }
+      },
+      "plusCode": {
+        "compoundCode": "QMRG+6R Druid Hills, Georgia, United States",
+        "globalCode": "865QQMRG+6R"
+      },
+      "scope": "GOOGLE",
+      "url": "https://maps.google.com/?cid=15975723719003396763",
+      "utcOffset": -300,
+      "vicinity": "540 Asbury Circle, Atlanta",
+      "cid": "15975723719003396763"
+    },
+    {
+      "id": "oxford",
+      "name": "Oxford College Library at Emory University",
+      "alias": "Oxford College Library",
+      "placeID": "ChIJU7gbS-o09IgRePAaRk61PyY",
+      "addressComponents": [
+        {
+          "longName": "134",
+          "shortName": "134",
+          "types": [
+            "street_number"
+          ]
+        },
+        {
+          "longName": "Few Circle",
+          "shortName": "Few Cir",
+          "types": [
+            "route"
+          ]
+        },
+        {
+          "longName": "Oxford",
+          "shortName": "Oxford",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "longName": "Newton County",
+          "shortName": "Newton County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "longName": "Georgia",
+          "shortName": "GA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "longName": "United States",
+          "shortName": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        },
+        {
+          "longName": "30054",
+          "shortName": "30054",
+          "types": [
+            "postal_code"
+          ]
+        }
+      ],
+      "adrAddress": "<span class=\"street-address\">134 Few Cir</span>, <span class=\"locality\">Oxford</span>, <span class=\"region\">GA</span> <span class=\"postal-code\">30054</span>, <span class=\"country-name\">USA</span>",
+      "formattedAddress": "134 Few Cir, Oxford, GA 30054, USA",
+      "geometry": {
+        "location": {
+          "lat": 33.6199204,
+          "lng": -83.8722755
+        },
+        "viewport": {
+          "northeast": {
+            "lat": 33.6213533302915,
+            "lng": -83.8709459197085
+          },
+          "southwest": {
+            "lat": 33.6186553697085,
+            "lng": -83.87364388029151
+          }
+        }
+      },
+      "plusCode": {
+        "compoundCode": "J49H+X3 Oxford, Georgia, United States",
+        "globalCode": "865RJ49H+X3"
+      },
+      "scope": "GOOGLE",
+      "url": "https://maps.google.com/?cid=2756120844762280056",
+      "utcOffset": -300,
+      "vicinity": "134 Few Circle, Oxford",
+      "cid": "2756120844762280056"
+    },
+    {
+      "id": "theology",
+      "name": "Pitts Theology Library",
+      "alias": "Theology Library",
+      "placeID": "ChIJMaHvTPAG9YgRu3LJds99wnc",
+      "addressComponents": [
+        {
+          "longName": "560",
+          "shortName": "560",
+          "types": [
+            "subpremise"
+          ]
+        },
+        {
+          "longName": "1531",
+          "shortName": "1531",
+          "types": [
+            "street_number"
+          ]
+        },
+        {
+          "longName": "Dickey Drive",
+          "shortName": "Dickey Dr",
+          "types": [
+            "route"
+          ]
+        },
+        {
+          "longName": "Atlanta",
+          "shortName": "Atlanta",
+          "types": [
+            "locality",
+            "political"
+          ]
+        },
+        {
+          "longName": "DeKalb County",
+          "shortName": "Dekalb County",
+          "types": [
+            "administrative_area_level_2",
+            "political"
+          ]
+        },
+        {
+          "longName": "Georgia",
+          "shortName": "GA",
+          "types": [
+            "administrative_area_level_1",
+            "political"
+          ]
+        },
+        {
+          "longName": "United States",
+          "shortName": "US",
+          "types": [
+            "country",
+            "political"
+          ]
+        },
+        {
+          "longName": "30322",
+          "shortName": "30322",
+          "types": [
+            "postal_code"
+          ]
+        }
+      ],
+      "adrAddress": "<span class=\"street-address\">1531 Dickey Dr #560</span>, <span class=\"locality\">Atlanta</span>, <span class=\"region\">GA</span> <span class=\"postal-code\">30322</span>, <span class=\"country-name\">USA</span>",
+      "formattedAddress": "1531 Dickey Dr #560, Atlanta, GA 30322, USA",
+      "geometry": {
+        "location": {
+          "lat": 33.7917358,
+          "lng": -84.3257819
+        },
+        "viewport": {
+          "northeast": {
+            "lat": 33.79314473029149,
+            "lng": -84.3243155697085
+          },
+          "southwest": {
+            "lat": 33.7904467697085,
+            "lng": -84.32701353029151
+          }
+        }
+      },
+      "plusCode": {
+        "compoundCode": "QMRF+MM Druid Hills, Georgia, United States",
+        "globalCode": "865QQMRF+MM"
+      },
+      "scope": "GOOGLE",
+      "url": "https://maps.google.com/?cid=8629598165999907515",
+      "utcOffset": -300,
+      "vicinity": "1531 Dickey Drive #560, Atlanta",
+      "cid": "8629598165999907515"
+    }
+  ]
+}
