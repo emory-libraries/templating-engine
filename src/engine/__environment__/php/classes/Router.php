@@ -1,114 +1,135 @@
 <?php
 
-// Initialize utility methods.
+/*
+ * Router Utilities
+ *
+ * Utility methods for the Router class.
+ */
 trait Router_Utilities {
   
-  // Attempt to load and parse routes from a router file.
-  private function __loadRoutes() {
+  // Map routes to router endpoints.
+  private static function mapRoutesToEndpoints( array $routes, Index $index ) {
     
-    // Initialize the results.
-    $result = [];
+    // Initialize endpoints.
+    $endpoints = [];
     
-    // Get the router file's path.
-    // NOTE: If router file is `.xml`, will need to create `XMLParser` class to use here and with `Data::__parseXML`
-    $path = ENGINE_ROOT."/config/router.json";
-
-    // Verify that the router file exists.
-    if( file_exists($path) ) {
+    // Traverse the routes.
+    foreach( $routes as $id => $route ) {
       
-      // Read the router file. 
-      $result = json_decode(file_get_contents($path), true);
+      // Recursively map routes within nested arrays to their endpoints.
+      if( is_array($route) ) $endpoints = array_merge($endpoints, self::mapRoutesToEndpoints($route, $index));
+      
+      // Otherwise, map the current route to its endpoint.
+      else $endpoints[] = new Endpoint($route, $index);
       
     }
     
-    // Return the results.
-    return $result;
+    // Return endpoints.
+    return $endpoints;
     
   }
   
-  // Filter an array based on a exact key-value match.
-  private function __filterRoutesExact( $key, $value ) {
+}
+
+/*
+ * Router
+ * 
+ * Interprets route data from an index and creates an endpoint API.
+ * The router is what's responsible for rendering valid endpoints,
+ * redirecting for endpoints with redirects, and/or forcing an error
+ * page for all invalid and unknown routes. 
+ */
+class Router {
+  
+  // Load utility methods.
+  use Router_Utilities;
+  
+  // The list of known routes found in the index.
+  protected $routes = [];
+  
+  // The set of recognized endpoints within the site.
+  protected $endpoints = [];
+  
+  // Constructs the router.
+  function __construct( Index $index ) {
     
-    // Return the exact match.
-    return array_filter_key($key, $value, $this->routes);
+    // Save the routes in the index.
+    $this->routes = $index->routes;
+
+    // Map routes to endpoints.
+    $this->endpoints = self::mapRoutesToEndpoints($index->routes, $index);
     
   }
   
-  // Filter an array based on a close key-value match.
-  private function __filterRoutesClose( $key, $value ) {
+  // Determines if an endpoint exists.
+  function endpointExists( $endpoint ) {
     
-    // Return the close match.
-    return array_values(array_filter($this->routes, function($route) use ($key, $value) {
+    // Lookup the endpoint in the collection of known endpoints.
+    $endpoint = array_values(array_filter($this->endpoints, function($data) use ($endpoint) {
       
-      // Determine if the route is dynamic.
-      $dynamic = isset($route['dynamic']) ? $route['dynamic'] : false;
-     
-      // Find the route path that almost matches the given path.
-      return ($dynamic and strpos($value, $route[$key]) === 0);
+      // Find the endpoint object with the given endpoint.
+      return $data->endpoint == $endpoint;
       
     }));
     
-  }
-  
-}
-
-// Initalize the router's `GET` methods.
-trait Router_GET {
-  
-  // Get all routes.
-  public function getRoutes() { return $this->routes; }
-  
-  // Get a single route by path.
-  public function getRouteByPath( $path ) {
-    
-    // Filter routes for the exact path.
-    $result = $this->__filterRoutesExact('path', $path);
-    
-    // Otherwise, filter routes for a dynamic path.
-    if( empty($result) ) {
-      
-      // Find any route data.
-      $result = $this->__filterRoutesClose('path', $path);
-      
-      // Extract endpoint data from the path if applicable.
-      if( !empty($result) ) { 
-        
-        // Extract endpoint data for the path(s).
-        foreach( $result as &$route ) {
-          
-          // Define a regex.
-          $regex = '/^'.preg_quote($route['path'], '/').'/';
-          
-          // Identify the dynamic portion of the path.
-          $route['endpoint'] = preg_replace($regex, '/', $path);
-          
-        }
-        
-      }
-      
-    }
-
-    // Return the route or nothing otherwise.
-    return (!empty($result) ? $result[0] : null);
+    // Return whether or not the endpoint exists.
+    return isset($endpoint[0]);
     
   }
   
-}
-
-// Creates a `Router` class for handling endpoints.
-class Router {
-  
-  // Load traits.
-  use Router_Utilities, Router_GET;
-  
-  // Capture route data.
-  private $routes = [];
-  
-  // Constructor
-  function __construct() {
+  // Determines if an endpoint redirects.
+  function endpointRedirects( $endpoint ) {
     
-    // Attempt to load route data.
-    $this->routes = $this->__loadRoutes();
+    // Lookup the endpoint in the collection of known endpoints.
+    $endpoint = array_values(array_filter($this->endpoints, function($data) use ($endpoint) {
+      
+      // Find the endpoint object with the given endpoint.
+      return $data->endpoint == $endpoint;
+      
+    }));
+    
+    // Return whether or not the endpoint exists.
+    return isset($endpoint[0]);
+    
+  }
+  
+  // Gets the endpoint object for a given endpoint.
+  function getEndpoint( $endpoint ) {
+    
+    // Lookup the endpoint in the collection of known endpoints.
+    $endpoint = array_values(array_filter($this->endpoints, function($data) use ($endpoint) {
+      
+      // Find the endpoint object with the given endpoint.
+      return (is_array($data->endpoint) ? in_array($endpoint, $data->endpoint) : $data->endpoint == $endpoint);
+      
+    }));
+    
+    // Return the endpoint if it exists, or use a 404 error endpoint otherwise.
+    return (isset($endpoint[0]) ? $endpoint[0] : $this->getEndpoint('/404'));
+    
+  }
+  
+  // Redirects to a different page using either an internal URI or an external URL.
+  function redirect( $path, $permanent = false ) {
+    
+    // Detect URLs and redirect.
+    header("Location: $path", true, ($permanent ? 301 : 302));
+    
+  }
+  
+  // Renders an endpoint. 
+  // If the endpoint redirects, then it will redirect the given location.
+  // If the endpoint doesn't exist, then it will render an error page instead.
+  function render( $endpoint ) {
+    
+    // Get the endpoint object for the given endpoint.
+    $endpoint = $this->getEndpoint($endpoint);
+   
+    // If the endpoint redirects, redirect to the new location.
+    if( $endpoint->redirect !== false ) return $this->redirect($endpoint['redirect']);
+    
+    // Otherwise, render the endpoint.
+    return Renderer::render($endpoint);
     
   }
   
