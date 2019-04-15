@@ -1,53 +1,24 @@
 <?php
 
-// Converts a string into its attribute-friendly version.
-function strtoattr( string $string, $delimiter = '-', $regex = "/[^A-Za-z0-9\/\-\ ]/" ) {
-  
-  // Force the string to be lowercase.
-  $string = strtolower($string);
-  
-  // Remove all special characters from the string, and trim whitespace.
-  $string = trim(preg_replace($regex, '', $string));
-  
-  // Replace all spaces and forward slashes in the string with a dash.
-  $string = preg_replace('/[\/\ ]/', $delimiter, $string);
+// Convert a string to kebabcase.
+function kebabcase( string $string ) { return _::kebabCase($string); }
 
-  // Eliminate all duplicate delimiters within the string.
-  $string = preg_replace("/{$delimiter}+/", $delimiter, $string);
-
-  // Remove numbers from the start of the string.
-  $string = preg_replace('/^[0-9]+/', '', $string);
+// Convert an array key to kebabcase.
+function kebabcase_key( string $key ) {
   
-  // Return the cleaned string.
-  return $string;
+  // Assume the key is in dot notation, and slugify each part.
+  return implode('.', array_map('kebabcase', explode('.', $key)));
   
 }
 
-// Converts a string into its slug equivalent.
-function strtoslug( string $string, $delimiter = '-', $regex = "/[^A-Za-z0-9\/\-\ ]/" ) {
-  
-  // Alias for `strtoattr`.
-  return strtoattr($string, $delimiter, $regex);
-  
-}
+// Convert a string to camelcase.
+function camelcase( string $string ) { return _::camelCase($string); }
 
-// Converts a string to a camelcase format, removing any delimiters and spaces.
-function strtocamel( string $string, $delimiters = '-_ ' ) {
+// Convert an array key to camelcase.
+function camelcase_key( string $key ) {
   
-  // Convert the delimiters to a regex-friendly format.
-  $delimiters = implode('|', array_map('preg_quote', str_split($delimiters)));
-
-  // Extract the delimiters.
-  $new = preg_split('/'.$delimiters.'/', $string);
-
-  // Pull out the first part of the string.
-  $first = array_shift($new); 
-  
-  // Capitalize all remaining parts of the string.
-  $new = array_map('ucfirst', $new); 
-  
-  // Recombine and return string.
-  return $first.implode('', $new);
+  // Assume the key is in dot notation, and camelcase each part.
+  return implode('.', array_map('camelcase', explode('.', $key)));
   
 }
 
