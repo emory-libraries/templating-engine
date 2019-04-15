@@ -12,6 +12,15 @@ function scandir_clean( $path ) {
 
 function scandir_recursive( $path, $prefix = '' ) {
   
+  // Remove trailing slashes from the prefix.
+  $prefix = rtrim($prefix, '/');
+  
+  // Remove trailing slashes from the path.
+  $path = rtrim($path, '/');
+  
+  // Format prefix.
+  $prefix = isset($prefix) ? "{$prefix}/" : "";
+  
   // Scan the contents of the directory.
   $contents = scandir_clean($path);
   
@@ -23,19 +32,20 @@ function scandir_recursive( $path, $prefix = '' ) {
 
     // Get the subdirectory path.
     $subdir = "$path/$file"; 
+    
 
     // Determine if the subdirectory exists.
     if( is_dir($subdir) ) {
 
       // Continue scanning the subdirectory for files.
-      $results = array_merge($results, scandir_recursive($subdir, "$file/"));
+      $results = array_merge($results, scandir_recursive($subdir, $prefix.$file));
 
     }
     
     // Otherwise, a file was found.
     else {
       
-      $results[] = "{$prefix}{$file}";
+      $results[] = $prefix.$file;
       
     }
 
