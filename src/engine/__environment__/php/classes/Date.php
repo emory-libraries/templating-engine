@@ -124,6 +124,11 @@ class Date {
       // Continue parsing date and time parts.
       $date['string'] = $string;
       $date['month'] = is_numeric($month) ? (int) $month : array_search($month, self::$months) + 1;
+      
+      // Validate that the month is value.
+      if( $date['month'] < 1 or $date['month'] > 12 ) return false;
+   
+      // Continue parsing data and time parts.
       $date['month_name'] = self::$months[$date['month'] - 1];
       $date['day'] = is_numeric($day) ? (int) $day : 1;
       $date['days_in_month'] = self::$days_in_month[$date['month'] - 1];
