@@ -111,7 +111,18 @@ class Router {
   
   // Redirects to a different page using either an internal URI or an external URL.
   function redirect( $path, $permanent = false ) {
-    
+
+    // Convert relative paths to absolute paths.
+    if( preg_match('/^(?!(http(s)?:)?\/\/).+$/i', $path) ) {
+      
+      // Get the site's base path.
+      $site = cleanpath('/'.str_replace(CONFIG['document']['root'], '', CONFIG['site']['root']));
+      
+      // Get the site's absolute path to the destination.
+      $path = absolute_path_from_root($site."/$path");
+      
+    }
+
     // Detect URLs and redirect.
     header("Location: $path", true, ($permanent ? 301 : 302));
     
@@ -126,7 +137,7 @@ class Router {
     $endpoint = $this->getEndpoint($endpoint);
    
     // If the endpoint redirects, redirect to the new location.
-    if( $endpoint->redirect !== false ) return $this->redirect($endpoint['redirect']);
+    if( $endpoint->redirect !== false ) return $this->redirect($endpoint->redirect);
     
     // Otherwise, render the endpoint.
     return Renderer::render($endpoint);
