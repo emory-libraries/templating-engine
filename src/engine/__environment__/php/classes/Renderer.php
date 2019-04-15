@@ -12,7 +12,7 @@ use SuperClosure\Serializer;
 class Renderer {
   
   // Set flags for the handlebars engine.
-  public static $flags = LightnCandy::FLAG_HANDLEBARSJS|
+  public static $flags = LightnCandy::FLAG_HANDLEBARSJS |
                          LightnCandy::FLAG_THIS |
                          LightnCandy::FLAG_ELSE |
                          LightnCandy::FLAG_RUNTIMEPARTIAL |
@@ -65,7 +65,7 @@ class Renderer {
       'helpers' => self::$helpers,
       'partials' => self::$partials
     ])." ?>";
-    
+ 
     // Return the compiled template.
     return $php;
     
