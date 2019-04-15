@@ -2,33 +2,35 @@
   "meta": {
     "system": {
       "id": "calling-page.system-page.@attributes.id",
-      "link": "calling-page.system-page.link",
-      "link": "calling-page.system-page.site",
+      "cascade": {
+        "site": "calling-page.system-page.site",
+        "link": "calling-page.system-page.link"
+      },
       "created": {
-        "timestamp": "calling-page.system-page.created-on",
+        "datetime": "calling-page.system-page.created-on",
         "user": "calling-page.system-page.created-by"
       },
       "modified": {
-        "timestamp": "calling-page.system-page.last-modified",
+        "datetime": "calling-page.system-page.last-modified",
         "user": "calling-page.system-page.last-modified-by"
       },
       "published": {
-        "timestamp": "calling-page.system-page.last-published-on",
+        "datetime": "calling-page.system-page.last-published-on",
         "user": "calling-page.system-page.last-published-by"
       }
     },
     "name": "calling-page.system-page.name",
     "path": "calling-page.system-page.path",
-    "published": "calling-page.system-page.is-published"
+    "title": "calling-page.system-page.title",
+    "published": "calling-page.system-page.is-published",
+    "template": "calling-page.system-page.system-data-structure.@attributes.definition-path",
+    "version": "calling-page.system-page.system-data-structure.version",
+    "redirect": "calling-page.system-page.system-data-structure.redirect"
   },
   "data": "calling-page.system-page.system-data-structure",
   "config": {
-    "array": [
-      "section-content",
-      "book"
-    ],
     "html": [
-      "main"
+      "wysiwyg"
     ]
   }
 }
