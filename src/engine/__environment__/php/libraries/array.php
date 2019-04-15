@@ -1,12 +1,12 @@
 <?php
 
-// Retrieve a value from an array or return its literal interpretation (`null`).
+// Get a value from an array using dot notation or return the default value.
 function array_get( array $array, $keys, $default = null ) {
   
   // Set delimiter.
   $delimiter = '.';
   
-  // Permit dot-notation in key values.
+  // Permit dot notation in key values.
   $keys = explode($delimiter, $keys);
   
   // Initialize the result.
@@ -24,6 +24,101 @@ function array_get( array $array, $keys, $default = null ) {
   }
   
   // Return the result.
+  return $result;
+  
+}
+
+// Set a value within an array using dot notation.
+function array_set( array $array, $keys, $value, $override = false ) {
+
+  // Set delimiter.
+  $delimiter = '.';
+  
+  // Permit dot notation in keys values.
+  $keys = explode($delimiter, $keys);
+  
+  // Initialize the result.
+  $result = $array;
+  
+  // Intialize a pointer for traversing the array.
+  $pointer = &$result;
+  
+  // Get the key index and length.
+  $index = 0;
+  $length = count($keys);
+  
+  // Determine if the value can be set.
+  $set = false;
+  
+  // Find the target location.
+  foreach( $keys as $key ) {
+    
+    // Create the key if it doesn't exit.
+    if( !array_key_exists($key, $pointer) ) $pointer[$key] = [];
+    
+    // Otherwise, determine if the value should be overriden.
+    else if( !is_array($pointer[$key]) ) {
+      
+      // Prevent overriding of non-array values unless override flag is given.
+      if( $override ) $pointer[$key] = [];
+        
+      // Otherwise, the value should not be overriden, so stop trying.
+      else break;
+        
+    }
+    
+    // Move the pointer to the new location.
+    $pointer = &$pointer[$key];
+    
+    // Increment the index.
+    $index++;
+    
+    // Change the set flag if all keys were found without issues.
+    if( $index === $length ) $set = true;
+    
+  }
+  
+  // Set the new value.
+  if( $set ) $pointer = $value;
+  
+  // Return the array with the newly set value, or the unchanged array otherwise.
+  return $result;
+
+  
+}
+
+// Unset a value within an array using dot notation.
+function array_unset( array $array, $keys, $index = 0 ) {
+  
+  // Set delimiter.
+  $delimiter = '.';
+  
+  // Permit dot notation in keys values.
+  $keys = explode($delimiter, $keys);
+  
+  // Initialize the result.
+  $result = [];
+  
+  // Recursively duplicate the array but leave of the key.
+  foreach( $array as $key => $value ) {
+    
+    // See if the keys match, and ignore it only if its the target endpoint within the array.
+    if( $key == $keys[$index] ) {
+
+      // Ignore the value if it's the target endpoint within the array.
+      if( $index + 1 == count($keys) ) continue;
+      
+      // Otherwise, recursively look inside arrays.
+      else if( is_array($value) ) $result[$key] = array_unset($value, $keys, $index + 1);
+      
+    }
+    
+    // Otherwise, capture the value per usual.
+    else $result[$key] = $value;
+    
+  }
+  
+  // Return the array without the value, or the unchanged array otherwise.
   return $result;
   
 }
@@ -160,6 +255,78 @@ function array_filter_key( $key, $value, array $array ) {
     return $item[$key] == $value;
 
   }));
+  
+}
+
+// Merge two or more arrays while maintaining exact key values.
+function array_merge_exact( array $array, array ...$arrays ) {
+  
+  // Initialize the result.
+  $result = $array;
+  
+  // Merge the other arrays into the result.
+  foreach( $arrays as $array ) {
+    
+    // Merge each array maintaining its same key.
+    foreach( $array as $key => $value ) {
+      
+      // Merge the array item into the result.
+      $results[$key] = $value;
+      
+    }
+    
+  }
+  
+  // Return the result.
+  return $result;
+  
+}
+
+// Merge two or more arrays recursively while maintaining exact key values.
+function array_merge_exact_recursive( array $array, array ...$arrays ) {
+  
+  // Initialize the result.
+  $result = $array;
+  
+  // Merge the other arrays into the result.
+  foreach( $arrays as $array ) {
+    
+    // Merge each array maintaining its same key.
+    foreach( $array as $key => $value ) {
+      
+      // Merge into existing keys.
+      if( array_key_exists($key, $result) ) {
+        
+        // Recursively merge arrays.
+        if( is_array($result[$key]) ) {
+          
+          // Merge the array recursively.
+          $result[$key] = array_merge_exact_recursive($result[$key], $value);
+          
+        }
+        
+        // Otherwise, convert the existing key to an array.
+        else {
+          
+          // Convert the result to an array.
+          $result[$key] = [$result[$key]];
+
+          // Add to the new array item.
+          $result[$key][] = $value;
+          
+        }
+        
+      }
+      
+      // Otherwise, create the new key.
+      else $result[$key] = $value;
+      
+    }
+    
+  }
+  
+  // Return the result.
+  return $result;
   
 }
 
