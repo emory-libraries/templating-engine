@@ -25,7 +25,8 @@ class File {
     foreach( [
       CONFIG['data']['site']['root'],
       CONFIG['data']['environment']['root'],
-      CONFIG['patterns']['root']
+      CONFIG['patterns']['root'],
+      CONFIG['engine']['meta']
     ] as $remove ) { $directory = str_replace($remove, '', $directory); }
    
     // Convert the directory to kebabcase.

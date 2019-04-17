@@ -194,6 +194,9 @@ class Index {
       
     }, $environment);
     
+    // Merge any meta data from the templating engine into environment data.
+    if( array_get(CONFIG, 'meta') ) $environment['meta'] = array_merge($environment['meta'], CONFIG['meta']);
+    
     // Convert file lists to associative arrays.
     $environment = self::makeFilesAssociative($environment);
     $shared = self::makeFilesAssociative($shared);

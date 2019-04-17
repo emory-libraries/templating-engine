@@ -131,6 +131,7 @@ define('CONFIG', array_merge([
     'root' => ENGINE_ROOT,
     'config' => ENGINE_ROOT.'/config',
     'env' => ENGINE_ROOT.'/.env',
+    'meta' => ENGINE_ROOT.'/meta',
     'php' => ENGINE_ROOT.'/php',
     'classes' => ENGINE_ROOT.'/php/classes',
     'helpers' => ENGINE_ROOT.'/php/helpers',
@@ -236,6 +237,9 @@ define('CONFIG', array_merge([
     return array_set($config, $key, $contents);
     
   }, []),
+  
+  // Get the contents of all templating engine meta files.
+  'meta' => scandir_recursive(ENGINE_ROOT.'/meta', ENGINE_ROOT.'/meta'),
   
   // Get and load all icons.
   'icons' => array_reduce(scandir_clean(ENGINE_ROOT.'/icons/svg'), function($icons, $icon) {
