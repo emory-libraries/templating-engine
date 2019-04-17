@@ -331,5 +331,6 @@ module.exports = function(grunt) {
   grunt.registerTask('dist', [
     'build'
   ]);
+  grunt.registerTask('deploy', require(path.resolve('scripts/deploy.js')));
   
 };

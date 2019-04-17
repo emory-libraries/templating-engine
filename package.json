@@ -13,6 +13,14 @@
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-phplint": "^0.1.0",
-    "load-grunt-tasks": "^4.0.0"
+    "load-grunt-tasks": "^4.0.0",
+    "lodash": "^4.17.11"
+  },
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "fs-extra": "^7.0.1",
+    "inquirer": "^6.3.1",
+    "path": "^0.12.7",
+    "webdav": "^2.6.0"
   }
 }
