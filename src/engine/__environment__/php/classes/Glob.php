@@ -29,16 +29,19 @@ class Glob {
   }
   
   // Filters an array of paths for only paths that match a given glob pattern.
-  public static function filter( array $paths, $pattern, $flags == self::FILTER_VALUE ) {
+  public static function filter( array $paths, $pattern, $flags = self::FILTER_VALUE ) {
     
   }
   
   // Determines if a glob pattern is dynamic.
   public static function isDynamic( $glob ) {
     
-    return (strpos($glob '*') !== false or strpos($glob, '{') !== false or strpos($glob, '?') !== false or strpos($glob, '[') !== false); 
+    return (strpos($glob, '*') !== false or strpos($glob, '{') !== false or strpos($glob, '?') !== false or strpos($glob, '[') !== false); 
     
   }
+  
+  // Initialize a constructor to prevent error messages.
+  function __construct() {}
   
 }
 
