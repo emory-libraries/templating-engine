@@ -1,9 +1,0 @@
-{
-  "engines": [
-    {
-      "label": "Google Site Search",
-      "provider": "Google",
-      "url": "https://www.google.com/search?q=:query+site=:__site__.domain"
-    }
-  ]
-}
