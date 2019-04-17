@@ -1,32 +1,35 @@
 {
-	"regex": {
-		"prefix": "(?:<!--|\\/\\*|\\/\\/|#|--) *@?(",
-		"suffix": "):? *(.*?) ?(?=\\/\\*|-->|\\*\\/|\\r\\n|\\n|\\r|$)"
-	},
-	"tags": [
+  "regex": {
+    "prefix": "(?:<!--|\\/\\*|\\/\\/|#|--) *@?(",
+    "suffix": "):? *(.*?) ?(?=\\/\\*|-->|\\*\\/|\\r\\n|\\n|\\r|$)"
+  },
+  "tags": [
 		"TODO",
 		"NOTE",
 		"FIX ?ME",
 		"CHANGES",
 		"FUTURE"
 	],
-	"case": false,
-	"search": {
-		"scope": "project",
-		"excludeFolders": [
-			"vendor",
-			"node_modules",
-			"bower_components",
-			"dev",
-			"dist",
-			"public"
-		],
-		"excludeFiles": []
-	},
-	"sort": {
-		"done": true
-	},
-	"hide": {
-		"done": true
-	}
+  "case": false,
+  "search": {
+    "scope": "project",
+    "excludeFolders": [
+      "vendor",
+      "node_modules",
+      "bower_components",
+      "dev",
+      "dist",
+      "public",
+      "src/engine/__environment__/js",
+      "src/engine/__environment__/css",
+      "src/engine/__environment__/php/scripts"
+    ],
+    "excludeFiles": []
+  },
+  "sort": {
+    "done": true
+  },
+  "hide": {
+    "done": true
+  }
 }
