@@ -195,7 +195,7 @@ class Index {
     }, $environment);
     
     // Merge any meta data from the templating engine into environment data.
-    if( array_get(CONFIG, 'meta') ) $environment['meta'] = array_merge($environment['meta'], CONFIG['meta']);
+    if( array_get(CONFIG, 'meta') ) $environment['meta'] = array_merge(CONFIG['meta'], $environment['meta']);
     
     // Convert file lists to associative arrays.
     $environment = self::makeFilesAssociative($environment);
