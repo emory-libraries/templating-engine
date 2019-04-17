@@ -1,0 +1,9 @@
+{
+  "engines": [
+    {
+      "label": "Bing Site Search",
+      "provider": "Bing",
+      "url": "https://www.bing.com/search?q=:query+site=:__site__.domain"
+    }
+  ]
+}
