@@ -1,16 +1,16 @@
 <?php
 
 // Load dependencies.
-require_once "dependencies/autoload.php";
+require_once ENGINE_ROOT."/php/dependencies/autoload.php";
 
 // Load libraries.
-require_once "libraries/autoload.php";
+require_once ENGINE_ROOT."/php/libraries/autoload.php";
 
 // Load classes.
-require_once "classes/autoload.php";
+require_once ENGINE_ROOT."/php/classes/autoload.php";
 
 // Load configurations.
-require_once "config.php";
+require_once ENGINE_ROOT."/php/config.php";
 
 // Load environment variables.
 (Dotenv\Dotenv::create(dirname(CONFIG['engine']['env']), basename(CONFIG['engine']['env'])))->load();

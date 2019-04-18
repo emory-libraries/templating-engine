@@ -1,7 +1,7 @@
 <?php
 
 // Initialize the templating engine.
-require "init.php";
+require ENGINE_ROOT."/php/init.php";
 
 // Enable debugging during development.
 if( $_SERVER['HTTP_HOST'] == 'localhost' or $_SERVER['SERVER_NAME'] == 'localhost' or ENVIRONMENT == 'development' ) {
