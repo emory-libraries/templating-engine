@@ -15,20 +15,18 @@ module.exports = async function () {
   // Get the simulated environment settings
   const envsim = require(path.resolve('environment-sim.json'));
   
-  // Set environments.
-  const env = [
-    'dev',
-    'qa',
-    'staging',
-    'production'
-  ];
+  // Set environments and their remote folder names.
+  const env = {
+    'development':  'dev',
+    'qa':           'qa',
+    'staging':      'staging',
+    'production':   'prod'
+  };
   
   // Identify the local and remote paths to deploy.
   const paths = {
-    'src/data/__environment__/_meta': 'data/{{environment}}/_meta',
-    'src/data/__environment__/_global': 'data/{{environment}}/_global',
-    'src/data/__environment__/_shared': 'data/{{environment}}/_shared',
     'src/engine/__environment__/.env': 'engine/{{environment}}/.env',
+    'src/engine/__environment__/meta': 'engine/{{environment}}/meta',
     'src/engine/__environment__/config': 'engine/{{environment}}/config',
     'src/engine/__environment__/css': 'engine/{{environment}}/css',
     'src/engine/__environment__/js': 'engine/{{environment}}/js',
@@ -45,7 +43,7 @@ module.exports = async function () {
       name: 'environment',
       type: 'list',
       message: 'What is the environment you wish to deploy to?',
-      choices: env,
+      choices: Object.keys(env),
       default: envsim.environment
     },
     {
@@ -92,7 +90,7 @@ module.exports = async function () {
     const files = _.reduce(paths, (files, remote, local) => {
 
       // Get the remote and local paths
-      remote = remote.replace('{{environment}}', answers.environment);
+      remote = remote.replace('{{environment}}', env[answers.environment]);
       local = path.resolve(local);
 
       // Find all files at the local path.
