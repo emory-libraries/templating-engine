@@ -34,7 +34,8 @@ module.exports = async function () {
     'src/engine/__environment__/logos': 'engine/{{environment}}/logos',
     'src/engine/__environment__/images': 'engine/{{environment}}/images',
     'src/engine/__environment__/php': 'engine/{{environment}}/php',
-    'src/patterns/__environment__/': 'patterns/{{environment}}'
+    'src/patterns/__environment__': 'patterns/{{environment}}',
+    'vendor': 'engine/{{environment}}/php/dependencies',
   };
   
   // Initialize prompts.
