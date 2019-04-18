@@ -4,7 +4,7 @@ function scandir_clean( $path ) {
   
   return array_values(array_filter(scandir($path), function($file) {
         
-    return !in_array($file, ['.', '..', '.DS_Store']);
+    return !in_array($file, ['.', '..', '.DS_Store', '.DAV', '.acl']);
 
   }));
   
