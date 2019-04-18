@@ -2,7 +2,7 @@
 
 namespace HandlebarsLogging;
 
-use _;
+use __ as _;
 
 trait LogHelpers {
   

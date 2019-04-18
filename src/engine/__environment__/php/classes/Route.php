@@ -1,5 +1,7 @@
 <?php
 
+use __ as _;
+
 /*
  * Route
  *
@@ -87,11 +89,11 @@ class Route {
       $this->endpoint = $route['endpoint'];
       
       // Make the `index` keyword optional for index endpoints.
-      if( _::endsWith($this->endpoint, '/') ) $this->endpoint = [
+      if( str_ends_with($this->endpoint, '/') ) $this->endpoint = [
         $this->endpoint,
         $this->endpoint.'index'
       ];
-      else if( _::endsWith($this->endpoint, 'index') ) $this->endpoint = [
+      else if( str_ends_with($this->endpoint, 'index') ) $this->endpoint = [
         preg_replace('/index$/', '', $this->endpoint),
         $this->endpoint
       ];

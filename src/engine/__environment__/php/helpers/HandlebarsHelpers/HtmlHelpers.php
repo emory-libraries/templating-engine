@@ -2,7 +2,7 @@
 
 namespace HandlebarsHelpers;
 
-use _;
+use __ as _;
 use HTML;
 
 trait HtmlHelpers {

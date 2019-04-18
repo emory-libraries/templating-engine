@@ -2,6 +2,8 @@
 
 namespace HandlebarsLogging;
 
+use __ as _;
+
 trait DebugHelpers {
   
   // Outputs a debug statement with the current context.

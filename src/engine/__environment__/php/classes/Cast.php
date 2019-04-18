@@ -1,6 +1,6 @@
 <?php
 
-use _ as _;
+use __ as _;
 use Moment\Moment;
 
 /*
