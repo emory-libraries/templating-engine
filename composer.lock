@@ -104,16 +104,16 @@
         },
         {
             "name": "fightbulc/moment",
-            "version": "1.29.0",
+            "version": "1.30.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fightbulc/moment.php.git",
-                "reference": "bd57bba6d00dfa012e7b7b167e7006c6247ce3c8"
+                "reference": "2f232918b63cf37699cd692ccd1926c4a547fb32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fightbulc/moment.php/zipball/bd57bba6d00dfa012e7b7b167e7006c6247ce3c8",
-                "reference": "bd57bba6d00dfa012e7b7b167e7006c6247ce3c8",
+                "url": "https://api.github.com/repos/fightbulc/moment.php/zipball/2f232918b63cf37699cd692ccd1926c4a547fb32",
+                "reference": "2f232918b63cf37699cd692ccd1926c4a547fb32",
                 "shasum": ""
             },
             "require": {
@@ -153,7 +153,7 @@
                 "translation",
                 "validate"
             ],
-            "time": "2019-01-07T11:16:45+00:00"
+            "time": "2019-04-18T08:27:34+00:00"
         },
         {
             "name": "jeremeamia/SuperClosure",
@@ -653,7 +653,7 @@
         },
         {
             "name": "symfony/inflector",
-            "version": "v4.2.5",
+            "version": "v4.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/inflector.git",
@@ -877,7 +877,7 @@
         },
         {
             "name": "symfony/property-access",
-            "version": "v4.2.5",
+            "version": "v4.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/property-access.git",
@@ -944,7 +944,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v4.2.5",
+            "version": "v4.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
