@@ -202,7 +202,12 @@ class Index {
     $shared = self::makeFilesAssociative($shared);
     
     // Remove the shared key from site-specific shared file data because it's redundant.
-    foreach( $shared as $site => $files ) { $shared[$site] = $files['shared']; }
+    foreach( $shared as $site => $files ) { 
+      
+      // Collapse all shared data to a single level.
+      if( array_key_exists('shared', $files) ) $shared[$site] = $files['shared'];
+    
+    }
 
     // Return only the files listing if the read flag is not set.
     if( !$read ) {
