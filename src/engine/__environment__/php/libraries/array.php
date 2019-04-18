@@ -359,25 +359,25 @@ function array_tail( array $array ) {
 }
 
 // Filter an array by a given value.
-function array_filter_by( array $array, $value ) {
+function array_filter_by( array $array, $value = null ) {
   
-  // Assume string value should filter by an key.
+  // Assume string value should filter by a key.
   if( is_string($value) ) {
     
     return array_values(array_filter($array, function($v, $k) use ($value) {
       
-      return ($k == $value and $k);
+      return (array_key_exists($value, $v) and $v[$value]);
       
     }, ARRAY_FILTER_USE_BOTH));
     
   }
   
   // Assume non-associative array values should filter by a key and value.
-  if( is_array($value) and !is_associative_array($value) ) {
+  if( is_array($value) and !is_associative_array($value) ) { 
     
-    return array_values(array_filter($array, function($v, $k) use($value) {
+    return array_values(array_filter($array, function($v, $k) use ($value) {
       
-      return ($k == $value[0] and $v == $value[1]);
+      return (array_key_exists($value[0], $v) and $v[$value[0]] == $value[1]);
       
     }, ARRAY_FILTER_USE_BOTH));
     
@@ -392,7 +392,7 @@ function array_filter_by( array $array, $value ) {
       
       $result = array_values(array_filter($array, function($v, $k) use ($key, $val) {
       
-        return ($k == $key and $v == $val);
+        return (array_key_exists($key, $v) and $v[$key] == $val);
 
       }, ARRAY_FILTER_USE_BOTH));
       
@@ -409,8 +409,8 @@ function array_filter_by( array $array, $value ) {
     
   }
   
-  // Otherwise, assume we cannot filter, therefore return an empty array.
-  return [];
+  // Otherwise, filter but ignore value.
+  return array_values(array_filter($array));
   
 }
 
