@@ -1,22 +1,24 @@
 <?php
 
-// Splits a string into its words.
-function words( string $string, string $pattern = null ) {
-  
-  if( isset($pattern) ) {
-    
-    if( preg_match_all($pattern, $string, $matches) > 0 ) return $matches[0];
-    
-  }
-  
-  return explode(' ', trim($string, ',;:."!?(){}[]<>_- '));
-  
-}
-
 // Convert a string to kebabcase.
 function kebabcase( string $string ) {
   
-  return implode('-', array_map('strtolower', words(preg_replace("/['\x{2019}]/u", '', $string))));
+  // Make sure the string is lowercase.
+  $string = strtolower($string);
+
+  // Extract words in the string.
+  $words = array_values(array_filter(preg_split('/-|_| /', $string)));
+  
+  // Remove extraneous characters from words.
+  $words = array_map(function($word) {
+    
+    // Trim extraneous characters.
+    return preg_replace('/^[^a-z0-9]|[^a-z0-9]$/', '', $word);
+    
+  }, $words);
+  
+  // Return the kebabcase string.
+  return implode('-', $words);
 
 }
 
@@ -31,11 +33,28 @@ function kebabcase_key( string $key ) {
 // Convert a string to camelcase.
 function camelcase( string $string ) { 
   
-  return lcfirst(array_reduce(words(preg_replace("/['\\x{2019}]/u", '', $string)), function ($result, $word) {
+  // Make sure the string is lowercase.
+  $string = strtolower($string);
+
+  // Extract words in the string.
+  $words = array_values(array_filter(preg_split('/-|_| /', $string)));
+  
+  // Remove extraneous characters from words.
+  $words = array_map(function($word) {
     
-    return $result.ucfirst(strtolower($word));
+    // Trim extraneous characters.
+    return preg_replace('/^[^a-z0-9]|[^a-z0-9]$/', '', $word);
     
-  }, ''));
+  }, $words);
+
+  // Get the first word.
+  $first = array_shift($words);
+  
+  // Capitalize the remaining words.
+  $words = array_map('ucfirst', $words);
+  
+  // Return the camelcase string.
+  return $first.implode('', $words);
 
 }
 
