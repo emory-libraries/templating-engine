@@ -1,6 +1,5 @@
 <?php
 
-use __ as _;
 use Moment\Moment;
 
 /*
@@ -367,7 +366,7 @@ class Cast {
   public static function toArray( $value ) {
     
     // Strip array wrappers and whitespace from the value.
-    $value = _::trim($value, ' [](){}');
+    $value = trim($value, ' [](){}');
     
     // Convert to an array, and clean up all array items.
     $array = array_map('trim', explode(',', $value));
@@ -382,7 +381,7 @@ class Cast {
       if( count($pair) == 2 ) {
         
         // Save the key-value pair.
-        $array[_::trim($pair[0], ' "\'')] = _::trim($pair[1], ' "\'');
+        $array[trim($pair[0], ' "\'')] = trim($pair[1], ' "\'');
         
         // Then, unset its previous key.
         unset($array[$key]);

@@ -2,16 +2,14 @@
 
 namespace HandlebarsLogging;
 
-use __ as _;
-
 trait DebugHelpers {
   
   // Outputs a debug statement with the current context.
   public static function _debug( $value ) {
     
     $arguments = func_get_args();
-    $options = _::last($arguments);
-    $key = array_get(_::tail(_::initial($arguments)), 0, null);
+    $options = array_last($arguments);
+    $key = array_get(array_tail(array_head($arguments)), 0, null);
     $context = $options['_this'];
     
     if( isset($value) and count($arguments) > 0 ) {

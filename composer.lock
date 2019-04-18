@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1f1069ab4f0156db7fa908a49cd807d1",
+    "content-hash": "9b0d5cd2c737623cfaa9853cb6069191",
     "packages": [
         {
             "name": "erusev/parsedown",
@@ -212,53 +212,6 @@
                 "tokenizer"
             ],
             "time": "2018-03-21T22:21:57+00:00"
-        },
-        {
-            "name": "me-io/php-lodash",
-            "version": "2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/me-io/php-lodash.git",
-                "reference": "48d65bbd16c55db1a8565e2ace8de00e79455a47"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/me-io/php-lodash/zipball/48d65bbd16c55db1a8565e2ace8de00e79455a47",
-                "reference": "48d65bbd16c55db1a8565e2ace8de00e79455a47",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1"
-            },
-            "require-dev": {
-                "overtrue/phplint": "^1.1",
-                "phpstan/phpstan": "^0.11",
-                "phpunit/phpunit": "^7.5",
-                "squizlabs/php_codesniffer": "^3.4"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "src/__.php"
-                ],
-                "psr-4": {
-                    "__\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A full-on PHP manipulation utility-belt that provides support for the usual functional.",
-            "keywords": [
-                "__",
-                "bottomline",
-                "functions",
-                "library",
-                "lodash",
-                "utility"
-            ],
-            "time": "2019-01-24T12:35:10+00:00"
         },
         {
             "name": "mustache/mustache",

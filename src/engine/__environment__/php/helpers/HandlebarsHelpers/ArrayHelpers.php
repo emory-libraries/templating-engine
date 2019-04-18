@@ -2,21 +2,19 @@
 
 namespace HandlebarsHelpers;
 
-use __ as _;
-
 trait ArrayHelpers {
   
   // Returns all of the items in an array after the specified index. [opposite of before]
   public static function after( array $array, $n ) {
     
-    return (isset($array) ? _::slice($array, $n) : []);
+    return (isset($array) ? array_slice($array, $n) : []);
     
   }
   
   // Return all of the items in an array before the specified index. [opposite of after]
   public static function before( array $array, $n ) {
     
-    return (isset($array) ? _::slice($array, 0, $n) : []);
+    return (isset($array) ? array_slice($array, 0, $n) : []);
     
   }
   
@@ -53,10 +51,10 @@ trait ArrayHelpers {
     $prop = array_get($options, 'hash.prop');
       
     // Filter on a specific property.
-    if( isset($prop) ) { $results = _::filter($array, [$prop, $value]); }
+    if( isset($prop) ) { $results = array_filter_by($array, [$prop, $value]); }
     
     // Otherwise, filter on a string.
-    else { $results = _::filter($array, function($item) use ($value) {
+    else { $results = array_filter_by($array, function($item) use ($value) {
       
       return $item === $value;
       
@@ -84,7 +82,7 @@ trait ArrayHelpers {
     
     if( isset($value ) ) {
     
-      if( is_array($value) ) return _::take($array, $n);
+      if( is_array($value) ) return array_slice($array, 0, $n);
     
       if( is_string($value) ) return substr($value, 0, $n);
       
@@ -102,7 +100,7 @@ trait ArrayHelpers {
     
     if( isset($value) ) {
       
-      if( is_array($value) ) return _::takeRight($array, $n);
+      if( is_array($value) ) return array_slice($array, -$n, $n);
     
       if( is_string($value) ) return substr($value, -1, $n);
       
@@ -179,7 +177,7 @@ trait ArrayHelpers {
     
     // Get arguments and options.
     $arguments = func_get_args();
-    $options = _::last($arguments);
+    $options = array_last($arguments);
     $length = func_num_args() == 2 ? 0 : $length;
     $count = 0; 
     
@@ -230,9 +228,9 @@ trait ArrayHelpers {
   
     global $HELPERS;
     
-    if( gettype($iteratee) == 'callable' ) return _::map($array, $iteratee);
+    if( gettype($iteratee) == 'callable' ) return array_map_by($array, $iteratee);
     
-    if( array_key_exists($iteratee, $HELPERS) ) return _::map($array, $HELPERS[$iteratee]);
+    if( array_key_exists($iteratee, $HELPERS) ) return array_map_by($array, $HELPERS[$iteratee]);
     
     return $array;
     
@@ -273,7 +271,7 @@ trait ArrayHelpers {
     
     if( gettype($iteratee) == 'callable' ) {
       
-      if( _::some($array, $iteratee) ) return $options['fn']();
+      if( array_some($array, $iteratee) ) return $options['fn']();
       
       return $options['inverse']();
       
@@ -281,7 +279,7 @@ trait ArrayHelpers {
     
     if( array_key_exists($iteratee, $HELPERS) ) {
       
-      if( _::some($array, $HELPERS[$iteratee]) ) return $options['fn']();
+      if( array_some($array, $HELPERS[$iteratee]) ) return $options['fn']();
       
       return $options['inverse']();
       
@@ -313,23 +311,23 @@ trait ArrayHelpers {
     
     if( gettype($property) == 'callable' ) {
       
-      if( $reverse ) return array_reverse(_::sortBy($array, $property));
+      if( $reverse ) return array_reverse(array_sort_by($array, $property));
       
-      return _::sortBy($array, $property);
+      return array_sort_by($array, $property);
       
     }
     
     if( array_key_exists($property, $HELPERS) ) {
       
-      if( $reverse ) return array_reverse(_::sortBy($array, $HELPERS[$property]));
+      if( $reverse ) return array_reverse(array_sort_by($array, $HELPERS[$property]));
       
-      return _::sortBy($array, $HELPERS[$property]);
+      return array_sort_by($array, $HELPERS[$property]);
       
     }
     
-    if( $reverse ) return array_reverse(_::sortBy($array, [$property]));
+    if( $reverse ) return array_reverse(array_sort_by($array, [$property]));
     
-    return _::sortBy($array, [$property]);
+    return array_sort_by($array, [$property]);
     
     
   }
@@ -337,7 +335,7 @@ trait ArrayHelpers {
   // Use the items in the array after the specific `index` as context inside a block. [opposite of withBefore]
   public static function withAfter( array $array, $index, $options ) {
     
-    $array = _::slice($array, $index);
+    $array = array_slice($array, $index);
     $data = array_merge([], array_get($options, 'data', []));
     
     $result = '';
@@ -351,7 +349,7 @@ trait ArrayHelpers {
   // Use the items in the array before the specific `index` as context inside a block. [opposite of withAfter]
   public static function withBefore( array $array, $index, $options ) {
     
-    $array = _::slice($array, 0, $index);
+    $array = array_slice($array, 0, $index);
     $data = array_merge([], array_get($options, 'data', []));
     
     $result = '';
@@ -366,11 +364,11 @@ trait ArrayHelpers {
   public static function withFirst( array $array, $index = 1, $options = [] ) {
     
     $arguments = func_get_args();
-    $options = _::last($arguments);
-    $index = func_num_args() == 2 ? 1 : _::last(_::initial($arguments));
+    $options = array_last($arguments);
+    $index = func_num_args() == 2 ? 1 : array_last(array_head($arguments));
     $data = array_merge([], array_get($options, 'data', []));
     
-    $array = _::slice($array, 0, $index);
+    $array = array_slice($array, 0, $index);
     $result = '';
     
     foreach( $array as $item ) { $result .= $options['fn']($item, ['data' => $data]); }
@@ -383,11 +381,11 @@ trait ArrayHelpers {
   public static function withLast( array $array, $index = 1, $options = [] ) {
     
     $arguments = func_get_args();
-    $options = _::last($arguments);
-    $index = func_num_args() == 2 ? 1 : _::last(_::initial($arguments));
+    $options = array_last($arguments);
+    $index = func_num_args() == 2 ? 1 : array_last(array_head($arguments));
     $data = array_merge([], array_get($options, 'data', []));
     
-    $array = _::slice($array, -$index);
+    $array = array_slice($array, -$index);
     $result = '';
     
     foreach( $array as $item ) { $result .= $options['fn']($item, ['data' => $data]); }
@@ -435,8 +433,8 @@ trait ArrayHelpers {
   public static function withSort( array $array, $property = null, $options = [] ) {
     
     $arguments = func_get_args();
-    $options = _::last($arguments);
-    $property = func_num_args() == 2 ? null : _::last(_::initial($arguments));
+    $options = array_last($arguments);
+    $property = func_num_args() == 2 ? null : array_last(array_head($arguments));
     $reverse = array_get($options, 'hash.reverse', false);
     
     $result = '';
@@ -445,7 +443,7 @@ trait ArrayHelpers {
     
     if( isset($property) ) {
       
-      $array = _::sortBy($array, [$property]);
+      $array = array_sort_by($array, [$property]);
       
       if( $reverse ) $array = array_reverse($array);
       

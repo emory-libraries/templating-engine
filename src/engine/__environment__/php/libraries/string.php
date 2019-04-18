@@ -1,9 +1,24 @@
 <?php
 
-use __ as _;
+// Splits a string into its words.
+function words( string $string, string $pattern = null ) {
+  
+  if( isset($pattern) ) {
+    
+    if( preg_match_all($pattern, $string, $matches) > 0 ) return $matches[0];
+    
+  }
+  
+  return explode(' ', trim($string, ',;:."!?(){}[]<>_- '));
+  
+}
 
 // Convert a string to kebabcase.
-function kebabcase( string $string ) { return _::kebabCase($string); }
+function kebabcase( string $string ) {
+  
+  return implode('-', array_map('strtolower', words(preg_replace("/['\x{2019}]/u", '', $string))));
+
+}
 
 // Convert an array key to kebabcase.
 function kebabcase_key( string $key ) {
@@ -14,7 +29,15 @@ function kebabcase_key( string $key ) {
 }
 
 // Convert a string to camelcase.
-function camelcase( string $string ) { return _::camelCase($string); }
+function camelcase( string $string ) { 
+  
+  return lcfirst(array_reduce(words(preg_replace("/['\\x{2019}]/u", '', $string)), function ($result, $word) {
+    
+    return $result.ucfirst(strtolower($word));
+    
+  }, ''));
+
+}
 
 // Convert an array key to camelcase.
 function camelcase_key( string $key ) {

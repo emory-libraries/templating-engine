@@ -2,7 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use __ as _;
 use HTML;
 
 trait HtmlHelpers {
@@ -19,7 +18,7 @@ trait HtmlHelpers {
     
     // Get arguments.
     $arguments = func_get_args();
-    $options = _::last($arguments);
+    $options = array_last($arguments);
     $stylesheets = func_num_args() < 2 ? array_get($options, 'hash.href', []) : $stylesheets;
     
     // Force stylesheets into a list.
@@ -62,7 +61,7 @@ trait HtmlHelpers {
     
     // Get arguments.
     $arguments = func_get_args();
-    $options = _::last($arguments);
+    $options = array_last($arguments);
     $scripts = func_num_args() < 2 ? array_get($options, 'hash.href', []) : $scripts;
     
     // Force scripts into a list.

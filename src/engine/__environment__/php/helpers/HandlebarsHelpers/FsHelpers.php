@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use __ as _;
-
 trait FsHelpers {
   
   // Read a file from the file system.
@@ -30,7 +28,7 @@ trait FsHelpers {
     
     // Capture filters.
     $arguments = func_get_args();
-    $options = _::last($arguments);
+    $options = array_last($arguments);
     $filter = func_num_args() == 3 ? $filter : false;
     
     // Use global configurations.

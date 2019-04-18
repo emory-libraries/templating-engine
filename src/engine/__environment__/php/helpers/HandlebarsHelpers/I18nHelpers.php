@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use __ as _;
-
 trait I18nHelpers {
   
   // Internationalization (i18n) helper. See [button-i18n](https://github.com/assemble/buttons) for a working example.
@@ -11,7 +9,7 @@ trait I18nHelpers {
     
     // Get arguments.
     $arguments = func_get_args();
-    $options = _::last($arguments);
+    $options = array_last($arguments);
     $locales = func_num_args() == 3 ? $locales : array_get($options['_this'], 'locales', []);
     $language = array_get($options, 'language', array_get($options, 'lang')) ?: array_get($options, 'hash.language', array_get($options, 'hash.lang', 'en'));
 

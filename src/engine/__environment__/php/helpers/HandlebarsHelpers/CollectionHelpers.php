@@ -2,15 +2,13 @@
 
 namespace HandlebarsHelpers;
 
-use __ as _;
-
 trait CollectionHelpers {
   
   // Inline and block helper that returns truthy if a given collection is empty.
   public static function isEmpty( array $collection, $options = [] ) {
     
     $arguments = func_get_args();
-    $options = _::last($options);
+    $options = array_last($options);
     $collection = func_num_args() == 2 ? $collection : false;
     
     if( $collection ) {

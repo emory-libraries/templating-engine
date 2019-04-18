@@ -1,7 +1,5 @@
 <?php
 
-use __ as _;
-
 /*
  * Route
  *

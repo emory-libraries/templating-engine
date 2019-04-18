@@ -2,7 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use __ as _;
 use Moment;
 use Date;
 
@@ -24,7 +23,7 @@ trait DateHelpers {
     
     // Get arguments.
     $arguments = func_get_args();
-    $options = _::last($arguments);
+    $options = array_last($arguments);
     $format = func_num_args() == 3 ? $format : (func_num_args() == 2 ? $date : 'MMMM DD, YYYY');
     $date = func_num_args() == 3 ? $date : null;
     

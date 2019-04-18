@@ -330,4 +330,170 @@ function array_merge_exact_recursive( array $array, array ...$arrays ) {
   
 }
 
+// Get the first item of an array.
+function array_first( array $array ) {
+  
+  return (isset($array) ? $array[0] : null);
+  
+}
+
+// Get the last item of an array.
+function array_last( array $array ) {
+  
+  return (isset($array) ? $array[count($array) - 1] : null);
+  
+}
+
+// Get the head (all but the last item) of the array.
+function array_head( array $array ) {
+  
+  return array_slice($array, 0, -1);
+  
+}
+
+// Get the tail (all but the first item) of the array.
+function array_tail( array $array ) {
+  
+  return array_slice($array, 1);
+  
+}
+
+// Filter an array by a given value.
+function array_filter_by( array $array, $value ) {
+  
+  // Assume string value should filter by an key.
+  if( is_string($value) ) {
+    
+    return array_values(array_filter($array, function($v, $k) use ($value) {
+      
+      return ($k == $value and $k);
+      
+    }, ARRAY_FILTER_USE_BOTH));
+    
+  }
+  
+  // Assume non-associative array values should filter by a key and value.
+  if( is_array($value) and !is_associative_array($value) ) {
+    
+    return array_values(array_filter($array, function($v, $k) use($value) {
+      
+      return ($k == $value[0] and $v == $value[1]);
+      
+    }, ARRAY_FILTER_USE_BOTH));
+    
+  }
+  
+  // Assume associative array values should filter by all key-value pairs.
+  if( is_array($value) and is_associative_array($value) ) {
+    
+    $result = $array;
+    
+    foreach( $value as $key => $val ) {
+      
+      $result = array_values(array_filter($array, function($v, $k) use ($key, $val) {
+      
+        return ($k == $key and $v == $val);
+
+      }, ARRAY_FILTER_USE_BOTH));
+      
+    }
+    
+    return $result;
+    
+  }
+  
+  // Assume callable values should filter by function.
+  if( is_callable($value) ) {
+    
+    return array_values(array_filter($array, $value, ARRAY_FILTER_USE_BOTH));
+    
+  }
+  
+  // Otherwise, assume we cannot filter, therefore return an empty array.
+  return [];
+  
+}
+
+// Determines if a condition is met for some items within an array.
+function array_some( array $array, callable $callback ) {
+  
+  foreach( $array as $key => $value ) {
+    
+    if( $callback($value, $key, $array) ) return true;
+    
+  }
+  
+  return false;
+  
+}
+
+// Determines if a condition is met for all items within an array.
+function array_every( array $array, callable $callback ) {
+  
+  foreach( $array as $key => $value ) {
+    
+    if( !$callback($value, $key, $array) ) return false;
+    
+  }
+  
+  return true;
+  
+}
+
+// Sort an array by one or more values.
+function array_sort_by( array $array, $value = null ) {
+  
+  // Assume that non-associative array values should sort on each key in ascending order.
+  if( is_array($value) and !is_associative_array($value) ) {
+    
+    $args = array_reduce($value, function($args, $key) {
+      
+      return array_merge($args, [$key, SORT_ASC]);
+      
+    }, []);
+    
+    return call_user_func_array('array_multisort', $args);
+    
+  }
+  
+  // Assume that associative array values should short on each key based on a given order.
+  if( is_array($value) and is_associative_array($value) ) {
+    
+    $args = array_reduce(array_keys($value), function($args, $key) use ($value) {
+      
+      return array_merge($args, [$key, $value[$key]]);
+      
+    }, []);
+    
+    return call_user_func_array('array_multisort', $args);
+    
+  }
+  
+  // Otherwise, perform a simple sort on the array.
+  return sort($array);
+  
+}
+
+// Map an array by a given value.
+function array_map_by( array $array, $value ) {
+  
+  // Assume string values should map on the given key.
+  if( is_string($value) ) {
+    
+    return array_map(function($item) use ($value) {
+      
+      return (array_key_exists($value, $item) ? $item[$value] : null);
+      
+    }, $value);
+    
+  }
+  
+  // Assume callable values should map normally.
+  if( is_callable($value) ) return array_map($value, $array);
+  
+  // Otherwise, return the unmapped array.
+  return $array;
+  
+}
+
 ?>

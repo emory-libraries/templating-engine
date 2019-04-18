@@ -2,16 +2,14 @@
 
 namespace HandlebarsHelpers;
 
-use __ as _;
-
 trait ComparisonHelpers {
   
   // Inline and block helper that returns truthy if all conditionals are truthy.
   public static function and( ...$conditions ) {
     
     // Extract options.
-    $options = _::last($conditions);
-    $conditions = _::initial($conditions);
+    $options = array_last($conditions);
+    $conditions = array_head($conditions);
     $result = true;
  
     // Ensure that all conditions are truthy.
@@ -39,8 +37,8 @@ trait ComparisonHelpers {
   public static function or( ...$conditions ) {
     
     // Extract options.
-    $options = _::last($conditions);
-    $conditions = _::initial($conditions);
+    $options = array_last($conditions);
+    $conditions = array_head($conditions);
     $result = false;
  
     // Ensure that at least one conditions is truthy.
@@ -79,7 +77,7 @@ trait ComparisonHelpers {
   public static function compare( $a, $operator, $b, $options ) {
     
     $arguments = func_get_args();
-    $options = _::last($arguments);
+    $options = array_last($arguments);
     $b = func_num_args() < 4 ? $operator : $b;
     $operator = func_num_args() < 4 ? '==' : $operator;
     
@@ -130,9 +128,9 @@ trait ComparisonHelpers {
     
     // Get result.
     $arguments = func_get_args();
-    $options = _::last($arguments);
+    $options = array_last($arguments);
     $index = func_num_args() > 3 ? $index : 0;
-    $result = in_array($value, _::slice($collection, $index));
+    $result = in_array($value, array_slice($collection, $index));
     
     // Return truthy.
     if( $result ) return (isset($options['fn']) ? $options['fn']() : true);
@@ -146,9 +144,9 @@ trait ComparisonHelpers {
   public static function default( ...$values ) {
     
     // Extract options and the default.
-    $options = _::last($values);
-    $default = _::last(_::initial($values));
-    $values = _::initial(_::initial($values));
+    $options = array_last($values);
+    $default = array_last(array_head($values));
+    $values = array_head(array_head($values));
     
     foreach( $values as $value ) {
       
@@ -219,7 +217,7 @@ trait ComparisonHelpers {
   public static function has( $value, $pattern, $options ) {
     
     $arguments = func_get_args();
-    $options = _::last($arguments);
+    $options = array_last($arguments);
     $pattern = func_num_args() > 2 ? $pattern : false;
     $result = false;
     

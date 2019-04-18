@@ -2,16 +2,14 @@
 
 namespace HandlebarsLogging;
 
-use __ as _;
-
 trait LogHelpers {
   
   // Helper for logging an simple message to the terminal.
   public static function log( ...$messages ) {
     
     // Extract options.
-    $options = _::last($messages);
-    $messages = _::initial($messages);
+    $options = array_last($messages);
+    $messages = array_head($messages);
     
     // Format messages.
     $messages = implode(', ', array_map(function ($message) {
@@ -29,8 +27,8 @@ trait LogHelpers {
   public static function ok( ...$messages ) {
     
     // Extract options.
-    $options = _::last($messages);
-    $messages = _::initial($messages);
+    $options = array_last($messages);
+    $messages = array_head($messages);
     
     // Define styles.
     $styles = array_to_css([
@@ -53,8 +51,8 @@ trait LogHelpers {
   public static function success( ...$messages ) {
     
     // Extract options.
-    $options = _::last($messages);
-    $messages = _::initial($messages);
+    $options = array_last($messages);
+    $messages = array_head($messages);
     
     // Define styles.
     $styles = array_to_css([
@@ -77,8 +75,8 @@ trait LogHelpers {
   public static function info( ...$messages ) {
     
     // Extract options.
-    $options = _::last($messages);
-    $messages = _::initial($messages);
+    $options = array_last($messages);
+    $messages = array_head($messages);
     
     // Format messages.
     $messages = implode(", ", array_map(function ($message) {
@@ -96,8 +94,8 @@ trait LogHelpers {
   public static function warning( ...$messages ) {
     
     // Extract options.
-    $options = _::last($messages);
-    $messages = _::initial($messages);
+    $options = array_last($messages);
+    $messages = array_head($messages);
     
     // Format messages.
     $messages = implode(", ", array_map(function ($message) {
@@ -122,8 +120,8 @@ trait LogHelpers {
   public static function error( ...$messages ) {
     
     // Extract options.
-    $options = _::last($messages);
-    $messages = _::initial($messages);
+    $options = array_last($messages);
+    $messages = array_head($messages);
     
     // Format messages.
     $messages = implode(", ", array_map(function ($message) {
@@ -148,8 +146,8 @@ trait LogHelpers {
   public static function bold( ...$messages ) {
     
     // Extract options.
-    $options = _::last($messages);
-    $messages = _::initial($messages);
+    $options = array_last($messages);
+    $messages = array_head($messages);
     
     // Define styles.
     $styles = array_to_css([
