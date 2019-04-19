@@ -467,7 +467,7 @@ class Index {
     
     // Return the template if it exists, or return the default template.
     // FIXME: When no template is found for a route, meaning the template hasn't been created or just doesn't exist, should we return the default template?
-    return ($template !== false ? $template['data']->template : $default['data']->template);
+    return ($template !== false ? $template['data'] : $default['data']);
     
   }
   

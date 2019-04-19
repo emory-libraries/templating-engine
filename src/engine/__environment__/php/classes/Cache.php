@@ -25,7 +25,7 @@ class Cache {
     if( !self::isDirectory(dirname($path)) ) self::make(dirname($path));
     
     // Write the file.
-    file_put_contents(self::path($path), $data);
+    File::write(self::path($path), $data);
     
   }
   
@@ -33,7 +33,7 @@ class Cache {
   public static function read( $path ) {
     
     // Read the file if it exists.
-    if( self::isFile($path) ) return file_get_contents(self::path($path));
+    if( self::isFile($path) ) return File::read(self::path($path));
     
   }
   
@@ -77,8 +77,15 @@ class Cache {
   public static function modified( $path ) {
   
     // Verify that the file exists, and return the last modified time.
-    if( self::isFile($path) ) return filemtime(self::path($path));
+    if( self::isFile($path) ) return File::modified(self::path($path));
   
+  }
+  
+  // Determine if a cached file is outdated based on a time of reference.
+  public static function outdated( $path, $time ) {
+    
+    return (self::modified($path) < $time);
+    
   }
 
 }

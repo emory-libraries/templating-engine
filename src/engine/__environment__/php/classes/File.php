@@ -64,6 +64,22 @@ class File {
     
   }
   
+  // Write a file or array of files.
+  public static function write( $path, $data = null ) {
+    
+    // Write a file.
+    return file_put_contents($path, (string) $data);
+    
+  }
+  
+  // Get the last modified time of a file.
+  public static function modified( $path ) {
+    
+    // Return the file's last modified time.
+    return filemtime($path);
+    
+  }
+  
 }
 
 ?>

@@ -34,18 +34,41 @@ class Renderer {
     // Initialize the handlebars engine.
     $handlebars = new LightnCandy();
     
-    // Compile the template.
-    $compiled = self::compile($endpoint->template);
-    
-    // Get the cache path for the compiled template.
+    // Determine the cache path for the compiled template.
     $path = "templates/{$endpoint->eid}".CONFIG['ext']['cache'];
     
-    // Save the compiled template to the cache.
-    // TODO: Create the Cache class.
-    Cache::write($path, $compiled);
+    // If a cached version of the template exists, see if it needs to be recompiled.
+    // FIXME: Is this performant enough, or should we implement more advanced caching for compiled templates? Currently, we're compiling templates when first requested and only recompiling when the template pattern has changed. Refer to the [LightnCandy docs](https://zordius.github.io/HandlebarsCookbook/9000-quickstart.html) for best practices in terms of rendering.
+    if( Cache::exists($path) ) {
+      
+      // Get the template pattern's last modified time.
+      $modified = File::modified($endpoint->template->file);
+      
+      // Determine if the cached template is outdated, and recompile it if so.
+      if( Cache::outdated($path, $modified) ) {
+        
+        // Recompile the template.
+        $compiled = self::compile($endpoint->template->template);
+        
+        // Overwrite the cached template with the newly recompiled template.
+        Cache::write($path, $compiled);
+        
+      }
+      
+    }
+    
+    // Otherwise, compile the template for the first time.
+    else {
+      
+      // Compile the template.
+      $compiled = self::compile($endpoint->template->template);
+    
+      // Save the compiled template to the cache.
+      Cache::write($path, $compiled);
+      
+    }
     
     // Get the template renderer.
-    // FIXME: Is this too unperformant, or should we implement caching for compiled templates? Currently, we're recompiling templates for every incoming request. Refer to the [LightnCandy docs](https://zordius.github.io/HandlebarsCookbook/9000-quickstart.html) if we need to implement caching.
     $renderer = Cache::include($path);
     
     // Render the template with the given data.
