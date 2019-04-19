@@ -93,9 +93,15 @@ module.exports = async function () {
       // Get the remote and local paths
       remote = remote.replace('{{environment}}', env[answers.environment]);
       local = path.resolve(local);
-
-      // Find all files at the local path.
-      files = files.concat(glob(path.join(local, '**')).map((file) => {
+      
+      // Find the local file.
+      if( fs.statSync(local).isFile() ) files.push({
+        src: local,
+        dest: remote
+      });
+      
+      // Otherwise, find all files at the local path.
+      else files = files.concat(glob(path.join(local, '**')).map((file) => {
 
         // Get the file's paths and contents.
         return {
