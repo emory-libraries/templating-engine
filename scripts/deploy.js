@@ -6,6 +6,7 @@ module.exports = async function () {
   const path = require('path');
   const glob = require('glob').sync;
   const fs = require('fs-extra');
+  const cliProgress = require('cli-progress');
   const {createClient} = require('webdav');
   const _ = require('lodash');
   
@@ -122,9 +123,15 @@ module.exports = async function () {
       password: answers.password
     });
     
+    // Initialize the progress bar.
+    const progress = new cliProgress.Bar({}, cliProgress.Presets.shades_classic);
+    
     // Attempt to write all local files and folders to the remote server.
     try {
-
+      
+      // Start the progress bar.
+      progress.start(files.length, 0);
+      
       // Write the files and folders to the remote server.
       for( let file of files ) {
 
@@ -197,8 +204,14 @@ module.exports = async function () {
           else await client.putFileContents(dest, contents);
 
         }
+        
+        // Increment the progress bar.
+        progress.increment();
 
       }
+      
+      // Stop the progress bar.
+      progress.stop();
 
       // Report success.
       console.log(chalk`\nFiles were successfully deployed to {green.bold ${answers.environment}}.\n`);
@@ -210,6 +223,9 @@ module.exports = async function () {
     
     // Otherwise, alert the user when errors occur.
     catch(error) {
+      
+      // Stop the progress bar.
+      progress.stop();
       
       // Report errors.
       console.error(chalk`\nAn error occurred while trying to deploy files to {red.bold ${answers.environment}}:\n\n${error}\n`);
