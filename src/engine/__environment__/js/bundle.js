@@ -1596,6 +1596,33 @@ Components.register('notification', {
     }
   }
 });
+Components.register('accordion', {
+  data: function data() {
+    return {
+      panels: []
+    };
+  },
+  methods: {
+    showAll: function showAll() {
+      // Show all panels.
+      this.panels.forEach(function (panel) {
+        // Find the panel's switch, and flip it on.
+        $(panel).find('.panel-switch').prop('checked', true);
+      });
+    },
+    hideAll: function hideAll() {
+      // Hide all panels.
+      this.panels.forEach(function (panel) {
+        // Find the panel's switch, and flip it off.
+        $(panel).find('.panel-switch').prop('checked', false);
+      });
+    }
+  },
+  mounted: function mounted() {
+    // Find all accordion panels.
+    this.panels = Array.from($(this.$el).find('.accordion-panel'));
+  }
+});
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"jQuery":2,"leaflet":4,"leaflet-providers":3,"lodash":5,"string-similarity":7,"vue":10}],2:[function(require,module,exports){

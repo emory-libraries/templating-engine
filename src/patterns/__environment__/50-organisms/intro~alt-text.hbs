@@ -1,0 +1,7 @@
+{{#unless (eq main false)}}
+  {{> tokens-heading level="1" alternate=true classes="main-title intro-title" heading=title}}
+  {{> tokens-text type="lead" classes="main-subtitle intro-subtitle" text=subtitle}}
+{{else}}
+  {{> tokens-heading level="1" alternate=true classes="intro-title" heading=title}}
+  {{> tokens-text type="lead" classes="intro-subtitle" text=subtitle}}
+{{/unless}}

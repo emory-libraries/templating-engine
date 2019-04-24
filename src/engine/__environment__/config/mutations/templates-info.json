@@ -38,24 +38,17 @@
   "repeatable": [
     "content-block",
     "link-contact",
-    "sidebar.link",
-    "sidebar.links-list-learn.link",
-    "sidebar.links-list-materials.link",
-    "link-research-aid"
+    "sidebar.links-list.link"
   ],
   "checkbox": [
-    "add-contact",
-    "add-research-aids",
-    "sidebar.link.@.link-customizations",
-    "sidebar.links-list-learn.link.@.link-customizations",
-    "sidebar.links-list-materials.link.@.link-customizations",
-    "link-research-aid.@.customize-label"
+    "add-sidebar",
+    "sidebar.action-box",
+    "sidebar.image-heavy-card.link-customizations"
   ],
   "radio": [
     "content-block.@.block-type",
-    "sidebar.link.@.link-type",
-    "sidebar.links-list-learn.link.@.link-type",
-    "sidebar.links-list-materials.link.@.link-type"
+    "sidebar.links-list.link.@.link-type",
+    "sidebar.image-heavy-card.link.link-type"
   ],
   "timestamp": [
     "system.created.datetime",
@@ -68,18 +61,17 @@
     "content-block.@.image.caption",
     "content-block.@.image.photo-credit",
     "content-block.@.video-url",
-    "sidebar.link.@.external-url",
-    "sidebar.link.@.link-label",
-    "sidebar.link.@.link-description",
-    "sidebar.links-list-learn.heading",
-    "sidebar.links-list-learn.link.@.external-url",
-    "sidebar.links-list-learn.link.@.link-label",
-    "sidebar.links-list-learn.link.@.link-description",
-    "sidebar.links-list-materials.heading",
-    "sidebar.links-list-materials.link.@.external-url",
-    "sidebar.links-list-materials.link.@.link-label",
-    "sidebar.links-list-materials.link.@.link-description",
-    "link-research-aid.@.link-label"
+    "sidebar.links-list.link.@.external-url",
+    "sidebar.links-list.link.@.link-label",
+    "sidebar.links-list.link.@.link-description",
+    "sidebar.links-list.heading",
+    "sidebar.image-heavy-card.link.external-url",
+    "sidebar.image-heavy-card.link.link-label",
+    "sidebar.image-heavy-card.link.link-description",
+    "sidebar.image-heavy-card.link.link-label",
+    "sidebar.image-heavy-card.image.caption",
+    "sidebar.image-heavy-card.image.photo-credit",
+    "sidebar.image-heavy-card.button.label"
   ],
   "html": [
     "content-block.@.wysiwyg"

@@ -54,8 +54,7 @@ class Cast {
   // Defines the regexes used to identify some types.
   public static $regex = [
     
-    'array' => '/^((?:\S|\ )+?,)+?(\S|\ )+?$/',
-    'list' => '/^([^.?!]+?[,;] ?)+([^.?!]+)$/'
+    'array' => '/^\[((?:\S|\ )+?,)+?(\S|\ )+?\]$/'
     
   ];
   
@@ -110,9 +109,6 @@ class Cast {
       if( self::isFalsey($value) ) return 'falsey';
       return 'bool';
     }
-    
-    // Check for list types.
-    else if( self::isList($value) ) return 'list';
     
     // Check for null types.
     else if( self::isNull($value) ) return 'null';
@@ -243,14 +239,6 @@ class Cast {
     
     // Determine if the value is an array.
     return preg_match(self::$regex['array'], (string) $value);
-    
-  }
-  
-  // Check if a value is of type `list`.
-  public static function isList( $value ) {
-    
-    // Determine if the value is a list.
-    return preg_match(self::$regex['list'], (string) $value);
     
   }
   
@@ -397,9 +385,6 @@ class Cast {
     return $array;
     
   }
-  
-  // Cast a value to type `list`. [alias]
-  public static function toList( $value ) { return forward_static_call('Cast::toArray', $value); }
   
   // Cast a value to type `bool`.
   public static function toBool( $value ) { 

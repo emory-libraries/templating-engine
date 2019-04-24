@@ -1,0 +1,5 @@
+<div class="cards{{#if classes}} {{classes}}{{/if}}">
+  {{#each cards}}
+    {{> (combine 'molecules-card-' (default ../type type)) classes=''}}
+  {{/each}}
+</div>

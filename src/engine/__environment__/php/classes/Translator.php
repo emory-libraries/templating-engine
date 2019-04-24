@@ -41,7 +41,7 @@ class Translator {
     }
     
     // Extract the XML base data.
-    $data = array_get($data, array_get($model, 'data', []));
+    $data = array_get($data, array_get($model, 'data'), []);
       
     // Combine the base data and meta data.
     $result = array_merge($result, $data);

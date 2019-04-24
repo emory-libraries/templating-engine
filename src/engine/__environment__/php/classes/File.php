@@ -16,18 +16,18 @@ class File {
   }
   
   // Get a file's endpoint.
-  public static function endpoint( $path ) {
+  public static function endpoint( $path, $base = [
+    CONFIG['data']['site']['root'],
+    CONFIG['data']['environment']['root'],
+    CONFIG['patterns']['root'],
+    CONFIG['engine']['meta']
+  ] ) {
     
     // Get the file's directory path.
     $directory = dirname($path);
     
     // Remove data and patterns paths from the directory.
-    foreach( [
-      CONFIG['data']['site']['root'],
-      CONFIG['data']['environment']['root'],
-      CONFIG['patterns']['root'],
-      CONFIG['engine']['meta']
-    ] as $remove ) { $directory = str_replace($remove, '', $directory); }
+    foreach( $base as $remove ) { $directory = str_replace($remove, '', $directory); }
    
     // Convert the directory to kebabcase.
     $directory = implode('/', array_map('kebabcase', explode('/', $directory)));

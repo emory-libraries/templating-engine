@@ -23,18 +23,42 @@ class Endpoint {
   // One or more complete URLs that the endpoint uses.
   public $url;
   
+  // The data file that corresponds to the given endpoint, if applicable.
+  public $file;
+  
   // The data file that the endpoint uses.
   public $data;
   
   // The template file that the endpoint uses.
   public $template;
   
+  // Capture the template file ID.
+  public $tid;
+  
+  // Indicates whether the endpoint is for an asset.
+  public $asset = false;
+  
+  // Identifies the an asset endpoint's mime type, if applicable.
+  public $mime;
+  
   // Constructs the endpoint.
   function __construct( Route $route, Index $index ) { 
     
+    // Determine if the route is for an asset.
+    $this->asset = $route->template === 1;
+
     // Capture data about the endpoint(s).
     $this->id = $route->id;
-    $this->eid = (isset($route->path) ? File::endpoint($route->path) : $route->endpoint);
+    $this->eid = $this->asset ? $route->endpoint : (isset($route->path) ? File::endpoint($route->path, [
+      CONFIG['data']['site']['root'],
+      CONFIG['data']['environment']['root'],
+      CONFIG['patterns']['root'],
+      CONFIG['engine']['meta'],
+      CONFIG['site'],
+      CONFIG['engine'],
+      CONFIG['data']['site']['root']
+    ]) : $route->endpoint);
+    $this->file = $route->path;
     $this->endpoint = $route->endpoint;
     $this->redirect = $route->redirect;
     $this->url = is_array($route->endpoint) ? array_map(function($endpoint) use ($route) {
@@ -53,9 +77,10 @@ class Endpoint {
     
     // Get the template that the endpoint uses.
     $this->template = $index->getEndpointTemplate($this->eid);
-
-    // Mutate the data based on the template, if applicable.
-    $this->data = Mutator::mutate($this->data, $route->template);
+    $this->tid = $route->template;
+    
+    // Capture the asset's mime type, if applicable.
+    if( $this->asset ) $this->mime = Mime::type(pathinfo($this->id, PATHINFO_EXTENSION));
     
   }
   

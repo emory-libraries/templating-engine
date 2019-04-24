@@ -2,8 +2,6 @@
 
 namespace CustomHelpers;
 
-use _;
-
 trait SvgHelpers {
 
   // Dynamically load an icon by ID.

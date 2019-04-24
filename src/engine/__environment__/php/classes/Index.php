@@ -86,7 +86,7 @@ trait Index_Utilities {
   // Extract routes from an array of site data.
   private static function extractSiteRoutes( array $site ) {
     
-    // Travese the site data.
+    // Traverse the site data.
     foreach( $site as $pageId => $pageData ) {
       
       // Extract routes when given simple page data consisting of only a page path.
@@ -107,6 +107,47 @@ trait Index_Utilities {
     
     // Return the site routes.
     return $site;
+    
+  }
+  
+  // Extract routes from an array of assets.
+  private static function extractAssetRoutes( array $assets ) {
+    
+    // Initialize the routes.
+    $routes = [];
+    
+    // Traverse the asset data.
+    foreach( $assets as $group => $data ) {
+      
+      // Traverse each asset.
+      foreach( $data as $asset ) {
+        
+        // Get the asset's parent route key.
+        $key = str_replace('/', '.', trim(dirname($asset->endpoint), '/'));
+
+        // Initialize the route parent if not already initialized.
+        if( array_get($routes, $key, false) === false ) $routes = array_set($routes, $key, []);
+        
+        // Initialize the route parent.
+        $parent = &$routes;
+        
+        // Get the route parent.
+        foreach( explode('.', $key) as $level ) { $parent = &$parent[$level]; }
+
+        // Convert the asset into a route, and save it.
+        $parent[$asset->id] = new Route([
+          'path' => $asset->path,
+          'id' => $asset->id,
+          'endpoint' => $asset->endpoint,
+          'template' => Route::TEMPLATE_ASSET
+        ]);
+        
+      }
+      
+    }
+    
+    // Return the asset routes.
+    return $routes;
     
   }
   
@@ -143,8 +184,11 @@ class Index {
     // Get an index of all the templates.
     $this->templates = self::getTemplates(true);
     
+    // Get an index of all assets.
+    $this->assets = self::getAssets();
+    
     // Get an index of all routes within the active site.
-    $this->routes = self::getRoutes($this->data); 
+    $this->routes = self::getRoutes($this->data, $this->assets); 
     
     // Also, get preconfigured routes.
     $routes = array_reduce(array_map(function($route) {
@@ -305,9 +349,79 @@ class Index {
     
   }
   
-  // Identifies all known routes within the active site using the data and templates indices.
-  public static function getRoutes(  array $data ) {
+  // Locate all assets used by the site.
+  public static function getAssets( ) {
     
+    // Get asset directories.
+    $assets = [
+      'css' => [
+        CONFIG['site']['css'],
+        CONFIG['engine']['css']
+      ],
+      'js' => [
+        CONFIG['site']['js'],
+        CONFIG['engine']['js']
+      ],
+      'scripts' => [
+        CONFIG['site']['scripts'],
+        CONFIG['engine']['scripts']
+      ],
+      'images' => [
+        CONFIG['site']['images'],
+        CONFIG['engine']['images'],
+        CONFIG['data']['site']['root'].'/images'
+      ],
+      'assets' => [
+        CONFIG['site']['assets'],
+        CONFIG['engine']['assets'],
+        CONFIG['data']['site']['root'].'/documents'
+      ],
+      'fonts' => [
+        CONFIG['site']['fonts'],
+        CONFIG['engine']['fonts']
+      ]
+    ];
+    
+    // Recursively find all asset files.
+    foreach( $assets as $group => $directories ) {
+      
+      // Find all asset files from the given paths.
+      $assets[$group] = array_reduce($directories, function($files, $path) {
+        
+        // Capture the existing asset file.
+        if( is_file($path) ) return array_merge($files, [$path]);
+        
+        // Otherwise, recursively find files within an existing directory.
+        if( file_exists($path) ) return array_merge($files, scandir_recursive($path, $path));
+        
+        // Otherwise, assume the path doesn't exist, so skip it for now.
+        return $files;
+        
+      }, []);
+      
+    }
+    
+    // Convert all asset files to asset objects.
+    $assets = array_map(function($files) {
+      
+      // Convert all asset files within the group to asset objects.
+      return array_map(function($file) {
+        
+        // Convert the asset file to an asset object.
+        return new Asset($file);
+        
+      }, $files);
+      
+    }, $assets);
+    
+    // Return assets.
+    return $assets;
+    
+  }
+  
+  // Identifies all known routes within the active site using the data and templates indices.
+  public static function getRoutes(  array $data, $assets = [] ) {
+   
     // Initialize the routes.
     $routes = [];
     
@@ -316,6 +430,12 @@ class Index {
     
     // Convert site data to routes.
     $routes = self::extractSiteRoutes($site);
+    
+    // Convert asset data to routes.
+    $assets = self::extractAssetRoutes($assets);
+    
+    // Merge asset routes into routes.
+    $routes = array_merge_exact_recursive($routes, $assets);
     
     // Return the routes.
     return $routes;
@@ -395,7 +515,7 @@ class Index {
   }
   
   // Get the data by key or endpoint.
-  public function getData( $key ) {
+  public function getData( $key ) { 
     
     // Lookup the data that correlates to the given endpoint, or return an empty data set if the endpoint was not found.
     return array_get($this->data, 'site.site'.str_replace('/', '.', $key));
@@ -406,7 +526,7 @@ class Index {
   public function getEndpointData( $endpoint ) {
     
     // Lookup the data that correlates to the given endpoint.
-    $data = $this->getData($endpoint);
+    $data = $this->getData($endpoint); 
     
     // Return the data if it exists, or an empty data set otherwise.
     // FIXME: When no data is found for an endpoint, most likely because the endpoint doesn't exist, should we return an empty data set?
@@ -417,16 +537,34 @@ class Index {
   // Get a template by ID or PLID.
   public function getTemplate( $id ) {
     
-    // Lookup the template that has the given ID or PLID. 
-    $template = array_values(array_filter(array_values($this->templates), function($template) use ($id) {
-
-      // Get the template by either ID or PLID.
-      return in_array($id, [$template['data']->id, $template['data']->plid]);
+    // Handle built-in template types.
+    if( is_int($id) ) {
       
-    }));
-   
-    // Return the template if it exists, or false otherwise.
-    return (isset($template[0]) ? $template[0] : false);
+      // Get the template based on the constant.
+      switch($id) {
+          
+        // Assets (Route::TEMPLATE_ASSET)
+        case 1: return ['data' => new Template(['template' => '{{file}}'])];
+          
+      }
+      
+    }
+    
+    // Otherwise, handle user-defined template types.
+    else {
+    
+      // Lookup the template that has the given ID or PLID. 
+      $template = array_values(array_filter(array_values($this->templates), function($template) use ($id) {
+
+        // Get the template by either ID or PLID.
+        return in_array($id, [$template['data']->id, $template['data']->plid]);
+
+      }));
+
+      // Return the template if it exists, or false otherwise.
+      return (isset($template[0]) ? $template[0] : false);
+      
+    }
     
   }
   
@@ -443,7 +581,7 @@ class Index {
       return (is_array($route->endpoint) ? in_array($endpoint, $route->endpoint) : $route->endpoint == $endpoint);
       
     }));
-    
+
     // Return the route, or false otherwise.
     return (isset($route[0]) ? $route[0] : false);
     
@@ -453,8 +591,8 @@ class Index {
   public function getEndpointTemplate( $endpoint ) {
     
     // Find the route that uses the endpoint, or false otherwise.
-    $route = $this->getRoute($endpoint);
-
+    $route = $this->getRoute($endpoint); 
+    
     // If no route was found for the endpoint, then return an empty template.
     // FIXME: When no route is found for an endpoint, meaning the route doesn't exist, should we return an empty template?
     if( $route === false ) return ''; 

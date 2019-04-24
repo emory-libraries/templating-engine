@@ -496,4 +496,103 @@ function array_map_by( array $array, $value ) {
   
 }
 
+// Get all combinations of values from the given arrays.
+function array_combos( ...$arrays ) {
+  
+  // Only work with arrays.
+  $arrays = array_values(array_filter($arrays, 'is_array'));
+  
+  // Ignore empty arrays.
+  if( count($arrays) === 0 ) return [];
+  
+  // Ignore single arrays.
+  if( count($arrays) == 1 ) return $arrays[0];
+  
+  // Initialize the result.
+  $result = [];
+  
+  // Initialize a helper for combining arrays.
+  $combine = function( array $result, array $array ) {
+    
+    // Initialize an index.
+    $i = 0;
+    
+    // Capture any existing combinations before manipulating the result.
+    $combos = $result;
+    
+    // Initialize a flag to determine when the result set needs reducing.
+    $reduce = false;
+    
+    // Loop through all items in the array.
+    foreach( $array as $item ) {
+      
+      // Determine if this is the first item to be added into the combinations.
+      if( !isset($result[$i]) ) {
+        
+        // Initialize the combination by adding the item.
+        $result[$i] = array_merge([], [$item]);
+        
+      }
+      
+      // Otherwise, tack the item onto a previous combination.
+      else {
+          
+        // Map out the new set of item combinations.
+        $map = array_map(function($combo) use ($item) {
+          
+          // Merge the item into the combination.
+          return array_merge($combo, [$item]);
+
+        }, $combos);
+
+        // Save the new combinations with the item included.
+        $result[$i] = array_merge($result[$i], $map);
+        
+        // Remove string values from the array.
+        $result[$i] = array_values(array_filter($result[$i], 'is_array'));
+        
+        // Set the reduce flag.
+        $reduce = true;
+        
+      }
+      
+      // Increment the index.
+      $i++;
+      
+    }
+    
+    // Reduce the array to a single level if needed.
+    if( $reduce ) {
+      
+      // Flatten nested arrays to a single level.
+      $result = array_reduce($result, function($result, $combo) {
+
+        // Flatten the array.
+        return array_merge($result, $combo);
+
+      }, []);
+      
+    }
+    
+    // Return the result.
+    return $result;
+    
+  };
+  
+  // Initialize an index.
+  $i = -1;
+  
+  // Recursively combine the arrays.
+  while( ++$i < count($arrays) ) {
+    
+    // Merge all array combinations.
+    $result = $combine($result, $arrays[$i]);
+    
+  }
+  
+  // Return the result.
+  return array_values(array_filter($result, 'is_array'));
+  
+}
+
 ?>

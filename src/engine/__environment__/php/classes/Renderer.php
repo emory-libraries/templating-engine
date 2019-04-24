@@ -29,7 +29,7 @@ class Renderer {
   public static $partials = CONFIG['handlebars']['partials'];
   
   // Renders a page from the given template and data.
-  public static function render( Endpoint $endpoint ) {
+  public static function render( Endpoint $endpoint ) { 
     
     // Initialize the handlebars engine.
     $handlebars = new LightnCandy();
@@ -48,7 +48,7 @@ class Renderer {
       if( Cache::outdated($path, $modified) ) {
         
         // Recompile the template.
-        $compiled = self::compile($endpoint->template->template);
+        $compiled = self::compile(self::prepare($endpoint));
         
         // Overwrite the cached template with the newly recompiled template.
         Cache::write($path, $compiled);
@@ -59,14 +59,17 @@ class Renderer {
     
     // Otherwise, compile the template for the first time.
     else {
-      
+
       // Compile the template.
-      $compiled = self::compile($endpoint->template->template);
+      $compiled = self::compile(self::prepare($endpoint));
     
       // Save the compiled template to the cache.
       Cache::write($path, $compiled);
       
     }
+    
+    // If the endpoint is an asset, return the proper headers to render the asset.
+    if( $endpoint->asset ) header("Content-Type: {$endpoint->mime}");
     
     // Get the template renderer.
     $renderer = Cache::include($path);
@@ -76,7 +79,40 @@ class Renderer {
     
   }
   
-  // Compiles a template file.
+  // Prepare a template to be compiled.
+  public static function prepare( Endpoint $endpoint ) {
+    
+    // Get the template.
+    $template = $endpoint->template->template;
+    
+    // Prepare assets for compiling.
+    if( $endpoint->asset ) {
+      
+      // Replace any file placeholders within the template with the source file's contents.
+      $template = str_replace('{{file}}', File::read($endpoint->file), $template);
+      
+    }
+    
+    // Otherwise, prepare pages for compiling.
+    else {
+    
+      // Get the layout wrapper ID.
+      $id = isset($endpoint->template->wrapper) ? $endpoint->template->wrapper : 'default';
+
+      // Get the layout wrapper.
+      $wrapper = array_get(CONFIG['layouts'], $id, '{{template}}');
+
+      // Compile the template with the wrapper.
+      $template = str_replace('{{template}}', $template, $wrapper);
+      
+    }
+    
+    // Return the prepared template.
+    return $template;
+    
+  }
+  
+  // Compiles a template string.
   public static function compile( string $template ) {
     
     // Initialize the handlebars engine.

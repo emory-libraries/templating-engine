@@ -28,7 +28,7 @@ class Engine {
   function __construct() {
     
     // Get data about the request.
-    $this->request = new Request(); 
+    $this->request = new Request();
     
     // Index all data and templates.
     $this->index = new Index();  

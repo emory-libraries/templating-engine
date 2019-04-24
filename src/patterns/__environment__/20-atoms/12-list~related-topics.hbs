@@ -1,5 +1,5 @@
-<ul class="list -topics">
+<ul class="list -topics{{#if classes}} {{classes}}{{/if}}">
   {{#each topics}}
-  <li class="list-item">{{#if href}}{{#if data}}{{> atoms-link label=data }}{{else}}{{> atoms-link }}{{/if}}{{else if data}}{{data}}{{else}}{{.}}{{/if}}</li>
+  <li class="list-item">{{#if href}}{{#if data}}{{> atoms-link label=data classes=''}}{{else}}{{> atoms-link classes=''}}{{/if}}{{else if data}}{{data}}{{else}}{{.}}{{/if}}</li>
   {{/each}}
 </ul>

@@ -7,6 +7,9 @@
  */
 class Route {
   
+  // Defines special template types.
+  const TEMPLATE_ASSET = 1;
+  
   // The path of the data file.
   public $path = null;
   
@@ -79,6 +82,9 @@ class Route {
     
     // Otherwise, extract the route data if an array is given.
     else if( is_array($route) ) {
+      
+      // Get the route's path, if applicable.
+      $this->path = array_get($route, 'path');
       
       // Get the route's ID.
       $this->id = array_get($route, 'id', File::id($route['endpoint']));

@@ -22,9 +22,24 @@ trait StringHelpers {
   
   // TODO: Create definition for `dotcase` helper.
   
-  // TODO: Create definition for `lowercase` helper.
+  // A block and inline helper that converts a string to lowercase. [aliased as downcase]
+  public static function lowercase( $string ) {
+    
+    // Get options.
+    $options = func_num_args() > 1 ? array_last(func_get_args()) : $string;
+    $string = func_num_args() > 1 ? $string : '';
+    
+    // Lowercase the string or block.
+    return (isset($options['fn']) ? strtolower($options['fn']()) : strtolower($string));
+    
+  }
   
-  // TODO: Create definition for `downcase` helper.
+  // A block and inline helper that converts a string to lowercase. [alias for lowercase]
+  public static function downcase( $string ) {
+    
+    return forward_static_call('HandlebarsHelpers\StringHelpers::lowercase', $string);
+    
+  }
   
   // TODO: Create definition for `ellipsis` helper.
   
@@ -70,9 +85,24 @@ trait StringHelpers {
   
   // TODO: Create definition for `trimRight` helper.
   
-  // TODO: Create definition for `uppercase` helper.
+  // A block and inline helper that converts a string to uppercase. [aliased as upcase]
+  public static function uppercase( $string ) {
+    
+    // Get options.
+    $options = func_num_args() > 1 ? array_last(func_get_args()) : $string;
+    $string = func_num_args() > 1 ? $string : '';
+    
+    // Lowercase the string or block.
+    return (isset($options['fn']) ? strtoupper($options['fn']()) : strtoupper($string));
+    
+  }
   
-  // TODO: Create definition for `upcase` helper.
+  // A block and inline helper that converts a string to uppercase. [alias for uppercase]
+  public static function upcase( $string ) {
+    
+    return forward_static_call('HandlebarsHelpers\StringHelpers::uppercase', $string);
+    
+  }
   
 }
 

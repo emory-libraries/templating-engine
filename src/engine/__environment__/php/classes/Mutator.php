@@ -12,7 +12,10 @@ use Moment\Moment;
 class Mutator {
   
   // Mutate some data based on a set of template-specific data mutations.
-  public static function mutate( array $data, string $template ) {
+  public static function mutate( array $data, $template ) {
+    
+    // Only permit mutations on user-defined templates.
+    if( !is_string($template) ) return $data;
     
     // Look for any template-specific mutations.
     $mutations = array_get(CONFIG['config']['mutations'], $template);
@@ -52,6 +55,9 @@ class Mutator {
     
     // Then, add things.
     $data = self::add($data, array_get($mutations, 'add', []));
+    
+    // Then, evaluate things.
+    $data = self::evaluate($data, array_get($mutations, 'evaluate', []));
     
     // Return the mutated data.
     return $data;
@@ -216,7 +222,7 @@ class Mutator {
         if( array_get($data, $radio, false) !== false ) { 
 
           // Get the radio item.
-          $item = array_get($data, $radio); 
+          $item = array_get($data, $radio);
 
           // Convert empty radio buttons to a null value by default.
           if( !isset($item) or empty($item) ) $data = array_set($data, $radio, null);
@@ -387,8 +393,49 @@ class Mutator {
     // Alias keys as different keys.
     foreach( $aliases as $alias => $source ) {
       
-      // Only try to alias keys that actually exists.
-      if( array_get($data, $source, false) !== false ) {
+      // Alias items within an array.
+      if( strpos($source, '@') !== false ) {
+        
+        // Get the keys for the alias and source.
+        $aliasKeys = array_map(function($key) {
+          
+          // Strip trailing and leading dots from the keys.
+          return trim($key, '. ');
+          
+        }, explode('@', $alias));
+        $sourceKeys = array_map(function($key) {
+          
+          // Strip trailing and leading dots from the keys.
+          return trim($key, '. ');
+          
+        }, explode('@', $source));
+        
+        // For array aliases, only permit aliasing within the same array item.
+        if( count($aliasKeys) != count($sourceKeys) or $aliasKeys[0] != $sourceKeys[0] ) continue;
+ 
+        // Look for the array of objects.
+        if( array_get($data, $sourceKeys[0], false) !== false ) {
+          
+          // Get the array of objects.
+          $array = array_get($data, $sourceKeys[0]);
+          
+          // Mutate each object within the array.
+          foreach( $array as $index => $object ) {
+            
+            // Mutate the object's text keys.
+            $array[$index] = self::alias($object, [$aliasKeys[1] => $sourceKeys[1]]);
+            
+          }
+          
+          // Save the array.
+          $data = array_set($data, $sourceKeys[0], $array, true);
+          
+        }
+        
+      }
+      
+      // Otherwise, only try to alias keys that actually exists.
+      else if( array_get($data, $source, false) !== false ) {
       
         // Save the alias, but disallow overwriting of keys that already exist.
         $data = array_set($data, $alias, array_get($data, $source));
@@ -408,8 +455,49 @@ class Mutator {
     // Rename keys as different keys.
     foreach( $renames as $new => $old ) {
       
-      // Only try to rename keys that actually exists.
-      if( array_get($data, $old, false) !== false ) {
+      // Rename items within an array.
+      if( strpos($old, '@') !== false ) {
+        
+        // Get the keys for new and old.
+        $newKeys = array_map(function($key) {
+          
+          // Strip trailing and leading dots from the keys.
+          return trim($key, '. ');
+          
+        }, explode('@', $new));
+        $oldKeys = array_map(function($key) {
+          
+          // Strip trailing and leading dots from the keys.
+          return trim($key, '. ');
+          
+        }, explode('@', $old));
+        
+        // For array renames, only permit renaming within the same array item.
+        if( count($newKeys) != count($oldKeys) or $newKeys[0] != $oldKeys[0] ) continue;
+        
+        // Look for the array of objects.
+        if( array_get($data, $oldKeys[0], false) !== false ) {
+          
+          // Get the array of objects.
+          $array = array_get($data, $oldKeys[0]);
+          
+          // Mutate each object within the array.
+          foreach( $array as $index => $object ) {
+            
+            // Mutate the object's text keys.
+            $array[$index] = self::rename($object, [$newKeys[1] => $oldKeys[1]]);
+            
+          }
+          
+          // Save the array.
+          $data = array_set($data, $oldKeys[0], $array);
+          
+        }
+        
+      }
+      
+      // Otherwise, only try to rename keys that actually exists.
+      else if( array_get($data, $old, false) !== false ) {
         
         // Prevent renaming if the new key already exists.
         if( array_get($data, $new, false) !== false ) continue;
@@ -435,8 +523,40 @@ class Mutator {
     // Replace values with different values.
     foreach( $replaces as $key => $value ) {
       
-      // Only try to replace keys that actually exists.
-      if( array_get($data, $key, false) !== false ) {
+      // Replace values within an array.
+      if( strpos($key, '@') !== false ) {
+        
+        // Get the keys.
+        $keys = array_map(function($key) {
+          
+          // Strip trailing and leading dots from the keys.
+          return trim($key, '. ');
+          
+        }, explode('@', $key));
+        
+        // Look for the array of objects.
+        if( array_get($data, $keys[0], false) !== false ) {
+          
+          // Get the array of objects.
+          $array = array_get($data, $keys[0]);
+          
+          // Mutate each object within the array.
+          foreach( $array as $index => $object ) {
+            
+            // Replace the array item's key with the new value.
+            $array[$index] = array_set($array[$index], $keys[1], $value, true);
+            
+          }
+          
+          // Save the array.
+          $data = array_set($data, $keys[0], $array);
+          
+        }
+        
+      }
+      
+      // Otherwise, only try to replace keys that actually exists.
+      else if( array_get($data, $key, false) !== false ) {
       
         // Replace the key's existing value with the new value.
         $data = array_set($data, $key, $value, true);
@@ -477,6 +597,83 @@ class Mutator {
       
       // Add any keys that don't already exist.
       $data = array_set($data, $key, $value);
+      
+    }
+    
+    // Return the mutated data.
+    return $data;
+    
+  }
+  
+  // Mutate the data by evaluating some condition.
+  public static function evaluate( array $data, array $evaluates ) {
+    
+    // Evaluate values with the given conditions.
+    foreach( $evaluates as $eval ) {
+      
+      // Ignore invalid expressions.
+      if( !isset($eval['condition']) or !isset($eval['target']) or !isset($eval['value']) ) continue;
+      
+      // Get the condition, target, and value.
+      $condition = $eval['condition'];
+      $target = $eval['target'];
+      $value = $eval['value'];
+      
+      // Evaluate values within an array.
+      if( strpos($target, '@') !== false ) {
+        
+        // Get the keys.
+        $keys = array_map(function($key) {
+          
+          // Strip trailing and leading dots from the keys.
+          return trim($key, '. ');
+          
+        }, explode('@', $target));
+        
+        // Look for the array of objects.
+        if( array_get($data, $keys[0], false) !== false ) {
+          
+          // Get the array of objects.
+          $array = array_get($data, $keys[0]);
+          
+          // Mutate each object within the array.
+          foreach( $array as $index => $object ) {
+            
+            // Evaluate the array item's key with the new value.
+            $array[$index] = self::evaluate($array[$index], [[
+              'condition' => str_replace($keys[0].'.@.', '', $condition),
+              'target' => $keys[1],
+              'value' => $value
+            ]]);
+            
+          }
+          
+          // Save the array.
+          $data = array_set($data, $keys[0], $array);
+          
+        }
+        
+      }
+      
+      // Otherwise, only try to evaluate keys that actually exists.
+      else if( ($source = array_get($data, $target, false)) !== false ) {
+        
+        // Parse the expression.
+        $exp = Conditional::parse($condition);
+        
+        // Inject values within the expression.
+        if( $exp['a'] == $target ) $exp['a'] = $source;
+        else if( strpos('&', $exp['a']) === 0 ) $exp['a'] = array_get($data, ltrim($exp['a'], '&'));
+        if( $exp['b'] == $target ) $exp['b'] = $source;
+        else if( strpos('&', $exp['b']) === 0 ) $exp['b'] = array_get($data, ltrim($exp['b'], '&'));
+        
+        // Evaluate the expression.
+        $result = Conditional::expression("{$exp['a']} {$exp['operator']} {$exp['b']}");
+        
+        // If the expression evaluated successfully, then replace the value.
+        if( $result ) $data = array_set($data, $target, $value, true);
+          
+      }
       
     }
     

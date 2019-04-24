@@ -1,0 +1,13 @@
+{{#each blocks}}
+  {{#if (or (eq (lowercase type) 'rich-text') (eq (lowercase type) 'rich text'))}}
+    {{> tokens-text rich=true text=(default wysiwyg text)}}
+  {{else if (eq (lowercase type) 'text')}}
+    {{> tokens-text}}
+  {{else if (eq (lowercase type) 'image')}}
+    {{> atoms-image src=(default image.image-file.path src)}}
+  {{else if (eq (lowercase type) 'heading')}}
+    {{> tokens-heading heading=(default heading-label heading) level=(default heading-level level)}}
+  {{else if (eq (lowercase type) 'video')}}
+    {{> atoms-video-youtube id=(default video-url id)}}
+  {{/if}}
+{{/each}}

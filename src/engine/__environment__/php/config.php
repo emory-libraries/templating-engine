@@ -31,8 +31,8 @@ define('CONFIG', array_merge([
     'root' => SITE_ROOT,
     'css' => SITE_ROOT.'/css',
     'js' => SITE_ROOT.'/js',
+    'scripts' => SITE_ROOT.'/php/scripts',
     'images' => SITE_ROOT.'/images',
-    'icons' => SITE_ROOT.'/icons',
     'assets' => SITE_ROOT.'/assets',
     'fonts' => SITE_ROOT.'/fonts'
     
@@ -140,6 +140,7 @@ define('CONFIG', array_merge([
     'js' => ENGINE_ROOT.'/js',
     'images' => ENGINE_ROOT.'/images',
     'icons' => ENGINE_ROOT.'/icons',
+    'logos' => ENGINE_ROOT.'/logos',
     'assets' => ENGINE_ROOT.'/assets',
     'fonts' => ENGINE_ROOT.'/fonts',
     'cache' => CACHE_ROOT
@@ -240,6 +241,21 @@ define('CONFIG', array_merge([
   
   // Get the contents of all templating engine meta files.
   'meta' => scandir_recursive(ENGINE_ROOT.'/meta', ENGINE_ROOT.'/meta'),
+  
+  // Get available layouts.
+  'layouts' => array_reduce(scandir_clean(ENGINE_ROOT.'/layout'), function($layouts, $layout) {
+    
+    // Get the file's basename and contents.
+    $basename = basename($layout, '.'.pathinfo($layout, PATHINFO_EXTENSION));
+    $contents = file_get_contents(ENGINE_ROOT."/layout/$layout");
+    
+    // Read and save the layouts.
+    $layouts[$basename] = $contents;
+      
+    // Continue reducing.
+    return $layouts;
+    
+  }, []),
   
   // Get and load all icons.
   'icons' => array_reduce(scandir_clean(ENGINE_ROOT.'/icons/svg'), function($icons, $icon) {

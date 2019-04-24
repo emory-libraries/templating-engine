@@ -58,7 +58,7 @@ class Router {
 
     // Map routes to endpoints.
     $this->endpoints = self::mapRoutesToEndpoints($index->routes, $index);
-    
+ 
   }
   
   // Determines if an endpoint exists.
@@ -139,7 +139,10 @@ class Router {
     // If the endpoint redirects, redirect to the new location.
     if( $endpoint->redirect !== false ) return $this->redirect($endpoint->redirect);
     
-    // Otherwise, render the endpoint.
+    // Mutate the data for the endpoint.
+    $endpoint->data = Mutator::mutate($endpoint->data, $endpoint->tid);
+    
+    // Render the endpoint.
     return Renderer::render($endpoint);
     
   }
