@@ -29,6 +29,7 @@ module.exports = async function () {
     'src/engine/__environment__/.env': 'engine/{{environment}}/.env',
     'src/engine/__environment__/meta': 'engine/{{environment}}/meta',
     'src/engine/__environment__/config': 'engine/{{environment}}/config',
+    'src/engine/__environment__/layout': 'engine/{{environment}}/layout',
     'src/engine/__environment__/css': 'engine/{{environment}}/css',
     'src/engine/__environment__/js': 'engine/{{environment}}/js',
     'src/engine/__environment__/icons': 'engine/{{environment}}/icons',
