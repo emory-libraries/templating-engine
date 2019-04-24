@@ -3,6 +3,10 @@
 // Configure the templating engine.
 define('CONFIG', array_merge([
   
+  // Store some information about the current setup.
+  'localhost' => LOCALHOST,
+  'development' => DEVELOPMENT,
+  
   // Stores information about the active site.
   '__site__' => [
     'domain' => DOMAIN,

@@ -1,7 +1,11 @@
 <?php
 
-// Enable debugging during development.
-if( $_SERVER['HTTP_HOST'] == 'localhost' or $_SERVER['SERVER_NAME'] == 'localhost' or ENVIRONMENT == 'development' ) {
+// Set a localhost and development mode flag.
+define('LOCALHOST', ($_SERVER['HTTP_HOST'] == 'localhost' or $_SERVER['SERVER_NAME'] == 'localhost'));
+define('DEVELOPMENT', (LOCALHOST or ENVIRONMENT == 'development'));
+
+// Enable debugging when in development mode.
+if( DEVELOPMENT ) {
   
   // Report all errors.
   error_reporting(E_ALL);
