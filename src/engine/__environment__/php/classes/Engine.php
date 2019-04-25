@@ -31,7 +31,16 @@ class Engine {
     $this->request = new Request();
     
     // Index all data and templates.
-    $this->index = new Index();  
+    $this->index = new Index();
+    
+    // Save index data globally.
+    define('INDEX', object_to_array($this->index));
+    define('SITE_DATA_INDEX', object_to_array([
+      'meta' => $this->index->getMetaData(),
+      'global' => $this->index->getGlobalData(),
+      'shared' => $this->index->getSharedData(),
+      'site' => $this->index->data['site']['site']
+    ]));
     
     // Initialize the router.
     $this->router = new Router($this->index);
