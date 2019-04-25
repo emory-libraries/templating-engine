@@ -1,0 +1,110 @@
+<system-index-block current-time="1554993846744" name="Current Page" type="folder">
+  <calling-page>
+    <system-page current="true" id="08c674340ae720980c981690deac3e2a">
+      <name>films-videos</name>
+      <is-published>true</is-published>
+      <title>Using Films and Videos in Research</title>
+      <path>/materials/films-videos</path>
+      <site>Emory Libraries - Main</site>
+      <link>site://Emory Libraries - Main/materials/films-videos</link>
+      <created-by>kcolli2</created-by>
+      <created-on>1554925384707</created-on>
+      <last-modified-by>kcolli2</last-modified-by>
+      <last-modified>1554925384707</last-modified>
+      <dynamic-metadata>
+        <name>Goal</name>
+      </dynamic-metadata>
+      <dynamic-metadata>
+        <name>Audience</name>
+      </dynamic-metadata>
+      <system-data-structure definition-path="Page Types/Info Page">
+        <version>1.0</version>
+        <introduction />
+        <content-block>
+          <block-type />
+          <heading-label />
+          <heading-level>Heading Level 2</heading-level>
+          <wysiwyg />
+          <image>
+            <version>1.0</version>
+            <image-file>
+              <path>/</path>
+            </image-file>
+            <caption />
+            <photo-credit />
+          </image>
+          <video-url />
+        </content-block>
+        <sidebar>
+          <version>1.0</version>
+          <link>
+          <version>1.0</version>
+          <link-type />
+          <cascade-page>
+            <path>/</path>
+          </cascade-page>
+          <cascade-file>
+            <path>/</path>
+          </cascade-file>
+          <external-url />
+          <link-customizations />
+          <link-label />
+          <link-description />
+          </link>
+          <links-list-learn>
+            <version>1.0</version>
+            <heading />
+            <link>
+            <version>1.0</version>
+            <link-type />
+            <cascade-page>
+              <path>/</path>
+            </cascade-page>
+            <cascade-file>
+              <path>/</path>
+            </cascade-file>
+            <external-url />
+            <link-customizations />
+            <link-label />
+            <link-description />
+            </link>
+          </links-list-learn>
+          <links-list-materials>
+            <version>1.0</version>
+            <heading />
+            <link>
+            <version>1.0</version>
+            <link-type />
+            <cascade-page>
+              <path>/</path>
+            </cascade-page>
+            <cascade-file>
+              <path>/</path>
+            </cascade-file>
+            <external-url />
+            <link-customizations />
+            <link-label />
+            <link-description />
+            </link>
+          </links-list-materials>
+        </sidebar>
+        <add-contact />
+        <link-contact>
+          <version>1.0</version>
+          <cascade-page>
+            <path>/</path>
+          </cascade-page>
+        </link-contact>
+        <add-research-aids />
+        <link-research-aid>
+          <version>1.0</version>
+          <cascade-page>
+            <path>/</path>
+          </cascade-page>
+          <customize-label />
+          <link-label />
+        </link-research-aid>
+      </system-data-structure>
+    </system-page>
+  </calling-page>
+</system-index-block>

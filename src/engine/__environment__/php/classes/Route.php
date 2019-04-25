@@ -71,7 +71,7 @@ class Route {
         $index = array_search($name, array_values(array_get(CONFIG, 'config.template')));
 
         // Lookup the template ID if the index exists, or use the default template otherwise.
-        $template = $index !== false ? array_keys(array_get(CONFIG, "config.template"))[$index] : $this->template;
+        $template = $index !== false ? array_keys(array_get(CONFIG, 'config.template'))[$index] : $this->template;
 
         // Save the template ID.
         $this->template = $template;
