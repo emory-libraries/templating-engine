@@ -4,7 +4,7 @@
 define('LOCALHOST', ($_SERVER['HTTP_HOST'] == 'localhost' or $_SERVER['SERVER_NAME'] == 'localhost'));
 define('DEVELOPMENT', (LOCALHOST or ENVIRONMENT == 'development'));
 
-// Enable debugging when in development mode.
+// Enable debugging and error reporting when in development mode.
 if( DEVELOPMENT ) {
   
   // Report all errors.
@@ -14,6 +14,9 @@ if( DEVELOPMENT ) {
   ini_set('display_errors', 1);
   
 }
+
+// Otherwise, disable debugging and error reporting.
+else Kint::$enabled_mode = false;
 
 // Initialize the templating engine.
 require ENGINE_ROOT."/php/init.php";

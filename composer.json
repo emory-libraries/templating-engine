@@ -7,6 +7,7 @@
     "mustache/mustache": "^2.12",
     "erusev/parsedown-extra": "0.8.0-beta-1",
     "fightbulc/moment": "^1.29",
-    "vlucas/phpdotenv": "^3.3"
+    "vlucas/phpdotenv": "^3.3",
+    "kint-php/kint": "^3.2"
   }
 }
