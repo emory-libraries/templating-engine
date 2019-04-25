@@ -169,6 +169,9 @@ class Index {
   // The known templates.
   public $templates = [];
   
+  // The assets found within the site.
+  public $assets = [];
+  
   // The index of known routes within the site.
   public $routes = [];
   
@@ -379,25 +382,42 @@ class Index {
       'fonts' => [
         CONFIG['site']['fonts'],
         CONFIG['engine']['fonts']
+      ],
+      'other' => [
+        CONFIG['data']['site']['root']
       ]
     ];
+    
+    // Get a list of data file extensions that should be ignored.
+    $data = array_merge(...array_values(Transformer::$transformers));
     
     // Recursively find all asset files.
     foreach( $assets as $group => $directories ) {
       
       // Find all asset files from the given paths.
-      $assets[$group] = array_reduce($directories, function($files, $path) {
+      $assets[$group] = array_reduce($directories, function($assets, $path) {
         
         // Capture the existing asset file.
-        if( is_file($path) ) return array_merge($files, [$path]);
+        if( is_file($path) ) return array_merge($assets, [$path]);
         
         // Otherwise, recursively find files within an existing directory.
-        if( file_exists($path) ) return array_merge($files, scandir_recursive($path, $path));
+        if( is_dir($path) ) return array_merge($assets, scandir_recursive($path, $path));
         
         // Otherwise, assume the path doesn't exist, so skip it for now.
-        return $files;
+        return $assets;
         
       }, []);
+      
+      // Ignore any data files that may have been found.
+      $assets[$group] = array_values(array_filter($assets[$group], function($file) use ($data) {
+   
+        // Get the file's extension.
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+          
+        // Verify that the file's extension does not match a data file extension.
+        return !in_array($ext, $data);
+        
+      }));
       
     }
     
