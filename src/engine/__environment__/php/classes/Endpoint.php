@@ -68,19 +68,23 @@ class Endpoint {
       
     }, $route->endpoint) : $route->domain.$route->endpoint;
 
-    // Get all data that the endpoint uses.
-    $this->data = array_merge([
-      '__meta__' => $index->getMetaData(),
-      '__global__' => $index->getGlobalData(),
-      '__shared__' => $index->getSharedData()
-    ], $index->getEndpointData($this->eid));
-    
     // Get the template that the endpoint uses.
     $this->template = $index->getEndpointTemplate($this->eid);
     $this->tid = $route->template;
     
     // Capture the asset's mime type, if applicable.
     if( $this->asset ) $this->mime = Mime::type(pathinfo($this->id, PATHINFO_EXTENSION));
+    
+    // Get all data that the endpoint uses.
+    $this->data = array_merge([
+      '__meta__' => $index->getMetaData(),
+      '__global__' => $index->getGlobalData(),
+      '__shared__' => $index->getSharedData(),
+      '__route__' => $route
+    ], $index->getEndpointData($this->eid));
+    
+    // Save the finalized endpoint data.
+    $this->data['__endpoint__'] = object_to_array($this);
     
   }
   
