@@ -37,34 +37,37 @@ class Renderer {
     // Determine the cache path for the compiled template.
     $path = "templates/{$endpoint->eid}".CONFIG['ext']['cache'];
     
-    // If a cached version of the template exists, see if it needs to be recompiled.
-    // FIXME: Is this performant enough, or should we implement more advanced caching for compiled templates? Currently, we're compiling templates when first requested and only recompiling when the template pattern has changed. Refer to the [LightnCandy docs](https://zordius.github.io/HandlebarsCookbook/9000-quickstart.html) for best practices in terms of rendering.
-    if( Cache::exists($path) ) {
+    // Create a helper method for quickly compiling and saving a template to the cache.
+    $compiler = function() use ($endpoint, $path) {
       
-      // Get the template pattern's last modified time.
-      $modified = File::modified($endpoint->template->file);
-      
-      // Determine if the cached template is outdated, and recompile it if so.
-      if( Cache::outdated($path, $modified) ) {
-        
-        // Recompile the template.
-        $compiled = self::compile(self::prepare($endpoint));
-        
-        // Overwrite the cached template with the newly recompiled template.
-        Cache::write($path, $compiled);
-        
-      }
-      
-    }
-    
-    // Otherwise, compile the template for the first time.
-    else {
-
       // Compile the template.
       $compiled = self::compile(self::prepare($endpoint));
-    
+
       // Save the compiled template to the cache.
       Cache::write($path, $compiled);
+      
+    };
+    
+    // Skip caching when in development mode, and always recompile patterns.
+    if( CONFIG['development'] ) $compiler();
+    
+    // Otherwise, use caching when not in development mode.
+    else {
+    
+      // If a cached version of the template exists, see if it needs to be recompiled.
+      // FIXME: Is this performant enough, or should we implement more advanced caching for compiled templates? Currently, we're compiling templates when first requested and only recompiling when the template pattern has changed. Refer to the [LightnCandy docs](https://zordius.github.io/HandlebarsCookbook/9000-quickstart.html) for best practices in terms of rendering.
+      if( Cache::exists($path) ) {
+
+        // Get the template pattern's last modified time.
+        $modified = File::modified($endpoint->template->file);
+
+        // Determine if the cached template is outdated, and recompile it if so.
+        if( Cache::outdated($path, $modified) ) $compiler();
+
+      }
+
+      // Otherwise, compile the template for the first time.
+      else $compiler();
       
     }
     
