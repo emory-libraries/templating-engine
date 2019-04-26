@@ -290,14 +290,28 @@ class Index {
       'site' => array_get(CONFIG, 'data.site.root')
     ];
     
+    // Get data file extensions.
+    $data = array_merge(...array_values(Transformer::$transformers));
+    
     // Find data files.
-    $site = array_map(function($directory) {
+    $site = array_map(function($directory) use ($data) {
       
       // Initialize the result.
       $files = [];
       
       // Verify that the directory exists, and scan it recursively for files.
       if( file_exists($directory) ) $files = scandir_recursive($directory, $directory);
+      
+      // Filter out any non-data files.
+      $files = array_values(array_filter($files, function($file) use ($data) {
+        
+        // Get the file's extension.
+        $ext = pathinfo($file, PATHINFO_EXTENSION);
+        
+        // Verify that the file has a data file extensions.
+        return in_array($ext, $data);
+        
+      }));
        
       // Return the listing of data files.
       return $files;
