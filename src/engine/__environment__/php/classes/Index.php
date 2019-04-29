@@ -189,7 +189,7 @@ class Index {
     
     // Get an index of all assets.
     $this->assets = self::getAssets();
-    
+
     // Get an index of all routes within the active site.
     $this->routes = self::getRoutes($this->data, $this->assets); 
     
@@ -412,22 +412,22 @@ class Index {
       $assets[$group] = array_reduce($directories, function($assets, $path) {
         
         // Capture the existing asset file.
-        if( is_file($path) ) return array_merge($assets, [$path]);
+        if( is_file($path) ) return array_merge_recursive($assets, [$path]);
         
         // Otherwise, recursively find files within an existing directory.
-        if( is_dir($path) ) return array_merge($assets, scandir_recursive($path, $path));
+        if( is_dir($path) ) return array_merge_recursive($assets, scandir_recursive($path, $path));
         
         // Otherwise, assume the path doesn't exist, so skip it for now.
         return $assets;
         
       }, []);
-      
+     
       // Ignore any data files that may have been found.
       $assets[$group] = array_values(array_filter($assets[$group], function($file) use ($data) {
-   
+
         // Get the file's extension.
         $ext = pathinfo($file, PATHINFO_EXTENSION);
-          
+        
         // Verify that the file's extension does not match a data file extension.
         return !in_array($ext, $data);
         

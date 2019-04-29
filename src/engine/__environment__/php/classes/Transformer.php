@@ -11,7 +11,7 @@ class Transformer {
   
   // Defines recognized file extensions and their respective transformer methods.
   public static $transformers = [
-    'transformJSON'   => ['json', 'js'],
+    'transformJSON'   => ['json'],
     'transformYAML'   => ['yaml', 'yml'],
     'transformXML'    => ['xml']
   ];
