@@ -172,23 +172,38 @@ define('CONFIG', array_merge([
       // Get the partial's contents and recognized include names.
       return [
         'contents' => $partial->template,
-        'includes' => [
-          $partial->id,
-          $partial->plid,
-          $partial->path
-        ]
+        'plid' => $partial->plid,
+        'id' => $partial->id,
+        'path' => $partial->path
       ];
 
     }, scandir_recursive(PATTERNS_ROOT)), function($partials, $partial) {
+      
+      // Get all of the partial's parts.
+      ['plid' => $plid, 'id' => $id, 'path' => $path, 'contents' => $contents] = $partial;
 
-      // Register the partial under its recognized include names.
-      foreach( $partial['includes'] as $include ) { $partials[$include] = $partial['contents']; }
+      // Register the partial under its recognized PLID include name.
+      $partials[$plid] = $contents;
+      
+      // Also register any alias include names.
+      $partials[$path] = $partials[$id] = &$partials[$plid];
 
       // Continune reducing all partials into a single-level array.
       return $partials;
 
     }, []),
-    'helpers' => (include ENGINE_ROOT.'/php/helpers/autoload.php')()
+    'helpers' => (include ENGINE_ROOT.'/php/helpers/autoload.php')(),
+    'flags' => [
+      'FLAG_HANDLEBARSJS',
+      'FLAG_THIS',
+      'FLAG_ELSE',
+      'FLAG_RUNTIMEPARTIAL',
+      'FLAG_NAMEDARG',
+      'FLAG_PARENT',
+      'FLAG_ADVARNAME',
+      'FLAG_JSLENGTH',
+      'FLAG_SPVARS',
+    ]
     
   ],
   

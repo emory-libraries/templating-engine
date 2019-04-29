@@ -18,9 +18,6 @@ if( DEVELOPMENT ) {
 // Initialize the templating engine.
 require ENGINE_ROOT."/php/init.php";
 
-// Disable debugging and error reporting.
-if( !DEVELOPMENT ) Kint::$enabled_mode = false;
-
 // Start the templating engine.
 new Engine();
 

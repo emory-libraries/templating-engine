@@ -33,7 +33,7 @@ class File {
     $directory = implode('/', array_map('kebabcase', explode('/', $directory)));
     
     // Get the ID from the dirname and basename in kebabcase.
-    return (isset($directory) ? "$directory/" : "").self::id($path);
+    return (isset($directory) ? "$directory/" : "").File::id($path);
     
   }
   
@@ -64,11 +64,19 @@ class File {
     
   }
   
-  // Write a file or array of files.
+  // Write a file.
   public static function write( $path, $data = null ) {
     
     // Write a file.
     return file_put_contents($path, (string) $data);
+    
+  }
+  
+  // Delete a file.
+  public static function delete( $path ) {
+    
+    // Delete a file.
+    return unlink($path);
     
   }
   

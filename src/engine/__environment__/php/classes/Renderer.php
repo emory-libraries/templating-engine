@@ -11,23 +11,6 @@ use SuperClosure\Serializer;
  */
 class Renderer {
   
-  // Set flags for the handlebars engine.
-  public static $flags = LightnCandy::FLAG_HANDLEBARSJS |
-                         LightnCandy::FLAG_THIS |
-                         LightnCandy::FLAG_ELSE |
-                         LightnCandy::FLAG_RUNTIMEPARTIAL |
-                         LightnCandy::FLAG_NAMEDARG |
-                         LightnCandy::FLAG_PARENT |
-                         LightnCandy::FLAG_ADVARNAME |
-                         LightnCandy::FLAG_JSLENGTH |
-                         LightnCandy::FLAG_SPVARS;
-  
-  // Get custom handlebars helpers.
-  public static $helpers = CONFIG['handlebars']['helpers'];
-  
-  // Get handlebars partials.
-  public static $partials = CONFIG['handlebars']['partials'];
-  
   // Renders a page from the given template and data.
   public static function render( Endpoint $endpoint ) { 
     
@@ -76,7 +59,7 @@ class Renderer {
     
     // Get the template renderer.
     $renderer = Cache::include($path);
-    
+
     // Render the template with the given data.
     return $renderer($endpoint->data);
     
@@ -118,16 +101,32 @@ class Renderer {
   // Compiles a template string.
   public static function compile( string $template ) {
     
-    // Initialize the handlebars engine.
-    $handlebars = new LightnCandy();
+    // Initialize a hleper method for getting flag constants.
+    $flag = function( $flag ) {
+      
+      // Return the flag constant.
+      return constant("LightnCandy\LightnCandy::$flag");
+      
+    };
+    
+    // Get the handlebars engine configurations.
+    $config = [
+      'flags' => array_reduce(array_tail(CONFIG['handlebars']['flags']), function($a, $b) use ($flag) {
+        
+        // Merge all flags together.
+        return $a | $flag($b);
+        
+      }, $flag(array_first(CONFIG['handlebars']['flags']))),
+      'helpers' => CONFIG['handlebars']['helpers'],
+      'partials' => CONFIG['handlebars']['partials']
+    ];
+    
+    // Compile the template to a closure function.
+    $closure = LightnCandy::compile($template, $config);
     
     // Compile the template to PHP.
-    $php = "<?php ".$handlebars->compile($template, [
-      'flags' => self::$flags,
-      'helpers' => self::$helpers,
-      'partials' => self::$partials
-    ])." ?>";
- 
+    $php = "<?php $closure ?>";
+
     // Return the compiled template.
     return $php;
     
