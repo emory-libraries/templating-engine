@@ -1,7 +1,12 @@
-<div class="main{{#if type}} -{{type}}{{/if}}{{#if classes}} {{classes}}{{/if}}">
+THIS IS MAIN
+<div class="section-main{{#if type}} -{{type}}{{/if}}{{#if classes}} {{classes}}{{/if}}">
   {{> organisms-intro-alt-text}}
-  <main class="main-body">
+  <main class="section-main-body">
+    {{#unless blocks}}
+    {{#block 'section-main-body'}}{{/block}}
+    {{else}}
     {{> compounds-blocks}}
+    {{/unless}}
   </main>
-  <aside class="main-sidebar"></aside>
+  <aside class="section-main-sidebar"></aside>
 </div>

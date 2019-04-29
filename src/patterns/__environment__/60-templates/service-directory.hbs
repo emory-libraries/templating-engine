@@ -1,0 +1,61 @@
+{{! Capture dynamic site data if available. }}
+{{#if (getSiteDataOfType 'templates-service')}}
+  {{set dynamic true this}}
+  {{set 'accordions' (keyBy (values (getSiteDataOfType 'template-services')) 'category') this}}
+{{/if}}
+
+<div class="service-directory-page">
+  <header class="service-directory-page-header"></header>
+  {{#extend 'organisms-main' type="service-directory-page" classes="service-directory-page-main"}}
+    {{#content 'section-main-body'}}
+
+      {{! Use a grid to better position stuff inside the main section. }}
+      {{#extend 'tokens-grid' cols='1fr' gap=(objectify cols='25px' rows='25px')}}
+        {{#content 'grid-items'}}
+
+          {{! Get the ID of all accordion panels, and compile them into an array. }}
+          {{set 'index' (arrayify null) this}}
+          {{#if dynamic}}
+            {{#each accordions as |panels|}}
+              {{#each panels}}
+                {{#unless id}}{{set 'id' (lowercase (dashcase title)) this}}{{/unless}}
+                {{push id ../../index}}
+              {{/each}}
+            {{/each}}
+          {{else}}
+            {{#each accordions}}
+              {{#each panels}}
+                {{#unless id}}{{set 'id' (lowercase (dashcase title)) this}}{{/unless}}
+                {{push id ../../index}}
+              {{/each}}
+            {{/each}}
+          {{/if}}
+
+          {{! Render a search filter. }}
+          {{> atoms-filter-search layout='contained' mode='big' keys=(makeArray 'group' 'title') config=(objectify sort=false) placeholder=(default placeholder 'Search for a Service')}}
+
+          {{! Render the card buttons in a grid. }}
+          {{#embed 'tokens-grid' sizes=(objectify
+            s=(objectify cols='1fr')
+            m=(objectify cols='repeat(3, 1fr)')
+            l=(objectify cols='repeat(3, 1fr)')
+          )}}
+            {{#content 'grid-items'}}
+              {{#each buttons}}{{> molecules-card-button}}{{/each}}
+            {{/content}}
+          {{/embed}}
+
+          {{! Render the accordions. }}
+          {{#if dynamic}}
+          {{#each accordions as |panels title|}}{{> compounds-accordion filterable=true}}{{/each}}
+          {{else}}
+          {{#each accordions}}{{> compounds-accordion filterable=true}}{{/each}}
+          {{/if}}
+
+        {{/content}}
+      {{/extend}}
+
+    {{/content}}
+  {{/extend}}
+  <footer class="service-directory-page-footer"></footer>
+</div>

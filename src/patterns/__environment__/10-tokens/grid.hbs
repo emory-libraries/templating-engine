@@ -1,0 +1,28 @@
+<div class="grid{{#each sizes as |config size|}} -{{size}}{{/each}}"
+     style="{{#if rows}}--rows: {{rows}};{{/if}}
+            {{#if cols}}--cols: {{cols}};{{/if}}
+            {{#if gap.rows}}--gap-rows: {{gap.rows}};{{/if}}
+            {{#if gap.cols}}--gap-cols: {{gap.cols}};{{/if}}
+            {{#if align.rows}}--align-rows: {{align.rows}};{{/if}}
+            {{#if align.cols}}--align-cols: {{align.cols}};{{/if}}
+            {{#each sizes as |config size|}}
+            {{#if config.rows}}--rows-{{size}}: {{config.rows}};{{/if}}
+            {{#if config.cols}}--cols-{{size}}: {{config.cols}};{{/if}}
+            {{#if config.gap.rows}}--gap-rows-{{size}}: {{config.gap.rows}};{{/if}}
+            {{#if config.gap.cols}}--gap-cols-{{size}}: {{config.gap.cols}};{{/if}}
+            {{#if config.align.rows}}--align-rows-{{size}}: {{config.align.rows}};{{/if}}
+            {{#if config.align.cols}}--align-cols-{{size}}: {{config.align.cols}};{{/if}}
+            {{/each}}
+            ">
+  {{#unless items}}
+  {{#block 'grid-items'}}{{/block}}
+  {{else}}
+  {{#each items}}
+    {{#if use}}
+    {{> (lowercase use)}}
+    {{else}}
+    <div>{{.}}</div>
+    {{/if}}
+  {{/each}}
+  {{/unless}}
+</div>

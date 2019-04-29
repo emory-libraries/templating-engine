@@ -1,9 +1,9 @@
 {{#unless (eq main false)}}
   <span class="intro-context">{{context}}</span>
-  {{> tokens-heading level="1" alternate=true classes="main-title intro-title" heading=title}}
-  {{> tokens-text type="lead" classes="main-subtitle intro-subtitle" text=subtitle}}
+  {{> tokens-heading level="1" alternate=true classes="section-main-title intro-title" heading=title icon=false}}
+  {{> tokens-text type="lead" classes="section-main-subtitle intro-subtitle" text=subtitle}}
 {{else}}
   <span class="intro-context">{{context}}</span>
-  {{> tokens-heading level="1" alternate=true classes="intro-title" heading=title}}
+  {{> tokens-heading level="1" alternate=true classes="intro-title" heading=title icon=false}}
   {{> tokens-text type="lead" classes="intro-subtitle" text=subtitle}}
 {{/unless}}

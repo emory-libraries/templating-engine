@@ -21,7 +21,7 @@
         {{/unless}}
       </div>
 
-      {{#each panels}}{{> molecules-accordion classes='accordion-panel'}}{{/each}}
+      {{#each panels}}{{> molecules-accordion classes='accordion-panel' filterable=(default ../filterable false) group=../title}}{{/each}}
 
     </div>
 
@@ -33,7 +33,7 @@
 
       <div class="accordion-title">{{title}}</div>
 
-      {{#each panels}}{{> molecules-accordion classes='accordion-panel'}}{{/each}}
+      {{#each panels}}{{> molecules-accordion classes='accordion-panel' filterable=false}}{{/each}}
 
     </div>
 
@@ -45,7 +45,7 @@
 
     <div class="accordion-title">{{title}}</div>
 
-    {{#each panels}}{{> molecules-accordion classes='accordion-panel'}}{{/each}}
+    {{#each panels}}{{> molecules-accordion classes='accordion-panel' filterable=(default ../filterable false) group=../title}}{{/each}}
 
   </div>
 
