@@ -271,7 +271,9 @@ var Fuzzy =
 /*#__PURE__*/
 function () {
   // Constructor
-  function Fuzzy(index, options) {
+  function Fuzzy(index) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
     _classCallCheck(this, Fuzzy);
 
     // Capture self.
@@ -301,60 +303,60 @@ function () {
           // Reorder items based on sort order.
           _.each(sorted.map(function (item) {
             return item.__el;
-          }), function ($el) {
+          }), function (el) {
             // Sort.
-            if ($el) $el.parent().append($el);
+            if ($(el)) $(el).parent().append(el);
           });
         },
         filter: function filter(filtered, filteredout) {
           // Show filtered.
           _.each(filtered.map(function (item) {
             return item.__el;
-          }), function ($el) {
+          }), function (el) {
             // Show.
-            if ($el) $el.show();
+            if (el) $(el).show();
           }); // Hide filteredout.
 
 
           _.each(filteredout.map(function (item) {
             return item.__el;
-          }), function ($el) {
+          }), function (el) {
             // Hide.
-            if ($el) $el.hide();
+            if (el) $(el).hide();
           });
         },
         search: function search(results, nonresults) {
           // Show results.
           _.each(results.map(function (item) {
             return item.__el;
-          }), function ($el) {
+          }), function (el) {
             // Show.
-            if ($el) $el.show();
+            if (el) $(el).show();
           }); // Hide nonresults.
 
 
           _.each(nonresults.map(function (item) {
             return item.__el;
-          }), function ($el) {
+          }), function (el) {
             // Hide.
-            if ($el) $el.hide();
+            if (el) $(el).hide();
           });
         },
         page: function page(active, inactive, data) {
           // Show active.
           _.each(active.map(function (item) {
             return item.__el;
-          }), function ($el) {
+          }), function (el) {
             // Show.
-            if ($el) $el.show();
+            if (el) $(el).show();
           }); // Hide inactive.
 
 
           _.each(inactive.map(function (item) {
             return item.__el;
-          }), function ($el) {
+          }), function (el) {
             // Hide.
-            if ($el) $el.hide();
+            if (el) $(el).hide();
           });
         }
       }
@@ -368,59 +370,119 @@ function () {
       // Find references to associated index elements.
       reference: function reference(index) {
         // Get the ID attribute.
-        var attr = this.attr('id'); // Locate elements for each index item.
+        var attr = this.attr('id'); // Use the index data as given, but associate it with elements on the page.
 
-        return index.map(function (item) {
-          // Require that items have an ID.
-          if (_.has(item, 'id')) {
-            // Attempt to find the element based on ID.
-            var $el = $("[".concat(attr, "=\"").concat(item.id, "\"]")); // Save elements when found.
+        if (_.isPlainObject(index[0])) {
+          // Locate elements for each index item.
+          return index.map(function (item) {
+            // Get the item ID.
+            var id = item.id; // Attempt to find the element based on ID.
 
-            if ($el.length > 0) item.__el = $el;
-          } // Return.
+            var $el = $("[".concat(attr, "=\"").concat(id, "\"]")); // Save elements when found.
 
+            if ($el.length > 0) item.__el = $el[0]; // Return.
 
-          return item;
-        });
+            return item;
+          });
+        } // Otherwise, assume a list of IDs was given and index items need to be located and parsed.
+        else {
+            // Locate elements by ID.
+            return this.index(index.map(function (id) {
+              // Attempt to find the element based on ID.
+              var $el = $("[".concat(attr, "=\"").concat(id, "\"]")); // Save elements when found.
+
+              if ($el.length > 0) return $el; // Otherwise, return nothing.
+
+              return null;
+            }).filter(function (el) {
+              return !_.isNil(el);
+            }));
+          }
       },
       // Convert a list of elements to an index.
       index: function index(list) {
         var _this3 = this;
 
         // Initialize result.
-        var result = []; // Extract the items from the list, and index them.
+        var result = []; // Initialize a helper method for parsing elements as index items.
 
-        $(list).children().each(function (i, item) {
-          // Find items with search data.
-          result.push(_.toArray($(item).find("[".concat(_this3.attr('key'), "]"))).map(function (el) {
-            // Get search attributes.
-            var attrs = _.toArray(el.attributes).reduce(function (result, attr) {
-              result[attr.name] = attr.value;
-              return result;
-            }, {}); // Initialize data.
+        var parse = function parse(item) {
+          // Find all elements that have some search data.
+          var targets = $(item).add($(item).find('*')).filter(function (i, el) {
+            // Get the element's attributes.
+            var attrs = _.toArray(el.attributes); // Only keep elements with usable attributes.
 
 
-            var data = Object.keys(attrs).filter(function (attr) {
-              return attr.indexOf(_this3.attr('key')) === 0;
+            return _.some(attrs, function (attr) {
+              return attr.name.indexOf(_this3.attr('key')) === 0;
+            });
+          }); // Find items with search data.
+
+          result.push(_.reduce(_.toArray(targets).map(function (target) {
+            // Get all of the target's attributes.
+            var attrs = _.toArray(target.attributes); // Get only the target's relevant attribute data.
+
+
+            var rattrs = _.toArray(target.attributes).filter(function (attr) {
+              // Only look for key attributes at the moment.
+              return attr.name.indexOf(self.config.attrs.base) === 0;
+            }); // Get the data
+
+
+            var data = rattrs.filter(function (attr) {
+              // Only use key attributes at the moment.
+              return attr.name.indexOf(_this3.attr('key')) === 0;
             }).reduce(function (data, attr) {
-              if (attr.indexOf(':') > -1) _.set(data, attr.split(':')[1], attrs[attr]);else {
-                var key = attrs[attr];
-                var value;
-                if (attrs[_this3.attr('attr')]) value = attrs[_this3.attr('attr')];
-                if (attrs[_this3.attr('value')]) value = attrs[_this3.attr('value')];
-                data[attrs[attr]] = value || $(el).val() || $(el).text().trim();
-              }
+              // Look for designated key-value pairs.
+              if (attr.name.indexOf(':') > -1) {
+                // Capture the attribute key and value.
+                _.set(data, attr.name.split(':')[1], attr.value);
+              } // Otherwise, look for values elsewhere.
+              else {
+                  // Look for an attribute or value.
+                  var a = _.get(rattrs.filter(function (attr) {
+                    // Find possible attribute values.
+                    return attr.name == _this3.attr('attr');
+                  }), 0, false);
+
+                  var v = _.get(rattrs.filter(function (attr) {
+                    // Find possible attribute values.
+                    return attr.name == _this3.attr('value');
+                  }), 0, false); // Get the attribute's key and value.
+
+
+                  var key = attr.value;
+                  var value = a ? attrs[a.value] : v ? v.value : null; // Save the data.
+
+                  _.set(data, key, value || target.value || target.textContent.trim());
+                } // Return the parsed data.
+
+
               return data;
             }, {}); // Return data and element.
 
             return _.merge({
-              __el: $(item)
+              __el: $(item)[0]
             }, data);
-          }).reduce(function (result, data) {
-            result = _.merge(result, data);
-            return result;
+          }), function (result, data) {
+            return _.merge(result, data);
           }, {}));
-        }); // Return.
+        }; // If an array of items was given, then assume the array contains the items to be parsed.
+
+
+        if (_.isArray(list)) {
+          // Index each item.
+          list.forEach(function (item) {
+            return parse(item);
+          });
+        } // Otherwise, try to parse the items in a list.
+        else {
+            // Extract the items from the list, and index them.
+            $(list).children().each(function (i, item) {
+              return parse(item);
+            });
+          } // Return.
+
 
         return result;
       },
@@ -1298,7 +1360,7 @@ Components.register('filter-button', {
       this.fuzzy.unfilter();
     }
   },
-  created: function created() {
+  mounted: function mounted() {
     // Initialize the search utility.
     this.fuzzy = new Fuzzy(this.index, this.config);
   }
@@ -1347,7 +1409,7 @@ Components.register('filter-dropdown', {
       this.selected = this.defaults.selected || '';
     }
   },
-  created: function created() {
+  mounted: function mounted() {
     // Initialize the search utility.
     this.fuzzy = new Fuzzy(this.index, this.config);
   },
@@ -1410,7 +1472,7 @@ Components.register('filter-search', {
       this.query = '';
     }
   },
-  created: function created() {
+  mounted: function mounted() {
     // Initialize the search utility.
     this.fuzzy = new Fuzzy(this.index, this.config);
   },
@@ -1620,7 +1682,7 @@ Components.register('accordion', {
   },
   mounted: function mounted() {
     // Find all accordion panels.
-    this.panels = Array.from($(this.$el).find('.accordion-panel'));
+    this.panels = _.toArray($(this.$el).find('.accordion-panel'));
   }
 });
 
