@@ -180,7 +180,10 @@ define('CONFIG', array_merge([
     }, scandir_recursive(PATTERNS_ROOT)), function($partials, $partial) {
       
       // Get all of the partial's parts.
-      ['plid' => $plid, 'id' => $id, 'path' => $path, 'contents' => $contents] = $partial;
+      $plid = $partial['plid'];
+      $id = $partial['id'];
+      $path = $partial['path'];
+      $contents = $partial['contents'];
 
       // Register the partial under its recognized PLID include name.
       $partials[$plid] = $contents;
