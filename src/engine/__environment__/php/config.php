@@ -5,6 +5,7 @@ define('CONFIG', array_merge([
   
   // Store some information about the current setup.
   'localhost' => LOCALHOST,
+  'ngrok' => NGROK,
   'development' => DEVELOPMENT,
   
   // Stores information about the active site.

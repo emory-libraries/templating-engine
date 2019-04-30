@@ -27,8 +27,17 @@ class Engine {
   // Constructor
   function __construct() {
     
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::point('Engine', true);
+    
     // Get data about the request.
     $this->request = new Request();
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) {
+      Performance\Performance::point('Request processed.');
+      Performance\Performance::point('Indexing', true);
+    }
     
     // Index all data and templates.
     $this->index = new Index();
@@ -42,11 +51,17 @@ class Engine {
       'site' => $this->index->data['site']['site']
     ]));
     
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::finish('Indexing');
+    
     // Initialize the router.
     $this->router = new Router($this->index);
     
     // Run the templating engine.
     $this->run();
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::finish('Engine');
     
   }
   

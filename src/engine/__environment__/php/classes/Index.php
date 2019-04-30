@@ -217,6 +217,9 @@ class Index {
   // Locate environment-specific data files.
   public static function getEnvironmentData( $read = false ) {
     
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::point('Indexing environment data...');
+    
     // Get environment-specific data directories.
     $environment = [
       'meta' => array_get(CONFIG, 'data.environment.meta'),
@@ -274,6 +277,9 @@ class Index {
     // Merge the shared environment data.
     $environment['shared'] = array_merge($environment['shared'], $shared);
     
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::finish();
+    
     // Return all files with their contents.
     return $environment;
     
@@ -281,6 +287,9 @@ class Index {
   
   // Locate site-specific data files.
   public static function getSiteData( $read = false ) {
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::point('Indexing site data...');
     
     // Get site-specific data directories.
     $site = [
@@ -330,6 +339,9 @@ class Index {
     // Otherwise, get the contents of all files.
     $site = self::readFiles($site, 'Data');
     
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::finish();
+    
     // Return all files with their contents.
     return $site;
     
@@ -337,6 +349,9 @@ class Index {
   
   // Locate template patterns.
   public static function getTemplates( $read = false ) {
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::point('Indexing templates...');
     
     // Get template directory.
     $directory = array_get(CONFIG, 'patterns.groups.templates');
@@ -361,6 +376,9 @@ class Index {
     // Otherwise, read the contents of all files.
     $templates = self::readFiles($templates, 'Template');
     
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::finish();
+    
     // Return all files with their contents.
     return $templates;
     
@@ -368,6 +386,9 @@ class Index {
   
   // Locate all assets used by the site.
   public static function getAssets( ) {
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::point('Indexing assets...');
     
     // Get asset directories.
     $assets = [
@@ -448,6 +469,9 @@ class Index {
       
     }, $assets);
     
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::finish();
+    
     // Return assets.
     return $assets;
     
@@ -455,6 +479,9 @@ class Index {
   
   // Identifies all known routes within the active site using the data and templates indices.
   public static function getRoutes(  array $data, $assets = [] ) {
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::point('Indexing routes...');
    
     // Initialize the routes.
     $routes = [];
@@ -470,6 +497,9 @@ class Index {
     
     // Merge asset routes into routes.
     $routes = array_merge_exact_recursive($routes, $assets);
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::finish();
     
     // Return the routes.
     return $routes;

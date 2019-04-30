@@ -2,7 +2,8 @@
 
 // Set a localhost and development mode flag.
 define('LOCALHOST', ($_SERVER['HTTP_HOST'] == 'localhost' or $_SERVER['SERVER_NAME'] == 'localhost'));
-define('DEVELOPMENT', (LOCALHOST or ENVIRONMENT == 'development'));
+define('NGROK', strpos($_SERVER['HTTP_HOST'], 'ngrok') !== false or strpos($_SERVER['HTTP_HOST'], 'ngrok') !== false);
+define('DEVELOPMENT', (LOCALHOST or NGROK or ENVIRONMENT == 'development'));
 
 // Enable debugging and error reporting when in development mode.
 if( DEVELOPMENT ) {
@@ -20,5 +21,11 @@ require ENGINE_ROOT."/php/init.php";
 
 // Start the templating engine.
 new Engine();
+
+// Output all performance result.
+if( DEVELOPMENT ) {
+  Performance\Performance::results();
+  d(Performance\Performance::export()->get());
+};
 
 ?>

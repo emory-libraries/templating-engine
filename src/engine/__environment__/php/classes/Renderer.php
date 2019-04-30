@@ -14,8 +14,8 @@ class Renderer {
   // Renders a page from the given template and data.
   public static function render( Endpoint $endpoint ) { 
     
-    // Initialize the handlebars engine.
-    $handlebars = new LightnCandy();
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::point('Renderer', true);
     
     // Determine the cache path for the compiled template.
     $path = "templates/{$endpoint->eid}".CONFIG['ext']['cache'];
@@ -28,6 +28,9 @@ class Renderer {
 
       // Save the compiled template to the cache.
       Cache::write($path, $compiled);
+      
+      // Add benchmark point.
+      if( DEVELOPMENT ) Performance\Performance::point('Template compiled.');
       
     };
     
@@ -59,6 +62,9 @@ class Renderer {
     
     // Get the template renderer.
     $renderer = Cache::include($path);
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::finish('Renderer');
 
     // Render the template with the given data.
     return $renderer($endpoint->data);
@@ -92,6 +98,9 @@ class Renderer {
       $template = str_replace('{{template}}', $template, $wrapper);
       
     }
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::point('Template prepared.');
     
     // Return the prepared template.
     return $template;

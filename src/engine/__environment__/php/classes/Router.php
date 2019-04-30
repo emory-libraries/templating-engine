@@ -58,6 +58,9 @@ class Router {
 
     // Map routes to endpoints.
     $this->endpoints = self::mapRoutesToEndpoints($index->routes, $index);
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::point('Routes converted to endpoints.');
  
   }
   
@@ -133,6 +136,9 @@ class Router {
   // If the endpoint doesn't exist, then it will render an error page instead.
   function render( $endpoint ) {
     
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::point('Router', true);
+    
     // Get the endpoint object for the given endpoint.
     $endpoint = $this->getEndpoint($endpoint);
    
@@ -141,6 +147,12 @@ class Router {
     
     // Mutate the data for the endpoint.
     $endpoint->data = Mutator::mutate($endpoint->data, $endpoint->tid);
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) {
+      Performance\Performance::point('Mutations applied to data.');  
+      Performance\Performance::finish('Router');
+    }
     
     // Render the endpoint.
     return Renderer::render($endpoint);
