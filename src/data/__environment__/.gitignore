@@ -1,0 +1,12 @@
+*
+!__site__/
+!__site__/**/*
+!__sibling*__/
+!__sibling*__/**/*
+!_global/
+!_global/**/*
+!_meta/
+!_meta/**/*
+!_shared/
+!_shared/**/*
+!.gitignore

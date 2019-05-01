@@ -1,0 +1,8 @@
+*
+!_global/
+!_global/**/*
+!_meta/
+!_meta/**/*
+!_shared/
+!_shared/**/*
+!.gitignore

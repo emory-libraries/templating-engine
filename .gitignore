@@ -4,24 +4,3 @@ node_modules/
 vendor/
 public/
 .env
-
-# Environment Data
-src/data/__environment__/
-!src/data/__environment__/_global/
-!src/data/__environment__/_meta/
-!src/data/__environment__/_shared/
-!src/data/__environment__/__sibling*__/
-!src/data/__environment__/__site__/
-
-# Sibling Data
-!src/data/__environment__/__sibling*__/_global/
-!src/data/__environment__/__sibling*__/_meta/
-!src/data/__environment__/__sibling*__/_shared/
-
-# Site Data
-!src/data/__environment__/__site__/_global/
-!src/data/__environment__/__site__/_meta/
-!src/data/__environment__/__site__/_shared/
-
-# Gitkeep
-!**/.gitkeep
