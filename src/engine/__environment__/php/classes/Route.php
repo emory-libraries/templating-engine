@@ -3,112 +3,124 @@
 /*
  * Route
  *
- * Interprets some route data given the path to a data file.
+ * Builds a set of routing data for an incoming request.
+ * Routing data consists of information about where an
+ * endpoint's files are expected to be found.
  */
 class Route {
   
-  // Defines special template types.
-  const TEMPLATE_ASSET = 1;
-  
-  // The path of the data file.
-  public $path = null;
-  
-  // The route ID.
-  public $id;
-  
-  // The site's environment.
-  public $environment = CONFIG['__site__']['environment'];
-  
-  // The site ID.
-  public $site = CONFIG['__site__']['site'];
-  
-  // The site's domain.
-  public $domain = CONFIG['__site__']['domain'];
-  
-  // The route's endpoint within the site.
+  // The endpoint of the incoming request.
   public $endpoint;
   
-  // Whether the route redirects, and if so, where it redirects to.
-  public $redirect = false;
+  // The anticpated data file location for the incoming request.
+  public $data;
   
-  // The route's template type.
-  public $template = CONFIG['defaults']['template'];
+  // The global data file locations for the request.
+  public $global = [];
+  
+  // The meta data file locations for the request.
+  public $meta = [];
+  
+  // The shared data file locations for the request.
+  public $shared = [];
+  
+  // The template file location for each template by ID.
+  public $templates = [];
+  
+  // The anticipated cache file location for the incoming request.
+  public $cache;
+  
+  // Indicates if the route is presumed to be an asset.
+  public $asset = false;
   
   // Constructs the route.
-  function __construct( $route ) {
+  function __construct( Request $request ) {
     
-    // Infer route data if a path is given.
-    if( is_string($route) ) {
+    // Capture the endpoint of the incoming request.
+    $this->endpoint = $endpoint = $request->endpoint;
+   
+    // Determine the data file's path and cache file path.
+    $this->data = cleanpath(CONFIG['data']['site']['root']."/$endpoint");
+    $this->cache = cleanpath(CONFIG['engine']['cache']['pages']."/$endpoint");
     
-      // Save the data file path.
-      $this->path = $route;
-
-      // Get the data file's ID.
-      $this->id = File::id($route);
-
-      // Determine the endpoint that would map to the data file.
-      $this->endpoint = File::endpoint($route);
-
-      // Make the `index` keyword optional for index endpoints.
-      if( $this->id == 'index' ) $this->endpoint = [
-        preg_replace('/index$/', '', $this->endpoint),
-        $this->endpoint
-      ];
-
-      // Get the data file's data.
-      $data = new Data($route);
-
-      // Determine if the route redirects, and if so, get the redirect path.
-      if( array_get($data->data, 'redirect', false) ) $this->redirect = array_get($data->data, 'redirect');
-
-      // Get the route's template, or use the default template.
-      if( !$this->redirect and array_get($data->data, 'template', false) ) {
-
-        // Get the template name from the data file.
-        $name = array_get($data->data, 'template');
-
-        // Lookup the position of the template name within list of known template names.
-        $index = array_search($name, array_values(array_get(CONFIG, 'config.template')));
-
-        // Lookup the template ID if the index exists, or use the default template otherwise.
-        $template = $index !== false ? array_keys(array_get(CONFIG, 'config.template'))[$index] : $this->template;
-
-        // Save the template ID.
-        $this->template = $template;
-
-      }
+    // Get the requested endpoint's extension, if any.
+    $ext = pathinfo($endpoint, PATHINFO_EXTENSION);
+    
+    // For asset files, account for the asset file's path potentially being aliased.
+    if( isset($ext) and in_array($ext, array_keys(Mime::$mimes)) ) {
+      
+      // Set the asset flag.
+      $this->asset = true;
+      
+      // Capture all potential data locations.
+      $this->data = array_map(function($path) use ($endpoint) {
+        
+        // Get the potential asset path.
+        return cleanpath("$path/$endpoint");
+        
+      }, CONFIG['assets']);
       
     }
     
-    // Otherwise, extract the route data if an array is given.
-    else if( is_array($route) ) {
+    // For index files, account for the data file potentially not including the index keyword.
+    if( substr($endpoint, -1) == '/' ) {
       
-      // Get the route's path, if applicable.
-      $this->path = array_get($route, 'path');
-      
-      // Get the route's ID.
-      $this->id = array_get($route, 'id', File::id($route['endpoint']));
-      
-      // Get the route's endpoint.
-      $this->endpoint = $route['endpoint'];
-      
-      // Make the `index` keyword optional for index endpoints.
-      if( str_ends_with($this->endpoint, '/') ) $this->endpoint = [
-        $this->endpoint,
-        $this->endpoint.'index'
-      ];
-      else if( str_ends_with($this->endpoint, 'index') ) $this->endpoint = [
-        preg_replace('/index$/', '', $this->endpoint),
-        $this->endpoint
-      ];
-      
-      // Determine if the route redirects, and if so, get the redirect path.
-      if( array_get($route, 'redirect', false) ) $this->redirect = $route['redirect'];
-      
-      // Get the route's template.
-      if( !$this->redirect ) $this->template = $route['template'];
+      // Add the index keyword onto the data file path and cache file path.
+      $this->data .= 'index';
+      $this->cache .= 'index';
       
     }
+    
+    // For data file paths, enable the use of any valid data file extensions.
+    if( is_string($this->data) and (!isset($ext) or $ext === '') ) {
+      
+      // Get all valid data extension.
+      $exts = array_merge(...array_values(Transformer::$transformers));
+      
+      // Get all potential data file paths based on valid data file extensions.
+      $this->data = array_map(function($ext) {
+        
+        // Add the extension to the data file.
+        return $this->data.".$ext";
+        
+      }, $exts);
+      
+    }
+    
+    // Add the cache file extension.
+    $this->cache .= CONFIG['ext']['cache'];
+    
+    // Get the global data folder paths, maintaining override order.
+    $this->global[] = CONFIG['data']['environment']['global'];
+    $this->global[] = CONFIG['data']['site']['global'];
+    
+    // Get the meta data folder paths, maintaining override order.
+    $this->meta[] = CONFIG['engine']['meta'];
+    $this->meta[] = CONFIG['data']['environment']['meta'];
+    $this->meta[] = CONFIG['data']['site']['meta'];
+    
+    // Get the shared data folder paths, maintaining override order.
+    $this->shared[] = CONFIG['data']['environment']['shared'];
+    $this->shared = array_merge($this->shared, ...array_values(CONFIG['data']['shared']));
+    $this->shared[] = CONFIG['data']['site']['shared'];
+    
+    // Get the template pattern directory.
+    $templates = CONFIG['patterns']['groups']['templates'];
+    
+    // Get template file paths and map them to their respective IDs.
+    // FIXME: This is scanning the template folder for for template files. If this is still a performance issue, and we end up needing to lessen and/or eliminate reliance on the file system, we'll want to readdress how template files are registered within the templating engine.
+    $this->templates = array_reduce(scandir_clean($templates), function($result, $template) use ($templates) {
+      
+      // Get the template's path.
+      $path = cleanpath("$templates/$template");
+      
+      // Get the template's PLID.
+      $plid = Template::plid($path);
+      
+      // Save template paths under their respective PLIDs.
+      return array_set($result, $plid, $path);
+      
+    }, []);
     
   }
   

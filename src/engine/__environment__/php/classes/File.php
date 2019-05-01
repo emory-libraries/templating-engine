@@ -80,6 +80,50 @@ class File {
     
   }
   
+  // Determine if a path or any/every path in an array of paths exists.
+  public static function exists( $path, $every = false ) { 
+    
+    // Determine if the path or array of paths exists.
+    return (is_array($path) ? ($every ? array_every($path, 'file_exists') : array_some($path, 'file_exists')) : file_exists($path)); 
+  
+  }
+  
+  // Determine if a file path or any/every file path in an array of paths exists.
+  public static function isFile( $path, $every = false ) { 
+    
+    // Determine if the file path or array of file paths exists.
+    return (is_array($path) ? ($every ? array_every($path, function($file) {
+      
+      // Check to see if the file path points to an actual file.
+      return is_file($file);
+      
+    }) : array_some($path, function($file) {
+      
+      // Check to see if the file path points to an actual file.
+      return is_file($file);
+      
+    })) : is_file($path)); 
+  
+  }
+  
+  // Determine if a directory path or any/every directory path in an array of paths exists.
+  public static function isDirectory( $path, $every = false ) { 
+    
+    // Determine if the directory path or array of directory paths exists.
+    return (is_array($path) ? ($every ? array_every($path, function($directory) {
+      
+      // Check to see if the directory path points to an actual directory.
+      return is_dir($directory);
+      
+    }) : array_some($path, function($directory) {
+      
+      // Check to see if the directory path points to an actual directory.
+      return is_dir($directory);
+      
+    })) : is_dir($path)); 
+  
+  }
+  
   // Get the last modified time of a file.
   public static function modified( $path ) {
     

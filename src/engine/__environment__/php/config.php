@@ -1,7 +1,29 @@
 <?php
 
+// Get pattern groups.
+define('PATTERN_GROUPS', array_reduce(array_map(function($folder) {
+      
+  // Get the atomic group name.
+  $group = preg_replace('/^\d{1,2}-/', '', $folder);
+
+  // Return folder data.
+  return [
+    'group' => $group,
+    'path' => cleanpath(PATTERNS_ROOT.'/'.$folder)
+  ];
+
+}, scandir_clean(PATTERNS_ROOT)), function($groups, $group) {
+
+  // Merge the group data into a single array.
+  $groups[$group['group']] = $group['path'];
+
+  // Continue reducing.
+  return $groups;
+
+}, []));
+
 // Configure the templating engine.
-define('CONFIG', array_merge([
+define('CONFIG', [
   
   // Store some information about the current setup.
   'localhost' => LOCALHOST,
@@ -60,6 +82,7 @@ define('CONFIG', array_merge([
       'shared' => SITE_DATA.'/_shared'
     ],
     
+    // FIXME: This is scanning the shared data folders of all sibling sites for shared data. This may become an issue as the number of sites with shared data increases. Also, this implies that we'll need to read the data from these files later, so if we're wanting to lessen and/or eliminate the number of times we're retrieving data from the file system, we'll likely want to address how shared data is being used.
     'shared' => array_map(function($path) {
       
       // Initialize the files.
@@ -89,7 +112,6 @@ define('CONFIG', array_merge([
       // Filter out environment-level data folders, and only keep site-level folders.
       return !in_array($folder, ['_meta', '_global', '_shared']);
       
-      
     }))), function($shared, $site) {
 
       // Merge the site-specific shared files into a single array.
@@ -107,27 +129,15 @@ define('CONFIG', array_merge([
     
     'root' => PATTERNS_ROOT,
     
-    'groups' => array_reduce(array_map(function($folder) {
-      
-      // Get the atomic group name.
-      $group = preg_replace('/^\d{1,2}-/', '', $folder);
-      
-      // Return folder data.
-      return [
-        'group' => $group,
-        'path' => cleanpath(PATTERNS_ROOT.'/'.$folder)
-      ];
-      
-    }, scandir_clean(PATTERNS_ROOT)), function($groups, $group) {
-
-      // Merge the group data into a single array.
-      $groups[$group['group']] = $group['path'];
-      
-      // Continue reducing.
-      return $groups;
-      
-    }, [])
+    'groups' => PATTERN_GROUPS
     
+  ],
+  
+  // Configures asset directories we can expect to find assets.
+  'assets' => [
+    SITE_ROOT,
+    ENGINE_ROOT,
+    SITE_DATA
   ],
   
   // Configures engine paths.
@@ -148,7 +158,10 @@ define('CONFIG', array_merge([
     'logos' => ENGINE_ROOT.'/logos',
     'assets' => ENGINE_ROOT.'/assets',
     'fonts' => ENGINE_ROOT.'/fonts',
-    'cache' => CACHE_ROOT
+    'cache' => [
+      'root' => CACHE_ROOT,
+      'pages' => CACHE_ROOT.'/pages'
+    ]
     
   ],
   
@@ -167,15 +180,12 @@ define('CONFIG', array_merge([
       // Get the full path of the partial.
       $path = PATTERNS_ROOT."/$partial";
 
-      // Treat the partial as a template in order to get needed data out of it.
-      $partial = new Template($path);
-
       // Get the partial's contents and recognized include names.
       return [
-        'contents' => $partial->template,
-        'plid' => $partial->plid,
-        'id' => $partial->id,
-        'path' => $partial->path
+        'contents' => File::read($path),
+        'plid' => Template::plid($path),
+        'id' => Template::id($path),
+        'path' => Template::path($path)
       ];
 
     }, scandir_recursive(PATTERNS_ROOT)), function($partials, $partial) {
@@ -231,15 +241,13 @@ define('CONFIG', array_merge([
     
   ],
   
-  // Sets defaults for things.
+  // Configures the defaults for things.
   'defaults' => [
     
     // Set the default template when a template cannot be found for a route.
     'template' => 'templates-info'
     
-  ]
-  
-], [
+  ],
   
   // Get the contents of all templating engine configuration files.
   'config' => array_reduce(scandir_recursive(ENGINE_ROOT.'/config'), function($config, $file) {
@@ -314,6 +322,6 @@ define('CONFIG', array_merge([
     
   }, [])
   
-]));
+]);
 
 ?>

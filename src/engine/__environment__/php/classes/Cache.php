@@ -11,7 +11,7 @@ class Cache {
   public static function path( $path ) {
     
     // Get the root path of the cache.
-    $root = CONFIG['engine']['cache'];
+    $root = CONFIG['engine']['cache']['root'];
    
     // Return the absolute path.
     return cleanpath("$root/".trim(str_replace($root, '', $path), '/'));

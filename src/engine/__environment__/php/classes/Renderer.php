@@ -8,96 +8,18 @@ use SuperClosure\Serializer;
  * Renderer
  *
  * Renders a page given a page template and some data.
+ * Alternatively, this may render an error page or asset.
  */
 class Renderer {
   
-  // Renders a page from the given template and data.
-  public static function render( Endpoint $endpoint ) { 
-    
-    // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Renderer', true);
-    
-    // Determine the cache path for the compiled template.
-    $path = "templates/{$endpoint->eid}".CONFIG['ext']['cache'];
-    
-    // Create a helper method for quickly compiling and saving a template to the cache.
-    $compiler = function() use ($endpoint, $path) {
-      
-      // Compile the template.
-      $compiled = self::compile(self::prepare($endpoint));
-
-      // Save the compiled template to the cache.
-      Cache::write($path, $compiled);
-      
-      // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::point('Template compiled.');
-      
-    };
-    
-    // Skip caching when in development mode, and always recompile patterns.
-    if( CONFIG['development'] ) $compiler();
-    
-    // Otherwise, use caching when not in development mode.
-    else {
-    
-      // If a cached version of the template exists, see if it needs to be recompiled.
-      // FIXME: Is this performant enough, or should we implement more advanced caching for compiled templates? Currently, we're compiling templates when first requested and only recompiling when the template pattern has changed. Refer to the [LightnCandy docs](https://zordius.github.io/HandlebarsCookbook/9000-quickstart.html) for best practices in terms of rendering.
-      if( Cache::exists($path) ) {
-
-        // Get the template pattern's last modified time.
-        $modified = File::modified($endpoint->template->file);
-
-        // Determine if the cached template is outdated, and recompile it if so.
-        if( Cache::outdated($path, $modified) ) $compiler();
-
-      }
-
-      // Otherwise, compile the template for the first time.
-      else $compiler();
-      
-    }
-    
-    // If the endpoint is an asset, return the proper headers to render the asset.
-    if( $endpoint->asset ) header("Content-Type: {$endpoint->mime}");
-    
-    // Get the template renderer.
-    $renderer = Cache::include($path);
-    
-    // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::finish('Renderer');
-
-    // Render the template with the given data.
-    return $renderer($endpoint->data);
-    
-  }
-  
   // Prepare a template to be compiled.
-  public static function prepare( Endpoint $endpoint ) {
-    
-    // Get the template.
-    $template = $endpoint->template->template;
-    
-    // Prepare assets for compiling.
-    if( $endpoint->asset ) {
-      
-      // Replace any file placeholders within the template with the source file's contents.
-      $template = str_replace('{{file}}', File::read($endpoint->file), $template);
-      
-    }
-    
-    // Otherwise, prepare pages for compiling.
-    else {
-    
-      // Get the layout wrapper ID.
-      $id = isset($endpoint->template->wrapper) ? $endpoint->template->wrapper : 'default';
+  public static function prepare( string $template, $wrapper = 'default' ) {
 
-      // Get the layout wrapper.
-      $wrapper = array_get(CONFIG['layouts'], $id, '{{template}}');
+    // Get the layout wrapper.
+    $wrapper = array_get(CONFIG['layouts'], $wrapper, '{{template}}');
 
-      // Compile the template with the wrapper.
-      $template = str_replace('{{template}}', $template, $wrapper);
-      
-    }
+    // Compile the template with the wrapper.
+    $template = str_replace('{{template}}', $template, $wrapper);
     
     // Add benchmark point.
     if( DEVELOPMENT ) Performance\Performance::point('Template prepared.');
@@ -138,6 +60,112 @@ class Renderer {
 
     // Return the compiled template.
     return $php;
+    
+  }
+  
+  // Renders a page for the requested endpoint, given its data and template.
+  public static function render( Route $route, Data $data, Template $template ) { 
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::point('Renderer', true);
+    
+    // Get the cache path for the compiled template.
+    $path = $route->cache;
+    
+    // Create a helper method for quickly compiling and saving a template to the cache.
+    $compiler = function() use ($template, $path) {
+      
+      // Compile the template.
+      $compiled = self::compile(self::prepare($template->template));
+
+      // Save the compiled template to the cache.
+      Cache::write($path, $compiled);
+      
+      // Add benchmark point.
+      if( DEVELOPMENT ) Performance\Performance::point('Template compiled.');
+      
+    };
+    
+    // Skip caching when in development mode, and always recompile patterns.
+    if( CONFIG['development'] ) $compiler();
+    
+    // Otherwise, use caching when not in development mode.
+    else {
+    
+      // If a cached version of the template exists, see if it needs to be recompiled.
+      // FIXME: Is this performant enough, or should we implement more advanced caching for compiled templates? Currently, we're compiling templates when first requested and only recompiling when the template pattern has changed. Refer to the [LightnCandy docs](https://zordius.github.io/HandlebarsCookbook/9000-quickstart.html) for best practices in terms of rendering.
+      if( Cache::exists($path) ) {
+
+        // Get the template pattern's last modified time.
+        $modified = File::modified($template->file);
+
+        // Determine if the cached template is outdated, and recompile it if so.
+        if( Cache::outdated($path, $modified) ) $compiler();
+
+      }
+
+      // Otherwise, compile the template for the first time.
+      else $compiler();
+      
+    }
+    
+    // Get the template's renderer.
+    $renderer = Cache::include($path);
+    
+    // Add benchmark point.
+    if( DEVELOPMENT ) Performance\Performance::finish('Renderer');
+
+    // Render the template with the given data.
+    return $renderer($data->data);
+    
+  }
+  
+  // Renders an error page.
+  public static function error( int $code ) {
+    
+    // Output the status code header.
+    http_response_code($code);
+    
+    // Set the template's PLID.
+    $plid = "templates-error-$code";
+    
+    // Simulate a request to the error endpoint.
+    $request = new Request('GET', "/$code");
+    
+    // Convert the request to a route.
+    $route = new Route($request);
+    
+    // Get the error page's data.
+    $data = new Data([]);
+    
+    // Compile the error page's data.
+    $data = Data::compile($data, $request, $route);
+    
+    // Mutate the error page's data.
+    $data->data = Mutator::mutate($data->data, $plid);
+    
+    // Get the error page's template.
+    $template = new Template($route->templates[$plid]);
+    
+    // Render the appropriate error page.
+    return self::render($route, $data, $template);
+    
+  }
+  
+  // Renders an asset file.
+  public static function asset( string $path ) {
+    
+    // Get the asset's extension.
+    $ext = pathinfo($path, PATHINFO_EXTENSION);
+    
+    // Get the asset's mime type.
+    $mime = Mime::type($ext);
+    
+    // Output a content type header.
+    header("Content-Type: $mime");
+    
+    // Output the asset.
+    readfile($path);
     
   }
   
