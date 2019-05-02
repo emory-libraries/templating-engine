@@ -52,7 +52,7 @@ class Router {
   function render() {
 
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Router', true);
+    if (DEBUG_ENABLED) Performance\Performance::point('Router', true);
 
     // Immediately detect invalid endpoints, and point them at a 404 error page.
     if( !File::isFile($this->route->data) ) return Renderer::error( 404 );
@@ -76,19 +76,19 @@ class Router {
     $template = new Template($this->route->templates[$plid]);
 
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Router: Get Endpoint\'s Template');
+    if (DEBUG_ENABLED) Performance\Performance::point('Router: Get Endpoint\'s Template');
 
     // Compile the data for the requested endpoint.
     $data = Data::compile($data, $this->request, $this->route);
 
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Router: Compile Endpoint\'s Data');
+    if (DEBUG_ENABLED) Performance\Performance::point('Router: Compile Endpoint\'s Data');
 
     // Mutate the data for the endpoint.
     $data->data = Mutator::mutate($data->data, $plid);
 
     // Add benchmark point.
-    if( DEVELOPMENT ) {
+    if (DEBUG_ENABLED) {
       Performance\Performance::point('Mutations applied to data.');
       Performance\Performance::finish('Router');
     }
