@@ -595,4 +595,44 @@ function array_combos( ...$arrays ) {
   
 }
 
+// Defines constants for array subset.
+const ARRAY_SUBSET_INCLUDE = 0;
+const ARRAY_SUBSET_EXCLUDE = 1;
+
+// Extract a subset of an array with certain keys excluded or included.
+function array_subset( array $array, $keys, $flag = ARRAY_SUBSET_INCLUDE ) {
+  
+  // Ignore invalid keys.
+  if( !is_string($keys) and !is_int($keys) and !is_array($keys) ) return $array;
+  
+  // Initialize the subset.
+  $subset = $array;
+  
+  // Handle string and integer.
+  if( is_string($keys) or is_int($keys) ) {
+    
+    // For exclusion subsets, remove the given key.
+    if( $flag & ARRAY_SUBSET_EXCLUDE ) unset($subset[$keys]);
+    
+    // Otherwise, for inclusion subsets, extract the given key.
+    else $subset = $subset[$keys];
+    
+  }
+  
+  // Handle array subsets.
+  else {
+    
+    // For exclusion subsets, remove every key that was given.
+    if( $flag & ARRAY_SUBSET_EXCLUDE ) foreach( $keys as $key ) { unset($subset[$key]); }
+    
+    // Otherwise, for inclusion subsets, extract only the given keys.
+    else foreach( $subset as $key => $value ) { if( !in_array($key, $keys) ) unset($subset[$key]); }
+    
+  }
+  
+  // Return the subset.
+  return $subset;
+  
+}
+
 ?>

@@ -7,11 +7,11 @@
  */
 class Route {
   
-  // Defines special template types.
-  const TEMPLATE_ASSET = 1;
-  
   // The path of the data file.
   public $path = null;
+  
+  // The route's anticipated cache location.
+  public $cache;
   
   // The route ID.
   public $id;
@@ -25,90 +25,125 @@ class Route {
   // The site's domain.
   public $domain = CONFIG['__site__']['domain'];
   
-  // The route's endpoint within the site.
-  public $endpoint;
+  // The route's anticipated URL(s).
+  public $url;
   
-  // Whether the route redirects, and if so, where it redirects to.
-  public $redirect = false;
+  // Indicates if a route is for an asset.
+  public $asset = false;
   
-  // The route's template type.
-  public $template = CONFIG['defaults']['template'];
+  // Indicates if a route is for an error page.
+  public $error = false;
   
   // Constructs the route.
-  function __construct( $route ) {
-    
+  function __construct( $path ) {
+  
     // Infer route data if a path is given.
-    if( is_string($route) ) {
+    if( is_string($path) ) {
     
       // Save the data file path.
-      $this->path = $route;
+      $this->path = $path;
 
       // Get the data file's ID.
-      $this->id = File::id($route);
+      $this->id = File::id($path);
 
       // Determine the endpoint that would map to the data file.
-      $this->endpoint = File::endpoint($route);
-
+      $this->endpoint = File::endpoint($path, [
+        CONFIG['engine']['root'],
+        CONFIG['data']['site']['root'],
+        CONFIG['site']['root']
+      ]);
+      
       // Make the `index` keyword optional for index endpoints.
-      if( $this->id == 'index' ) $this->endpoint = [
+      if( $this->id == 'index' or str_ends_with($this->endpoint, '/') ) $this->endpoint = [
         preg_replace('/index$/', '', $this->endpoint),
-        $this->endpoint
+        preg_replace('/index$/', '', $this->endpoint).'index'
       ];
+      
+      // Get the route's URL(s).
+      $this->url = is_array($this->endpoint) ? array_map(function($endpoint) {
+        
+        // Get the antipacted URL for the route.
+        return Request::protocol().'://'.$this->domain.$endpoint;
+        
+      }, $this->endpoint) : Request::protocol().'://'.$this->domain.$this->endpoint;
 
-      // Get the data file's data.
-      $data = new Data($route);
+      // Get the route's extension.
+      $ext = pathinfo($path, PATHINFO_EXTENSION);
 
-      // Determine if the route redirects, and if so, get the redirect path.
-      if( array_get($data->data, 'redirect', false) ) $this->redirect = array_get($data->data, 'redirect');
+      // Get the data files extensions.
+      $exts = array_merge(...array_values(Transformer::$transformers));
 
-      // Get the route's template, or use the default template.
-      if( !$this->redirect and array_get($data->data, 'template', false) ) {
+      // Determine if the route is an asset.
+      if( isset($ext) and $ext !== '' and !in_array($ext, $exts) ) {
 
-        // Get the template name from the data file.
-        $name = array_get($data->data, 'template');
+        // Set the asset flag to true.
+        $this->asset = true;
 
-        // Lookup the position of the template name within list of known template names.
-        $index = array_search($name, array_values(array_get(CONFIG, 'config.template')));
-
-        // Lookup the template ID if the index exists, or use the default template otherwise.
-        $template = $index !== false ? array_keys(array_get(CONFIG, 'config.template'))[$index] : $this->template;
-
-        // Save the template ID.
-        $this->template = $template;
+        // Make sure the the asset's endpoint includes its extension.
+        $this->endpoint .= ".$ext";
 
       }
+      
+      // Determine the route's cache location.
+      $this->cache = cleanpath(CONFIG['engine']['cache']['pages'].'/'.str_replace(".$ext", '', (is_array($this->endpoint) ? array_last($this->endpoint) : $this->endpoint)).'.php');
+      
+      // Determine if the route is for an error page by assuming pages with integer IDs are errors.
+      if( (string) ((int) $this->id) == $this->id ) $this->error = true;
       
     }
     
     // Otherwise, extract the route data if an array is given.
-    else if( is_array($route) ) {
+    else if( is_array($path) ) {
       
-      // Get the route's path, if applicable.
-      $this->path = array_get($route, 'path');
-      
-      // Get the route's ID.
-      $this->id = array_get($route, 'id', File::id($route['endpoint']));
-      
-      // Get the route's endpoint.
-      $this->endpoint = $route['endpoint'];
+      // Extract the route's data from the array.
+      $this->endpoint = $path['endpoint'];
+      $this->path = array_get($path, 'path');
+      $this->id = array_get($path, 'id', File::id($path['endpoint']));
       
       // Make the `index` keyword optional for index endpoints.
-      if( str_ends_with($this->endpoint, '/') ) $this->endpoint = [
-        $this->endpoint,
-        $this->endpoint.'index'
-      ];
-      else if( str_ends_with($this->endpoint, 'index') ) $this->endpoint = [
+      if( $this->id == 'index' or str_ends_with($this->endpoint, '/') ) $this->endpoint = [
         preg_replace('/index$/', '', $this->endpoint),
-        $this->endpoint
+        preg_replace('/index$/', '', $this->endpoint).'index'
       ];
+
+      // Get the route's extension.
+      $ext = pathinfo($this->endpoint, PATHINFO_EXTENSION);
+
+      // Get the data files extensions.
+      $exts = array_merge(...array_values(Transformer::$transformers));
+
+      // Determine if the route is an asset.
+      if( isset($ext) and $ext !== '' and !in_array($ext, $exts) ) {
+
+        // Set the asset flag to true.
+        $this->asset = true;
+
+        // Make sure the the asset's endpoint includes its extension.
+        $this->endpoint .= ".$ext";
+
+      }
       
-      // Determine if the route redirects, and if so, get the redirect path.
-      if( array_get($route, 'redirect', false) ) $this->redirect = $route['redirect'];
+      // Determine the route's cache location.
+      $this->cache = cleanpath(CONFIG['engine']['cache']['pages'].'/'.str_replace(".$ext", '', (is_array($this->endpoint) ? array_last($this->endpoint) : $this->endpoint)).'.php');
       
-      // Get the route's template.
-      if( !$this->redirect ) $this->template = $route['template'];
+      // Determine if the route is for an error page by assuming pages with integer IDs are errors.
+      if( (string) ((int) $this->id) == $this->id ) $this->error = true;
       
     }
+    
+  }
+  
+  // Defines set state method for restoring state.
+  public static function __set_state( array $state ) {
+    
+    // Initialize an instance of the class.
+    $instance = new self(null);
+    
+    // Assign properties to the instance.
+    foreach( $state as $property => $value ) { $instance->$property = $value; }
+    
+    // Return the instance.
+    return $instance;
     
   }
   

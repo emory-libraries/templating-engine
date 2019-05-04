@@ -10,7 +10,7 @@ require_once ENGINE_ROOT."/php/libraries/autoload.php";
 require_once ENGINE_ROOT."/php/classes/autoload.php";
 
 // Load configurations.
-require_once ENGINE_ROOT."/php/config.php";
+require_once ENGINE_ROOT."/php/index.config.php";
 
 // Load environment variables.
 (Dotenv\Dotenv::create(dirname(CONFIG['engine']['env']), basename(CONFIG['engine']['env'])))->load();
@@ -19,6 +19,6 @@ require_once ENGINE_ROOT."/php/config.php";
 date_default_timezone_set('America/New_York');
 
 // Add benchmark point.
-if( DEVELOPMENT ) Performance\Performance::point('Templating engine initialized.');
+if( DEVELOPMENT ) Performance\Performance::point('Indexer initialized.');
 
 ?>

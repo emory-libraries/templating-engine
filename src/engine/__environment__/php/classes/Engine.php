@@ -9,11 +9,11 @@
  */
 class Engine {
   
-  // Load the endpoint.
-  //protected $endpoint;
+  // A single cache for the site.
+  protected $cache;
   
-  // Load utilities.
-  //protected $parser;
+  // The API interface for accessing data.
+  protected $api;
   
   // Some data about the request.
   protected $request;
@@ -27,35 +27,26 @@ class Engine {
   // Constructor
   function __construct() {
     
+    // Use the global cache.
+    global $cache;
+    
     // Add benchmark point.
     if( DEVELOPMENT ) Performance\Performance::point('Engine', true);
+    
+    // Initialize the cache.
+    $this->cache = $cache;
+    
+    // Initialize the API.
+    $this->api = new API($this->cache);
     
     // Get data about the request.
     $this->request = new Request();
     
     // Add benchmark point.
-    if( DEVELOPMENT ) {
-      Performance\Performance::point('Request processed.');
-      Performance\Performance::point('Indexing', true);
-    }
-    
-    // Index all data and templates.
-    $this->index = new Index();
-    
-    // Save index data globally.
-    define('INDEX', object_to_array($this->index));
-    define('SITE_DATA_INDEX', object_to_array([
-      'meta' => $this->index->getMetaData(),
-      'global' => $this->index->getGlobalData(),
-      'shared' => $this->index->getSharedData(),
-      'site' => $this->index->data['site']['site']
-    ]));
-    
-    // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::finish('Indexing');
+    if( DEVELOPMENT ) Performance\Performance::point('Request processed.');
     
     // Initialize the router.
-    $this->router = new Router($this->index);
+    $this->router = new Router($this->request);
     
     // Run the templating engine.
     $this->run();
@@ -69,7 +60,7 @@ class Engine {
   private function run() {
     
     // Attempt to load the requested endpoint.
-    echo $this->router->render($this->request->endpoint);
+    echo $this->router->render();
     
   }
   

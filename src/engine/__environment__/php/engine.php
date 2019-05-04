@@ -17,7 +17,10 @@ if( DEVELOPMENT ) {
 }
 
 // Initialize the templating engine.
-require ENGINE_ROOT."/php/init.php";
+require ENGINE_ROOT."/php/engine.init.php";
+
+// Initialize a global cache.
+$cache = new Cache(CACHE_ROOT.'/'.DOMAIN.'.php');
 
 // Start the templating engine.
 new Engine();

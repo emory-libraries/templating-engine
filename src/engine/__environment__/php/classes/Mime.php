@@ -420,6 +420,7 @@ class Mime {
     'pgn' => 'application/x-chess-pgn',
     'pgp' => 'application/pgp-encrypted',
     'pgp' => 'application/pgp-signature',
+    'php' => 'application/x-httpd-php',
     'pic' => 'image/x-pict',
     'pjpeg' => 'image/pjpeg',
     'pki' => 'application/pkixcmp',

@@ -1,7 +1,8 @@
 [
   {
     "endpoint": "/404",
-    "template": "templates-error-404"
+    "template": "templates-error-404",
+    "error": true
   },
   {
     "endpoint": "/materials/this-isnt-real",
