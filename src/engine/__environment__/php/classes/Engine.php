@@ -9,9 +9,6 @@
  */
 class Engine {
   
-  // A single cache for the site.
-  protected $cache;
-  
   // The API interface for accessing data.
   protected $api;
   
@@ -27,23 +24,17 @@ class Engine {
   // Constructor
   function __construct() {
     
-    // Use the global cache.
-    global $cache;
-    
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Engine', true);
-    
-    // Initialize the cache.
-    $this->cache = $cache;
+    if( BENCHMARKING ) Performance\Performance::point('Engine', true);
     
     // Initialize the API.
-    $this->api = new API($this->cache);
+    $this->api = new API();
     
     // Get data about the request.
     $this->request = new Request();
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Request processed.');
+    if( BENCHMARKING ) Performance\Performance::point('Request processed.');
     
     // Initialize the router.
     $this->router = new Router($this->request);
@@ -52,7 +43,7 @@ class Engine {
     $this->run();
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::finish('Engine');
+    if( BENCHMARKING ) Performance\Performance::finish('Engine');
     
   }
   

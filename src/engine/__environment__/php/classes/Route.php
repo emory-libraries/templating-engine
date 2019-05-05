@@ -36,6 +36,14 @@ class Route {
   
   // Constructs the route.
   function __construct( $path ) {
+    
+    // Initialize a helper method for inferring a route's URL.
+    $url = function($endpoint) {
+      
+      // Get the antipacted URL for the route.
+      return Request::protocol().'://'.$this->domain.$endpoint;
+      
+    };
   
     // Infer route data if a path is given.
     if( is_string($path) ) {
@@ -60,12 +68,7 @@ class Route {
       ];
       
       // Get the route's URL(s).
-      $this->url = is_array($this->endpoint) ? array_map(function($endpoint) {
-        
-        // Get the antipacted URL for the route.
-        return Request::protocol().'://'.$this->domain.$endpoint;
-        
-      }, $this->endpoint) : Request::protocol().'://'.$this->domain.$this->endpoint;
+      $this->url = is_array($this->endpoint) ? array_map($url, $this->endpoint) : $url($this->endpoint);
 
       // Get the route's extension.
       $ext = pathinfo($path, PATHINFO_EXTENSION);
@@ -105,6 +108,9 @@ class Route {
         preg_replace('/index$/', '', $this->endpoint),
         preg_replace('/index$/', '', $this->endpoint).'index'
       ];
+      
+      // Get the route's URL(s).
+      $this->url = is_array($this->endpoint) ? array_map($url, $this->endpoint) : $url($this->endpoint);
 
       // Get the route's extension.
       $ext = pathinfo($this->endpoint, PATHINFO_EXTENSION);

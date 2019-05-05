@@ -52,7 +52,7 @@ class Router {
   function render() {
 
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Router', true);
+    if( BENCHMARKING ) Performance\Performance::point('Router', true);
     
     // If the endpoint redirects, then redirect.
     if( $this->endpoint->redirect !== false ) return $this->redirect($this->endpoint->redirect);
@@ -62,6 +62,9 @@ class Router {
     
     // Otherwise, if the endpoint is an asset, then get the asset.
     if( $this->endpoint->asset !== false ) return Renderer::asset($this->endpoint);
+    
+    // Add benchmark point.
+    if( BENCHMARKING ) Performance\Performance::finish('Router');
     
     // Otherwise, render the endpoint.
     return Renderer::render($this->endpoint);

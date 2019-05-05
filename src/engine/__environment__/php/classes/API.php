@@ -47,11 +47,12 @@ class API {
   // Construct the API.
   function __construct( ) {
     
-    // Use the global cache.
-    global $cache;
+    // Get the cache root path, and site's domain.
+    $cache = CONFIG['engine']['cache']['root'];
+    $domain = CONFIG['__site__']['domain'];
     
-    // Capture the cache.
-    self::$cache = $cache;
+    // Initialize the cache.
+    self::$cache = new Cache($cache.'/'.$domain.'.php');
     
   }
   
@@ -93,6 +94,23 @@ class API {
 
     // Otherwise, throw an error if the data could not be cached.
     else throw new Error("Failed to cache $index data");
+    
+  }
+  
+  // Determine if some data within the cache is outdated and needs recaching.
+  protected static function outdated( string $index ) {
+    
+    // Get the index's last modified date from the cache.
+    $cached = self::$cache->get("$index.modified");
+    
+    // Convert the index's last modified time to a timestamp.
+    if( is_a($cached, 'DateTime') ) $cached = $cached->getTimestamp();
+    
+    // Get the index file's last modified time.
+    $file = Cache::modified($index);
+    
+    // Determine if the cached data is outdated by seeing if the index file's last modified if newer.
+    return $cached < $file;
     
   }
   
@@ -237,11 +255,17 @@ class API {
       $patterns = self::$cache->get('patterns');
       $routes = self::$cache->get('routes');
 
-      // If any of the index data has not yet been cached, then cache it now, and get it.
-      if( !isset($environment) ) $environment = self::cache('environment');
-      if( !isset($site) ) $site = self::cache('site');
-      if( !isset($patterns) ) $patterns = self::cache('patterns');
-      if( !isset($routes) ) $routes = self::cache('routes');
+      // If any index data has not yet been cached or is outdated, then (re)cache it now, and get it.
+      if( !isset($environment) or self::outdated('environment') ) $environment = self::cache('environment');
+      if( !isset($site) or self::outdated('site') ) $site = self::cache('site');
+      if( !isset($patterns) or self::outdated('patterns') ) $patterns = self::cache('patterns');
+      if( !isset($routes) or self::outdated('routes') ) $routes = self::cache('routes');
+      
+      // Get the index data.
+      $environment = $environment['data'];
+      $site = $site['data'];
+      $patterns = $patterns['data'];
+      $routes = $routes['data'];
       
       // Find the route for the given path within the cached index data.
       $route = array_values(array_filter($routes, function($route) use ($path) {
@@ -317,9 +341,13 @@ class API {
       $assets = self::$cache->get('assets');
       $routes = self::$cache->get('routes');
 
-      // If any of the index data has not yet been cached, then cache it now, and get it.
-      if( !isset($assets) ) $assets = self::cache('assets');
-      if( !isset($routes) ) $routes = self::cache('routes');
+      // If any index data has not yet been cached or is outdated, then (re)cache it now, and get it.
+      if( !isset($assets) or self::outdated('assets') ) $assets = self::cache('assets');
+      if( !isset($routes) or self::outdated('routes') ) $routes = self::cache('routes');
+      
+      // Get the index data.
+      $assets = $assets['data'];
+      $routes = $routes['data'];
       
       // Find the route for the given path within the cached index data.
       $route = array_values(array_filter($routes, function($route) use ($path) {
@@ -377,11 +405,17 @@ class API {
       $patterns = self::$cache->get('patterns');
       $routes = self::$cache->get('routes');
 
-      // If any of the index data has not yet been cached, then cache it now, and get it.
-      if( !isset($environment) ) $environment = self::cache('environment');
-      if( !isset($site) ) $site = self::cache('site');
-      if( !isset($patterns) ) $patterns = self::cache('patterns');
-      if( !isset($routes) ) $routes = self::cache('routes');
+      // If any index data has not yet been cached or is outdated, then (re)cache it now, and get it.
+      if( !isset($environment) or self::outdated('environment') ) $environment = self::cache('environment');
+      if( !isset($site) or self::outdated('site') ) $site = self::cache('site');
+      if( !isset($patterns) or self::outdated('patterns') ) $patterns = self::cache('patterns');
+      if( !isset($routes) or self::outdated('routes') ) $routes = self::cache('routes');
+      
+      // Get the index data.
+      $environment = $environment['data'];
+      $site = $site['data'];
+      $patterns = $patterns['data'];
+      $routes = $routes['data'];
     
       // Find the route for the given error within the cached index data.
       $route = array_values(array_filter($routes, function($route) use ($code) {
@@ -481,8 +515,11 @@ class API {
     // Attempt to retrieve patterns from the cache.
     $patterns = self::$cache->get('patterns');
     
-    // If patterns have not been cached yet, then cache them now, and get them.
-    if( !isset($patterns) ) $patterns = self::cache('patterns');
+    // If patterns have not been cached yet or are outdated, then (re)cache them now, and get them.
+    if( !isset($patterns) or self::outdated('patterns') ) $patterns = self::cache('patterns');
+    
+    // Get the pattern data.
+    $patterns = $patterns['data'];
 
     // Return the given pattern if a pattern ID was given.
     if( isset($id) ) {

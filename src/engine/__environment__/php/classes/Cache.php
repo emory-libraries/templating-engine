@@ -24,8 +24,8 @@ class Cache {
     // Save the cache path to be used by the cache instance.
     $this->path = self::path($path);
     
-    // If in development mode, then reset the cache.
-    if( DEVELOPMENT ) $this->reset();
+    // Caching is disabled, then reset the cache.
+    if( !CACHING ) $this->reset();
     
     // Load the cache into memory if it already exists.
     if( File::isFile($path) ) $this->cache = (include $path);

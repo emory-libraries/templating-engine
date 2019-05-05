@@ -19,6 +19,6 @@ require_once ENGINE_ROOT."/php/engine.config.php";
 date_default_timezone_set('America/New_York');
 
 // Add benchmark point.
-if( DEVELOPMENT ) Performance\Performance::point('Templating engine initialized.');
+if( BENCHMARKING ) Performance\Performance::point('Templating engine initialized.');
 
 ?>

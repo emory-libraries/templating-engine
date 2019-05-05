@@ -81,7 +81,10 @@ class Index {
     ];
     
     // Get routes from the site and asset indices, and cache it.
-    $this->routes = $routes = $this->getRouteData($site, $assets);
+    $this->routes = [
+      'metadata' => null,
+      'data' => ($routes = $this->getRouteData($site, $assets))
+    ];
     
     // Cache everything.
     self::cache('environment', $this->environment);
@@ -248,43 +251,32 @@ class Index {
   // Cache some index data.
   protected static function cache( string $name, array $index ) {
     
-    // For indices containing both metadata and data, cache the metadata and data separately.
-    if( count(array_diff(array_keys($index), ['metadata', 'data'])) === 0 ) {
+    // Add created and modified times into the cache data.
+    $index['modified'] = $index['created'] = new DateTime();
       
-      // Cache the metadata and data separately.
-      Index::cache($name, $index['data']);
-      Index::cache("$name.metadata", $index['metadata']);
-      
-    }
-    
-    // Otherwise, cache the index.
-    else {
-      
-      // Get the index's filename with the proper extension.
-      $filename = "$name.php";
+    // Get the index's filename with the proper extension.
+    $filename = "$name.php";
 
-      // Convert the index to a PHP string.
-      $php = '<?php return '.var_export($index, true).'; ?>';
+    // Convert the index to a PHP string.
+    $php = '<?php return '.var_export($index, true).'; ?>';
 
-      // Try to save the index as a temporary file, and make sure no errors were thrown.
-      try {
+    // Try to save the index as a temporary file, and make sure no errors were thrown.
+    try {
 
-        // Create the temporary file.
-        $cached = Cache::tmp($php, $filename);
+      // Create the temporary file.
+      $cached = Cache::tmp($php, $filename);
 
-        // Move the temporary file to the index, and overwrite any existing index file that's there.
-        $cached['move'](CONFIG['engine']['cache']['index']."/$filename");
+      // Move the temporary file to the index, and overwrite any existing index file that's there.
+      $cached['move'](CONFIG['engine']['cache']['index']."/$filename");
 
-      } 
+    } 
 
-      // Otherwise, log that an error occurred when attempting to cache the index.
-      catch( Exception $e ) { 
+    // Otherwise, log that an error occurred when attempting to cache the index.
+    catch( Exception $e ) { 
 
-        // Log the error.
-        error_log("Something went wrong while trying to create the index '$name'.");
+      // Log the error.
+      error_log("Something went wrong while trying to create the index '$name'.");
 
-      }
-      
     }
     
   }

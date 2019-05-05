@@ -21,7 +21,7 @@ class Renderer {
     $template = str_replace('{{template}}', $template, $wrapper);
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Template prepared.');
+    if( BENCHMARKING ) Performance\Performance::point('Template prepared.');
     
     // Return the prepared template.
     return $template;
@@ -66,7 +66,7 @@ class Renderer {
   public static function render( Endpoint $endpoint) { 
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Renderer', true);
+    if( BENCHMARKING ) Performance\Performance::point('Renderer', true);
     
     // Get the cache path for the compiled template.
     $path = $endpoint->route->cache;
@@ -84,7 +84,7 @@ class Renderer {
       Cache::write($path, $compiled);
       
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::point('Template compiled.');
+      if( BENCHMARKING ) Performance\Performance::point('Template compiled.');
       
     };
     
@@ -115,7 +115,7 @@ class Renderer {
     $renderer = Cache::include($path);
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::finish('Renderer');
+    if( BENCHMARKING ) Performance\Performance::finish('Renderer');
 
     // Render the template with the given data.
     return $renderer($endpoint->data);

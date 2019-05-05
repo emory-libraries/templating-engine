@@ -20,16 +20,18 @@ function done( int $status, $message = null ) {
 }
 
 // Parse command line arguments.
-$options = getopt('s:e:k:d', [
+$options = getopt('s:e:k:c::d', [
   'site:',
   'environment:',
   'key:',
-  'development'
+  'callback::',
+  'development',
 ]);
 
 // Normalizes the options.
 $options['site'] = isset($options['site']) ? $options['site'] : $options['s'];
 $options['environment'] = isset($options['environment']) ? $options['environment'] : $options['e'];
+$options['callback'] = isset($options['callback']) ? $options['callback'] : isset($options['c']) ? $options['c'] : false;
 $options['key'] = isset($options['key']) ? $options['key'] : $options['k'];
 $options['development'] = (isset($options['development']) or isset($options['d'])) ? true : false;
 
@@ -38,6 +40,7 @@ unset($options['s']);
 unset($options['e']);
 unset($options['k']);
 unset($options['d']);
+unset($options['c']);
 
 // Fail immediately if missing any arguments.
 if( !isset($options['site']) ) done(1, 'Missing site argument.');
@@ -113,6 +116,17 @@ if( $options['key'] !== $_ENV['INDEX_KEY'] ) done(1, 'Invalid key');
 
 // Start indexing.
 new Index();
+
+// Fire any callbacks if given.
+if( $options['callback'] !== false ) {
+  
+  // Get the callback path.
+  $callback = __DIR__."/callbacks/{$options['callback']}.php";
+
+  // Look for the callback, and execute it if it exists.
+  if( file_exists($callback) ) include $callback;
+  
+}
 
 // Output all performance results.
 if( DEVELOPMENT ) Performance\Performance::results();
