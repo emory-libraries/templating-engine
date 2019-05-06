@@ -48,7 +48,7 @@ class HandlebarsLayouts {
     $stack[] = $fn;
     
     // Override the layout stack.
-    $context = array_set($context, '__layoutStack', $stack); d($context);
+    $context = array_set($context, '__layoutStack', $stack); 
 
     // Render the partial.
     return $renderer($context, ['data' => $data]);
@@ -56,7 +56,7 @@ class HandlebarsLayouts {
   }
   
   // Initialize a placeholder content block.
-  public static function block( $name, $options ) { //d('BLOCK START');
+  public static function block( $name, $options ) {
     
     // Capture the render function.
     $fn = isset($options['fn']) ? $options['fn'] : '';
@@ -72,35 +72,47 @@ class HandlebarsLayouts {
     
     // Get the context's layout stack.
     $stack = &$context['__layoutStack'];
+    
+    // Capture rendered block contexts.
+    $result = [];
 
     // Run the layout stack.
-    while( count($stack) > 0 ) { array_shift($stack)($context); }
- 
+    while( count($stack) > 0 ) { $result[] = json_decode(array_shift($stack)($context), true); }
+    
     // Ensure that the context's layout actions exist, or initialize them otherwise.
     if( !isset($context['__layoutActions']) ) $context['__layoutActions'] = [];
     
+    // Merge rendered block contexts back into the current context.
+    $context['__layoutActions'] = array_merge($context['__layoutActions'], ...array_map(function($content) {
+      
+      // Get the rendered content's layout actions.
+      return array_get($content, '__layoutActions', []);
+      
+    }, $result));
+    
     // Ensure that the context's current layout action exists.
     if( !isset($context['__layoutActions'][$name]) ) $context['__layoutActions'][$name] = [];
-   
+    
     // Get the layout actions.
     $actions = $context['__layoutActions'][$name];
-   	//d('CONTEXT IS', $context); d('BLOCK END');
-    // Run the actions.
-    return array_reduce($actions, function($content, $action) use ($context) {
+  
+    // Initialize a helper to expand content blocks.
+    $expand = function($action) use ($context, $parser) {
 
-      // Initialize a helper to expand the content block.
-      $expand = function() use ($action, $context) {
-        
-        return $action['fn']($context, $action['options']);
-        
-      };
+      // Run the action.
+      return $action['fn']($context, $action['options']);
+
+    };
+    
+    // Run the actions.
+    return array_reduce($actions, function($content, $action) use ($context, $expand) {
 
       // Run the action in the appropriate mode.
       switch($action['mode']) {
         
         case 'append': return $content.$expand();
         case 'prepend': return $expand().$content;
-        case 'replace': return $expand();
+        case 'replace': return $expand($action);
         default: return $content;
           
       }
@@ -110,7 +122,7 @@ class HandlebarsLayouts {
   }
   
   // Determine if a placeholder content block exists, and if so, optionally modify it.
-  public static function content( $name, $options ) { //d('CONTENT START');
+  public static function content( $name, $options ) {
     
     // Capture the render function.
     $fn = isset($options['fn']) ? $options['fn'] : '';
@@ -144,15 +156,17 @@ class HandlebarsLayouts {
 	
     // Ensure that the context's layout actions exist, or initialize them otherwise.
     if( !isset($actions[$name]) ) $actions[$name] = [];
-    
+
     // Override content block's actions.
     $actions[$name][] = [
       'options' => ['data' => $data],
       'mode' => $mode,
-      'fn' => $fn
+      'fn' => $fn // FIXME: Cannot serialize Closure!!
     ];
-	//d('CONTEXT SHOULD BE', $context);
-    //d('CONTENT END');
+
+	d('CONTEXT SHOULD BE', $context);
+    return json_encode($context);
+    
   }
   
 }
