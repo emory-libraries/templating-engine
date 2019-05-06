@@ -1,50 +1,103 @@
 <?php
 
-// Initialize a helper method for exiting gracefully.
-function done( int $status, $message = null ) {
-  
-  // Log messages if given.
-  if( isset($message) ) {
-  
-    // Get the appropriate I/O stream.
-    $stream = $status === 0 ? STDIN : STDERR;
+// Get the request method.
+$method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : false;
 
-    // Write the message.
-    fwrite($stream, $message.PHP_EOL);
+// Initialize a helper method for exiting gracefully.
+function done( int $status, $message = null, $code = null ) {
+  
+  // Use the global method.
+  global $method;
+  
+  // For post requests, return the appropriate status code and message.
+  if( $method === 'POST' ) {
+    
+    // Send the response code.
+    http_response_code($code); 
+    
+    // Set content type header.
+    header('Content-Type: application/json');
+    
+    // Output the message.
+    if( isset($message) ) echo json_encode((is_array($message) ? $message : [
+      'code' => $code,
+      'message' => $message
+    ]), JSON_PRETTY_PRINT);
     
   }
   
-  // Then, exit.
-  exit($status);
+  // Otherwise, report errors to the command line.
+  else {
+  
+    // Log messages if given.
+    if( isset($message) ) {
+
+      // Get the appropriate I/O stream.
+      $stream = $status === 0 ? STDIN : STDERR;
+
+      // Write the message.
+      fwrite($stream, $message.PHP_EOL);
+
+    }
+
+    // Then, exit.
+    exit($status);
+    
+  }
   
 }
 
-// Parse command line arguments.
-$options = getopt('s:e:k:c::d', [
-  'site:',
-  'environment:',
-  'key:',
-  'callback::',
-  'development',
-]);
+// Enable indexing via a post request.
+if( $method === 'POST' ) {
+  
+  // Capture post arguments.
+  $options = [
+    'site' => $_POST['site'],
+    'environment' => $_POST['environment'],
+    'callback' => isset($_POST['callback']) ? $_POST['callback'] : false,
+    'development' => isset($_POST['development']) ? filter_var($_POST['development'], FILTER_VALIDATE_BOOLEAN) : false,
+    'username' => isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null,
+    'password' => isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : null,
+  ];
+  
+  // Initialize the response output.
+  $output = [];
+  
+}
 
-// Normalizes the options.
-$options['site'] = isset($options['site']) ? $options['site'] : $options['s'];
-$options['environment'] = isset($options['environment']) ? $options['environment'] : $options['e'];
-$options['callback'] = isset($options['callback']) ? $options['callback'] : isset($options['c']) ? $options['c'] : false;
-$options['key'] = isset($options['key']) ? $options['key'] : $options['k'];
-$options['development'] = (isset($options['development']) or isset($options['d'])) ? true : false;
+// Otherwise, enable indexing via command line.
+else {
 
-// Unset shorthand options.
-unset($options['s']);
-unset($options['e']);
-unset($options['k']);
-unset($options['d']);
-unset($options['c']);
+  // Parse command line arguments.
+  $options = getopt('s:e:u:p:c::d', [
+    'site:',
+    'environment:',
+    'key:',
+    'callback::',
+    'development',
+  ]);
+
+  // Normalizes the options.
+  $options['site'] = isset($options['site']) ? $options['site'] : $options['s'];
+  $options['environment'] = isset($options['environment']) ? $options['environment'] : $options['e'];
+  $options['callback'] = isset($options['callback']) ? $options['callback'] : isset($options['c']) ? $options['c'] : false;
+  $options['username'] = isset($options['username']) ? $options['username'] : $options['u'];
+  $options['password'] = isset($options['password']) ? $options['password'] : $options['p'];
+  $options['development'] = (isset($options['development']) or isset($options['d'])) ? true : false;
+
+  // Unset shorthand options.
+  unset($options['s']);
+  unset($options['e']);
+  unset($options['u']);
+  unset($options['p']);
+  unset($options['d']);
+  unset($options['c']);
+  
+}
 
 // Fail immediately if missing any arguments.
-if( !isset($options['site']) ) done(1, 'Missing site argument.');
-if( !isset($options['environment']) ) done(1, 'Missing environment argument.');
+if( !isset($options['site']) ) done(1, 'Missing site argument.', 400);
+if( !isset($options['environment']) ) done(1, 'Missing environment argument.', 400);
 
 // Set environment directories.
 $environment = [
@@ -84,7 +137,7 @@ define('SITES', array_values(array_filter(scandir(DATA_ROOT), function($path) {
 })));
 
 // Validate the given site option.
-if( !in_array($options['site'], SITES) ) done(1, 'Invalid site.');
+if( !in_array($options['site'], SITES) ) done(1, 'Invalid site.', 400);
 
 // Derive the site's subdomain from the environment.
 $subdomain = str_replace('prod', '', $environment[ENVIRONMENT]);
@@ -111,8 +164,9 @@ if( DEVELOPMENT ) {
 // Initialize the templating engine.
 require ENGINE_ROOT."/php/index.init.php";
 
-// Prevent indexing if the given key is not acceptable.
-if( $options['key'] !== $_ENV['INDEX_KEY'] ) done(1, 'Invalid key');
+// Prevent indexing if the given username and password are not acceptable.
+if( $options['username'] !== $_ENV['INDEX_USERNAME'] ) done(1, 'Invalid username or password.', 401);
+if( $options['password'] !== $_ENV['INDEX_PASSWORD'] ) done(1, 'Invalid username or password.', 401);
 
 // Start indexing.
 new Index();
@@ -128,10 +182,30 @@ if( $options['callback'] !== false ) {
   
 }
 
-// Output all performance results.
-if( DEVELOPMENT ) Performance\Performance::results();
+// If a post request was used, then return a JSON response.
+if( $method === 'POST' ) {
+  
+  // Set the response code and message.
+  $output['code'] = 200;
+  $output['message'] = 'Indexing completed successfully.';
+  
+  // Add performance to the response in development mode.
+  if( DEVELOPMENT ) $output['performance'] = json_decode((Performance\Performance::export())->toJson(), true);
+  
+  // Done.
+  done(1, $output, $output['code']);
+ 
+}
 
-// Exit.
-done(0);
+// Otherwise, output the response to the command line.
+else {
+
+  // Output all performance results.
+  if( DEVELOPMENT ) Performance\Performance::results();
+
+  // Exit.
+  done(0, 'Indexing completed successfully.', 200);
+  
+}
 
 ?>

@@ -209,13 +209,13 @@ class Cache {
   }
   
   // Move a file from one place in the cache to another.
-  public static function move( $from, $to, $overwrite = true ) {
+  public static function move( $from, $to, $overwrite = true, $mode = 0755, $recursive = true ) {
     
     // Verify that the item exists within the cache, and move it.
     if( Cache::exists($from) ) {
       
       // Create the directory if it doesn't exist.
-      if( !Cache::isDirectory(dirname($to)) ) Cache::make(dirname($to));
+      if( !Cache::isDirectory(dirname($to)) ) Cache::make(dirname($to), $mode, $recursive);
       
       // Prevent overwriting if the destination already exists and overwrite is disabled.
       if( !$overwrite and Cache::exists($to) ) return false;
@@ -256,8 +256,17 @@ class Cache {
   // Create a directory at a given path.
   public static function make( $path, $mode = 0755, $recursive = true ) { 
     
+    // Unset umask temporarily.
+    $umask = umask(0);
+    
     // Make directories using the given mode.
-    return mkdir(Cache::path($path), $mode, $recursive); 
+    $result = mkdir(Cache::path($path), $mode, $recursive); 
+    
+    // Reset umask.
+    umask($umask);
+    
+    // Return the result.
+    return $result;
   
   }
   
@@ -285,13 +294,13 @@ class Cache {
   }
   
   // Temporarily store a file in the cache.
-  public static function tmp( $data, $path = null ) {
+  public static function tmp( $data, $path = null, $mode = 0755, $recursive = true ) {
     
     // Get the temporary cache path.
     $tmp = Cache::path(CONFIG['engine']['cache']['tmp']);
     
     // Ensure that the temporary cache directory exists.
-    if( !Cache::isDirectory($tmp) ) Cache::make($tmp);
+    if( !Cache::isDirectory($tmp) ) Cache::make($tmp, $mode, $recursive);
     
     // Get the temporary file path.
     $path = isset($path) ? cleanpath($tmp.'/'.$path) : tempnam($tmp, 'eul_');
@@ -329,10 +338,10 @@ class Cache {
         return Cache::delete($path);
         
       },
-      'move' => function( $dest, $overwrite = true ) use ($path) {
+      'move' => function( $dest, $overwrite = true ) use ($path, $mode, $recursive) {
         
         // Move the file.
-        return Cache::move($path, $dest, $overwrite);
+        return Cache::move($path, $dest, $overwrite, $mode, $recursive);
         
       }
     ];

@@ -69,6 +69,14 @@ curl_multi_close($curl);
 if( DEVELOPMENT ) Performance\Performance::point('Prerender callback completed.');
 
 // Output the responses.
-if( DEVELOPMENT ) d($responses);
+if( DEVELOPMENT ) {
+  
+  // Capture the results.
+  if( $method === 'POST' ) $output['prerender'] = $responses;
+  
+  // Otherwise, log the response to the command line.
+  else d($responses);
+  
+}
 
 ?>

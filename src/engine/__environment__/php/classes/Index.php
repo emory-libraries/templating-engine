@@ -264,7 +264,7 @@ class Index {
     try {
 
       // Create the temporary file.
-      $cached = Cache::tmp($php, $filename);
+      $cached = Cache::tmp($php, $filename, 0775);
 
       // Move the temporary file to the index, and overwrite any existing index file that's there.
       $cached['move'](CONFIG['engine']['cache']['index']."/$filename");
