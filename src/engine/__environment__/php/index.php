@@ -116,6 +116,27 @@ define('ENVIRONMENT', $options['environment']);
 // Set development mode flag.
 define('DEVELOPMENT', $options['development']);
 
+// Defines flags that can be switched on/off to force certain templating engine behaviors.
+define('FLAG', [
+
+  
+  // Debugging includes error reporting and displaying as well as all other messaging.
+  // By default, debugging is only enabled in development mode. Changing this flag
+  // with either force enable (true) or disable (false) debugging.
+  'debuggingEnabled' => /*DEVELOPMENT*/true,
+  
+  // Benchmarking is the process of analyzing the execution time of templating engine
+  // processes in an attempt to optimize its performance. By default, the built-in
+  // benchmarking tool is only enabled development mode. Changing this flag will
+  // either force enable (true) or disable (false) the benchmarking tool.
+  'benchmarkingEnabled' => /*DEVELOPMENT*/true
+  
+]);
+
+// Aliases major flags as globals for easier access.
+define('DEBUGGING', FLAG['debuggingEnabled']);
+define('BENCHMARKING', FLAG['benchmarkingEnabled']);
+
 // Set path globals.
 define('DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
 define('SERVER_ROOT', dirname(dirname(dirname(__DIR__)))); 
@@ -151,7 +172,7 @@ define('SITE_DATA', DATA_ROOT.'/'.SITE);
 define('SITE_ROOT', SERVER_ROOT.'/'.DOMAIN);
 
 // Enable debugging and error reporting when in development mode.
-if( DEVELOPMENT ) {
+if( DEBUGGING ) {
   
   // Report all errors.
   error_reporting(E_ALL);
@@ -190,7 +211,7 @@ if( $method === 'POST' ) {
   $output['message'] = 'Indexing completed successfully.';
   
   // Add performance to the response in development mode.
-  if( DEVELOPMENT ) $output['performance'] = json_decode((Performance\Performance::export())->toJson(), true);
+  if( BENCHMARKING ) $output['performance'] = json_decode((Performance\Performance::export())->toJson(), true);
   
   // Done.
   done(1, $output, $output['code']);
@@ -201,7 +222,7 @@ if( $method === 'POST' ) {
 else {
 
   // Output all performance results.
-  if( DEVELOPMENT ) Performance\Performance::results();
+  if( BENCHMARKING ) Performance\Performance::results();
 
   // Exit.
   done(0, 'Indexing completed successfully.', 200);

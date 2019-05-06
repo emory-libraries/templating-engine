@@ -17,11 +17,14 @@ $responses = [];
 foreach( $routes['data'] as $i => $route ) {
   
   // Get the route's endpoint and URL.
-  $endpoint = is_array($route->endpoint) ? $route->endpoint[0] : $route->endpoint;
-  $url = is_array($route->url) ? $route->url[0] : $route->url;
+  $endpoint = is_array($route->endpoint) ? $route->endpoint[1] : $route->endpoint;
+  $url = is_array($route->url) ? $route->url[1] : $route->url;
   
   // Get the URL of the route to be fetched.
   $fetch = DEVELOPMENT ? DEV_BASE_URL.'/'.CONFIG['__site__']['domain'].$endpoint : $url;
+  
+  // Save the URL.
+  $responses[$i] = ['url' => $fetch];
   
   // Initialize the request.
   $requests[$i] = curl_init();
@@ -50,12 +53,13 @@ do {
   
 // Capture the responses.
 foreach($requests as $i => $response) {
+  
+  // Initialize the responsei if not already initialized.
+  if( !isset($responses[$i]) or !is_array($responses[$i]) ) $responses[$i] = [];
 
   // Save the response.
-  $responses[$i] = [
-    'endpoint' => $routes['data'][$i]->endpoint,
-    'response' => curl_multi_getcontent($response)
-  ];
+  $responses[$i]['endpoint'] = $routes['data'][$i]->endpoint;
+  $responses[$i]['response'] = curl_multi_getcontent($response);
 
   // Remove the request from the queue after its completed.
   curl_multi_remove_handle($curl, $response);
@@ -66,10 +70,10 @@ foreach($requests as $i => $response) {
 curl_multi_close($curl);
 
 // Add benchmark point.
-if( DEVELOPMENT ) Performance\Performance::point('Prerender callback completed.');
+if( BENCHMARKING ) Performance\Performance::point('Prerender callback completed.');
 
 // Output the responses.
-if( DEVELOPMENT ) {
+if( DEBUGGING ) {
   
   // Capture the results.
   if( $method === 'POST' ) $output['prerender'] = $responses;
