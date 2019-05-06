@@ -89,11 +89,19 @@ class API {
     // Get the cached index data.
     $data = (include self::$index[$index]);
     
-    // Cache the data, then return it.
-    if( self::$cache->set($index, $data) ) return self::$cache->get($index);
+    // Verify that the data was included.
+    if( $data !== false ) {
+    
+      // Cache the data, then return it.
+      if( self::$cache->set($index, $data) ) return self::$cache->get($index);
 
-    // Otherwise, throw an error if the data could not be cached.
-    else throw new Error("Failed to cache $index data");
+      // Otherwise, throw an error if the data could not be cached.
+      else throw new Error("Failed to cache $index data");
+      
+    }
+    
+    // Otherwise, throw an error if there was no data to cache.
+    else throw new Erorr("Index $index not available");
     
   }
   

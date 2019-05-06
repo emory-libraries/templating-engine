@@ -11,6 +11,14 @@ use LightnCandy\LightnCandy;
  */
 class Renderer {
   
+  // Defines keep alive time constants for caching assets in the browser.
+  const KEEP_ALIVE_MINUTE = 60;
+  const KEEP_ALIVE_HOUR = 3600;
+  const KEEP_ALIVE_DAY = 86400;
+  const KEEP_ALIVE_WEEK = 604800;
+  const KEEP_ALIVE_MONTH = 2628000;
+  const KEEP_ALIVE_YEAR = 31536000;
+  
   // Prepare a template to be compiled.
   public static function prepare( string $template, $wrapper = 'default' ) {
 
@@ -138,6 +146,9 @@ class Renderer {
     
     // Output a content type header.
     header('Content-Type: '.$endpoint->data['mime']);
+    
+    // Send cache control headers.
+    header('Cache-Control: max-age='.CONFIG['assets']['keepAlive'].', public');
 
     // Output the asset.
     readfile($endpoint->data['path']);

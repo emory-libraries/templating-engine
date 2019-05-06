@@ -139,6 +139,13 @@ ERROR_TEMPLATE
     
   ],
   
+  // Configures assets.
+  'assets' => [
+    
+    // Sets the keep alive time for caching assets in the browser.
+    'keepAlive' => Renderer::KEEP_ALIVE_MONTH
+    
+  ],
   
   // Get the contents of all templating engine configuration files.
   'config' => array_reduce(Index::scan(ENGINE_ROOT.'/config'), function($config, $file) {
