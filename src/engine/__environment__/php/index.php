@@ -58,8 +58,8 @@ if( $method === 'POST' ) {
   
   // Capture post arguments.
   $options = [
-    'site' => $_POST['site'],
-    'environment' => $_POST['environment'],
+    'site' => defined(SITE) ? SITE : $_POST['site'],
+    'environment' => defined(ENVIRONMENT) ? ENVIRONMENT : $_POST['environment'],
     'callback' => isset($_POST['callback']) ? $_POST['callback'] : false,
     'development' => isset($_POST['development']) ? filter_var($_POST['development'], FILTER_VALIDATE_BOOLEAN) : false,
     'username' => isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null,
