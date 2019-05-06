@@ -9,25 +9,8 @@ function done( int $status, $message = null, $code = null ) {
   // Use the global method.
   global $method;
   
-  // For post requests, return the appropriate status code and message.
-  if( $method === 'POST' ) {
-    
-    // Send the response code.
-    http_response_code($code); 
-    
-    // Set content type header.
-    header('Content-Type: application/json');
-    
-    // Output the message.
-    if( isset($message) ) echo json_encode((is_array($message) ? $message : [
-      'code' => $code,
-      'message' => $message
-    ]), JSON_PRETTY_PRINT);
-    
-  }
-  
-  // Otherwise, report errors to the command line.
-  else {
+  // For command line usage, report errors to the command line.
+  if( $method === false ) {
   
     // Log messages if given.
     if( isset($message) ) {
@@ -45,7 +28,30 @@ function done( int $status, $message = null, $code = null ) {
     
   }
   
+  // For all other requests, return the appropriate status code and message.
+  else {
+    
+    // Send the response code.
+    http_response_code($code); 
+    
+    // Set content type header.
+    header('Content-Type: application/json');
+    
+    // Output the message.
+    if( isset($message) ) echo json_encode((is_array($message) ? $message : [
+      'code' => $code,
+      'message' => $message
+    ]), JSON_PRETTY_PRINT);
+    
+    // Exit.
+    exit($status);
+    
+  }
+  
 }
+
+// Disallow all other request types other than post.
+if( $method !== 'POST' and $method !== false ) done(1, 'Method not allowed.', 405);
 
 // Enable indexing via a post request.
 if( $method === 'POST' ) {
@@ -111,7 +117,7 @@ $environment = [
 if( !in_array($options['environment'], array_keys($environment)) ) done(1, 'Invalid environment.');
 
 // Set environment flag.
-define('ENVIRONMENT', $options['environment']);
+if( !defined('DEVELOPMENT') ) define('ENVIRONMENT', $options['environment']);
 
 // Set development mode flag.
 define('DEVELOPMENT', $options['development']);
@@ -138,13 +144,13 @@ define('DEBUGGING', FLAG['debuggingEnabled']);
 define('BENCHMARKING', FLAG['benchmarkingEnabled']);
 
 // Set path globals.
-define('DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
-define('SERVER_ROOT', dirname(dirname(dirname(__DIR__)))); 
-define('SERVER_PATH', str_replace(DOCUMENT_ROOT.'/', '', SERVER_ROOT));
-define('DATA_ROOT', SERVER_ROOT.'/data/'.$environment[ENVIRONMENT]);
-define('PATTERNS_ROOT', SERVER_ROOT.'/patterns/'.$environment[ENVIRONMENT]);
-define('ENGINE_ROOT', SERVER_ROOT.'/engine/'.$environment[ENVIRONMENT]);
-define('CACHE_ROOT', SERVER_ROOT.'/engine/'.$environment[ENVIRONMENT].'/php/cache');
+if( !defined('DOCUMENT_ROOT') ) define('DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
+if( !defined('SERVER_ROOT') ) define('SERVER_ROOT', dirname(dirname(dirname(__DIR__)))); 
+if( !defined('SERVER_PATH') ) define('SERVER_PATH', str_replace(DOCUMENT_ROOT.'/', '', SERVER_ROOT));
+if( !defined('DATA_ROOT') ) define('DATA_ROOT', SERVER_ROOT.'/data/'.$environment[ENVIRONMENT]);
+if( !defined('PATTERNS_ROOT') ) define('PATTERNS_ROOT', SERVER_ROOT.'/patterns/'.$environment[ENVIRONMENT]);
+if( !defined('ENGINE_ROOT') ) define('ENGINE_ROOT', SERVER_ROOT.'/engine/'.$environment[ENVIRONMENT]);
+if( !defined('CACHE_ROOT') ) define('CACHE_ROOT', SERVER_ROOT.'/engine/'.$environment[ENVIRONMENT].'/php/cache');
 
 // Get a list of known sites.
 define('SITES', array_values(array_filter(scandir(DATA_ROOT), function($path) {
@@ -164,12 +170,12 @@ if( !in_array($options['site'], SITES) ) done(1, 'Invalid site.', 400);
 $subdomain = str_replace('prod', '', $environment[ENVIRONMENT]);
 
 // Set the site and domain globals.
-define('SITE', $options['site']);
-define('DOMAIN', ($subdomain !== '' ? "$subdomain." : '').SITE);
+if( !defined('SITE') ) define('SITE', $options['site']);
+if( !defined('DOMAIN') ) define('DOMAIN', ($subdomain !== '' ? "$subdomain." : '').SITE);
 
 // Set site-specific globals.
-define('SITE_DATA', DATA_ROOT.'/'.SITE);
-define('SITE_ROOT', SERVER_ROOT.'/'.DOMAIN);
+if( !defined('SITE_DATA') ) define('SITE_DATA', DATA_ROOT.'/'.SITE);
+if( !defined('SITE_ROOT') ) define('SITE_ROOT', SERVER_ROOT.'/'.DOMAIN);
 
 // Enable debugging and error reporting when in development mode.
 if( DEBUGGING ) {
