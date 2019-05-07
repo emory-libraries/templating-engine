@@ -27,6 +27,9 @@ class Transformer {
       
     }
     
+    // Otherwise, return the contents without transforming it.
+    return $contents;
+    
   }
   
   // Transform some JSON file contents.
@@ -49,7 +52,7 @@ class Transformer {
   public static function transformXML( $contents ) {
     
     // Retrieve the XML data model.
-    $model = self::transformJSON(file_get_contents(CONFIG['engine']['config'].'/xml.json'));
+    $model = CONFIG['config']['xml'];
     
     // Determine the XML fields that contain HTML and should be escaped.
     $escape = array_get($model, 'config.html', []);
