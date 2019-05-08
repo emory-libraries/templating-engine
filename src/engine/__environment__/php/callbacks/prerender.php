@@ -1,8 +1,5 @@
 <?php
 
-// Defines the base URL for use in development mode.
-define('DEV_BASE_URL', 'http://localhost/templating-engine/public');
-
 // Locate the indexed routes file, and read it.
 $routes = (include CONFIG['engine']['cache']['index'].'/routes.php');
 
@@ -20,17 +17,14 @@ foreach( $routes['data'] as $i => $route ) {
   $endpoint = is_array($route->endpoint) ? $route->endpoint[1] : $route->endpoint;
   $url = is_array($route->url) ? $route->url[1] : $route->url;
   
-  // Get the URL of the route to be fetched.
-  $fetch = DEVELOPMENT ? DEV_BASE_URL.'/'.CONFIG['__site__']['domain'].$endpoint : $url;
-  
   // Save the URL.
-  $responses[$i] = ['url' => $fetch];
+  $responses[$i] = ['url' => $url];
   
   // Initialize the request.
   $requests[$i] = curl_init();
   
   // Configure the request.
-  curl_setopt($requests[$i], CURLOPT_URL, $fetch);
+  curl_setopt($requests[$i], CURLOPT_URL, $url);
   curl_setopt($requests[$i], CURLOPT_NOBODY, true);
   curl_setopt($requests[$i], CURLOPT_HEADER, true);
   curl_setopt($requests[$i], CURLOPT_RETURNTRANSFER, true);
@@ -59,7 +53,7 @@ foreach($requests as $i => $response) {
 
   // Save the response.
   $responses[$i]['endpoint'] = $routes['data'][$i]->endpoint;
-  $responses[$i]['response'] = curl_multi_getcontent($response);
+  $responses[$i]['response'] = trim(curl_multi_getcontent($response));
 
   // Remove the request from the queue after its completed.
   curl_multi_remove_handle($curl, $response);

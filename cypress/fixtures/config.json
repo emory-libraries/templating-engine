@@ -1,0 +1,6 @@
+{
+  "maxPageLoadTime": {
+    "pages": 1000,
+    "assets": 1000
+  }
+}

@@ -124,6 +124,9 @@ class Renderer {
     
     // Add benchmark point.
     if( BENCHMARKING ) Performance\Performance::finish('Renderer');
+    
+    // Output a content type header.
+    header('Content-Type: '.Mime::type('html'));
 
     // Render the template with the given data.
     return $renderer($endpoint->data);

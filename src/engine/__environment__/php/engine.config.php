@@ -113,7 +113,8 @@ define('CONFIG', [
     ],
     404 => [
       'status' => 'Not Found',
-      'message' => 'The page you were looking for could not be found'
+      'message' => 'The page you were looking for could not be found',
+      'template' => 'templates-error-404'
     ],
     500 => [
       'status' => 'Internal Server Error',

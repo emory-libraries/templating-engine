@@ -234,6 +234,9 @@ class API {
     // Get data about the request.
     $request = Request::parse('GET', $endpoint);
     
+    // Detect ending slashes on the endpoint.
+    $slash = str_ends_with($endpoint, '/');
+    
     // Extract the name of the API's internal process that's being requested.
     $process = ($parts = explode('/', trim($request['endpoint'], '/')))[0];
     
@@ -241,7 +244,7 @@ class API {
     if( !array_key_exists($process, self::$methods['GET']) ) return false;
     
     // Get the path within the index that the request is wanting to reach.
-    $path = cleanpath('/'.implode('/', array_subset($parts, 0, ARRAY_SUBSET_EXCLUDE)));
+    $path = cleanpath('/'.implode('/', array_subset($parts, 0, ARRAY_SUBSET_EXCLUDE)).($slash ? '/': ''));
     
     // Otherwise, return the result of the process.
     return self::$methods['GET'][$process]($path, $request);
@@ -250,6 +253,12 @@ class API {
   
   // Derive some endpoint data from the cached index data.
   protected static function getEndpoint( string $path, array $request ) {
+    
+    // Immediately detect error endpoints, and reroute them.
+    if( Route::isError($path) ) return self::getError((int) basename($path));
+    
+    // Immediately detect asset endpoints, and reroute them.
+    if( Route::isAsset($path) ) return self::getAsset($path);
 
     // Attempt to retrieve the endpoint data from the cache.
     $endpoint = self::$cache->get("endpoints.$path");
@@ -293,9 +302,13 @@ class API {
       $route = $route[0];
 
       // Check to see if the route points to an asset, and if so, treat it as such.
-      if( $route->asset ) return self::getAsset($path);
+      if( $route->asset !== false ) return self::getAsset($path);
+      
+      // Check to see if the route points to an error, and if so, treat it as such.
+      if( $route->error !== false ) return self::getError((int) $route->id);
 
       // Get the data for the endpoint.
+      // FIXME: Should/will all endpoints have a data file? If not, this may need to add an `isset` check to determine if some page data for the route exists, and if none exists, generate an empty `Data` object as needed.
       $data = $site['site'][$route->path];
       
       // Get the endpoint's template page type.
@@ -304,8 +317,8 @@ class API {
       // Lookup the endpoint's template pattern by page type.
       $template = array_values(array_filter($patterns['templates'], function($pattern) use ($pageType) {
         
-        // Find the template with the matching page type.
-        return $pattern->pageType == $pageType;
+        // Find the template with the matching page type, PLID, or ID.
+        return ($pattern->pageType == $pageType or $pattern->plid == $pageType or $pattern->id == $pageType);
         
       }));
       
@@ -443,7 +456,7 @@ class API {
       ]);
       
       // Get the data for the route, or simulate some.
-      $data = isset($route->path) ? $site[$route->path] : new Data(array_merge([
+      $data = (isset($route->path) and isset($site['site'][$route->path])) ? $site['site'][$route->path] : new Data(array_merge([
         'code' => $code
       ], CONFIG['errors'][$code]));
       
@@ -453,15 +466,16 @@ class API {
       // Lookup the endpoint's template by page type, if found.
       if( $pageType ) {
         
+        // Lookup the template.
         $template = array_values(array_filter($patterns['templates'], function($pattern) use ($pageType) {
         
-          // Find the template with the matching page type.
-          return $pattern->pageType == $pageType;
+          // Find the template with the matching page type, PLID, or ID.
+          return ($pattern->pageType == $pageType or $pattern->plid == $pageType or $pattern->id == $pageType);
 
         }));
       
         // Use the given template if a page type exists.
-        if( isset($template[0]) ) $template = $template[0]->pattern;
+        if( isset($template[0]) ) $template = $template[0];
         
         // Otherwise, throw a different error, or use the default error template.
         else {
@@ -493,8 +507,11 @@ class API {
 
       }
       
+      // Compile the data for the endpoint.
+      $data = self::compile($environment, $site, $data->data);
+      
       // Convert the error to an endpoint.
-      $error = new Endpoint($route, $data->data, $template);
+      $error = new Endpoint($route, $data, $template);
       
       // Cache the endpoint, or throw an error if caching failed.
       if( !self::$cache->set("errors.$code", $error) ) {

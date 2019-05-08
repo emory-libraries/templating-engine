@@ -255,19 +255,23 @@ class Index {
     $index['modified'] = $index['created'] = new DateTime();
       
     // Get the index's filename with the proper extension.
-    $filename = "$name.php";
+    $phpFilename = "$name.php";
+    $jsonFilename = "$name.json";
 
-    // Convert the index to a PHP string.
+    // Convert the index to a PHP string and JSON string.
     $php = '<?php return '.var_export($index, true).'; ?>';
+    $json = json_encode($index, JSON_PRETTY_PRINT);
 
     // Try to save the index as a temporary file, and make sure no errors were thrown.
     try {
 
       // Create the temporary file.
-      $cached = Cache::tmp($php, $filename, 0775);
+      $phpTmp = Cache::tmp($php, $phpFilename, 0775);
+      $jsonTmp = Cache::tmp($json, $jsonFilename, 0775);
 
       // Move the temporary file to the index, and overwrite any existing index file that's there.
-      $cached['move'](CONFIG['engine']['cache']['index']."/$filename");
+      $phpTmp['move'](CONFIG['engine']['cache']['index']."/$phpFilename");
+      $jsonTmp['move'](CONFIG['engine']['cache']['index']."/$jsonFilename");
 
     } 
 
