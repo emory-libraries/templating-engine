@@ -81,7 +81,10 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
       'FLAG_ADVARNAME',
       'FLAG_JSLENGTH',
       'FLAG_SPVARS',
-    ]
+    ],
+    
+    // TODO: Move the autoloading of handlebars helper classes into a separate process that can be run during initialization rather than needing to be included here to allow helpers to be indexed properly.
+    'helpers' => (include ENGINE_ROOT.'/php/helpers/autoload.php')()
   ],
   
   // Configures the markdown engine.
