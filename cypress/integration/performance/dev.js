@@ -4,23 +4,21 @@ const {_, $} = Cypress;
 // Get environment sim.
 const envsim = require('../../../environment-sim.json');
 
-// Load routes and patterns.
-const routes = require('../../fixtures/routes.json');
-const patterns = require('../../fixtures/patterns.json');
-const site = require('../../fixtures/site.json');
+// Load endpoints.
+const endpoints = require('../../fixtures/endpoints.json');
 
 // Initialize the test.
-describe('Performance on localhost', () => {
+describe('Performance on dev', () => {
   
   // Test each route.
-  routes['data'].forEach((route) => {
+  endpoints['data'].forEach((endpoint) => {
     
-    // Get the endpoint, and URL.
-    const endpoint = _.isArray(route.endpoint) ? route.endpoint[0] : route.endpoint;
-    const url = `dev.${envsim.site}${endpoint}`;
+    // Get the endpoint's URL and URI.
+    const uri = _.isArray(endpoint.endpoint) ? endpoint.endpoint[0] : endpoint.endpoint;
+    const url = `dev.${envsim.site}${uri}`;
     
     // Configure tests for the current the route.
-    describe(endpoint, () => {
+    describe(uri, () => {
       
       // Test that the route can be reached and returns the appropriate response code.
       it('Returns the appropriate response code', () => {
@@ -31,41 +29,20 @@ describe('Performance on localhost', () => {
           failOnStatusCode: false
         }).then((response) => {
           
-          // For error routes, their response code should match its ID.
-          if( route.error ) expect(response.status).to.equal(+route.id);
+          // For error endpoints, their response code should match its error code.
+          if( endpoint.error !== false ) expect(response.status).to.equal(+endpoint.error);
           
-          // For asset routes, their response code should be 200.
-          else if( route.asset ) expect(response.status).to.equal(200);
+          // For asset endpoints, their response code should be 200.
+          else if( endpoint.asset === true ) expect(response.status).to.equal(200);
           
-          // Otherwise, for all other requests, the response code should be based on whether or not the page's template exists.
-          else {
-            
-            // Get the route's page data.
-            const page = site.data.site[route.path];
-            
-            // For routes with real page data, identify the exact response code that should be given.
-            if( page ) {
-            
-              // Get the route's template based on its page type.
-              const template = _.get(_.filter(patterns.data.templates, function(template) {
-
-                // Find the template with a matching page type, PLID, or ID.
-                return (template.pageType == page.data.template || template.plid == page.data.template || template.id == page.data.template);
-
-              }), 0, false);
-
-              // For routes with an existing template, the response code should be 200.
-              if( template ) expect(response.status).to.equal(200);
-
-              // Otherwise, for routes without an existing template, the response code should be 515.
-              else expect(response.status).to.be.equal(515);
-              
-            }
-            
-            // Otherwise, for routes without any real data (e.g., predefined routes), permit a response code of either 200 or 515.
-            else expect(response.status).to.be.oneOf([200, 515]);
-            
-          }
+          // For redirect endpoints, their response code should either be either 515 or 200.
+          else if( endpoint.redirect !== false ) expect(response.status).to.be.oneOf([200, 515]);
+          
+          // For endpoints without a template, the response code should be 515.
+          else if( endpoint.pattern === null ) expect(response.status).to.equal(515);
+          
+          // Otherwise, for endpoints with templates, the response code should be 200.
+          else expect(response.status).to.equal(200);
           
         });
 
@@ -81,7 +58,7 @@ describe('Performance on localhost', () => {
           const {maxPageLoadTime} = config;
         
           // For asset routes, use the request method.
-          if( route.asset ) {
+          if( endpoint.asset === true ) {
 
             // Visit the route.
             cy.request({

@@ -7,17 +7,20 @@
  */
 class Endpoint {
   
+  // The endpoint's endpoint(s).
+  public $endpoint;
+  
   // The route data for the endpoint.
   public $route;
   
-  // The data file that the endpoint uses.
+  // The data that the endpoint uses.
   public $data;
   
-  // The pattern that the endpoint uses.
+  // The pattern that the endpoint uses, or `null` if no pattern could be found for the endpoint.
   public $pattern;
   
-  // The template data the the endpoint uses.
-  public $template = '';
+  // The template the the endpoint uses, if applicable.
+  public $template;
   
   // Indicates if the endpoint redirects, and if so, where it redirects to.
   public $redirect = false;
@@ -29,20 +32,25 @@ class Endpoint {
   public $error = false;
   
   // Constructs the endpoint.
-  function __construct( Route $route, array $data, Pattern $pattern ) { 
+  function __construct( Route $route, Data $data = null, Pattern $pattern = null ) { 
     
     // Capture the endpoint's route.
     $this->route = $route;
     
+    // Capture the endpoint's endpoint(s).
+    $this->endpoint = $route->endpoint;
+    
     // Capture the endpoint's data.
     $this->data = $data;
     
-    // Capture the endpoint's pattern, and its template.
+    // Capture the endpoint's pattern;
     $this->pattern = $pattern;
-    $this->template = $pattern->pattern;
+    
+    // Capture the endpoint's template, if applicable.
+    if( isset($pattern) ) $this->template = $pattern->pattern;
     
     // Determine if the endpoint redirects, and if so, capture its redirect location.
-    if( isset($data['redirect']) ) $this->redirect = $data['redirect'];
+    if( isset($route->redirect) or isset($data->data['redirect']) ) $this->redirect = $route->redirect ?? $data->data['redirect'];
     
     // Determine if the endpoint is an asset.
     if( $route->asset ) $this->asset = true;
@@ -56,7 +64,7 @@ class Endpoint {
   public static function __set_state( array $state ) {
     
     // Initialize an instance of the class.
-    $instance = new self(new Route(null), [], new Pattern(null));
+    $instance = new self(new Route(null), new Data(null), new Pattern(null));
     
     // Assign properties to the instance.
     foreach( $state as $property => $value ) { $instance->$property = $value; }

@@ -34,6 +34,15 @@ class Route {
   // Indicates if a route is for an error page.
   public $error = false;
   
+  // Indicates if the route redirects, if known.
+  public $redirect;
+  
+  // The route's endpoint.
+  public $endpoint;
+  
+  // The mime type of an asset, if applicable.
+  public $mime;
+  
   // Constructs the route.
   function __construct( $path ) {
   
@@ -65,6 +74,9 @@ class Route {
         $this->id .= ".$ext";
         $this->endpoint .= ".$ext";
         $this->url .= ".$ext";
+        
+        // Get the asset's mime type.
+        $this->mime = Mime::type($ext);
 
       }
       
@@ -83,6 +95,7 @@ class Route {
       $this->endpoint = self::indexIsOptional($path['endpoint']);
       $this->path = array_get($path, 'path');
       $this->id = array_get($path, 'id', File::id($path['endpoint']));
+      $this->redirect = array_get($path, 'redirect');
       
       // Get the route's URL(s).
       $this->url = self::url($this->endpoint);
@@ -100,6 +113,9 @@ class Route {
         $this->id .= ".$ext";
         $this->endpoint .= ".$ext";
         $this->url .= ".$ext";
+        
+        // Get the asset's mime type.
+        $this->mime = Mime::type($ext);
 
       }
       

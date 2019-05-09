@@ -27,6 +27,15 @@ class Index {
   const INDEX_METADATA = 2;
   const INDEX_READ = 4;
   
+  // Defines flags that can be used for the merge method.
+  const MERGE_PATHS = 1;
+  const MERGE_CONTENTS = 2;
+  const MERGE_NORMAL = 4;
+  const MERGE_RECURSIVE = 8;
+  const MERGE_KEYED = 16;
+  const MERGE_GROUPED = 32;
+  const MERGE_OVERRIDE = 64;
+  
   // Constructs the index.
   function __construct() {
     
@@ -69,6 +78,12 @@ class Index {
       }, $patterns)
     ];
     
+    // Build partials based on the pattern index.
+    $this->partials = [
+      'metadata' => null,
+      'data' => ($partials = $this->getPartialData($this->patterns['data']))
+    ];
+    
     // Get an index of all assets, and cache it.
     $this->assets = [
       'metadata' => ($assets = $this->getAssetData(self::INDEX_METADATA)),
@@ -86,12 +101,27 @@ class Index {
       'data' => ($routes = $this->getRouteData($site, $assets))
     ];
     
+    // Build endpoints based on the environment, site, pattern, and route indices.
+    $this->endpoints = [
+      'metadata' => null,
+      'data' => ($endpoints = $this->getEndpointData($this->environment['data'], $this->site['data'], $this->patterns['data'], $routes))
+    ];
+    
+    // Get an index of handlebars helpers, and cache it.
+    $this->helpers = [
+      'metadata' => null,
+      'data' => ($helpers = $this->getHelperData())
+    ];
+    
     // Cache everything.
     self::cache('environment', $this->environment);
     self::cache('site', $this->site);
     self::cache('patterns', $this->patterns);
+    self::cache('partials', $this->partials);
     self::cache('assets', $this->assets);
     self::cache('routes', $this->routes);
+    self::cache('endpoints', $this->endpoints);
+    self::cache('helpers', $this->helpers);
     
     // Add benchmark point.
     if( DEVELOPMENT ) Performance\Performance::finish('Index');
@@ -245,6 +275,104 @@ class Index {
       return $files;
       
     }
+    
+  }
+  
+    // Merge data files.
+  protected static function merge( ...$arrays/*, $flags = self::MERGE_KEYED | self::MERGE_RECURSIVE*/ ) {
+
+    // Get flags, or set the default.
+    $flags = !is_array(array_last($arrays)) ? array_last($arrays) : self::MERGE_KEYED | self::MERGE_RECURSIVE;
+    
+    // Filter out any non-arrays from the data set.
+    $arrays = array_values(array_filter($arrays, 'is_array'));
+    
+    // Merge the data on keys, where keys are composed of to data file IDs.
+    if( $flags & self::MERGE_KEYED ) {
+      
+      // Initialize the result.
+      $result = [];
+      
+      // Merge the data arrays.
+      foreach( $arrays as $data ) {
+      
+        // Merge data by key.
+        foreach( $data as $file => $content ) {
+
+          // Derive the key from the file's ID.
+          $key = File::id($file);
+
+          // Get the existing data for that key.
+          $existing = array_get($result, $key, []);
+
+          // Group the data by key.
+          if( $flags & self::MERGE_GROUPED ) {
+
+            // Add the data into the group.
+            $result = array_set($result, $key, array_merge([], $existing, [$content->data]));
+
+          }
+
+          // Recursively merge the data into the keyed data.
+          else if( $flags & self::MERGE_RECURSIVE ) {
+
+            // Recursively merge the data.
+            $result = array_set($result, $key, array_merge_recursive($existing, $content->data));
+
+          }
+
+          // Otherwise, merge the data into the keyed data.
+          else if( $flags & self::MERGE_NORMAL ) {
+
+            // Merge that data normally.
+            $result = array_set($result, $key, array_merge($existing, $content->data));
+
+          }
+
+          // Otherwise, set and/or override keyed data.
+          else $result = array_set($result, $key, $content->data, ($flags & self::MERGE_OVERRIDE));
+
+        }
+        
+      }
+      
+      // Return the result.
+      return $result;
+      
+    }
+  
+    // Recursively merge the data, and return it. 
+    if( $flags & self::MERGE_RECURSIVE ) return array_merge_recursive(...array_values($path));
+    
+    // Otherwise, merge the data, and return it.
+    if( $flags & self::MERGE_NORMAL ) return array_merge(...array_values($path));
+    
+    // Otherwise, return only the data contents.
+    if( $flags & self::MERGE_CONTENTS ) return array_values($path);
+    
+    // Otherwise, return the data as is with paths included.
+    return $path;
+    
+  }
+  
+  // Compile the meta data set for a request.
+  protected static function compile( array $environment, array $site, array $endpoint ) {
+   
+    // Get global, meta, and shared data.
+    $global = self::merge($environment['global'], $site['global'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
+    $meta = self::merge($environment['meta'], $site['meta'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
+    $shared = self::merge($environment['shared'], $site['shared'], self::MERGE_KEYED | self::MERGE_GROUPED);
+    
+    // Merge additional data into the route's endpoint data.
+    $data = array_merge([
+      '__global__' => $global,
+      '__meta__' => $meta,
+      '__shared__' => $shared,
+      '__params__' => []
+    ], $endpoint);
+    
+    // Return the compiled data.
+    return $data;
     
   }
   
@@ -496,6 +624,29 @@ class Index {
     
   }
   
+  // Convert pattern data into partial data.
+  protected function getPartialData( array $patterns ) {
+    
+    // Get all patterns without their groupings.
+    $patterns = array_merge(...array_values($patterns));
+    
+    // Convert the patterns to partials, and return the partials.
+    return array_reduce($patterns, function($result, $pattern) {
+      
+      // Save the pattern's partial by its PLID.
+      $result[$pattern->plid] = $pattern->pattern;
+
+      // Alias the pattern's partial by its ID and include path.
+      $result[$pattern->id] = &$result[$pattern->plid];
+      $result[trim($pattern->path, '/')] = &$result[$pattern->plid];
+
+      // Continue building partials.
+      return $result;
+      
+    }, []);
+    
+  }
+  
   // Locate all assets used by the site.
   protected function getAssetData( $flag = Index::INDEX_ONLY ) {
     
@@ -593,23 +744,153 @@ class Index {
       
     };
     
-    // Get site-specific data.
-    $site = $site['site'];
-    
     // Get site routes.
-    $site = $route($site);
+    $site = $route($site['site']);
     
     // Get asset routes.
     $assets = $route($assets);
     
-    // Also get any preconfigured routes found within the templating engine itself.
+    // Also, get any preconfigured routes found within the templating engine itself.
     $engine = $route(array_get(CONFIG['config'], 'routes', []));
+    
+    // Merge site, asset, and engine routes.
+    $routes = array_merge($engine, $site, $assets);
+    
+    // Filter out routes that are not for error pages, then get the existing error page codes from their route IDs.
+    $codes = array_map(function($route) {
+      
+      // Get the route ID of the error page.
+      return (int) $route->id;
+      
+    }, array_values(array_filter($routes, function($route) {
+      
+      // Filter out non-error pages.
+      return $route->error;
+      
+    })));
+    
+    // Lastly, simulate routes for any error pages that have been defined via configurations but not identified elsewhere.
+    $errors = array_map_use_both(function($data, $code) {
+      
+      // Simulate a route.
+      return new Route([
+        'endpoint' => "/$code",
+        'id' => (string) $code
+      ]);
+      
+    }, array_filter(CONFIG['errors'], function($code) use ($codes) {
+      
+      // Filter out any errors that have already been identified as routes.
+      return !in_array($code, $codes);
+      
+    }, ARRAY_FILTER_USE_KEY));
     
     // Add benchmark point.
     if( DEVELOPMENT ) Performance\Performance::finish();
     
-    // Merge and return all routes.
-    return array_merge($engine, $site, $assets);
+    // Merge the error routes, and return all routes.
+    return array_merge($routes, $errors);
+    
+  }
+  
+  // Transforms all index data into actual endpoint data.
+  protected function getEndpointData( array $environment, array $site, array $patterns, array $routes ) {
+    
+    // Initialize endpoints.
+    $endpoints = [];
+    
+    // Initialize a helper method for building endpoints.
+    $endpoint = function( Route $route ) use ($environment, $site, $patterns) {
+      
+      // For asset routes, the endpoint won't have any data or a template.
+      if( $route->asset ) {
+        
+        // Initialize empty data and pattern.
+        $data = null;
+        $pattern = null;
+        
+      }
+      
+      // Otherwise, for non-asset routes, get the endpoint's data and template.
+      else {
+        
+        // For redirecting endpoints, the endpoint won't have any data.
+        if( isset($route->redirect) ) $data = null;
+        
+        // Otherwise, for non-redirecting endpoints, attempt to get the its data.
+        else {
+          
+          // Find the endpoint's data.
+          $data = isset($site['site'][$route->path]) ? $site['site'][$route->path] : null;
+          
+          // For error endpoints without data, use the error data within configurations.
+          if( $route->error and !isset($data) ) $data = new Data([
+            'data' => array_merge(CONFIG['errors'][(int) $route->id], ['code' => (int) $route->id])
+          ]);
+          
+          // Otherwise, for non-error endpoints without data, simulate some data.
+          else if( !isset($data) ) $data = new Data([]);
+          
+          // If the endpoint redirects, then clear the data.
+          if( isset($data->data['redirect']) ) $data = null;
+          
+          // Otherwise, compile the data for the endpoint.
+          else $data->data = self::compile($environment, $site, $data->data);
+          
+        }
+        
+        // For redirecting endpoints, the endpoint won't have a template pattern.
+        if( is_null($data) ) $pattern = null;
+        
+        // Otherwise, for non-redirecting endpoints, attempt to get the its template pattern.
+        else {
+
+          // Get the endpoint's page type, if given.
+          $pageType = array_get($data->data, 'template', false);
+
+          // Lookup the endpoint's template pattern by page type when given.
+          if( $pageType ) {
+
+            // Get the endpoint's template pattern.
+            $pattern = array_get(array_values(array_filter($patterns['templates'], function($pattern) use ($pageType) {
+
+              // Find the template with the matching page type, PLID, or ID.
+              return ($pattern->pageType == $pageType or $pattern->plid == $pageType or $pattern->id == $pageType);
+
+            })), 0);
+
+          }
+
+          // Otherwise, for error endpoints, use the default error template.
+          else if( $route->error ) $pattern = new Pattern([
+            'template' => true,
+            'pattern' => CONFIG['defaults']['errorTemplate']
+          ]);
+
+          // Otherwise, for non-error endpoints, assume that no template is available.
+          else $pattern = null;
+          
+        }
+        
+      }
+
+      // Convert the route, data, and template to an endpoint, and return it.
+      return new Endpoint($route, $data, $pattern);
+      
+    };
+    
+    // Convert each route into an endpoint.
+    foreach( $routes as $route ) { $endpoints[] = $endpoint($route); }
+    
+    // Return the endpoints.
+    return $endpoints;
+    
+  }
+  
+  // Get all handlebars helpers.
+  protected function getHelperData() {
+    
+    return (include ENGINE_ROOT.'/php/helpers/autoload.php')();
     
   }
   

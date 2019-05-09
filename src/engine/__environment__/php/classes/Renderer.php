@@ -55,7 +55,7 @@ class Renderer {
         return $a | $flag($b);
         
       }, $flag(array_first(CONFIG['handlebars']['flags']))),
-      'helpers' => CONFIG['handlebars']['helpers'],
+      'helpers' => API::get('/helpers'),
       'partials' => API::get('/partials')
     ];
     
@@ -71,7 +71,7 @@ class Renderer {
   }
   
   // Renders a page for the requested endpoint, given its data and template.
-  public static function render( Endpoint $endpoint) { 
+  public static function render( Endpoint $endpoint) {
     
     // Add benchmark point.
     if( BENCHMARKING ) Performance\Performance::point('Renderer', true);
@@ -129,7 +129,7 @@ class Renderer {
     header('Content-Type: '.Mime::type('html'));
 
     // Render the template with the given data.
-    return $renderer($endpoint->data);
+    return $renderer($endpoint->data->data);
     
   }
   
@@ -148,13 +148,13 @@ class Renderer {
   public static function asset( Endpoint $endpoint ) {
     
     // Output a content type header.
-    header('Content-Type: '.$endpoint->data['mime']);
+    header('Content-Type: '.$endpoint->route->mime);
     
     // Send cache control headers.
     header('Cache-Control: max-age='.CONFIG['assets']['keepAlive'].', public');
 
     // Output the asset.
-    readfile($endpoint->data['path']);
+    readfile($endpoint->route->path);
     
   }
   

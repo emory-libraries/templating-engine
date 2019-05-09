@@ -26,7 +26,7 @@ class Router {
     $this->endpoint = API::get('/endpoint/'.ltrim($request->endpoint, '/'));
     
     // Set a global to indicate when an asset has been requested.
-    define('ASSET', $this->endpoint->asset);
+    define('ASSET', $this->endpoint->asset !== false);
 
   }
 
