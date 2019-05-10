@@ -180,6 +180,12 @@ class API {
   // Derive some endpoint data from the cached index data.
   protected static function getEndpoint( string $path ) {
     
+    // Immediately detect error endpoints, and reroute the request.
+    if( Route::isError($path) ) return self::getError((int) basename($path));
+    
+    // Immediately detect asset endpoints, and reroute the request.
+    if( Route::isAsset($path) ) return self::getAsset($path);
+    
     // Ensure that endpoint data exists within the cache.
     $endpoints = self::ensure('endpoints');
 
@@ -200,12 +206,6 @@ class API {
       // If the endpoint doesn't exist, then return a 404 error page instead.
       if( !isset($endpoint) ) return self::getError(404);
       
-      // If the endpoint is for an error page, then return the error page instead.
-      if( $endpoint->error !== false ) return self::getError($endpoint->error, $endpoint);
-      
-      // If the endpoint is for an asset page, then return the asset instead.
-      if( $endpoint->asset === true ) return self::getAsset($endpoint->endpoint, $endpoint);
-      
       // If the endpoint does not have a template pattern, then return a 515 error page instead.
       if( !isset($endpoint->pattern) ) return self::getError(515);
         
@@ -220,7 +220,10 @@ class API {
   }
   
   // Derive some asset data from the cached index data.
-  protected static function getAsset( string $path, Endpoint $endpoint = null ) {
+  protected static function getAsset( string $path ) {
+    
+    // Ensure that endpoint data exists within the cache.
+    $endpoints = self::ensure('endpoints');
     
     // Attempt to retrieve the asset data from the cache.
     $asset = self::$cache->get("assets.$path");
@@ -228,14 +231,27 @@ class API {
     // If the asset was not found, either use the given endpoint or retrieve one from the index.
     if( !isset($asset) ) {
       
-      // If an endpoint wasn't given, then get the endpoint.
-      if( !isset($endpoint) ) $endpoint = self::getEndpoint($path);
+      // Get the endpoints for assets only.
+      $assets = array_values(array_filter($endpoints['data'], function($endpoint) {
+        
+        // Locate all asset endpoints.
+        return $endpoint->asset;
+        
+      }));
       
-      // Capture the asset endpoint.
-      $asset = $endpoint;
+      // Find the endpoint for the given path.
+      $asset = array_get(array_values(array_filter($assets, function($endpoint) use ($path) {
+        
+        // Find the endpoint data for the given endpoint path.
+        return (is_array($endpoint->endpoint) ? in_array($path, $endpoint->endpoint) : $endpoint->endpoint == $path);
+        
+      })), 0);
       
-      // Cache the endpoint, or throw an asset if caching fails.
-      if( !self::$cache->set("errors.$path", $asset) ) throw new Error("Failed to cache asset $path");
+      // If the endpoint doesn't exist, then return a 404 error page instead.
+      if( !isset($asset) ) return self::getError(404);
+      
+      // Cache the asset, or throw an error if caching fails.
+      if( !self::$cache->set("assets.$path", $asset) ) throw new Error("Failed to cache asset $path");
       
     }
     
@@ -245,7 +261,10 @@ class API {
   }
   
   // Derive some error data from cached index data.
-  protected static function getError( $code, Endpoint $endpoint = null ) {
+  protected static function getError( $code ) {
+    
+    // Ensure that endpoint data exists within the cache.
+    $endpoints = self::ensure('endpoints');
     
     // Make sure the error code is an integer.
     $code = is_int($code) ? $code : (int) trim($code, '/');
@@ -256,13 +275,26 @@ class API {
     // If the error was not found, either use the given endpoint or retrieve one from the index.
     if( !isset($error) ) {
       
-      // If an endpoint wasn't given, then get the endpoint.
-      if( !isset($endpoint) ) $endpoint = self::getEndpoint("/$code");
+      // Get the endpoints for errors only.
+      $errors = array_values(array_filter($endpoints['data'], function($endpoint) {
+        
+        // Locate all asset endpoints.
+        return ($endpoint->error !== false);
+        
+      }));
       
-      // Capture the error endpoint.
-      $error = $endpoint;
+      // Find the endpoint for the given error code.
+      $error = array_get(array_values(array_filter($errors, function($endpoint) use ($code) {
+        
+        // Find the endpoint data for the given error code.
+        return ($endpoint->error == $code);
+        
+      })), 0);
       
-      // Cache the endpoint, or throw an error if caching fails.
+      // If the endpoint doesn't exists, then return a 404 error page instead.
+      if( !isset($error) ) return self::getError(404);
+      
+      // Cache the error, or throw an error if caching fails.
       if( !self::$cache->set("errors.$code", $error) ) throw new Error("Failed to cache error $code");
       
     }
