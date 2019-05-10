@@ -59,14 +59,32 @@ class Cache {
   // Get some data from the cache.
   public function get( $key, $default = null ) {
     
+    // Get the keys.
+    $keys = explode('.', $key);
+    
+    // Get the first key as the target item, and use the remaining keys to query within the item.
+    $item = array_first($keys);
+    $query = array_tail($keys);
+    
+    // Get the full key to the item.
+    $key = $item.'.data'.(!empty($query) ? '.'.implode('.', $query) : '');
+    
     // Verify that the item key exists within the cache, and immediately return the default if not.
     if( !$this->has($key) ) return $default;
     
     // Verify the the item is not expired, and get the item from the cache.
-    if( !$this->expired($key) ) return array_get($this->cache, "$key.data", $default);
+    if( !$this->expired($item) and !$this->expired($key) ) return array_get($this->cache, $key, $default);
     
     // Otherwise, unset the item in the cache.
-    $this->unset($key);
+    else {
+      
+      // Unset the item.
+      if( $this->expired($item) ) $this->unset($item);
+      
+      // Or unset the key.
+      if( $this->expired($key) ) $this->unset($key);
+      
+    }
     
     // Return the default.
     return $default;
@@ -76,14 +94,27 @@ class Cache {
   // Set some data within the cache.
   public function set( $key, $value, $expires = Cache::CACHE_EXPIRES_HOUR ) {
     
+    // Get the keys.
+    $keys = explode('.', $key);
+    
+    // Get the first key as the target item, and use the remaining keys to query within the item.
+    $item = array_first($keys);
+    $query = array_tail($keys);
+    
     // Get the expiry time, or disable experation altogether in development mode.
     $expires = DEVELOPMENT ? INF : (time() + $expires);
     
     // Get a copy of the cache data.
     $data = $this->cache;
     
+    // Set the value based on the query.
+    if( !empty($query) ) $value = array_set([], implode('.', $query), [
+      'data' => $value,
+      'expires' => $expires
+    ]);
+    
     // Set the given value within the cache data.
-    $data = array_set($data, $key, [
+    $data = array_set($data, $item, [
       'data' => $value,
       'expires' => $expires
     ]);
@@ -93,7 +124,7 @@ class Cache {
       
       // Save the updated cache data.
       $this->cache = $data;
-      
+
       // Indicate that the cache was updated successfully.
       return true;
       
@@ -130,10 +161,18 @@ class Cache {
   }
   
   // Determine if the cache has the given item.
-  protected function has( string $key ) { return array_key_exists($key, $this->cache); }
+  protected function has( string $key ) { return array_has($this->cache, $key); }
   
   // Determine if an item  within the cache is expired.
-  protected function expired( string $key ) { return $this->cache[$key]['expires'] < time(); }
+  protected function expired( string $key ) { 
+    
+    // If the item doesn't have an expiration date, then assum it's not expired.
+    if( !isset($this->cache[$key]['expires']) ) return false;
+    
+    // Otherwise, determine if the item is expired based on its expiry time.
+    return $this->cache[$key]['expires'] < time(); 
+  
+  }
   
   // Refreshes the expiry time of some data within the cache.
   protected function refresh( $key, $expires = Cache::CACHE_EXPIRES_HOUR ) {

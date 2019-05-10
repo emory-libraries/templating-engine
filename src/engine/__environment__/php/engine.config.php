@@ -20,7 +20,7 @@ define('PATTERN_GROUPS', array_reduce(array_map(function($path) {
   }, []));
 
 // Configure the templating engine.
-define('CONFIG', [
+define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
   
   // Store some information about the current setup.
   'localhost' => LOCALHOST,
@@ -82,6 +82,8 @@ define('CONFIG', [
       'FLAG_JSLENGTH',
       'FLAG_SPVARS',
     ],
+    
+    // TODO: Move the autoloading of handlebars helper classes into a separate process that can be run during initialization rather than needing to be included here to allow helpers to be indexed properly.
     'helpers' => (include ENGINE_ROOT.'/php/helpers/autoload.php')()
   ],
   
@@ -105,40 +107,6 @@ define('CONFIG', [
     
   ],
   
-  // Configures default error messaging for when error data files and/or templates are missing.
-  'errors' => [
-    400 => [
-      'status' => 'Bad Request',
-      'message' => 'Your request could not be understood as is.'
-    ],
-    404 => [
-      'status' => 'Not Found',
-      'message' => 'The page you were looking for could not be found'
-    ],
-    500 => [
-      'status' => 'Internal Server Error',
-      'message' => 'The server encountered an internal error and could not complete your request.'
-    ],
-    515 => [
-      'status' => 'Templating Engine Error',
-      'message' => 'The templating engine encountered an error and could not fulfill your request.'
-    ]
-  ],
-  
-  // Configures defaults.
-  'defaults' => [
-  
-    // Configures the default error template that's used when one does not exists.
-    'errorTemplate' => <<<'ERROR_TEMPLATE'
-    
-<h1 class="heading -h1">{{code}}</h1>
-<p class="text -lead">{{status}}</p>
-<p class="text">{{message}}</p>
-
-ERROR_TEMPLATE
-    
-  ],
-  
   // Configures assets.
   'assets' => [
     
@@ -146,27 +114,6 @@ ERROR_TEMPLATE
     'keepAlive' => Renderer::KEEP_ALIVE_MONTH
     
   ],
-  
-  // Get the contents of all templating engine configuration files.
-  'config' => array_reduce(Index::scan(ENGINE_ROOT.'/config'), function($config, $file) {
-    
-    // Get file's extension and basename.
-    $ext = pathinfo($file, PATHINFO_EXTENSION);
-    
-    // Get the file's endpoint within the configuration folder.
-    $endpoint = str_replace(ENGINE_ROOT.'/config/', '', $file);
-    $endpoint = str_replace(".$ext", '', $endpoint);
-    
-    // Convert the file's endpoint into a usable array key.
-    $key = str_replace('/', '.', $endpoint); 
-    
-    // Get the configuration file's contents.
-    $contents = Transformer::transform(File::read($file), $ext);
-    
-    // Merge all configuration files into a single array.
-    return array_set($config, $key, $contents);
-    
-  }, []),
   
   // Get available layouts.
   // TODO: Considering indexing layouts.
@@ -226,6 +173,6 @@ ERROR_TEMPLATE
     
   }, [])
   
-]);
+]));
 
 ?>

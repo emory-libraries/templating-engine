@@ -49,7 +49,7 @@ require ENGINE_ROOT."/php/engine.init.php";
 new Engine();
 
 // Output all performance result.
-if( BENCHMARKING ) {
+if( BENCHMARKING and !ASSET ) {
   
   // Output the results of the benchmarking tests.
   Performance\Performance::results();

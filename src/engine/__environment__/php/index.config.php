@@ -20,7 +20,7 @@ define('PATTERN_GROUPS', array_reduce(array_map(function($path) {
   }, []));
 
 // Configure the templating engine.
-define('CONFIG', [
+define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
   
   // Capture data about the setup.
   'development' => DEVELOPMENT,
@@ -163,30 +163,9 @@ define('CONFIG', [
     ENGINE_ROOT.'/icons/php' => false
   ],
   
-  // Get the contents of all templating engine configuration files.
-  'config' => array_reduce(Index::scan(ENGINE_ROOT.'/config'), function($config, $file) {
-    
-    // Get file's extension and basename.
-    $ext = pathinfo($file, PATHINFO_EXTENSION);
-    
-    // Get the file's endpoint within the configuration folder.
-    $endpoint = str_replace(ENGINE_ROOT.'/config/', '', $file);
-    $endpoint = str_replace(".$ext", '', $endpoint);
-    
-    // Convert the file's endpoint into a usable array key.
-    $key = str_replace('/', '.', $endpoint); 
-    
-    // Get the configuration file's contents.
-    $contents = Transformer::transform(File::read($file), $ext);
-    
-    // Merge all configuration files into a single array.
-    return array_set($config, $key, $contents);
-    
-  }, []),
-  
   // Get the contents of all templating engine meta files.
   'meta' => scandir_recursive(ENGINE_ROOT.'/meta', ENGINE_ROOT.'/meta')
   
-]);
+]));
 
 ?>

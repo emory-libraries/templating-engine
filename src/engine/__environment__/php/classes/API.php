@@ -17,28 +17,22 @@ class API {
     'site' => CONFIG['engine']['cache']['index'].'/site.php',
     'assets' => CONFIG['engine']['cache']['index'].'/assets.php',
     'patterns' => CONFIG['engine']['cache']['index'].'/patterns.php',
-    'routes' => CONFIG['engine']['cache']['index'].'/routes.php'
+    'partials' => CONFIG['engine']['cache']['index'].'/partials.php',
+    'routes' => CONFIG['engine']['cache']['index'].'/routes.php',
+    'endpoints' => CONFIG['engine']['cache']['index'].'/endpoints.php',
+    'helpers' => CONFIG['engine']['cache']['index'].'/helpers.php',
   ];
   
-  // Register methods and processers.
-  protected static $methods = [
+  // Register known API endpoints and their respective methods.
+  protected static $endpoints = [
     'GET' => [
-      'endpoint'  => 'API::getEndpoint',
-      'asset'     => 'API::getAsset',
-      'error'     => 'API::getError',
-      'pattern'   => 'API::getPattern',
-      'partials'  => 'API::getPartials'
+      '/endpoint'   => 'API::getEndpoint',
+      '/asset'      => 'API::getAsset',
+      '/error'      => 'API::getError',
+      '/partials'   => 'API::getPartials',
+      '/helpers'    => 'API::getHelpers',
     ]
   ];
-  
-  // Defines flags that can be used for the merge method.
-  const MERGE_PATHS = 1;
-  const MERGE_CONTENTS = 2;
-  const MERGE_NORMAL = 4;
-  const MERGE_RECURSIVE = 8;
-  const MERGE_KEYED = 16;
-  const MERGE_GROUPED = 32;
-  const MERGE_OVERRIDE = 64;
   
   // Define flags that can be used for the `GET` pattern method.
   const PATTERN_DATA = 0;
@@ -83,6 +77,20 @@ class API {
   
   //*********** PROTECTED METHODS ***********//
   
+  // Ensure that some index data existing within the cache and is up-to-date.
+  protected static function ensure( string $index ) {
+    
+    // Check to see if the necessary index data exists within the cache.
+    $cached = self::$cache->get($index);
+    
+    // If index data has not yet been cached or is outdated, then (re)cache it now, and return the cached data.
+    if( !isset($cached) or self::outdated($index) ) return self::cache($index);
+    
+    // Otherwise, return the cached data.
+    return $cached;
+    
+  }
+  
   // Cache some index data given the name of the target index.
   protected static function cache( string $index ) {
     
@@ -115,108 +123,38 @@ class API {
     if( is_a($cached, 'DateTime') ) $cached = $cached->getTimestamp();
     
     // Get the index file's last modified time.
-    $file = Cache::modified($index);
+    $file = Cache::modified(self::$index[$index]);
     
     // Determine if the cached data is outdated by seeing if the index file's last modified if newer.
     return $cached < $file;
     
   }
   
-  // Merge data files.
-  protected static function merge( ...$arrays/*, $flags = API::MERGE_KEYED | API::MERGE_RECURSIVE*/ ) {
-
-    // Get flags, or set the default.
-    $flags = !is_array(array_last($arrays)) ? array_last($arrays) : API::MERGE_KEYED | API::MERGE_RECURSIVE;
+  // Parse some data about a request.
+  protected static function parse( string $method, string $endpoint ) {
     
-    // Filter out any non-arrays from the data set.
-    $arrays = array_values(array_filter($arrays, 'is_array'));
+    // Parse the request.
+    $request = Request::parse($method, $endpoint);
     
-    // Merge the data on keys, where keys are composed of to data file IDs.
-    if( $flags & API::MERGE_KEYED ) {
+    // Replace URL with an API URL.
+    $request['url'] = str_replace($request['endpoint'], '', $request['url']).'/api'.$request['endpoint'];
+    
+    // Initialize the request's API data.
+    $request['api'] = [];
+    
+    // Determine the request's API endpoint.
+    $request['api']['endpoint'] = array_last(array_values(array_filter(array_keys(self::$endpoints[$method]), function($endpoint) use ($request) {
       
-      // Initialize the result.
-      $result = [];
+      // Find the requested endpoint.
+      return str_starts_with($request['endpoint'], $endpoint);
       
-      // Merge the data arrays.
-      foreach( $arrays as $data ) {
-      
-        // Merge data by key.
-        foreach( $data as $file => $content ) {
-
-          // Derive the key from the file's ID.
-          $key = File::id($file);
-
-          // Get the existing data for that key.
-          $existing = array_get($result, $key, []);
-
-          // Group the data by key.
-          if( $flags & API::MERGE_GROUPED ) {
-
-            // Add the data into the group.
-            $result = array_set($result, $key, array_merge([], $existing, [$content->data]));
-
-          }
-
-          // Recursively merge the data into the keyed data.
-          else if( $flags & API::MERGE_RECURSIVE ) {
-
-            // Recursively merge the data.
-            $result = array_set($result, $key, array_merge_recursive($existing, $content->data));
-
-          }
-
-          // Otherwise, merge the data into the keyed data.
-          else if( $flags & API::MERGE_NORMAL ) {
-
-            // Merge that data normally.
-            $result = array_set($result, $key, array_merge($existing, $content->data));
-
-          }
-
-          // Otherwise, set and/or override keyed data.
-          else $result = array_set($result, $key, $content->data, ($flags & API::MERGE_OVERRIDE));
-
-        }
-        
-      }
-      
-      // Return the result.
-      return $result;
-      
-    }
-  
-    // Recursively merge the data, and return it. 
-    if( $flags & API::MERGE_RECURSIVE ) return array_merge_recursive(...array_values($path));
+    })));
     
-    // Otherwise, merge the data, and return it.
-    if( $flags & API::MERGE_NORMAL ) return array_merge(...array_values($path));
+    // Get the request's path within the API endpoint.
+    $request['api']['path'] = preg_replace('/^'.str_replace('/', '\/', preg_quote($request['api']['endpoint'])).'/', '', $request['endpoint']);
     
-    // Otherwise, return only the data contents.
-    if( $flags & API::MERGE_CONTENTS ) return array_values($path);
-    
-    // Otherwise, return the data as is with paths included.
-    return $path;
-    
-  }
-  
-  // Compile the meta data set for a request.
-  protected static function compile( array $environment, array $site, array $endpoint ) {
-   
-    // Get global, meta, and shared data.
-    $global = self::merge($environment['global'], $site['global'], API::MERGE_KEYED | API::MERGE_RECURSIVE);
-    $meta = self::merge($environment['meta'], $site['meta'], API::MERGE_KEYED | API::MERGE_RECURSIVE);
-    $shared = self::merge($environment['shared'], $site['shared'], API::MERGE_KEYED | API::MERGE_GROUPED);
-    
-    // Merge additional data into the route's endpoint data.
-    $data = array_merge($endpoint, [
-      '__global__' => $global,
-      '__meta__' => $meta,
-      '__shared__' => $shared,
-      '__params__' => Request::params()
-    ]);
-    
-    // Return the compiled data.
-    return $data;
+    // Return the parsed request data.
+    return $request;
     
   }
   
@@ -230,371 +168,161 @@ class API {
    * @example /asset/css/style.css - Retrieves asset data for asset `css/style.css`.
    */
   public static function get( string $endpoint ) {
+
+    // Parse the request.
+    $request = self::parse('GET', $endpoint);
     
-    // Get data about the request.
-    $request = Request::parse('GET', $endpoint);
-    
-    // Extract the name of the API's internal process that's being requested.
-    $process = ($parts = explode('/', trim($request['endpoint'], '/')))[0];
-    
-    // Make sure the process exists, or indicate that the request failed otherwise.
-    if( !array_key_exists($process, self::$methods['GET']) ) return false;
-    
-    // Get the path within the index that the request is wanting to reach.
-    $path = cleanpath('/'.implode('/', array_subset($parts, 0, ARRAY_SUBSET_EXCLUDE)));
-    
-    // Otherwise, return the result of the process.
-    return self::$methods['GET'][$process]($path, $request);
+    // Then, forward the request to the API endpoint's appropriate method for processing.
+    return self::$endpoints['GET'][$request['api']['endpoint']]($request['api']['path']);
     
   }
   
   // Derive some endpoint data from the cached index data.
-  protected static function getEndpoint( string $path, array $request ) {
+  protected static function getEndpoint( string $path ) {
+    
+    // Immediately detect error endpoints, and reroute the request.
+    if( Route::isError($path) ) return self::getError((int) basename($path));
+    
+    // Immediately detect asset endpoints, and reroute the request.
+    if( Route::isAsset($path) ) return self::getAsset($path);
+    
+    // Ensure that endpoint data exists within the cache.
+    $endpoints = self::ensure('endpoints');
 
-    // Attempt to retrieve the endpoint data from the cache.
-    $endpoint = self::$cache->get("endpoints.$path");
+    // Attempt to retrieve the page data for the endpoint from the cache.
+    $endpoint = self::$cache->get("pages.$path");
 
     // If the endpoint was not found, then check to see if relevant index data has been cached.
     if( !isset($endpoint) ) {
-
-      // Check to see if the necessary index data exists within the cache.
-      $environment = self::$cache->get('environment');
-      $site = self::$cache->get('site');
-      $patterns = self::$cache->get('patterns');
-      $routes = self::$cache->get('routes');
-
-      // If any index data has not yet been cached or is outdated, then (re)cache it now, and get it.
-      if( !isset($environment) or self::outdated('environment') ) $environment = self::cache('environment');
-      if( !isset($site) or self::outdated('site') ) $site = self::cache('site');
-      if( !isset($patterns) or self::outdated('patterns') ) $patterns = self::cache('patterns');
-      if( !isset($routes) or self::outdated('routes') ) $routes = self::cache('routes');
       
-      // Get the index data.
-      $environment = $environment['data'];
-      $site = $site['data'];
-      $patterns = $patterns['data'];
-      $routes = $routes['data'];
-      
-      // Find the route for the given path within the cached index data.
-      $route = array_values(array_filter($routes, function($route) use ($path) {
-
-        // If endpoints are an array, look inside the array for matching endpoints.
-        if( is_array($route->endpoint) ) return in_array($path, $route->endpoint);
+      // Find the endpoint for the given path.
+      $endpoint = array_get(array_values(array_filter($endpoints['data'], function($endpoint) use ($path) {
         
-        // Look for a route with a matching endpoint.
-        return $route->endpoint == $path;
+        // Find the endpoint data for the given endpoint path.
+        return (is_array($endpoint->endpoint) ? in_array($path, $endpoint->endpoint) : $endpoint->endpoint == $path);
         
-      }));
-
-      // Verify that a route exists for the endpoint, or return an error otherwise.
-      if( !isset($route[0]) ) return self::getError(404);
+      })), 0);
       
-      // Capture the route.
-      $route = $route[0];
-
-      // Check to see if the route points to an asset, and if so, treat it as such.
-      if( $route->asset ) return self::getAsset($path);
-
-      // Get the data for the endpoint.
-      $data = $site['site'][$route->path];
+      // If the endpoint doesn't exist, then return a 404 error page instead.
+      if( !isset($endpoint) ) return self::getError(404);
       
-      // Get the endpoint's template page type.
-      $pageType = $data->data['template'];
-      
-      // Lookup the endpoint's template pattern by page type.
-      $template = array_values(array_filter($patterns['templates'], function($pattern) use ($pageType) {
+      // If the endpoint does not have a template pattern, then return a 515 error page instead.
+      if( !isset($endpoint->pattern) ) return self::getError(515);
         
-        // Find the template with the matching page type.
-        return $pattern->pageType == $pageType;
-        
-      }));
-      
-      // Verify that the template exists, or return an error otherwise.
-      if( !isset($template[0]) ) return self::getError(515);
-      
-      // Capture the template pattern.
-      $template = $template[0];
-      
-      // Compile the data for the endpoint.
-      $data = self::compile($environment, $site, $data->data);
-      
-      // Convert the route to an endpoint.
-      $endpoint = new Endpoint($route, $data, $template);
-      
-      // Cache the endpoint, or throw an error if caching failed.
-      if( !self::$cache->set("endpoints.$path", $endpoint) ) {
-        
-        // Throw an error.
-        throw new Error("Failed to cache endpoint $path");
-          
-      };
+      // Cache the endpoint, or throw an error if caching fails.
+      if( !self::$cache->set("pages.$path", $endpoint) ) throw new Error("Failed to cache endpoint $path");
 
     }
-
+    
     // Return the endpoint.
-    return $endpoint;
+    return (is_array($endpoint) ? $endpoint['data'] : $endpoint);
     
   }
   
   // Derive some asset data from the cached index data.
   protected static function getAsset( string $path ) {
     
+    // Ensure that endpoint data exists within the cache.
+    $endpoints = self::ensure('endpoints');
+    
     // Attempt to retrieve the asset data from the cache.
     $asset = self::$cache->get("assets.$path");
     
-    // If the asset was not found, then check to see if relevant index data has been cached.
+    // If the asset was not found, either use the given endpoint or retrieve one from the index.
     if( !isset($asset) ) {
-
-      // Check to see if the necessary index data exists within the cache.
-      $assets = self::$cache->get('assets');
-      $routes = self::$cache->get('routes');
-
-      // If any index data has not yet been cached or is outdated, then (re)cache it now, and get it.
-      if( !isset($assets) or self::outdated('assets') ) $assets = self::cache('assets');
-      if( !isset($routes) or self::outdated('routes') ) $routes = self::cache('routes');
       
-      // Get the index data.
-      $assets = $assets['data'];
-      $routes = $routes['data'];
-      
-      // Find the route for the given path within the cached index data.
-      $route = array_values(array_filter($routes, function($route) use ($path) {
+      // Get the endpoints for assets only.
+      $assets = array_values(array_filter($endpoints['data'], function($endpoint) {
         
-        // If endpoints are an array, look inside the array for matching endpoints.
-        if( is_array($route->endpoint) ) return in_array($path, $route->endpoint);
-        
-        // Look for a route with a matching endpoint.
-        return $route->endpoint == $path;
+        // Locate all asset endpoints.
+        return $endpoint->asset;
         
       }));
-
-      // Verify that a route exists for the asset, or return an error otherwise.
-      if( !isset($route[0]) ) return self::getError(404);
       
-      // Capture the route.
-      $route = $route[0];
-
-      // Get the data for the asset.
-      $data = $assets[$route->path];
-      
-      // Convert the asset to an endpoint.
-      $asset = new Endpoint($route, object_to_array($data), new Pattern(['template' => true]));
-      
-      // Cache the asset, or throw an error if caching failed.
-      if( !self::$cache->set("assets.$path", $asset) ) {
+      // Find the endpoint for the given path.
+      $asset = array_get(array_values(array_filter($assets, function($endpoint) use ($path) {
         
-        // Throw an error.
-        throw new Error("Failed to cache asset $path");
-          
-      };
-
+        // Find the endpoint data for the given endpoint path.
+        return (is_array($endpoint->endpoint) ? in_array($path, $endpoint->endpoint) : $endpoint->endpoint == $path);
+        
+      })), 0);
+      
+      // If the endpoint doesn't exist, then return a 404 error page instead.
+      if( !isset($asset) ) return self::getError(404);
+      
+      // Cache the asset, or throw an error if caching fails.
+      if( !self::$cache->set("assets.$path", $asset) ) throw new Error("Failed to cache asset $path");
+      
     }
-
+    
     // Return the asset.
-    return $asset;
+    return (is_array($asset) ? $asset['data'] : $asset);
     
   }
   
   // Derive some error data from cached index data.
   protected static function getError( $code ) {
     
-    // Convert the error code to an integer.
+    // Ensure that endpoint data exists within the cache.
+    $endpoints = self::ensure('endpoints');
+    
+    // Make sure the error code is an integer.
     $code = is_int($code) ? $code : (int) trim($code, '/');
     
     // Attempt to retrieve the error data from the cache.
     $error = self::$cache->get("errors.$code");
     
-    // If the error was not found, then check to see if relevant index data has been cached.
+    // If the error was not found, either use the given endpoint or retrieve one from the index.
     if( !isset($error) ) {
       
-      // Check to see if the necessary index data exists within the cache.
-      $environment = self::$cache->get('environment');
-      $site = self::$cache->get('site');
-      $patterns = self::$cache->get('patterns');
-      $routes = self::$cache->get('routes');
-
-      // If any index data has not yet been cached or is outdated, then (re)cache it now, and get it.
-      if( !isset($environment) or self::outdated('environment') ) $environment = self::cache('environment');
-      if( !isset($site) or self::outdated('site') ) $site = self::cache('site');
-      if( !isset($patterns) or self::outdated('patterns') ) $patterns = self::cache('patterns');
-      if( !isset($routes) or self::outdated('routes') ) $routes = self::cache('routes');
-      
-      // Get the index data.
-      $environment = $environment['data'];
-      $site = $site['data'];
-      $patterns = $patterns['data'];
-      $routes = $routes['data'];
-    
-      // Find the route for the given error within the cached index data.
-      $route = array_values(array_filter($routes, function($route) use ($code) {
+      // Get the endpoints for errors only.
+      $errors = array_values(array_filter($endpoints['data'], function($endpoint) {
         
-        // If endpoints are an array, look inside the array for matching endpoints.
-        if( is_array($route->endpoint) ) return in_array($code, $route->endpoint);
-        
-        // Look for a route with a matching endpoint.
-        return $route->endpoint == "/$code";
+        // Locate all asset endpoints.
+        return ($endpoint->error !== false);
         
       }));
-
-      // Verify that a route exists for the error, or simulate one.
-      $route = isset($route[0]) ? $route[0] : new Route([
-        'id' => $code,
-        'endpoint' => "/$code",
-      ]);
       
-      // Get the data for the route, or simulate some.
-      $data = isset($route->path) ? $site[$route->path] : new Data(array_merge([
-        'code' => $code
-      ], CONFIG['errors'][$code]));
-      
-      // Get the endpoint's template page type, if possible.
-      $pageType = isset($data->data['template']) ? $data->data['template'] : false;
-      
-      // Lookup the endpoint's template by page type, if found.
-      if( $pageType ) {
+      // Find the endpoint for the given error code.
+      $error = array_get(array_values(array_filter($errors, function($endpoint) use ($code) {
         
-        $template = array_values(array_filter($patterns['templates'], function($pattern) use ($pageType) {
+        // Find the endpoint data for the given error code.
+        return ($endpoint->error == $code);
         
-          // Find the template with the matching page type.
-          return $pattern->pageType == $pageType;
-
-        }));
+      })), 0);
       
-        // Use the given template if a page type exists.
-        if( isset($template[0]) ) $template = $template[0]->pattern;
-        
-        // Otherwise, throw a different error, or use the default error template.
-        else {
-          
-          // If the error code is not the default for undefined templates, then return that error.
-          if( $code != 515 ) return self::getError(515);
-          
-          // Otherwise, create a template on the fly.
-          else $template = new Pattern([
-            'template' => true,
-            'pattern' => CONFIG['defaults']['errorTemplate']
-          ]);
-          
-        }
-        
-      }
+      // If the endpoint doesn't exists, then return a 404 error page instead.
+      if( !isset($error) ) return self::getError(404);
       
-      // Otherwise, throw a different error, or create a template on the fly as needed.
-      else {
-
-        // If the error code is not the default for undefined templates, then return that error.
-        if( $code != 515 ) return self::getError(515);
-
-        // Otherwise, create a template on the fly.
-        else $template = new Pattern([
-          'template' => true,
-          'pattern' => CONFIG['defaults']['errorTemplate']
-        ]);
-
-      }
-      
-      // Convert the error to an endpoint.
-      $error = new Endpoint($route, $data->data, $template);
-      
-      // Cache the endpoint, or throw an error if caching failed.
-      if( !self::$cache->set("errors.$code", $error) ) {
-        
-        // Throw an error.
-        throw new Error("Failed to cache error $code");
-          
-      };
+      // Cache the error, or throw an error if caching fails.
+      if( !self::$cache->set("errors.$code", $error) ) throw new Error("Failed to cache error $code");
       
     }
     
     // Return the error.
-    return $error;
-    
-  }
-  
-  // Derive pattern data from cached index data.
-  protected static function getPattern( string $path = null ) {
-    
-    // Get the pattern ID.
-    $id = isset($path) ? trim($path, '/') : null;
-    
-    // Verify that an actual ID was set, or use null by default.
-    if( $id == '' ) $id = null;
-    
-    // Attempt to retrieve patterns from the cache.
-    $patterns = self::$cache->get('patterns');
-    
-    // If patterns have not been cached yet or are outdated, then (re)cache them now, and get them.
-    if( !isset($patterns) or self::outdated('patterns') ) $patterns = self::cache('patterns');
-    
-    // Get the pattern data.
-    $patterns = $patterns['data'];
-
-    // Return the given pattern if a pattern ID was given.
-    if( isset($id) ) {
-      
-      // Get the pattern ID parts.
-      $parts = Pattern::parse($path);
-      
-      // Get the pattern group.
-      $group = $patterns[$parts['group']['name']];
-      
-      // Filter the pattern group for the pattern.
-      $pattern = array_values(array_filter($group, function($pattern) use ($id) {
-        
-        // Find the pattern with the given PLID or ID.
-        return $pattern->plid == $id or $pattern->id == $id;
-        
-      }));
-      
-      // Get the pattern, or nothing otherwise.
-      $pattern = isset($pattern[0]) ? $pattern[0] : null;
-      
-    }
-    
-    // Otherwise, return all patterns otherwise.
-    return array_merge(...array_values($patterns));
+    return (is_array($error) ? $error['data'] : $error);
     
   }
   
   // Derive partial data from cached index data.
   protected static function getPartials() {
     
-    // Attempt to retrieve partials from the cache.
-    $partials = self::$cache->get('partials');
+    // Ensure that partial data exists within the cache.
+    $partials = self::ensure('partials');
     
-    // If partials were not found, build partials.
-    if( !isset($partials) ) {
+    // Then, return the partial data.
+    return $partials['data'];
     
-      // Get all patterns.
-      $patterns = API::getPattern('/');
+  }
+  
+  // Derive helper data from cached index data.
+  protected static function getHelpers() {
     
-      // Convert the patterns to partials.
-      $partials = array_reduce($patterns, function($result, $pattern) {
-        
-        // Save the partial by its PLID.
-        $result[$pattern->plid] = $pattern->pattern;
-        
-        // Alias the partial by its ID and include path.
-        $result[$pattern->id] = &$result[$pattern->plid];
-        $result[trim($pattern->path, '/')] = &$result[$pattern->plid];
-        
-        // Continue building partials.
-        return $result;
-        
-      }, []);
-      
-      // Cache the partials, or throw an error if the partials could not be cached.
-      if( !self::$cache->set('partials', $partials) ) {
-        
-        // Throw an error.
-        throw new Error("Failed to cache partials");
-      
-      }
-      
-    }
+    // Ensure that helper data exists within the cache.
+    $helpers = self::ensure('helpers');
     
-    // Return the partials.
-    return $partials;
+    // Then, return the helper data.
+    return $helpers['data'];
     
   }
   

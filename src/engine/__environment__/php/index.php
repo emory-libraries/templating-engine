@@ -78,7 +78,8 @@ else {
   $options = getopt('s:e:u:p:c::d', [
     'site:',
     'environment:',
-    'key:',
+    'username:',
+    'password:',
     'callback::',
     'development',
   ]);
@@ -98,6 +99,13 @@ else {
   unset($options['p']);
   unset($options['d']);
   unset($options['c']);
+  
+  // Ensure that only strings were captured.
+  if( is_array($options['site']) ) $options['site'] = $options['site'][0];
+  if( is_array($options['environment']) ) $options['environment'] = $options['environment'][0];
+  if( is_array($options['callback']) ) $options['callback'] = $options['callback'][0];
+  if( is_array($options['username']) ) $options['username'] = $options['username'][0];
+  if( is_array($options['password']) ) $options['password'] = $options['password'][0];
   
 }
 
@@ -192,8 +200,8 @@ if( DEBUGGING ) {
 require ENGINE_ROOT."/php/index.init.php";
 
 // Prevent indexing if the given username and password are not acceptable.
-if( $options['username'] !== $_ENV['INDEX_USERNAME'] ) done(1, 'Invalid username or password.', 401);
-if( $options['password'] !== $_ENV['INDEX_PASSWORD'] ) done(1, 'Invalid username or password.', 401);
+if( $options['username'] !== getenv('INDEX_USERNAME') ) done(1, 'Invalid username or password.', 401);
+if( $options['password'] !== getenv('INDEX_PASSWORD') ) done(1, 'Invalid username or password.', 401);
 
 // Start indexing.
 new Index();
