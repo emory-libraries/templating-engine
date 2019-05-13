@@ -22,6 +22,15 @@ class Index {
   // The index of known routes within the site.
   public $routes = [];
   
+  // The index of all partials.
+  public $partials = [];
+  
+  // The index of all recognized endpoints.
+  public $endpoints = [];
+  
+  // The index of all available handlebars helpers.
+  public $helpers = [];
+  
   // Defines flags for indexing modes.
   const INDEX_ONLY = 1;
   const INDEX_METADATA = 2;
