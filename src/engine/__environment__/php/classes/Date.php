@@ -94,7 +94,7 @@ class Date {
     // Try to parse the string by testing it against each of the datetime patterns.
     $patterns = array_values(array_filter(array_map(function($pattern) use ($string) {
       
-      preg_match("/$pattern/i", $string, $matches);
+      preg_match("/^$pattern$/i", $string, $matches);
       
       return $matches;
       

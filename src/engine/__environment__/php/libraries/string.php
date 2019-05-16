@@ -66,7 +66,25 @@ function camelcase_key( string $key ) {
   
 }
 
-// Determines if a string engins with another string.
+// Determines if a string starts with another string.
+function str_starts_with( string $string, string $target, int $position = null ) {
+  
+  // Get the string length.
+  $length = strlen($string);
+  
+  // Use the length as position if not given.
+  $position = null === $position ? 0 : +$position;
+  
+  // Get the position from the start or end.
+  if( $position < 0 ) $position = 0;
+  else if( $position > $length ) $position = $length;
+  
+  // Determine if the string starts with the target string.
+  return ($position >= 0 and substr($string, $position, strlen($target)) === $target);
+  
+}
+
+// Determines if a string ends with another string.
 function str_ends_with( string $string, string $target, int $position = null ) {
   
   // Get the string length.

@@ -123,6 +123,34 @@ function array_unset( array $array, $keys, $index = 0 ) {
   
 }
 
+// Determine if a key within an array exists using dot notation.
+function array_has( array $array, $keys ) {
+  
+  // Set delimiter.
+  $delimiter = '.';
+  
+  // Permit dot notation in keys values.
+  $keys = explode($delimiter, $keys);
+  
+  // Initialize a pointer.
+  $pointer = $array;
+  
+  // Recursively look for keys that do not exist within the array.
+  foreach( $keys as $key ) {
+    
+    // If the key doesn't exist at that level within the array, then return false.
+    if( !array_key_exists($key, $pointer) ) return false;
+    
+    // Otherwise, move the pointer, and continue searching.
+    else $pointer = $pointer[$key];
+    
+  }
+  
+  // Otherwise, assume that all keys were found, and return true.
+  return true;
+  
+}
+
 // Flattens an array.
 function array_flatten( array $expanded, $delimiter = '.', $parent = null ) {
   
@@ -224,7 +252,7 @@ function is_associative_array( array $array ) {
 }
 
 // Map array keys instead of values.
-function array_map_keys( callable $callback, array &$array ) {
+function array_map_keys( callable $callback, array $array ) {
   
   // Loop through the array, and call the callback with the key.
   foreach( $array as $key => $value ) {
@@ -242,6 +270,14 @@ function array_map_keys( callable $callback, array &$array ) {
   
   // Return the array.
   return $array;
+  
+}
+
+// Map an array using both keys and values.
+function array_map_use_both( callable $callback, array $array ) {
+  
+  // Map the array while maintaining its keys, but also passing its keys into the callback as an argument.
+  return array_map($callback, $array, array_keys($array));
   
 }
 
@@ -592,6 +628,46 @@ function array_combos( ...$arrays ) {
   
   // Return the result.
   return array_values(array_filter($result, 'is_array'));
+  
+}
+
+// Defines constants for array subset.
+const ARRAY_SUBSET_INCLUDE = 0;
+const ARRAY_SUBSET_EXCLUDE = 1;
+
+// Extract a subset of an array with certain keys excluded or included.
+function array_subset( array $array, $keys, $flag = ARRAY_SUBSET_INCLUDE ) {
+  
+  // Ignore invalid keys.
+  if( !is_string($keys) and !is_int($keys) and !is_array($keys) ) return $array;
+  
+  // Initialize the subset.
+  $subset = $array;
+  
+  // Handle string and integer.
+  if( is_string($keys) or is_int($keys) ) {
+    
+    // For exclusion subsets, remove the given key.
+    if( $flag & ARRAY_SUBSET_EXCLUDE ) unset($subset[$keys]);
+    
+    // Otherwise, for inclusion subsets, extract the given key.
+    else $subset = $subset[$keys];
+    
+  }
+  
+  // Handle array subsets.
+  else {
+    
+    // For exclusion subsets, remove every key that was given.
+    if( $flag & ARRAY_SUBSET_EXCLUDE ) foreach( $keys as $key ) { unset($subset[$key]); }
+    
+    // Otherwise, for inclusion subsets, extract only the given keys.
+    else foreach( $subset as $key => $value ) { if( !in_array($key, $keys) ) unset($subset[$key]); }
+    
+  }
+  
+  // Return the subset.
+  return $subset;
   
 }
 

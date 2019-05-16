@@ -46,8 +46,19 @@ class Translator {
     // Combine the base data and meta data.
     $result = array_merge($result, $data);
     
-    // Cast all values to their appropriate types.
-    $result = Cast::cast($result);
+    // Initialize a helper for casting values to their appropriate data types.
+    $cast = function($value, $key) use (&$cast) {
+      
+      // Do not cast any HTML content.
+      if( in_array($key, CONFIG['config']['xml']['config']['html']) ) return $value;
+      
+      // Otherwise, cast the value to its corresponding data type.
+      return Cast::cast($value);
+      
+    };
+    
+    // Cast all values to their appropriate types, except for HTML content.
+    array_walk_recursive($result, $cast);
     
     // Return the result.
     return $result;

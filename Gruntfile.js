@@ -3,14 +3,27 @@ module.exports = function(grunt) {
   // Load dependecies.
   const path = require('path');
   const glob = require('glob').sync;
+  const _ = require('lodash');
   
   // Initialize configurations.
   const SRC = 'src';
   const DEST = 'public';
   const ENVSIM = require(path.resolve('environment-sim.json'));
   
-  // Set environment domain.
-  ENVSIM.domain = ENVSIM.environment == 'production' ? ENVSIM.site : `${ENVSIM.environment}.${ENVSIM.site}`;
+  // Set environment directories, and domains.
+  switch(ENVSIM.environment) {
+    case 'development':
+      ENVSIM.dir = 'dev';
+      ENVSIM.domain = ENVSIM.dir + '.' + ENVSIM.site;
+      break;
+    case 'production':
+      ENVSIM.dir = 'prod';
+      ENVSIM.domain = ENVSIM.site;
+      break;
+    default:
+      ENVSIM.dir = ENVSIM.environment;
+      ENVSIM.domain = ENVSIM.dir + '.' + ENVSIM.site;
+  }
 
   // Register paths.
   const PATHS = {
@@ -81,47 +94,47 @@ module.exports = function(grunt) {
       engine: {
         root: `${DEST}/engine/`,
         environment: {
-          root: `${DEST}/engine/${ENVSIM.environment}`,
-          php: `${DEST}/engine/${ENVSIM.environment}/php`,
-          css: `${DEST}/engine/${ENVSIM.environment}/css`,
-          js: `${DEST}/engine/${ENVSIM.environment}/js`,
-          assets: `${DEST}/engine/${ENVSIM.environment}/assets`,
-          images: `${DEST}/engine/${ENVSIM.environment}/images`,
-          icons: `${DEST}/engine/${ENVSIM.environment}/icons`,
-          fonts: `${DEST}/engine/${ENVSIM.environment}/fonts`,
-          config: `${DEST}/engine/${ENVSIM.environment}/config`,
+          root: `${DEST}/engine/${ENVSIM.dir}`,
+          php: `${DEST}/engine/${ENVSIM.dir}/php`,
+          css: `${DEST}/engine/${ENVSIM.dir}/css`,
+          js: `${DEST}/engine/${ENVSIM.dir}/js`,
+          assets: `${DEST}/engine/${ENVSIM.dir}/assets`,
+          images: `${DEST}/engine/${ENVSIM.dir}/images`,
+          icons: `${DEST}/engine/${ENVSIM.dir}/icons`,
+          fonts: `${DEST}/engine/${ENVSIM.dir}/fonts`,
+          config: `${DEST}/engine/${ENVSIM.dir}/config`,
           dependencies: {
-            php: `${DEST}/engine/${ENVSIM.environment}/php/dependencies`,
-            js: `${DEST}/engine/${ENVSIM.environment}/js/dependencies`,
-            css: `${DEST}/engine/${ENVSIM.environment}/css/dependencies`
+            php: `${DEST}/engine/${ENVSIM.dir}/php/dependencies`,
+            js: `${DEST}/engine/${ENVSIM.dir}/js/dependencies`,
+            css: `${DEST}/engine/${ENVSIM.dir}/css/dependencies`
           }
         }
       },
       patterns: {
         root: `${DEST}/patterns`,
         environment: {
-          root: `${DEST}/patterns/${ENVSIM.environment}`
+          root: `${DEST}/patterns/${ENVSIM.dir}`
         }
       },
       data: {
         root: `${DEST}/data`,
         environment: {
-          root: `${DEST}/data/${ENVSIM.environment}`,
-          meta: `${DEST}/data/${ENVSIM.environment}/_meta`,
-          global: `${DEST}/data/${ENVSIM.environment}/_global`,
-          shared: `${DEST}/data/${ENVSIM.environment}/_shared`,
+          root: `${DEST}/data/${ENVSIM.dir}`,
+          meta: `${DEST}/data/${ENVSIM.dir}/_meta`,
+          global: `${DEST}/data/${ENVSIM.dir}/_global`,
+          shared: `${DEST}/data/${ENVSIM.dir}/_shared`,
         },
         site: {
-          root: `${DEST}/data/${ENVSIM.environment}/${ENVSIM.site}`,
-          meta: `${DEST}/data/${ENVSIM.environment}/${ENVSIM.site}/_meta`,
-          global: `${DEST}/data/${ENVSIM.environment}/${ENVSIM.site}/_global`,
-          shared: `${DEST}/data/${ENVSIM.environment}/${ENVSIM.site}/_shared`
+          root: `${DEST}/data/${ENVSIM.dir}/${ENVSIM.site}`,
+          meta: `${DEST}/data/${ENVSIM.dir}/${ENVSIM.site}/_meta`,
+          global: `${DEST}/data/${ENVSIM.dir}/${ENVSIM.site}/_global`,
+          shared: `${DEST}/data/${ENVSIM.dir}/${ENVSIM.site}/_shared`
         },
         siblings: {
-          root: `${SRC}/data/${ENVSIM.environment}/__sibling*__`,
-          meta: `${SRC}/data/${ENVSIM.environment}/__sibling*__/_meta`,
-          global: `${SRC}/data/${ENVSIM.environment}/__sibling*__/_global`,
-          shared: `${SRC}/data/${ENVSIM.environment}/__sibling*__/_shared`
+          root: `${SRC}/data/${ENVSIM.dir}/__sibling*__`,
+          meta: `${SRC}/data/${ENVSIM.dir}/__sibling*__/_meta`,
+          global: `${SRC}/data/${ENVSIM.dir}/__sibling*__/_global`,
+          shared: `${SRC}/data/${ENVSIM.dir}/__sibling*__/_shared`
         }
       },
       site: {
@@ -143,6 +156,11 @@ module.exports = function(grunt) {
       npm: 'node_modules'
     }
   };
+  
+  // Load the templating engine's environment variables.
+  require('dotenv').config({
+    path: path.resolve(PATHS.src.engine.environment.root, '.env')
+  });
 
   // Configure taks.
   grunt.initConfig({
@@ -194,7 +212,11 @@ module.exports = function(grunt) {
     },
     
     clean: {
-      dest: [PATHS.dest.root]
+      dest: [PATHS.dest.root],
+      cypress: [
+        'cypress/fixtures/*',
+        '!cypress/fixtures/config.json'
+      ]
     },
     
     copy: {
@@ -288,6 +310,18 @@ module.exports = function(grunt) {
       php: [path.join(PATHS.src.engine.environment.php, '**/*.php')]
     },
     
+    symlink: {
+      cypress: {
+        files: [{
+          expand: true,
+          overwrite: false,
+          cwd: path.join(PATHS.dest.engine.environment.php, `/cache/index/${ENVSIM.domain}`),
+          src: ['*.json'],
+          dest: 'cypress/fixtures/'
+        }]
+      }
+    }
+    
     /*connect: {
       server: {
         options: {
@@ -308,7 +342,8 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'unlock',
     'clean',
-    'copy'
+    'copy',
+    'index:prerender'
   ]);
   grunt.registerTask('unlock', 'Unlock public directory for deletion', function () {
     
@@ -326,11 +361,59 @@ module.exports = function(grunt) {
   grunt.registerTask('dev', [
     'build', 
     //'connect',
+    'test',
     'watch'
   ]);
   grunt.registerTask('dist', [
     'build'
   ]);
   grunt.registerTask('deploy', require(path.resolve('scripts/deploy.js')));
+  grunt.registerTask('index', "Runs the templating engine's indexer", function ( callback = null ) {
+    
+    // Make this task async.
+    const done = this.async();
+    
+    // Initialize options.
+    let options = _.merge({
+      username: process.env.INDEX_USERNAME,
+      password: process.env.INDEX_PASSWORD,
+      environment: ENVSIM.environment,
+      site: ENVSIM.site,
+      development: true
+    }, this.options());
+    
+    // Disable development mode.
+    if( !options.development ) _.unset(options, 'development');
+    
+    // Set the callback.
+    if( callback ) options.callback = callback;
+    
+    // Convert options to an array of arguments.
+    options = _.reduce(options, function(options, value, key) {
+          
+      // Save the option.
+      options.push(`-${key[0]}=${value}`);
+
+      // Continue reducing.
+      return options;
+
+    }, []);
+
+    // Run the indexer.
+    grunt.util.spawn({
+      cmd: 'php',
+      args: [
+        path.join(PATHS.dest.engine.environment.php, 'index.php'),
+        ...options
+      ],
+      opts: {stdio: 'inherit'}
+    }, () => done());
+    
+  });
+  grunt.registerTask('test', [
+    'clean:cypress',
+    'symlink:cypress', 
+    'cypress'
+  ]);
   
 };
