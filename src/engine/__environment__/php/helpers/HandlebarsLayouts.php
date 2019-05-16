@@ -21,7 +21,7 @@ class HandlebarsLayouts {
     $data = array_merge([], array_get($options, 'data', []));
     
     // Get the partial template.
-    $template = array_get(CONFIG['handlebars']['partials'], $partial, false);
+    $template = array_get(API::get('/partials'), $partial, false);
     
     // Throw an error if the template could not be found.
     if( $template === false ) throw new Error("Missing partial: '$partial'");
@@ -29,8 +29,11 @@ class HandlebarsLayouts {
     // Compile the partial.
     $compiled = Renderer::compile($template);
     
+    // Initialize a temporary file name.
+    $tmp = "CustomHelpers-HandlebarsLayouts-extend_$partial.php";
+    
     // Temporarily cache the partial.
-    $cached = Cache::tmp($compiled);
+    $cached = Cache::tmp($compiled, $tmp);
    
     // Get the partial's renderer.
     $renderer = $cached['include']();
@@ -86,7 +89,7 @@ class HandlebarsLayouts {
     $context['__layoutActions'] = array_merge($context['__layoutActions'], ...array_map(function($content) {
       
       // Get the rendered content's layout actions.
-      return array_get($content, '__layoutActions', []);
+      return array_get(Helper::get($content[0], $content[1], []), '__layoutActions', []);
       
     }, $result));
     
@@ -97,7 +100,7 @@ class HandlebarsLayouts {
     $actions = $context['__layoutActions'][$name];
   
     // Initialize a helper to expand content blocks.
-    $expand = function($action) use ($context, $parser) {
+    $expand = function($action) use ($context) {
 
       // Run the action.
       return $action['fn']($context, $action['options']);
@@ -161,11 +164,14 @@ class HandlebarsLayouts {
     $actions[$name][] = [
       'options' => ['data' => $data],
       'mode' => $mode,
-      'fn' => $fn // FIXME: Cannot serialize Closure!!
+      'fn' => $fn
     ];
 
-	d('CONTEXT SHOULD BE', $context);
-    return json_encode($context);
+    // Handoff the context to the block helper.
+    Helper::set("CustomHelpers/HandlebarsLayouts::content::$name", 'context', $context);
+
+    // Return the handoff instructions to the block helper.
+    return json_encode(["CustomHelpers/HandlebarsLayouts::content::$name", 'context']);
     
   }
   
