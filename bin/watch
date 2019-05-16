@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Before starting a new watch, make sure any existing watch tasks
+# are terminated. This can be done by killing all fswatch tasks that
+# utilize the custom process name (see the watch function for details).
+pkill -f "EUL-fswatch"
+
+# Capture all arguments passed into the watch command. This is 
+# necessary in order to pass along any flags, like whether or not
+# development mode is enabled, along to subsequent processes.
+OPTS=( $@ )
+
+# Initialize the root server path. When not in development, this
+# should just point to the server's current working directory. 
+# Otherwise, when in development, this will get overwritten to
+# account for the project's folder structure.
+ROOT="."
+
+# For development, assume that the files being watched live within a
+# subfolder that adheres to the project's folder structure (i.e., public). 
+# Otherwise, assume a server environment is being used and that the 
+# currect directory makes up the server's root path.
+if [ $# -ge 1 ]; then
+  case $1 in
+    -d | --dev | --development  ) ROOT="public" ;;
+  esac
+fi
+
+# Initialize a helper method for running a watch task as a
+# background process with a custom process name. This is crucial
+# for being able to listen to file changes in the background
+# as well as identify what child processes are spawned due to
+# this script. Additionally, the custom process name enables
+# us to kill all of our own tasks at will using `pkill -f <process-name>`
+# in a way that should not interfere with any other fswatch
+# processes being run on the server.
+function watch() {
+
+  PARAMS=( "$@" )
+  LEN=${#PARAMS[@]}-2
+  SITE=${PARAMS[@]: -1:1}
+  ENVIRONMENT=${PARAMS[@]: -2:1}
+  PATHS=${PARAMS[@]:0:LEN}
+  EXCLUDE="$ROOT/engine/**/php/cache/"
+
+  #trap "" SIGINT; exec -a "EUL-fswatch" fswatch -or "${PATHS[@]}" | xargs -n 1 -I {} echo "{}" &
+  trap "" SIGINT; exec -a "EUL-fswatch" fswatch -e $EXCLUDE -o -r ${PATHS[@]} | while read COUNT; do
+    index "$ENVIRONMENT" "$SITE"
+  done &
+
+}
+
+# Initialize a helper method for triggering an index. This 
+# method does not immediately kick off the indexing process
+# but, rather, calls another script that determines which 
+# site and/or environment indices need to be rebuilt.
+function index() {
+
+  ./bin/index -e="$1" -s="$2" ${OPTS[@]}
+
+}
+
+# Define all server paths that will be watched. This is needed to
+# distinguish between the various locations in order to run their 
+# respective watch processes. This also helps identify the location
+# that are being watched.
+ENVIRONMENT_DEVELOPMENT=("$ROOT/engine/dev/" "$ROOT/patterns/dev/")
+ENVIRONMENT_QA=("$ROOT/engine/qa/" "$ROOT/patterns/qa/")
+ENVIRONMENT_STAGING=("$ROOT/engine/staging/" "$ROOT/patterns/staging/")
+ENVIRONMENT_PRODUCTION=("$ROOT/engine/prod/" "$ROOT/patterns/prod/")
+SITE_MAIN_DEVELOPMENT=("$ROOT/dev.libraries.emory.edu/" "$ROOT/data/dev/libraries.emory.edu/")
+SITE_MAIN_QA=("$ROOT/qa.libraries.emory.edu/" "$ROOT/data/qa/libraries.emory.edu/")
+SITE_MAIN_STAGING=("$ROOT/staging.libraries.emory.edu/" "$ROOT/data/staging/libraries.emory.edu/")
+SITE_MAIN_PRODUCTION=("$ROOT/libraries.emory.edu/" "$ROOT/data/prod/libraries.emory.edu/")
+
+# Listen for any file changes to the templating engine or patterns.
+# When changes are detected, a reindexing of all sites within the
+# same environment should be triggered.
+watch "${ENVIRONMENT_DEVELOPMENT[@]}" "development" "+"
+watch "${ENVIRONMENT_QA[@]}" "qa" "+"
+watch "${ENVIRONMENT_STAGING[@]}" "staging" "+"
+watch "${ENVIRONMENT_PRODUCTION[@]}" "production" "+"
+
+# Listen for any file changes within the data folder, and when
+# changes are detected, a reindexing of the given site within
+# the given environment should be triggered.
+watch "${SITE_MAIN_DEVELOPMENT[@]}" "development" "libraries.emory.edu"
+watch "${SITE_MAIN_QA[@]}" "qa" "libraries.emory.edu"
+watch "${SITE_MAIN_STAGING[@]}" "staging" "libraries.emory.edu"
+watch "${SITE_MAIN_PRODUCTION[@]}" "production" "libraries.emory.edu"

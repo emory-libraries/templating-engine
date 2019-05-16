@@ -1,0 +1,117 @@
+#!/bin/bash
+
+# Initialize the root server path. When not in development, this
+# should just point to the server's current working directory. 
+# Otherwise, when in development, this will get overwritten to
+# account for the project's folder structure.
+ROOT="."
+
+# Initialize a development flag to determine if and when development
+# mode is enabled. This is mostly used to relay development mode to
+# the indexing process.
+DEVELOPMENT=0
+
+# Capture all arguments passed into the script. Minimally, this 
+# should include an environment and site flag with a development
+# mode flag being optional.
+for i in $@; do
+  case $i in
+    -e=* | --environment=* ) 
+      ENVIRONMENT=${i#*=} 
+      shift 
+      ;;
+    -s=* | --site=* ) 
+      SITE=${i#*=} 
+      shift 
+      ;;
+    -u=* | --username=* ) 
+      USERNAME=${i#*=} 
+      shift 
+      ;;
+    -p=* | --password=* ) 
+      PASSWORD=${i#*=} 
+      shift 
+      ;;
+    -c=* | --callback=* )
+      CALLBACK=${i#*=}
+      shift
+      ;;
+    -d | --dev | --development )
+      ROOT='public'
+      DEVELOPMENT=1
+      shift
+      ;;
+  esac
+done
+
+# Given the environment name, identify the environment's appropriate
+# folder name. This is mainly a requirement for `development` and 
+# `production` environments. Otherwise, assume that the given 
+# environment name is also used for the environment's folder name.
+case $ENVIRONMENT in
+  development ) ENVIRONMENT_DIR="dev" ;;
+  production  ) ENVIRONMENT_DIR="prod" ;;
+  *           ) ENVIRONMENT_DIR=$ENVIRONMENT ;;
+esac
+
+# Initialize a helper function for easily initiating an index process.
+# This helper method requires the site name that needs to be index with
+# an optional development flag and callback.
+function reindex() {
+
+  # Set the index file's path.
+  INDEXER="$ROOT/engine/$ENVIRONMENT_DIR/php/index.php"
+
+  # Initialize the default arguments for the indexing process.
+  ARGS=("$INDEXER" -e="$ENVIRONMENT" -s="$1" -u="$USERNAME" -p="$PASSWORD")
+  
+  # Optionally, set a development flag.
+  if [ $DEVELOPMENT -eq 1 ]; then
+    ARGS+=( -d )
+  fi
+  
+  # Optionally, add a callback.
+  if [[ $CALLBACK ]]; then
+    ARGS+=( -c="$CALLBACK" )
+  fi
+  
+  # Finally, execute the indexing process.
+  if [[ $USERNAME ]] && [[ $PASSWORD ]]; then
+    php ${ARGS[@]} &
+  fi
+
+}
+
+# If an environment-level file change occurred, then the index
+# for all sites within that environment will need to be rebuilt. 
+# If the site value is a plus sign (+), then assume that an 
+# environment-level file change has occurred, and act accordingly.
+if [ $SITE == '+' ]; then
+
+  # Find sites within the given environment's data folder.
+  SITES=$ROOT/data/$ENVIRONMENT_DIR/*/;
+  
+  # Loop through all sites found within the given environment's data folder.
+  for s in $SITES; do
+   
+    # Get the site's name.
+    SITE_NAME=$(basename $s)
+    
+    # Ignore global, meta, and shared data folders.
+    if [ $SITE_NAME == '_global' ] || [ $SITE_NAME == '_shared' ] || [ $SITE_NAME == '_meta' ]; then
+      continue
+    
+    # Otherwise, index the site.
+    else
+      reindex "$SITE_NAME"
+    fi
+    
+  done
+
+# If a site-level file change occurred, then the index for that
+# site will need to be rebuilts. If the site value is set and
+# an environment has been given, then assume that a site-level
+# file change has occurred, and act accordingly.
+else
+  reindex "$SITE"
+fi
