@@ -187,19 +187,19 @@ module.exports = function(grunt) {
           `${PATHS.src.engine.environment.root}/**/*`,
           `${PATHS.dependencies.composer}/**/*`
         ],
-        tasks: ['phplint', 'copy:engine']
+        tasks: ['phplint', 'copy:engine', 'index']
       },
       patterns: {
         files: [
           `${PATHS.src.patterns.root}/**/*`
         ],
-        tasks: ['copy:patterns']
+        tasks: ['copy:patterns', 'index']
       },
       data: {
         files: [
           `${PATHS.src.data.root}/**/*`
         ],
-        tasks: ['copy:data']
+        tasks: ['copy:data', 'index']
       },
       site: {
         files: [
@@ -207,7 +207,7 @@ module.exports = function(grunt) {
           `${PATHS.src.site.root}/index.php`,
           `${PATHS.src.site.root}/{css,js,assets,images,icons,fonts}/*`,
         ],
-        tasks: ['copy:site']
+        tasks: ['copy:site', 'index']
       }
     },
     
