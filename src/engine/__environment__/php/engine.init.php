@@ -8,6 +8,7 @@ require_once ENGINE_ROOT."/php/libraries/autoload.php";
 
 // Load classes.
 require_once ENGINE_ROOT."/php/classes/autoload.php";
+require_once ENGINE_ROOT."/php/helpers/autoload.php";
 
 // Load configurations.
 require_once ENGINE_ROOT."/php/engine.config.php";

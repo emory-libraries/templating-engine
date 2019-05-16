@@ -403,8 +403,8 @@ class Index {
     try {
 
       // Create the temporary file.
-      $phpTmp = Cache::tmp($php, $phpFilename, 0775);
-      $jsonTmp = Cache::tmp($json, $jsonFilename, 0775);
+      $phpTmp = Cache::tmp($php, $phpFilename, 0777);
+      $jsonTmp = Cache::tmp($json, $jsonFilename, 0777);
 
       // Move the temporary file to the index, and overwrite any existing index file that's there.
       $phpTmp['move'](CONFIG['engine']['cache']['index']."/$phpFilename");
@@ -899,7 +899,7 @@ class Index {
   // Get all handlebars helpers.
   protected function getHelperData() {
     
-    return (include ENGINE_ROOT.'/php/helpers/autoload.php')();
+    return (include ENGINE_ROOT.'/php/helpers/index.php')();
     
   }
   

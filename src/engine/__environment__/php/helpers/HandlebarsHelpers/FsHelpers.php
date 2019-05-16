@@ -31,8 +31,8 @@ trait FsHelpers {
     $options = array_last($arguments);
     $filter = func_num_args() == 3 ? $filter : false;
     
-    // Use global configurations.
-    global $HELPERS;
+    // Get a list of all helpers.
+    $helpers = API::get('helpers/');
     
     // Initialize the result.
     $contents = [];
@@ -54,7 +54,7 @@ trait FsHelpers {
         if( gettype($filter) == 'callable' ) $contents = array_filter($contents, $filter);
         
         // Use a helper filter.
-        if( array_key_exists($filter, $HELPERS) ) $contents = array_filter($contents, $HELPERS[$filter]);
+        if( array_key_exists($filter, $helpers) ) $contents = array_filter($contents, $helpers[$filter]);
         
         // Use a regex filter.
         if( is_regex($filter) ) $contents = array_filter($contents, function($file) use ($filter) {
