@@ -30,7 +30,7 @@ class HandlebarsLayouts {
     $compiled = Renderer::compile($template);
     
     // Initialize a temporary file name.
-    $tmp = "CustomHelpers-HandlebarsLayouts-extend_$partial.php";
+    $tmp = "HandlebarsLayouts-extend_$partial";
     
     // Temporarily cache the partial.
     $cached = Cache::tmp($compiled, $tmp);
@@ -88,6 +88,9 @@ class HandlebarsLayouts {
     // Merge rendered block contexts back into the current context.
     $context['__layoutActions'] = array_merge($context['__layoutActions'], ...array_map(function($content) {
       
+      // Ignore empty content.
+      if( !isset($content) ) return [];
+      
       // Get the rendered content's layout actions.
       return array_get(Helper::get($content[0], $content[1], []), '__layoutActions', []);
       
@@ -124,7 +127,7 @@ class HandlebarsLayouts {
     
   }
   
-  // Determine if a placeholder content block exists, and if so, optionally modify it.
+  // Determine if a placeholder content block exists, and if so, optionally modifies it.
   public static function content( $name, $options ) {
     
     // Capture the render function.
@@ -168,10 +171,26 @@ class HandlebarsLayouts {
     ];
 
     // Handoff the context to the block helper.
-    Helper::set("CustomHelpers/HandlebarsLayouts::content::$name", 'context', $context);
+    Helper::set("HandlebarsLayouts::content::$name", 'context', $context);
 
     // Return the handoff instructions to the block helper.
-    return json_encode(["CustomHelpers/HandlebarsLayouts::content::$name", 'context']);
+    return json_encode(["HandlebarsLayouts::content::$name", 'context']);
+    
+  }
+  
+  // Embeds a partial with placeholder content blocks.
+  public static function embed( $partial, $context = [], $options = [] ) {
+    
+    // Capture context and options.
+    $options = func_num_args() == 3 ? $options : $context;
+    $context = func_num_args() == 3 ? $context : (isset($options['_this']) ? $options['_this'] : []);
+    
+    // Reset context.
+    $context = array_set($context, '__layoutStack', []);
+    $context = array_set($context, '__layoutActions', []);
+    
+    // Extend the partial.
+    return forward_static_call('HandlebarsLayouts::extend', $partial, $context, $options);
     
   }
   
