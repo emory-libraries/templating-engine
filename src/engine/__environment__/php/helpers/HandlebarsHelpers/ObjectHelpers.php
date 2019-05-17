@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-
 trait ObjectHelpers {
   
   // TODO: Create definition for `extend` helper.

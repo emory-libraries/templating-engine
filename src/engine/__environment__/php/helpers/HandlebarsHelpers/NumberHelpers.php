@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-
 trait NumberHelpers {
   
   // Format a number to its equivalent in bytes, or for strings, get the string's size in bytes.

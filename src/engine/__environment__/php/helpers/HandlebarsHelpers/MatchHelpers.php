@@ -2,9 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-use Webmozart\Glob;
-
 trait MatchHelpers {
   
   // Returns truthy if a file path contains the given pattern.

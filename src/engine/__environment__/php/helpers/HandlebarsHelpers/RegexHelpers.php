@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-
 trait RegexHelpers {
   
   // TODO: Create definition for `toRegex` helper.

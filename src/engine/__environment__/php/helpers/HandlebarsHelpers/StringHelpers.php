@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-
 trait StringHelpers {
   
   // TODO: Create definition for `append` helper.

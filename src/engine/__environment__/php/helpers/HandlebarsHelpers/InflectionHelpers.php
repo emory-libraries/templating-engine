@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-
 trait InflectionHelpers {
   
   // Returns either the `singular` or `plural` inflection of a word based on the given `count`.

@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-
 trait PathHelpers {
   
   // TODO: Create definition for `absolute` helper.

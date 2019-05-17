@@ -2,7 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
 use Markdown;
 use Mustache_Engine;
 

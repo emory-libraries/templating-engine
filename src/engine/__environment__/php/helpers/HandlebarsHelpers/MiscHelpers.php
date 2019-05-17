@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-
 trait MiscHelpers {
   
   // Block helper for exposing private `@` variables on the context.

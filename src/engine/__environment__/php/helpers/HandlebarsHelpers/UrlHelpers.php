@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-
 trait UrlHelpers {
   
   // TODO: Create definition for `encodeURI` helper.

@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-
 trait MathHelpers {
   
   // Gets the absolute value of a number.
