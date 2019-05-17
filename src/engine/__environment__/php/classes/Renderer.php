@@ -106,11 +106,19 @@ class Renderer {
       // FIXME: Is this performant enough, or should we implement more advanced caching for compiled templates? Currently, we're compiling templates when first requested and only recompiling when the template pattern has changed. Refer to the [LightnCandy docs](https://zordius.github.io/HandlebarsCookbook/9000-quickstart.html) for best practices in terms of rendering.
       if( Cache::exists($path) ) {
 
-        // Get the template pattern's last modified time.
-        $modified = File::modified($template->file);
+        // Get the template pattern's file if available.
+        $template = $endpoint->pattern->file;
+        
+        // If the template has a pattern file, then determine if it needs to be recompiled.
+        if( isset($template) ) {
+        
+          // Get the template pattern's last modified time.
+          $modified = File::modified($template);
 
-        // Determine if the cached template is outdated, and recompile it if so.
-        if( Cache::outdated($path, $modified) ) $compiler();
+          // Determine if the cached template is outdated, and recompile it if so.
+          if( Cache::outdated($path, $modified) ) $compiler();
+          
+        }
 
       }
 
