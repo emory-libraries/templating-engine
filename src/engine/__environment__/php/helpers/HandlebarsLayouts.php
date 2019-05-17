@@ -2,8 +2,6 @@
 
 class HandlebarsLayouts {
   
-  // TODO: Add [`handlebars-layouts`](https://github.com/shannonmoeller/handlebars-layouts) helpers.
-  
   // Extend a partial with placeholder content blocks.
   public static function extend( $partial, $context = [], $options = [] ) {
     
