@@ -41,12 +41,8 @@ class API {
   // Construct the API.
   function __construct( ) {
     
-    // Get the cache root path, and site's domain.
-    $cache = CONFIG['engine']['cache']['root'];
-    $domain = CONFIG['__site__']['domain'];
-    
-    // Initialize the cache.
-    self::$cache = new Cache($cache.'/'.$domain.'.php');
+    // Initialize the API.
+    self::init();
     
   }
   
@@ -74,8 +70,24 @@ class API {
     
   }
   
-  
   //*********** PROTECTED METHODS ***********//
+  
+  // Initialize the API if not already initialized.
+  protected static function init( ) {
+    
+    // If the cache has not yet been initialized, then initialize it.
+    if( !isset(self::$cache) ) {
+    
+      // Get the cache root path, and site's domain.
+      $cache = CONFIG['engine']['cache']['root'];
+      $domain = CONFIG['__site__']['domain'];
+
+      // Initialize the cache.
+      self::$cache = new Cache($cache.'/'.$domain.'.php');
+      
+    }
+    
+  }
   
   // Ensure that some index data existing within the cache and is up-to-date.
   protected static function ensure( string $index ) {
@@ -174,6 +186,9 @@ class API {
    * @example /asset/css/style.css - Retrieves asset data for asset `css/style.css`.
    */
   public static function get( string $endpoint ) {
+    
+    // Initialize the cache if not previously initialized.
+    self::init();
 
     // Parse the request.
     $request = self::parse('GET', $endpoint);
