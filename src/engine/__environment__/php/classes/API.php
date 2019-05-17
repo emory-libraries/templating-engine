@@ -84,10 +84,16 @@ class API {
     $cached = self::$cache->get($index);
     
     // If index data has not yet been cached or is outdated, then (re)cache it now, and return the cached data.
-    if( !isset($cached) or self::outdated($index) ) return self::cache($index);
+    if( !isset($cached) or self::outdated($index) ) return [
+      'outdated' => true,
+      'index' => self::cache($index)
+    ];
     
     // Otherwise, return the cached data.
-    return $cached;
+    return [
+      'outdated' => false,
+      'index' => $cached
+    ];
     
   }
   
@@ -118,7 +124,7 @@ class API {
     
     // Get the index's last modified date from the cache.
     $cached = self::$cache->get("$index.modified");
-    
+   
     // Convert the index's last modified time to a timestamp.
     if( is_a($cached, 'DateTime') ) $cached = $cached->getTimestamp();
     
@@ -187,13 +193,15 @@ class API {
     if( Route::isAsset($path) ) return self::getAsset($path);
     
     // Ensure that endpoint data exists within the cache.
-    $endpoints = self::ensure('endpoints');
+    $ensured = self::ensure('endpoints');
+    $endpoints = $ensured['index'];
+    $outdated = $ensured['outdated'];
 
     // Attempt to retrieve the page data for the endpoint from the cache.
     $endpoint = self::$cache->get("pages.$path");
 
     // If the endpoint was not found, then check to see if relevant index data has been cached.
-    if( !isset($endpoint) ) {
+    if( !isset($endpoint) or $outdated ) {
       
       // Find the endpoint for the given path.
       $endpoint = array_get(array_values(array_filter($endpoints['data'], function($endpoint) use ($path) {
@@ -223,13 +231,15 @@ class API {
   protected static function getAsset( string $path ) {
     
     // Ensure that endpoint data exists within the cache.
-    $endpoints = self::ensure('endpoints');
+    $ensured = self::ensure('endpoints');
+    $endpoints = $ensured['index'];
+    $outdated = $ensured['outdated'];
     
     // Attempt to retrieve the asset data from the cache.
     $asset = self::$cache->get("assets.$path");
     
     // If the asset was not found, either use the given endpoint or retrieve one from the index.
-    if( !isset($asset) ) {
+    if( !isset($asset) or $outdated ) {
       
       // Get the endpoints for assets only.
       $assets = array_values(array_filter($endpoints['data'], function($endpoint) {
@@ -264,7 +274,9 @@ class API {
   protected static function getError( $code ) {
     
     // Ensure that endpoint data exists within the cache.
-    $endpoints = self::ensure('endpoints');
+    $ensured = self::ensure('endpoints');
+    $endpoints = $ensured['index'];
+    $outdated = $ensured['outdated'];
     
     // Make sure the error code is an integer.
     $code = is_int($code) ? $code : (int) trim($code, '/');
@@ -273,7 +285,7 @@ class API {
     $error = self::$cache->get("errors.$code");
     
     // If the error was not found, either use the given endpoint or retrieve one from the index.
-    if( !isset($error) ) {
+    if( !isset($error) or $outdated ) {
       
       // Get the endpoints for errors only.
       $errors = array_values(array_filter($endpoints['data'], function($endpoint) {
@@ -311,7 +323,7 @@ class API {
     $partials = self::ensure('partials');
     
     // Then, return the partial data.
-    return $partials['data'];
+    return $partials['index']['data'];
     
   }
   
@@ -322,7 +334,7 @@ class API {
     $helpers = self::ensure('helpers');
     
     // Then, return the helper data.
-    return $helpers['data'];
+    return $helpers['index']['data'];
     
   }
   
