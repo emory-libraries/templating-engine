@@ -97,6 +97,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
       'FLAG_ADVARNAME',
       'FLAG_JSLENGTH',
       'FLAG_SPVARS',
+      'FLAG_RAWBLOCK'
     ]
   ],
   
