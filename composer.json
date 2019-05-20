@@ -1,7 +1,7 @@
 {
   "require": {
     "erusev/parsedown": "1.8.0-beta-5",
-    "zordius/lightncandy": "dev-master",
+    "zordius/lightncandy": "^1.2.3",
     "symfony/yaml": "^4.1",
     "jeremeamia/SuperClosure": "^2.4",
     "mustache/mustache": "^2.12",
