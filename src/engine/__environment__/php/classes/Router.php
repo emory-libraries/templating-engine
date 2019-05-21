@@ -25,6 +25,9 @@ class Router {
     // Get the request's endpoint data from the API.
     $this->endpoint = API::get('/endpoint/'.ltrim($request->endpoint, '/'));
     
+    // Merge query parameters into the endpoint's data.
+    $this->endpoint->data->data['__params__'] = $this->request->params;
+    
     // Set a global to indicate when an asset has been requested.
     define('ASSET', $this->endpoint->asset !== false);
 
