@@ -45,6 +45,22 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
     'path' => SERVER_PATH
   ],
   
+  // Configures data paths.
+  'data' => [
+    'environment' => [
+      'root' => DATA_ROOT,
+      'global' => DATA_ROOT.'/_global',
+      'meta' => DATA_ROOT.'/_meta',
+      'shared' => DATA_ROOT.'/_shared'
+    ],
+    'site' => [
+      'root' => SITE_DATA,
+      'global' => SITE_DATA.'/_global',
+      'meta' => SITE_DATA.'/_meta',
+      'shared' => SITE_DATA.'/_shared'
+    ]
+  ],
+  
   // Configures site paths.
   'site' => [
     'root' => SITE_ROOT
@@ -81,10 +97,8 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
       'FLAG_ADVARNAME',
       'FLAG_JSLENGTH',
       'FLAG_SPVARS',
-    ],
-    
-    // TODO: Move the autoloading of handlebars helper classes into a separate process that can be run during initialization rather than needing to be included here to allow helpers to be indexed properly.
-    'helpers' => (include ENGINE_ROOT.'/php/helpers/autoload.php')()
+      'FLAG_RAWBLOCK'
+    ]
   ],
   
   // Configures the markdown engine.

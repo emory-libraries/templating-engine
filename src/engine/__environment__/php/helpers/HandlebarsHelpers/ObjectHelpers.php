@@ -2,11 +2,23 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-
 trait ObjectHelpers {
   
-  // TODO: Create definition for `extend` helper.
+  // Extend the context with the propertyes of other objects.
+  // FIXME: This `extend` helper gets overwritten by the `HandlebarsLayouts::extend` helper.
+  public static function extend( ...$objects ) {
+    
+    // Get the options and objects.
+    $options = array_last($objects);
+    $objects = array_head($objects);
+    
+    // Add options hash back into the objects.
+    $objects[] = array_get($options, 'hash', []);
+    
+    // Merge all objects into a single context.
+    return array_merge(...$objects);
+    
+  }
   
   // Block helper that iterates over the properties of an object. [aliased as forOwn]
   public static function forIn( array $object, $options ) {
@@ -40,7 +52,21 @@ trait ObjectHelpers {
     
   }
   
-  // TODO: Create definition for `toPath` helper.
+  // Take arguments and, if they are a string or number, convert them to a dot-delimited object property path.
+  public static function toPath( ...$properties ) {
+    
+    // Get properties without options.
+    $properties = array_head($properties);
+    
+    // Build a dot-delimited object path from the given properties.
+    return implode('.', array_values(array_filter($properties, function($property) {
+      
+      // Ignore non-strings and non-integers.
+      return (is_string($property) or is_int($property));
+      
+    })));
+    
+  }
   
   // Inline and block helper to get a value from the context using dot-delimited notation.
   public static function get( $property, array $context, $options ) {
@@ -56,11 +82,19 @@ trait ObjectHelpers {
     
   }
   
-  // TODO: Create definition for `getObject` helper.
+  // Use a dot-delimited property (`a.b.c`) path to get an object from the context.
+  public static function getObject( $property, array $context ) {
+    
+    // Get the object.
+    return (array_has($context, $property) ?  [$property => array_get($context, $property)] : []);
+    
+  }
   
-  // TODO: Create definition for `hasOwn` helper.
+  // Returns truthy if `key` is an own, enumerable property of the given `context` object.
+  public static function hasOwn( array $context, $key ) { return array_key_exists($key, $context); }
   
-  // TODO: Create definition for `isObject` helper.
+  // Returns truthy if a `value` is an object.
+  public static function isObject( $value ) { return (is_array($value) and is_associative_array($value)); }
   
   // Parses the given JSON string. [aliased as parseJSON]
   public static function JSONparse( $string ) {
@@ -94,9 +128,49 @@ trait ObjectHelpers {
     
   }
   
-  // TODO: Create definition for `merge` helper.
+  // Recursively merge the properties of the given `objects` with the context.
+  public static function merge( ...$objects ) {
+    
+     // Get the options and objects.
+    $options = array_last($objects);
+    $objects = array_head($objects);
+    
+    // Add options hash back into the objects.
+    $objects[] = array_get($options, 'hash', []);
+    
+    // Merge all objects into a single context.
+    return array_merge_recursive(...$objects);
+    
+  }
   
-  // TODO: Create definition for `pick` helper.
+  // Pick properties from the context object.
+  public static function pick( $properties, array $context, $options ) {
+    
+    // Get the keys.
+    $keys = is_array($properties) ? $properties : [$properties];
+    
+    // Initialize an index, and get the length of the keys.
+    $length = count($keys);
+    $index = -1;
+    
+    // Initialize the result.
+    $result = [];
+    
+    // Get objects from the context.
+    while( ++$index < $length ) {
+      
+      // Capture the object and save it to the results.
+      $result = array_merge([], $result, forward_static_call('HandlebarsHelpers\ObjectHelpers::getObject', $keys[$index], $context));
+      
+    }
+    
+    // If a block was used, then render the block.
+    if( isset($options['fn']) ) return (count($result) > 0 ? $options['fn']($result) : $options['inverse']($context));
+    
+    // Otherwise, return the result.
+    return $result;
+    
+  }
   
 }
 

@@ -2,9 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use Moment;
-use Date;
-
 trait DateHelpers {
   
   // Returns the current year, optionally formatted using the given `format`.

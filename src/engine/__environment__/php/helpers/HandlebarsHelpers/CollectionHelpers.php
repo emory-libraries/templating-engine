@@ -40,14 +40,14 @@ trait CollectionHelpers {
   // Block helper that iterates over a collection, using `forEach` or `forOwn`.
   public static function iterate( $collection, $options ) {
     
-    // Use global helpers.
-    global $HELPERS;
+    // Get a list of all helpers.
+    $helpers = API::get('/helpers');
     
     // Iterate over a collection.
-    if( is_associative_array($collection) ) return $HELPERS['forOwn']($collection, $options);
+    if( is_associative_array($collection) ) return $helpers['forOwn']($collection, $options);
     
     // Otherwise, iterate over an array.
-    else if( is_array($collection) ) return $HELPERS['forEach']($collection, $options);
+    else if( is_array($collection) ) return $helpers['forEach']($collection, $options);
     
     // Otherwise, render the inverse block.
     return $options['inverse']();

@@ -103,13 +103,13 @@ function array_unset( array $array, $keys, $index = 0 ) {
   foreach( $array as $key => $value ) {
     
     // See if the keys match, and ignore it only if its the target endpoint within the array.
-    if( $key == $keys[$index] ) {
+    if( $key == $keys[$index] ) { 
 
       // Ignore the value if it's the target endpoint within the array.
       if( $index + 1 == count($keys) ) continue;
       
       // Otherwise, recursively look inside arrays.
-      else if( is_array($value) ) $result[$key] = array_unset($value, $keys, $index + 1);
+      else if( is_array($value) ) $result[$key] = array_unset($value, implode($delimiter, $keys), $index + 1);
       
     }
     

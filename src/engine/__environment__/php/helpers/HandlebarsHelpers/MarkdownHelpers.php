@@ -2,7 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use _;
 use Markdown;
 use Mustache_Engine;
 
@@ -30,7 +29,7 @@ trait MarkdownHelpers {
     $mustache = new Mustache_Engine();
 
     // Render any mustache.
-    $rendered = $mustache->render((isset($options['fn']) ? $options['fn']() : $template), $context);
+    $rendered = $mustache->render((isset($options['fn']) ? $options['fn']([]) : $template), $context);
 
     // Render the markdown.
     return $markdown->text($rendered);
