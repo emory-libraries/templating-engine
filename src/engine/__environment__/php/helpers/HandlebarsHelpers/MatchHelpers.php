@@ -20,10 +20,8 @@ trait MatchHelpers {
       // Look for pattern matches.
       foreach( $patterns as $pattern ) {
         
-        // TODO: Finish definition for `isMatch` helper. Needs `Glob` library.
-        
         // Determine if the file and pattern matches.
-        /*if( ... ) {
+        if( Glob::match($file, $pattern) ) {
           
           // Save the result.
           $result = true;
@@ -31,7 +29,7 @@ trait MatchHelpers {
           // Break all loops.
           break 2;
           
-        }*/
+        }
         
       }
       
@@ -42,7 +40,28 @@ trait MatchHelpers {
     
   }
   
-  // TODO: Create definition for `match` helper.
+  // Returns an array of paths that match the given glob pattern(s).
+  public static function match( $files, $patterns, $options ) {
+    
+    // Initialize the result.
+    $result = [];
+    
+    // Force files and patterns into arrays.
+    $files = is_array($files) ? $files : [$files];
+    $patterns = is_array($patterns) ? $patterns : [$patterns];
+      
+    // Look for pattern matches.
+    foreach( $patterns as $pattern ) {
+
+      // Capture the intersection between files and patterns.
+      $result = array_merge($result, Glob::filter($files, $pattern));
+      
+    }
+    
+    // Return the result.
+    return $result;
+    
+  }
   
 }
 

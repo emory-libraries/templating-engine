@@ -144,7 +144,7 @@ class Index {
     if( File::isDirectory($path) ) return ($recursive ? scandir_recursive($path, $path) : array_map(function($file) use ($path) {
       
       // Make sure the path is absolute.
-      return "$path/$file";
+      return cleanpath($path.'/'.ltrim($file, '/'));
       
     }, scandir_clean($path)));
     

@@ -161,7 +161,7 @@ class Path {
     Path::init();
     
     // Assign a default path if none were given.
-    if( !isset($paths) or empty($paths) ) $paths = [self::$serverRoot];
+    if( !isset($paths) or empty($paths) ) $paths = [Path::$serverRoot];
     
     // Initialize the resolved path.
     $resolved = '';
@@ -208,23 +208,29 @@ class Path {
     }
     
     // Return the resolved path.
-    return $resolved;
+    return implode('/', $segments);
     
   }
   
   // Resolve a given path to a server path.
   public static function resolveServer( string $path ) {
     
+    // Initialize static variables if not already initialized.
+    Path::init();
+    
     // Treat this as an alias for the `resolve` method.
-    return forward_static_call('Path::resolve', self::$serverRoot, $path);
+    return forward_static_call('Path::resolve', Path::$serverRoot, $path);
     
   }
   
   // Resolve a given path to a data path on the server.
   public static function resolveData( string $path, $siteSpecific = false ) {
     
+    // Initialize static variables if not already initialized.
+    Path::init();
+    
     // Get the data root.
-    $dataRoot = $siteSpecific ? self::$dataRootSite : self::$dataRoot;
+    $dataRoot = $siteSpecific ? Path::$dataRootSite : Path::$dataRoot;
     
     // Treat this as an alias for the `resolve` method.
     return forward_static_call('Path::resolve', $dataRoot, $path);
@@ -234,16 +240,22 @@ class Path {
   // Resolve a given path to a site path on the server.
   public static function resolveSite( string $path ) {
     
+    // Initialize static variables if not already initialized.
+    Path::init();
+    
     // Treat this as an alias for the `resolve` method.
-    return forward_static_call('Path::resolve', self::$siteRoot, $path);
+    return forward_static_call('Path::resolve', Path::$siteRoot, $path);
     
   }
   
   // Resolve a given path to an engine path on the server.
   public static function resolveEngine( string $path, $cacheSpecific = false ) {
     
+    // Initialize static variables if not already initialized.
+    Path::init();
+    
     // Get the engine root.
-    $engineRoot = $cacheSpecific ? self::$cacheRoot : self::$engineRoot;
+    $engineRoot = $cacheSpecific ? Path::$cacheRoot : Path::$engineRoot;
     
     // Treat this as an alias for the `resolve` method.
     return forward_static_call('Path::resolve', $engineRoot, $path);
@@ -253,13 +265,19 @@ class Path {
   // Resolve a given path to a cache path on the server.
   public static function resolveCache( string $path ) {
     
+    // Initialize static variables if not already initialized.
+    Path::init();
+    
     // Treat this as an alias for the `resolve` method.
-    return forward_static_call('Path::resolve', self::$cacheRoot, $path);
+    return forward_static_call('Path::resolve', Path::$cacheRoot, $path);
     
   }
   
   // Convert a given path to an absolute path, or URL.
   public static function toUrl( string $path ) { 
+    
+    // Initialize static variables if not already initialized.
+    Path::init();
     
     // Treat this as an alias for the `toAbsolute` method.
     return forward_static_call('Path::toAbsolute', $path); 

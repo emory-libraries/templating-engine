@@ -31,21 +31,21 @@ function scandir_recursive( $path, $prefix = '' ) {
   foreach( $contents as $key => $file ) {  
 
     // Get the subdirectory path.
-    $subdir = "$path/$file"; 
+    $subdir = $path.'/'.ltrim($file, '/'); 
     
 
     // Determine if the subdirectory exists.
     if( is_dir($subdir) ) {
 
       // Continue scanning the subdirectory for files.
-      $results = array_merge($results, scandir_recursive($subdir, $prefix.$file));
+      $results = array_merge($results, scandir_recursive($subdir, $prefix.ltrim($file, '/')));
 
     }
     
     // Otherwise, a file was found.
     else {
       
-      $results[] = $prefix.$file;
+      $results[] = $prefix.ltrim($file, '/');
       
     }
 
