@@ -1,0 +1,71 @@
+{
+  "alias": {},
+  "rename": {
+    "subtitle": "introduction",
+    "buttons": "links-list-featured-help.link",
+    "accordions": "links-list-services-group",
+    "accordions.@.panels": "accordions.@.link",
+    "accordions.@.title": "accordions.@.heading"
+  },
+  "replace": {},
+  "remove": [],
+  "add": {},
+  "evaluate": [
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 2'",
+      "value": 2
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 3'",
+      "value": 3
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 4'",
+      "value": 4
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 5'",
+      "value": 5
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 6'",
+      "value": 6
+    }
+  ],
+  "repeatable": [
+    "links-list-featured-help.link",
+    "links-list-services-group",
+    "links-list-services-group.@.link"
+  ],
+  "checkbox": [
+    "links-list-featured-help.link.@.link-customizations"
+  ],
+  "radio": [
+    "links-list-featured-help.link.@.link-type",
+    "links-list-services-group.@.link.@.link-type"
+  ],
+  "timestamp": [
+    "system.created.datetime",
+    "system.modified.datetime",
+    "system.published.datetime"
+  ],
+  "text": [
+    "introduction",
+    "input-placeholder",
+    "links-list-featured-help.link.@.external-url",
+    "links-list-featured-help.link.@.link-label",
+    "links-list-services-group.link.@.external-url",
+    "links-list-services-group.@.heading",
+    "links-list-services-group.@.link.@.cascade-page.title",
+    "links-list-services-group.@.link.@.cascade-page.description",
+    "links-list-services-group.@.link.@.link-label",
+    "links-list-services-group.@.link.@.link-description",
+    "links-list-services-group.@.link.@.button-label"
+  ],
+  "html": []
+}

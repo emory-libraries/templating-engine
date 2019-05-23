@@ -63,20 +63,17 @@ class Route {
       
       // Determine if the route is an asset.
       if( self::isAsset($path) ) {
-        
-        // Get the asset's extension.
-        $ext = pathinfo($path, PATHINFO_EXTENSION);
 
         // Set the asset flag to true.
         $this->asset = true;
 
         // Make sure the the asset's ID, endpoint, and URL includes its extension.
-        $this->id .= ".$ext";
-        $this->endpoint .= ".$ext";
-        $this->url .= ".$ext";
+        $this->id = Path::basename($this->path);
+        $this->endpoint = Path::dirname($this->endpoint).'/'.$this->id;
+        $this->url = Path::dirname($this->endpoint).'/'.$this->id;
         
         // Get the asset's mime type.
-        $this->mime = Mime::type($ext);
+        $this->mime = Mime::type(Path::extname($this->path));
 
       }
       
@@ -103,19 +100,16 @@ class Route {
       // Determine if the route is an asset.
       if( self::isAsset($path['endpoint']) ) {
         
-        // Get the asset's extension.
-        $ext = pathinfo($path['endpoint'], PATHINFO_EXTENSION);
-
         // Set the asset flag to true.
         $this->asset = true;
 
         // Make sure the the asset's ID, endpoint, and URL includes its extension.
-        $this->id .= ".$ext";
-        $this->endpoint .= ".$ext";
-        $this->url .= ".$ext";
+        $this->id = Path::basename($this->endpoint);
+        $this->endpoint = Path::dirname($this->endpoint).'/'.$this->id;
+        $this->url = Path::dirname($this->endpoint).'/'.$this->id;
         
         // Get the asset's mime type.
-        $this->mime = Mime::type($ext);
+        $this->mime = Mime::type(Path::extname($this->endpoint));
 
       }
       

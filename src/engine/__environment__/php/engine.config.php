@@ -159,7 +159,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
     $svg = File::read($icon);
     
     // Get the icon's ID.
-    $id = File::id($icon);
+    $id = Path::filename($icon);
     
     // Save the icon.
     $icons[$id] = $svg;
@@ -177,7 +177,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
     $svg = File::read($logo);
     
     // Get the logo's ID.
-    $id = File::id($logo);
+    $id = Path::filename($logo);
     
     // Save the logo.
     $logos[$id] = $svg;

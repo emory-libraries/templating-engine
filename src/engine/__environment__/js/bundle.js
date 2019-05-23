@@ -1261,17 +1261,8 @@ function () {
   }]);
 
   return Fuzzy;
-}(); // Export globals.
+}(); // Register a Button component.
 
-
-global._ = _;
-global.Vue = Vue;
-global.Events = Events;
-global.Components = Components;
-global.Store = Store;
-global.Leaflet = global.L = L;
-global.jQuery = global.$ = $;
-global.EUL = EUL; // Register a Button component.
 
 Components.register('button', {
   props: {},
@@ -1684,7 +1675,21 @@ Components.register('accordion', {
     // Find all accordion panels.
     this.panels = _.toArray($(this.$el).find('.accordion-panel'));
   }
-});
+}); // Instantiate the vue.
+
+var App = new Vue({
+  el: '#eul-vue'
+}); // Export globals.
+
+global._ = _;
+global.Vue = Vue;
+global.Events = Events;
+global.Components = Components;
+global.Store = Store;
+global.Leaflet = global.L = L;
+global.jQuery = global.$ = $;
+global.EUL = EUL;
+global.App = App;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"jQuery":2,"leaflet":4,"leaflet-providers":3,"lodash":5,"string-similarity":7,"vue":10}],2:[function(require,module,exports){

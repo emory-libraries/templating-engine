@@ -4,8 +4,8 @@
 
 <eul-filter-search inline-template
                    :index="{{JSONstringify index}}"
-                   :keys="{{default (JSONstringify keys) '[]'}}"
-                   :config="{{default (JSONstringify config) '{}'}}"
+                   :keys="{{#if keys}}{{JSONstringify keys}}{{else}}'[]'{{/if}}"
+                   :config="{{#if config}}{{JSONstringify config}}{{else}}'{}'{{/if}}"
                    :defaults="{
                       button: {
                         isDisabled: {{default button.disabled true}},

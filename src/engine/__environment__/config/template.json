@@ -18,12 +18,10 @@
   "templates-staff-directory": "",
   "templates-subject-librarian-directory": "",
   "templates-bio": "Page Types/Employee Profile Page",
-  "templates-service-directory": "",
-  "templates-service-category": "",
+  "templates-service-directory": "Page Types/Services Directory",
   "templates-tool": "Page Types/Tool Page",
   "templates-video-tutorial": "",
   "templates-material": "Page Types/Materials Page",
   "templates-library-aid-directory": "",
-  "templates-library-aid-category": "",
   "templates-library-aid": "Page Types/Research Aid Page"
 }

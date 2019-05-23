@@ -1,13 +1,13 @@
 <div class="grid{{#each sizes as |config size|}} -{{size}}{{/each}}"
-     style="{{#if rows}}--rows: {{rows}};{{/if}}
-            {{#if cols}}--cols: {{cols}};{{/if}}
+     style="{{#if rows}}--rows: {{#if (isArray rows)}}{{rows.[0]}}({{rows.[1]}},{{rows.[2]}}){{else}}{{rows}}{{/if}};{{/if}}
+            {{#if cols}}--cols: {{#if (isArray cols)}}{{cols.[0]}}({{cols.[1]}},{{cols.[2]}}){{else}}{{cols}}{{/if}};{{/if}}
             {{#if gap.rows}}--gap-rows: {{gap.rows}};{{/if}}
             {{#if gap.cols}}--gap-cols: {{gap.cols}};{{/if}}
             {{#if align.rows}}--align-rows: {{align.rows}};{{/if}}
             {{#if align.cols}}--align-cols: {{align.cols}};{{/if}}
             {{#each sizes as |config size|}}
-            {{#if config.rows}}--rows-{{size}}: {{config.rows}};{{/if}}
-            {{#if config.cols}}--cols-{{size}}: {{config.cols}};{{/if}}
+            {{#if config.rows}}--rows-{{size}}: {{#if (isArray config.rows)}}{{config.rows.[0]}}({{config.rows.[1]}},{{config.rows.[2]}}){{else}}{{config.rows}}{{/if}};{{/if}}
+            {{#if config.cols}}--cols-{{size}}: {{#if (isArray config.cols)}}{{config.cols.[0]}}({{config.cols.[1]}},{{config.cols.[2]}}){{else}}{{config.cols}}{{/if}};{{/if}}
             {{#if config.gap.rows}}--gap-rows-{{size}}: {{config.gap.rows}};{{/if}}
             {{#if config.gap.cols}}--gap-cols-{{size}}: {{config.gap.cols}};{{/if}}
             {{#if config.align.rows}}--align-rows-{{size}}: {{config.align.rows}};{{/if}}

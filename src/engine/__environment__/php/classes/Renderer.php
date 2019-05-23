@@ -160,9 +160,12 @@ class Renderer {
     
     // Send cache control headers.
     header('Cache-Control: max-age='.CONFIG['assets']['keepAlive'].', public');
+    
+    // For PHP files, include them.
+    if( Path::extname($endpoint->endpoint) == 'php' ) include $endpoint->route->path;
 
-    // Output the asset.
-    readfile($endpoint->route->path);
+    // Otherwise, output the asset.
+    else readfile($endpoint->route->path);
     
   }
   
