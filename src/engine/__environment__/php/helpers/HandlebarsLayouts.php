@@ -169,10 +169,10 @@ class HandlebarsLayouts {
     ];
 
     // Handoff the context to the block helper.
-    Helper::set("HandlebarsLayouts::content::$name", 'context', $context);
+    Helper::set("HandlebarsLayouts::content", "$name.context", $context);
 
     // Return the handoff instructions to the block helper.
-    return json_encode(["HandlebarsLayouts::content::$name", 'context']);
+    return json_encode(["HandlebarsLayouts::content", "$name.context"]);
     
   }
   

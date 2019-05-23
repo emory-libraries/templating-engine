@@ -281,7 +281,7 @@ function array_map_use_both( callable $callback, array $array ) {
   
 }
 
-// Quickly filter an associate array by key based on a given value.
+// Quickly filter an associative array by key based on a given value.
 function array_filter_key( $key, $value, array $array ) {
   
   // Filter the array by key and value.
@@ -668,6 +668,31 @@ function array_subset( array $array, $keys, $flag = ARRAY_SUBSET_INCLUDE ) {
   
   // Return the subset.
   return $subset;
+  
+}
+
+// Group an array of associative arrays by a given key.
+function array_key_by( array $array, $keys ) {
+  
+  // Initialize the result.
+  $result = [];
+  
+  // Look through array items.
+  foreach( $array as $item ) {
+    
+    // Get the item's value for the given key.
+    $value = array_get($item, $keys);
+    
+    // Initialize the key's value if not already initialized.
+    if( !isset($result[$value]) ) $result[$value] = [];
+    
+    // Group the item by the key's value.
+    $result[$value][] = $item;
+    
+  }
+  
+  // Return the result.
+  return $result;
   
 }
 

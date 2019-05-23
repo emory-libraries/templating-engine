@@ -2,8 +2,6 @@
 
 namespace CustomHelpers;
 
-use Cast;
-
 trait ApiHelpers {
 
   // Use the API to get some data out of the index.
