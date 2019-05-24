@@ -1,24 +1,5 @@
 <?php
 
-// Get pattern groups.
-define('PATTERN_GROUPS', array_reduce(array_map(function($path) {
-
-    // Return pattern folder data.
-    return [
-      'group' => preg_replace('/^\d{1,2}-/', '', basename($path)),
-      'path' => $path
-    ];
-
-  }, Index::scan(PATTERNS_ROOT, false)), function($groups, $group) {
-
-    // Merge the group data into a single array.
-    $groups[$group['group']] = $group['path'];
-
-    // Continue reducing.
-    return $groups;
-
-  }, []));
-
 // Configure the templating engine.
 define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
   

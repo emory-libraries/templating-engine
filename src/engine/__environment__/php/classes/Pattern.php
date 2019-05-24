@@ -79,12 +79,13 @@ class Pattern {
       $this->name = array_get($path, 'name');
       $this->pattern = array_get($path, 'pattern', '');
       $this->template = array_get($path, 'template', false);
+      $this->pageType = array_get($path, 'pageType');
       
       // If the pattern is a template, then get its page type.
-      if( $this->template and isset($this->plid) ) {
+      if( !array_key_exists('pageType', $path) and $this->template and isset($this->plid) ) {
         
         // Get the template's page type.
-        $this->pageType = CONFIG['config']['template'][$this->plid];
+        $this->pageType =  array_get(CONFIG, "config.template.{$this->plid}", null);
         
       }
       

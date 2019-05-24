@@ -1,5 +1,24 @@
 <?php
 
+// Get pattern groups.
+define('PATTERN_GROUPS', array_reduce(array_map(function($path) {
+
+  // Return pattern folder data.
+  return [
+    'group' => preg_replace('/^\d{1,2}-/', '', basename($path)),
+    'path' => $path
+  ];
+
+}, Index::scan(PATTERNS_ROOT, false)), function($groups, $group) {
+
+  // Merge the group data into a single array.
+  $groups[$group['group']] = $group['path'];
+
+  // Continue reducing.
+  return $groups;
+
+}, []));
+
 // Set base configurations for use by both the templating engine's renderer and indexer.
 return [
   
@@ -38,6 +57,22 @@ return [
       <h1 class=\"heading -h1\">{{code}}</h1>
       <p class=\"text -lead\">{{status}}</p>
       <p class=\"text\">{{message}}</p>
+    ",
+    
+    'layoutTemplate' => "
+      <!doctype html>
+      <html>
+      <head>
+        <meta charset=\"UTF-8\">
+        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" http-equiv=\"\">
+        <title>{{title}}</title>
+        <link rel=\"stylesheet\" href=\"{{baseUrl}}/css/style.min.css\">
+      </head>
+      <body>
+        <div id=\"eul-vue\">{{template}}</div>
+        <script src=\"{{baseUrl}}/js/bundle.min.js\"></script>
+      </body>
+      </html>
     "
     
   ],

@@ -149,8 +149,11 @@ class Path {
       
     }
     
+    // Get the URL protocol.
+    $protocol = (isset($parsed['scheme']) ? $parsed['scheme'] : Request::protocol()).'://';
+    
     // Return the given path as an absolute path.
-    return self::$domainRoot.'/'.ltrim($path, '/');
+    return $protocol.self::$domainRoot.'/'.ltrim($path, '/');
     
   }
   

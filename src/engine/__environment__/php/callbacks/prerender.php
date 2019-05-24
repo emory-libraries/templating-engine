@@ -43,6 +43,9 @@ do {
   // Execute all curl requests.
   curl_multi_exec($curl, $index);
 
+  // Wait for the curl request to be processed.
+  curl_multi_select($curl);
+  
 }  while( $index > 0 );
   
 // Capture the responses.

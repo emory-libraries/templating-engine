@@ -23,7 +23,7 @@ class Renderer {
   public static function prepare( string $template, $wrapper = 'default' ) {
 
     // Get the layout wrapper.
-    $wrapper = array_get(CONFIG['layouts'], $wrapper, '{{template}}');
+    $wrapper = self::layout($wrapper);
 
     // Compile the template with the wrapper.
     $template = str_replace('{{template}}', $template, $wrapper);
@@ -97,7 +97,7 @@ class Renderer {
     };
     
     // Skip caching when in development mode, and always recompile patterns.
-    if( CONFIG['development'] ) $compiler();
+    if( DEVELOPMENT ) $compiler();
     
     // Otherwise, use caching when not in development mode.
     else {
@@ -166,6 +166,14 @@ class Renderer {
 
     // Otherwise, output the asset.
     else readfile($endpoint->route->path);
+    
+  }
+  
+  // Get a layout wrapper by an ID.
+  protected static function layout( $id ) {
+    
+    // Return the layout.
+    return array_get(CONFIG['layouts'], $id, CONFIG['defaults']['layoutTemplate']);
     
   }
   
