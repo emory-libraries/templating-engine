@@ -1415,7 +1415,7 @@ body {
 .-contained.search .search-cancel {
   grid-area: cancel;
 }
-.section-minor-title::after, .section-major-title::after, .intro-title.-heading::after, .intro-title.-heading::before, .rule.-feed, .rule.-heading, .rule.-thick, .rule.-dotted, .rule.-dark, .rule.-light, .rule {
+.section-minor-title::after, .section-major-title::after, .intro-title.-heading-alt::after, .intro-title.-heading-alt::before, .intro-title.-heading::after, .intro-title.-heading::before, .rule.-feed, .rule.-heading, .rule.-thick, .rule.-dotted, .rule.-dark, .rule.-light, .rule {
   display: block;
   width: 100%;
   height: 0;
@@ -3193,25 +3193,30 @@ body {
 .intro-context {
   display: block;
 }
-.-heading.intro-context {
+.-heading.intro-context, .-heading-alt.intro-context {
   display: none;
 }
-.intro-title:not(.-heading) {
+.intro-title:not(.-heading):not(.heading-alt) {
   margin: 0;
 }
-.-heading.intro-title {
+.-heading.intro-title, .-heading-alt.intro-title {
   margin-top: 0;
 }
-.-heading.intro-title::before, .-heading.intro-title::after {
+.-heading.intro-title::before, .-heading.intro-title::after, .-heading-alt.intro-title::before, .-heading-alt.intro-title::after {
   content: "";
   display: block;
   right: 0;
   bottom: -0.67em;
   left: 0;
   position: absolute;
+}
+.-heading.intro-title::before, .-heading.intro-title::after {
   margin: 0 auto;
 }
-.-heading.intro-subtitle {
+.-heading-alt.intro-title::before, .-heading-alt.intro-title::after {
+  margin: 0 auto 0 0;
+}
+.-heading.intro-subtitle, .-heading-alt.intro-subtitle {
   display: none;
 }
 
@@ -11919,6 +11924,31 @@ button, input[type=button], input[type=submit], input[type=reset] {
   background-color: transparent;
   color: transparent;
 }
+.intro-title.-heading-alt {
+  text-align: left;
+}
+.intro-title.-heading-alt {
+  font-family: "Cardo", serif !important;
+  font-size: 48px !important;
+  font-weight: bold !important;
+  font-style: normal !important;
+  line-height: 1.0833 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  color: #091C44 !important;
+}
+.intro-title.-heading-alt::before {
+  border-top: 6px solid #E9BF55;
+  width: 60px;
+  background-color: transparent;
+  color: transparent;
+}
+.intro-title.-heading-alt::after {
+  border-top: 1px solid rgba(9, 28, 68, 0.1);
+  width: 100%;
+  background-color: transparent;
+  color: transparent;
+}
 .intro-subtitle {
   font-family: "Cardo", serif !important;
   font-size: 28px !important;
@@ -11931,7 +11961,7 @@ button, input[type=button], input[type=submit], input[type=reset] {
   color: #004990 !important;
 }
 .section-main {
-  grid-column-gap: 40px;
+  grid-gap: 40px;
 }
 .section-main-body .heading.-h2 {
   font-family: "Open Sans", sans-serif;

@@ -1,8 +1,100 @@
-{{! Capture dynamic site data if available. }}
-{{#if (getSiteDataOfType 'templates-service')}}
-  {{set dynamic true this}}
-  {{set 'accordions' (keyBy (values (getSiteDataOfType 'template-services')) 'category') this}}
-{{/if}}
+{{! Reformat the accordion data for proper compatibility. }}
+{{#each accordions}}
+
+  {{! Reformat the panel data. }}
+  {{#each panels}}
+
+    {{! Set the panel's default title, content, and button. }}
+    {{#if (and link-type (eq link-type 'Cascade Page'))}}
+      {{assign 'title' cascade-page.title}}
+      {{assign 'content' cascade-page.description}}
+      {{assign 'button' (objectify href=cascade-page.path label=(default button-label 'Learn More'))}}
+    {{else if (and link-type (eq link-type 'Cascade File'))}}
+      {{assign 'title' link-label}}
+      {{assign 'content' link-description}}
+      {{assign 'button' (objectify href=cascade-file.path label=(default button-label 'Learn More'))}}
+    {{else if (and link-type (eq link-type 'External URL'))}}
+      {{assign 'title' link-label}}
+      {{assign 'content' link-description}}
+      {{assign 'button' (objectify href=external-url label=(default button-label 'Learn More'))}}
+    {{/if}}
+
+    {{! Override the panel title and/or content if applicable. }}
+    {{#if (and (and link-type (eq link-type 'Cascade Page')) link-customizations)}}
+      {{#contains link-customizations 'Label'}}
+        {{#if link-label}}{{assign 'title' link-label}}{{/if}}
+      {{/contains}}
+      {{#contains link-customizations 'Description'}}
+        {{#if link-description}}{{assign 'content' link-description}}{{/if}}
+      {{/contains}}
+    {{/if}}
+
+    {{! Set the panel's ID, and save it to the index. }}
+    {{assign 'id' (lowercase (dashcase title))}}
+
+    {{! Use query parameters to determine which panels should be opened by default. }}
+    {{#if (and ../../__params__ ../../__params__.category)}}
+      {{#if (eq ../title (decodeURI ../../__params__.category))}}
+        {{assign 'state' 'open'}}
+      {{else}}
+        {{assign 'state' 'closed'}}
+      {{/if}}
+    {{/if}}
+
+    {{! Save the updated panel to storage. }}
+    {{! NOTE: This is required as a patch for the templating engine. }}
+    {{storagePush 'panels' this}}
+
+  {{/each}}
+
+  {{! Save the accordion's updated panels. }}
+  {{! NOTE: This is required as a patch for the templating engine. }}
+  {{assign 'panels' (storageGet 'panels')}}
+
+  {{! Save the updated accordion to storage. }}
+  {{! NOTE: This is required as a patch for the templating engine. }}
+  {{storagePush 'accordions' this}}
+
+{{/each}}
+
+{{! Save the updated accordions. }}
+{{! NOTE: This is required as a patch for the templating engine. }}
+{{assign 'accordions' (storageGet 'accordions')}}
+
+{{! Create an index contianing the IDs of all accordion panels in order to enable filtering. }}
+{{assign 'index' (pluck (condense (pluck accordions 'panels')) 'id')}}
+
+{{! Reformat the button data for proper compatiblity. }}
+{{#each buttons}}
+
+  {{! Get the button's address and label. }}
+  {{#if (and link-type (eq link-type 'Cascade Page'))}}
+    {{assign 'label' cascade-page.title}}
+    {{assign 'href' cascade-page.path}}
+  {{else if (and link-type (eq link-type 'Cascade File'))}}
+    {{assign 'label' link-label}}
+    {{assign 'href' cascade-file.path}}
+  {{else if (and link-type (eq link-type 'External URL'))}}
+    {{assign 'label' link-label}}
+    {{assign 'href' external-url}}
+  {{/if}}
+
+  {{! Override the button label if applicable. }}
+  {{#if (and (and link-type (eq link-type 'Cascade Page')) link-customizations)}}
+    {{#contains link-customizations 'Label'}}
+      {{#if link-label}}{{assign 'label' link-label}}{{/if}}
+    {{/contains}}
+  {{/if}}
+
+  {{! Save the updated button to storage. }}
+  {{! NOTE: This is required as a patch for the templating engine. }}
+  {{storagePush 'buttons' this}}
+
+{{/each}}
+
+{{! Save the updated buttons. }}
+{{! NOTE: This is required as a patch for the templating engine. }}
+{{assign 'buttons' (storageGet 'buttons')}}
 
 <div class="service-directory-page">
   <header class="service-directory-page-header"></header>
@@ -13,44 +105,22 @@
       {{#extend 'tokens-grid' cols='1fr' gap=(objectify cols='25px' rows='25px')}}
         {{#content 'grid-items'}}
 
-          {{! Get the ID of all accordion panels, and compile them into an array. }}
-          {{set 'index' (arrayify null) this}}
-          {{#if dynamic}}
-            {{#each accordions as |panels|}}
-              {{#each panels}}
-                {{#unless id}}{{set 'id' (lowercase (dashcase title)) this}}{{/unless}}
-                {{push id ../../index}}
-              {{/each}}
-            {{/each}}
-          {{else}}
-            {{#each accordions}}
-              {{#each panels}}
-                {{#unless id}}{{set 'id' (lowercase (dashcase title)) this}}{{/unless}}
-                {{push id ../../index}}
-              {{/each}}
-            {{/each}}
-          {{/if}}
-
           {{! Render a search filter. }}
-          {{> atoms-filter-search layout='contained' mode='big' keys=(makeArray 'group' 'title') config=(objectify sort=false) placeholder=(default placeholder 'Search for a Service')}}
+          {{> atoms-filter-search layout='contained'
+                                  mode='big'
+                                  keys=(makeArray 'group' 'title')
+                                  config=(objectify sort=false)
+                                  placeholder=(default input-placeholder placeholder 'Search for a Service')}}
 
           {{! Render the card buttons in a grid. }}
-          {{#embed 'tokens-grid' sizes=(objectify
-            s=(objectify cols='1fr')
-            m=(objectify cols='repeat(3, 1fr)')
-            l=(objectify cols='repeat(3, 1fr)')
-          )}}
+          {{#embed 'tokens-grid' sizes=(objectify s=(objectify cols='1fr')  m=(objectify cols=(makeArray 'repeat' 3 '1fr')) l=(objectify cols=(makeArray 'repeat' 3 '1fr')))}}
             {{#content 'grid-items'}}
               {{#each buttons}}{{> molecules-card-button}}{{/each}}
             {{/content}}
           {{/embed}}
 
           {{! Render the accordions. }}
-          {{#if dynamic}}
-          {{#each accordions as |panels title|}}{{> compounds-accordion filterable=true}}{{/each}}
-          {{else}}
           {{#each accordions}}{{> compounds-accordion filterable=true}}{{/each}}
-          {{/if}}
 
         {{/content}}
       {{/extend}}
