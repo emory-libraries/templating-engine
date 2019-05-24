@@ -73,17 +73,54 @@ class Mutator {
     // Make the keys repeatable one by one.
     foreach( $repeatables as $repeatable ) { 
       
-      // Look for the key within the data set.
-      if( array_get($data, $repeatable, false) !== false ) {
+      // Mutate items within an array.
+      if( strpos($repeatable, '@') !== false ) {
+
+        // Get the keys.
+        $keys = array_map(function($key) {
+
+          // Strip trailing and leading dots from the keys.
+          return trim($key, '. ');
+
+        }, explode('@', $repeatable));
+
+        // Look for the array of objects.
+        if( array_get($data, $keys[0], false) !== false ) {
+
+          // Get the array of objects.
+          $array = array_get($data, $keys[0]);
+
+          // Mutate each object within the array.
+          foreach( $array as $index => $object ) {
+
+            // Mutate the object's checkbox keys.
+            $array[$index] = self::repeatable($object, $keys[1]);
+
+          }
+
+          // Save the array.
+          $data = array_set($data, $keys[0], $array);
+
+        }
+
+      }
+
+      // Otherwise, mutate the items within an object.
+      else {
         
-        // Get the existing value.
-        $value = array_get($data, $repeatable);
+        // Look for the key within the data set.
+        if( array_get($data, $repeatable, false) !== false ) {
         
-        // Force the key's value to be a non-associative array.
-        if( is_array($value) and is_associative_array($value) ) {
-          
-          // Mutate the value.
-          $data = array_set($data, $repeatable, [$value]);
+          // Get the existing value.
+          $value = array_get($data, $repeatable);
+
+          // Force the key's value to be a non-associative array.
+          if( is_array($value) and is_associative_array($value) ) {
+
+            // Mutate the value.
+            $data = array_set($data, $repeatable, [$value]);
+
+          }
           
         }
         
