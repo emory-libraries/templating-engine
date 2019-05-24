@@ -215,35 +215,35 @@ function str_replace_last( string $needle, string $replacement, string $haystack
 }
 
 // Trim a substring from the begining and end of another string.
-function trim_substr( string $string, string $substring ) {
+function trim_substr( string $string, string $substring, string $modifiers = null ) {
   
   // Convert the substring to a regex-compatible string.
-  $regex = strtr(preg_quote($substring), ['\\' => '\\\\', '/' => '\/']);
+  $regex = strtr(preg_quote($substring), ['/' => '\/']);
   
   // Trim the substring.
-  return preg_replace("/^$regex|$regex$/", '', $string);
+  return preg_replace("/^$regex|$regex$/".(isset($modifiers) ? $modifiers : ''), '', $string);
   
 }
 
 // Trim a substring from the begining of another string.
-function ltrim_substr( string $string, string $substring ) {
+function ltrim_substr( string $string, string $substring, string $modifiers = null ) {
   
   // Convert the substring to a regex-compatible string.
-  $regex = strtr(preg_quote($substring), ['\\' => '\\\\', '/' => '\/']);
+  $regex = strtr(preg_quote($substring), ['/' => '\/']);
   
   // Trim the substring.
-  return preg_replace("/^$regex/", '', $string);
+  return preg_replace("/^$regex/".(isset($modifiers) ? $modifiers : ''), '', $string);
   
 }
 
 // Trim a substring from the end of another string.
-function rtrim_substr( string $string, string $substring ) {
+function rtrim_substr( string $string, string $substring, string $modifiers = null ) {
   
   // Convert the substring to a regex-compatible string.
-  $regex = strtr(preg_quote($substring), ['\\' => '\\\\', '/' => '\/']);
+  $regex = strtr(preg_quote($substring), ['/' => '\/']);
   
   // Trim the substring.
-  return preg_replace("/$regex$/", '', $string);
+  return preg_replace("/$regex$/".(isset($modifiers) ? $modifiers : ''), '', $string);
   
 }
 

@@ -146,7 +146,7 @@ trait ArrayHelpers {
   }
   
   // Returns true if `value` is a simple array (non-associative).
-  public static function isArray( $value ) {
+  public static function isArray( $value ) { 
     
     return (is_array($value) and !is_associative_array($value));
     
