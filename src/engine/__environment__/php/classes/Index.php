@@ -7,6 +7,9 @@
  */
 class Index {
   
+  // Determine if performance data should be output.
+  public $performance = false;
+  
   // An index of all environment data.
   public $environment = [];
   
@@ -46,10 +49,13 @@ class Index {
   const MERGE_OVERRIDE = 64;
   
   // Constructs the index.
-  function __construct() {
+  function __construct( $instance = false ) {
     
+    // Set performance flag.
+    $this->performance = (!$instance and DEVELOPMENT);
+
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Index', true);
+    if( $this->performance ) Performance\Performance::point('Index', true);
     
     // Get an index of all environment-wide data files, and cache it.
     $this->environment = [
@@ -123,18 +129,51 @@ class Index {
     ];
     
     // Cache everything.
-    self::cache('environment', $this->environment);
-    self::cache('site', $this->site);
-    self::cache('patterns', $this->patterns);
-    self::cache('partials', $this->partials);
-    self::cache('assets', $this->assets);
-    self::cache('routes', $this->routes);
-    self::cache('endpoints', $this->endpoints);
-    self::cache('helpers', $this->helpers);
+    if( !$instance ) {
+      self::cache('environment', $this->environment);
+      self::cache('site', $this->site);
+      self::cache('patterns', $this->patterns);
+      self::cache('partials', $this->partials);
+      self::cache('assets', $this->assets);
+      self::cache('routes', $this->routes);
+      self::cache('endpoints', $this->endpoints);
+      self::cache('helpers', $this->helpers);
+    }
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::finish('Index');
+    if( $this->performance ) Performance\Performance::finish('Index');
   
+  }
+  
+  // Call methods as static functions.
+  public static function __callStatic( $method, $arguments ) { 
+    
+    // Get an instance of the class.
+    $instance = new self(true);
+    
+    // Make some protected methods public.
+    switch($method) {
+      case 'getPartialData': return $instance->partials['data'];
+      case 'getHelperData': return $instance->helpers['data'];
+      case 'getAssetData': return $instance->assets['data'];
+      case 'getEndpointData': return $instance->endpoints['data'];
+      case 'getAssetEndpointData': return array_values(array_filter($instance->endpoints['data'], function($endpoint) {
+
+        // Locate all asset endpoints.
+        return $endpoint->asset;
+
+      }));
+      case 'getAssetEndpoint': return array_get(array_values(array_filter($instance->endpoints['data'], function($endpoint) use ($arguments) {
+        
+        // Find asset endpoints.
+        if( !$endpoint->asset ) return false;
+
+        // Find the endpoint data for the given endpoint path.
+        return (is_array($endpoint->endpoint) ? in_array($arguments[0], $endpoint->endpoint) : $endpoint->endpoint == $arguments[0]);
+
+      })), 0);
+    }
+    
   }
   
   // Scan a directory for files.
@@ -426,13 +465,19 @@ class Index {
   protected function getEnvironmentData( $flag = Index::INDEX_ONLY ) {
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Indexing environment data...');
+    if( $this->performance ) Performance\Performance::point('Indexing environment data...');
+    
+    // Get meta data.
+    $meta = isset(CONFIG['meta']) ? CONFIG['meta'] : (include CONFIG['engine']['php'].'/config.index.php')['meta'];
+    
+    // Get shared data.
+    $shared = isset(CONFIG['data']['shared']) ? CONFIG['data']['shared'] : (include CONFIG['engine']['php'].'/config.index.php')['data']['shared'];
     
     // Get environment-specific data files.
     $environment = [
-      'meta' => array_merge(CONFIG['meta'], Index::scan(CONFIG['data']['environment']['meta'])),
+      'meta' => array_merge($meta, Index::scan(CONFIG['data']['environment']['meta'])),
       'global' => Index::scan(CONFIG['data']['environment']['global']),
-      'shared' => array_merge(Index::scan(CONFIG['data']['environment']['shared']), ...array_values(CONFIG['data']['shared']))
+      'shared' => array_merge(Index::scan(CONFIG['data']['environment']['shared']), ...array_values($shared))
     ];
     
     // Get data file extensions.
@@ -461,7 +506,7 @@ class Index {
       $environment = array_map('Index::read', $environment);
     
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
     
       // Return all files with their contents.
       return $environment;
@@ -475,7 +520,7 @@ class Index {
       $environment = array_map('Index::metadata', $environment);
     
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
     
       // Return all files with their metadata.
       return $environment;
@@ -486,7 +531,7 @@ class Index {
     else {
       
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
       
       // Return the file listing.
       return $environment;
@@ -499,7 +544,7 @@ class Index {
   protected function getSiteData( $flag = Index::INDEX_ONLY ) {
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Indexing site data...');
+    if( $this->performance ) Performance\Performance::point('Indexing site data...');
     
     // Get site-specific data files.
     $site = [
@@ -549,7 +594,7 @@ class Index {
       $site = array_map('Index::read', $site);
     
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
     
       // Return all files with their contents.
       return $site;
@@ -563,7 +608,7 @@ class Index {
       $site = array_map('Index::metadata', $site);
     
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
     
       // Return all files with their metadata.
       return $site;
@@ -574,7 +619,7 @@ class Index {
     else {
       
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
       
       // Return the file listing.
       return $site;
@@ -587,10 +632,10 @@ class Index {
   protected function getPatternData( $flag = Index::INDEX_ONLY ) {
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Indexing pattern data...');
+    if( $this->performance ) Performance\Performance::point('Indexing pattern data...');
     
     // Get all pattern files.
-    $patterns = array_map('Index::scan', CONFIG['patterns']['groups']);
+    $patterns = array_map('Index::scan', PATTERN_GROUPS);
     
     // Return the files with their contents.
     if( $flag & Index::INDEX_READ ) {
@@ -599,7 +644,7 @@ class Index {
       $patterns = array_map('Index::read', $patterns);
     
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
     
       // Return all files with their contents.
       return $patterns;
@@ -613,7 +658,7 @@ class Index {
       $patterns = array_map('Index::metadata', $patterns);
     
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
     
       // Return all files with their metadata.
       return $patterns;
@@ -624,7 +669,7 @@ class Index {
     else {
       
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
       
       // Return the file listing.
       return $patterns;
@@ -660,7 +705,7 @@ class Index {
   protected function getAssetData( $flag = Index::INDEX_ONLY ) {
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Indexing asset data...');
+    if( $this->performance ) Performance\Performance::point('Indexing asset data...');
     
     // Get asset files.
     $assets = array_merge(...array_values(array_map(function($path, $recursive) {
@@ -697,7 +742,7 @@ class Index {
       $assets = Index::read($assets);
     
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
     
       // Return all files with their contents.
       return $assets;
@@ -711,7 +756,7 @@ class Index {
       $assets = Index::metadata($assets);
     
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
     
       // Return all files with their metadata.
       return $assets;
@@ -722,7 +767,7 @@ class Index {
     else {
       
       // Add benchmark point.
-      if( DEVELOPMENT ) Performance\Performance::finish();
+      if( $this->performance ) Performance\Performance::finish();
       
       // Return the file listing.
       return $assets;
@@ -735,7 +780,7 @@ class Index {
   protected function getRouteData( array $site, array $assets = [] ) {
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::point('Indexing route data...');
+    if( $this->performance ) Performance\Performance::point('Indexing route data...');
     
     // Initialize a helper method for converting a single file or array of files to routes.
     $route = function($files) {
@@ -795,7 +840,7 @@ class Index {
     }, ARRAY_FILTER_USE_KEY));
     
     // Add benchmark point.
-    if( DEVELOPMENT ) Performance\Performance::finish();
+    if( $this->performance ) Performance\Performance::finish();
     
     // Merge the error routes, and return all routes.
     return array_merge($routes, $errors);

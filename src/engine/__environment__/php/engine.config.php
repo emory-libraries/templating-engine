@@ -1,7 +1,7 @@
 <?php
 
 // Configure the templating engine.
-define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
+define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), [
   
   // Store some information about the current setup.
   'localhost' => LOCALHOST,
@@ -53,6 +53,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
     'config' => ENGINE_ROOT.'/config',
     'env' => ENGINE_ROOT.'/.env',
     'classes' => ENGINE_ROOT.'/php/classes',
+    'php' => ENGINE_ROOT.'/php',
     // TODO: Add helpers to index.
     'helpers' => ENGINE_ROOT.'/php/helpers',
     // TODO: Determine if icons and logos should be indexed.
@@ -102,8 +103,8 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
     
   ],
   
-  // Configures assets.
-  'assets' => [
+  // Configures asset headers.
+  'assetHeaders' => [
     
     // Sets the keep alive time for caching assets in the browser.
     'keepAlive' => Renderer::KEEP_ALIVE_MONTH

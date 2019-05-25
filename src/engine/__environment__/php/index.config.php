@@ -1,7 +1,7 @@
 <?php
 
 // Configure the templating engine.
-define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
+define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), (include ENGINE_ROOT.'/php/config.index.php'), [
   
   // Capture data about the setup.
   'development' => DEVELOPMENT,
@@ -50,46 +50,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
       'global' => SITE_DATA.'/_global',
       'meta' => SITE_DATA.'/_meta',
       'shared' => SITE_DATA.'/_shared'
-    ],
-    'shared' => array_map(function($path) {
-      
-      // Initialize the files.
-      $files = [];
-      
-      // Get a list of all shared data files from the sibling site.
-      if( file_exists($path) ) $files = array_map(function($file) use ($path) {
-        
-        // Append the original path to the file.
-        return cleanpath("$path/$file");
-        
-      }, scandir_recursive($path));
-      
-      // Return the list of shared files.
-      return $files;
-      
-    }, array_reduce(array_map(function($site) {
-        
-      // Capture the site and path to its shared folder.
-      return [
-        'site' => $site,
-        'path' => DATA_ROOT.'/'.$site.'/_shared'
-      ];
-
-    }, array_values(array_filter(Index::scan(DATA_ROOT, false), function($folder) {
-     
-      // Filter out environment-level data folders, and only keep site-level folders.
-      return !in_array($folder, ['_meta', '_global', '_shared']);
-      
-      
-    }))), function($shared, $site) {
-
-      // Merge the site-specific shared files into a single array.
-      $shared[$site['site']] = $site['path'];
-
-      // Continue reducing.
-      return $shared;
-
-    }, []))
+    ]
   ],
   
   // Configures patterns paths.
@@ -104,6 +65,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
     'env' => ENGINE_ROOT.'/.env',
     'meta' => ENGINE_ROOT.'/meta',
     'config' => ENGINE_ROOT.'/config',
+    'php' => ENGINE_ROOT.'/php',
     'scripts' => ENGINE_ROOT.'/php/scripts',
     'css' => ENGINE_ROOT.'/css',
     'js' => ENGINE_ROOT.'/js',
@@ -120,32 +82,6 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
       'tmp' => CACHE_ROOT.'/tmp/'.DOMAIN
     ]
   ],
-  
-  // Configures asset paths, and indicates if their assets can be found recursively.
-  'assets' => [
-    SITE_ROOT.'/css' => true,
-    SITE_ROOT.'/js' => true,
-    SITE_ROOT.'/php' => false,
-    SITE_ROOT.'/images' => true,
-    SITE_ROOT.'/assets' => true,
-    SITE_ROOT.'/documents' => true,
-    SITE_ROOT.'/fonts' => true,
-    SITE_DATA.'/images' => true,
-    SITE_DATA.'/assets' => true,
-    SITE_DATA.'/documents' => true,
-    SITE_DATA => true,
-    ENGINE_ROOT.'/css' => true,
-    ENGINE_ROOT.'/js' => true,
-    ENGINE_ROOT.'/php/scripts' => false,
-    ENGINE_ROOT.'/images' => true,
-    ENGINE_ROOT.'/assets' => true,
-    ENGINE_ROOT.'/documents' => true,
-    ENGINE_ROOT.'/fonts' => true,
-    ENGINE_ROOT.'/icons/php' => false
-  ],
-  
-  // Get the contents of all templating engine meta files.
-  'meta' => scandir_recursive(ENGINE_ROOT.'/meta', ENGINE_ROOT.'/meta')
   
 ]));
 

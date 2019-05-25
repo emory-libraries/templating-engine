@@ -29,20 +29,32 @@ return [
   'errors' => [
     400 => [
       'status' => 'Bad Request',
-      'message' => 'Your request could not be understood as is.'
+      'message' => "Your request could not be understood as is."
     ],
     404 => [
       'status' => 'Not Found',
-      'message' => 'The page you were looking for could not be found',
+      'message' => "The page you were looking for could not be found",
       'template' => 'templates-error-404'
     ],
     500 => [
       'status' => 'Internal Server Error',
-      'message' => 'The server encountered an internal error and could not complete your request.'
+      'message' => "The server encountered an internal error and could not complete your request."
+    ],
+    514 => [
+      'status' => 'Unknown or Invalid Index',
+      'message' => "The templating engine encountered an error while trying to use data from the index."
     ],
     515 => [
-      'status' => 'Templating Engine Error',
-      'message' => 'The templating engine encountered an error and could not fulfill your request.'
+      'status' => 'Nonexistent Page Template',
+      'message' => "The templating engine encountered an error while trying to render the page's template."
+    ],
+    520 => [
+      'status' => 'Failed to Compile Page',
+      'message' => "The templating engine encountered an error while trying to compile the requested page."
+    ],
+    521 => [
+      'status' => 'Failed to Render Page',
+      'message' => "The templating engine encountered an error while trying to render the requested page."
     ]
   ],
   
@@ -66,15 +78,38 @@ return [
         <meta charset=\"UTF-8\">
         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" http-equiv=\"\">
         <title>{{title}}</title>
-        <link rel=\"stylesheet\" href=\"{{baseUrl}}/css/style.min.css\">
+        <style>".file_get_contents(ENGINE_ROOT.'/css/style.min.css')."</style>
       </head>
       <body>
         <div id=\"eul-vue\">{{template}}</div>
-        <script src=\"{{baseUrl}}/js/bundle.min.js\"></script>
+        <script>".file_get_contents(ENGINE_ROOT.'/js/bundle.min.js')."</script>
       </body>
       </html>
     "
     
+  ],
+  
+  // Configures asset paths, and indicates if their assets can be found recursively.
+  'assets' => [
+    SITE_ROOT.'/css' => true,
+    SITE_ROOT.'/js' => true,
+    SITE_ROOT.'/php' => false,
+    SITE_ROOT.'/images' => true,
+    SITE_ROOT.'/assets' => true,
+    SITE_ROOT.'/documents' => true,
+    SITE_ROOT.'/fonts' => true,
+    SITE_DATA.'/images' => true,
+    SITE_DATA.'/assets' => true,
+    SITE_DATA.'/documents' => true,
+    SITE_DATA => true,
+    ENGINE_ROOT.'/css' => true,
+    ENGINE_ROOT.'/js' => true,
+    ENGINE_ROOT.'/php/scripts' => false,
+    ENGINE_ROOT.'/images' => true,
+    ENGINE_ROOT.'/assets' => true,
+    ENGINE_ROOT.'/documents' => true,
+    ENGINE_ROOT.'/fonts' => true,
+    ENGINE_ROOT.'/icons/php' => false
   ],
   
   /* This gets the contents of all templating engine configuration files, and reads
@@ -99,7 +134,7 @@ return [
     // Merge all configuration files into a single array.
     return array_set($config, $key, $contents);
     
-  }, []),
+  }, [])
   
 ];
 
