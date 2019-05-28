@@ -17,13 +17,13 @@ class Route {
   public $id;
   
   // The site's environment.
-  public $environment = CONFIG['__site__']['environment'];
+  public $environment = ENVIRONMENT;
   
   // The site ID.
-  public $site = CONFIG['__site__']['site'];
+  public $site = SITE;
   
   // The site's domain.
-  public $domain = CONFIG['__site__']['domain'];
+  public $domain = DOMAIN;
   
   // The route's anticipated URL(s).
   public $url;
@@ -114,7 +114,7 @@ class Route {
       }
       
       // Determine the route's cache location.
-      $this->cache = self::cache($this->endpoint);
+      $this->cache = array_key_exists('cache', $path) ? $path['cache'] : self::cache($this->endpoint);
       
       // Determine if the route is for an error page by assuming pages with integer IDs are errors.
       if( self::isError($this->endpoint) ) $this->error = true;

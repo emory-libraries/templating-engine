@@ -20,16 +20,16 @@ class Renderer {
   const KEEP_ALIVE_YEAR = 31536000;
   
   // Prepare a template to be compiled.
-  public static function prepare( string $template, $wrapper = 'default' ) {
+  public static function prepare( string $template, $wrapper = 'default', $benchmarking = BENCHMARKING ) {
 
     // Get the layout wrapper.
-    $wrapper = array_get(CONFIG['layouts'], $wrapper, '{{template}}');
+    $wrapper = self::layout($wrapper);
 
     // Compile the template with the wrapper.
     $template = str_replace('{{template}}', $template, $wrapper);
     
     // Add benchmark point.
-    if( BENCHMARKING ) Performance\Performance::point('Template prepared.');
+    if( $benchmarking ) Performance\Performance::point('Template prepared.');
     
     // Return the prepared template.
     return $template;
@@ -62,6 +62,9 @@ class Renderer {
     // Compile the template to a closure function.
     $closure = LightnCandy::compile($template, $config);
     
+    // If the compiler failed, then return an error page.
+    if( $closure === false ) throw new Failure(520);
+   
     // Compile the template to PHP.
     $php = "<?php $closure ?>";
 
@@ -71,19 +74,19 @@ class Renderer {
   }
   
   // Renders a page for the requested endpoint, given its data and template.
-  public static function render( Endpoint $endpoint) {
+  public static function render( Endpoint $endpoint, $benchmarking = BENCHMARKING ) {
     
     // Add benchmark point.
-    if( BENCHMARKING ) Performance\Performance::point('Renderer', true);
+    if( $benchmarking ) Performance\Performance::point('Renderer', true);
     
     // Get the cache path for the compiled template.
     $path = $endpoint->route->cache;
     
     // Create a helper method for quickly compiling and saving a template to the cache.
-    $compiler = function() use ($endpoint, $path) {
+    $compiler = function() use ($endpoint, $path, $benchmarking) {
       
       // Get the template.
-      $template = self::prepare($endpoint->template);
+      $template = self::prepare($endpoint->template, 'default', $benchmarking);
       
       // Compile the template.
       $compiled = self::compile($template);
@@ -92,12 +95,12 @@ class Renderer {
       Cache::write($path, $compiled);
       
       // Add benchmark point.
-      if( BENCHMARKING ) Performance\Performance::point('Template compiled.');
+      if( $benchmarking ) Performance\Performance::point('Template compiled.');
       
     };
     
     // Skip caching when in development mode, and always recompile patterns.
-    if( CONFIG['development'] ) $compiler();
+    if( DEVELOPMENT ) $compiler();
     
     // Otherwise, use caching when not in development mode.
     else {
@@ -131,24 +134,38 @@ class Renderer {
     $renderer = Cache::include($path);
     
     // Add benchmark point.
-    if( BENCHMARKING ) Performance\Performance::finish('Renderer');
+    if( $benchmarking ) Performance\Performance::finish('Renderer');
     
     // Output a content type header.
     header('Content-Type: '.Mime::type('html'));
 
-    // Render the template with the given data.
-    return $renderer($endpoint->data->data);
+    // Attempt to render the page.
+    try {
+    
+      // Render the template with the given data.
+      $page = $renderer($endpoint->data->data);
+      
+      // Return the page's contents.
+      return $page;
+      
+    // If rendering fails, then throw an error page.
+    } catch( Throwable $exception ) {
+      
+      // Throw an error page.
+      throw new Failure(521);
+      
+    }
     
   }
   
   // Renders an error page.
-  public static function error( Endpoint $endpoint ) {
+  public static function error( Endpoint $endpoint, $benchmarking = BENCHMARKING ) {
     
     // Output the status code header.
     header('HTTP/1.0 '.$endpoint->error.' '.CONFIG['errors'][$endpoint->error]['status']);
     
     // Render the appropriate error page.
-    return self::render($endpoint);
+    return self::render($endpoint, $benchmarking);
     
   }
   
@@ -159,13 +176,21 @@ class Renderer {
     header('Content-Type: '.$endpoint->route->mime);
     
     // Send cache control headers.
-    header('Cache-Control: max-age='.CONFIG['assets']['keepAlive'].', public');
+    header('Cache-Control: max-age='.CONFIG['assetHeaders']['keepAlive'].', public');
     
     // For PHP files, include them.
     if( Path::extname($endpoint->endpoint) == 'php' ) include $endpoint->route->path;
 
     // Otherwise, output the asset.
     else readfile($endpoint->route->path);
+    
+  }
+  
+  // Get a layout wrapper by an ID.
+  protected static function layout( $id ) {
+    
+    // Return the layout.
+    return array_get(CONFIG['layouts'], $id, CONFIG['defaults']['layoutTemplate']);
     
   }
   
