@@ -81,7 +81,7 @@ return [
         <style>".file_get_contents(ENGINE_ROOT.'/css/style.min.css')."</style>
       </head>
       <body>
-        {{template}}
+        <div id=\"eul-vue\">{{template}}</div>
         <script>".file_get_contents(ENGINE_ROOT.'/js/bundle.min.js')."</script>
       </body>
       </html>
