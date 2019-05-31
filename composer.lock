@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a4a3aa02b437fb4458d29e829f385f21",
+    "content-hash": "46c43956f215c480be6ba509a9a35bf6",
     "packages": [
         {
             "name": "bvanhoekelen/performance",
@@ -405,14 +405,57 @@
         },
         {
             "name": "laurenhamel/lightncandy",
-            "version": "dev-master",
+            "version": "v1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laurenhamel/lightncandy.git",
-                "reference": "master"
+                "reference": "c12aea7d91f85f97e28b997851fe7b6764a8a1e0"
             },
-            "type": "git",
-            "time": "2019-05-31T18:36:12+00:00"
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laurenhamel/lightncandy/zipball/c12aea7d91f85f97e28b997851fe7b6764a8a1e0",
+                "reference": "c12aea7d91f85f97e28b997851fe7b6764a8a1e0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LightnCandy\\": "src"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Zordius Chen",
+                    "email": "zordius@gmail.com"
+                }
+            ],
+            "description": "An extremely fast PHP implementation of handlebars ( http://handlebarsjs.com/ ) and mustache ( http://mustache.github.io/ ).",
+            "homepage": "https://github.com/zordius/lightncandy",
+            "keywords": [
+                "PHP",
+                "handlebars",
+                "logicless",
+                "mustache",
+                "template"
+            ],
+            "support": {
+                "source": "https://github.com/laurenhamel/lightncandy/tree/v1.2.3"
+            },
+            "time": "2019-04-06T10:01:13+00:00"
         },
         {
             "name": "mustache/mustache",
@@ -895,8 +938,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "erusev/parsedown": 10,
-        "erusev/parsedown-extra": 10,
-        "laurenhamel/lightncandy": 20
+        "erusev/parsedown-extra": 10
     },
     "prefer-stable": false,
     "prefer-lowest": false,
