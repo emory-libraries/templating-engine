@@ -1699,10 +1699,12 @@ Components.register('accordion', {
   }
 }); // Initialize the Vue.
 
-var App; // Instantiate the Vue.
+var App = []; // Instantiate the Vue.
 
-if ($('#eul-vue').length > 0) App = new Vue({
-  el: '#eul-vue'
+if (!PATTERNLAB) Array.from($('.eul-vue')).forEach(function (el) {
+  return App.push(new Vue({
+    el: el
+  }));
 }); // Export globals.
 
 global._ = _;

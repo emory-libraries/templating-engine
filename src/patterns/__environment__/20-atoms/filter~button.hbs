@@ -2,6 +2,7 @@
   {{assign 'index' (passthrough index passthroughs)}}
 {{/if}}
 
+<div class="eul-vue">
 <eul-filter-button inline-template
                    :index="{{JSONstringify index}}"
                    :config="{{default (JSONstringify config) '{}'}}"
@@ -59,3 +60,4 @@
   </div>
 
 </eul-filter-button>
+</div>

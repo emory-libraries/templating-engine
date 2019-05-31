@@ -1,5 +1,5 @@
 <div class="sidebar-list{{#if divider}}{{#if divider.start}} -divider-start{{/if}}{{#if divider.end}} -divider-end{{/if}}{{/if}}">
-  
+
   {{#each sections}}
   <div class="sidebar-list-section">
     <span class="sidebar-list-section-title{{#if icon}} has-icon{{/if}}">
@@ -22,11 +22,12 @@
     </div>
   </div>
   {{/each}}
-  
+
   {{#if buttons}}
     {{#each buttons}}{{> atoms-button-link classes="sidebar-list-button" icon=false}}{{/each}}
-  {{else if button}}
+  {{/if}}
+  {{#if button}}
     {{#with button}}{{> atoms-button-link classes="sidebar-list-button" icon=false}}{{/with}}
   {{/if}}
-  
+
 </div>

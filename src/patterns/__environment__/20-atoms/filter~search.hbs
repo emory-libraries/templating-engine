@@ -2,6 +2,7 @@
   {{assign 'index' (passthrough index passthroughs)}}
 {{/if}}
 
+<div class="eul-vue">
 <eul-filter-search inline-template
                    :index="{{JSONstringify index}}"
                    :keys="{{#if keys}}{{JSONstringify keys}}{{else}}'[]'{{/if}}"
@@ -74,3 +75,4 @@
   </div>
 
 </eul-filter-search>
+</div>

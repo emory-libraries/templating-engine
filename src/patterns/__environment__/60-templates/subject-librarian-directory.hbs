@@ -1,8 +1,8 @@
 {{! Reformat the librarian data for proper compatibility. }}
-{{!--{{#each librarians}}
+{{#each librarians}}
 
-  {{! Manipulate librarian option data if given. }}
-  {{#if options }}
+  {{! Manipulate librarian config data if given. }}
+  {{#if config }}
 
     {{! Handle config data given in array form. }}
     {{#if (isArray config)}}
@@ -156,7 +156,7 @@
 {{assign 'options' (sort (unique (condense (pluck librarians 'subjects'))))}}
 
 {{! Determine if the default selection in the dropdown filter menu. }}
-{{#if __params__}}{{assign 'selected' (default __params__.subject '')}}{{/if}}--}}
+{{#if __params__}}{{assign 'selected' (default __params__.subject '')}}{{/if}}
 
 <div class="subject-librarian-directory-page">
   <header class="subject-librarian-directory-page-header"></header>
@@ -164,7 +164,7 @@
     {{#content 'section-main-body'}}
 
       {{! Use a grid to better position stuff inside the main section. }}
-      {{!--#extend 'tokens-grid' cols='1fr' gap=(objectify cols='25px' rows='25px')}}
+      {{#extend 'tokens-grid' cols='1fr' gap=(objectify cols='25px' rows='25px')}}
         {{#content 'grid-items'}}
 
           {{! Render a search filter. }}
@@ -176,7 +176,7 @@
           {{> compounds-cards card-type='librarian' cards=librarians columns=1 classes="" filterable=true}}
 
         {{/content}}
-      {{/extend--}}
+      {{/extend}}
 
     {{/content}}
   {{/extend}}
