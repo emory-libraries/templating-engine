@@ -236,7 +236,8 @@ module.exports = function(grunt) {
             expand: true, 
             cwd: PATHS.dependencies.composer, 
             src: ['**/*'], 
-            dest: PATHS.dest.engine.environment.dependencies.php
+            dest: PATHS.dest.engine.environment.dependencies.php,
+            follow: true
           }
         ]
       },
