@@ -1,5 +1,32 @@
-<div class="cards{{#if classes}} {{classes}}{{/if}}">
+<div class="cards{{#if classes}} {{classes}}{{/if}}"
+     {{#if columns}}style="
+        {{#if (isObject size)}}
+          {{#each columns as |size screen|}}
+          --cols-{{screen}}: {{size}};
+          {{/each}}
+        {{else}}
+          --cols-s: {{columns}};
+          --cols-m: {{columns}};
+          --cols-l: {{columns}};
+        {{/if}}
+     "{{/if}}>
   {{#each cards}}
-    {{> (combine 'molecules-card-' (default ../type type)) classes=''}}
+    {{#if (eq (default ../card-type card-type) 'action')}}
+      {{> molecules-card-action classes=""}}
+    {{else if (eq (default ../card-type card-type) 'button')}}
+      {{> molecules-card-button classes=""}}
+    {{else if (eq (default ../card-type card-type) 'contact')}}
+      {{> molecules-card-contact classes="" filterable=(default ../filterable false)}}
+    {{else if (eq (default ../card-type card-type) 'librarian')}}
+      {{> molecules-card-librarian classes="" filterable=(default ../filterable false)}}
+    {{else if (eq (default ../card-type card-type) 'library-aid')}}
+      {{> molecules-card-library-aid classes="" filterable=(default ../filterable false)}}
+    {{else if (eq (default ../card-type card-type) 'library-guide')}}
+      {{> molecules-card-library-guide classes="" filterable=(default ../filterable false)}}
+    {{else if (eq (default ../card-type card-type) 'listing')}}
+      {{> molecules-card-listing}}
+    {{else if (eq (default ../card-type card-type) 'multimedia')}}
+      {{> molecules-card-multimedia classes="" icon-type=../icon-type}}
+    {{/if}}
   {{/each}}
 </div>

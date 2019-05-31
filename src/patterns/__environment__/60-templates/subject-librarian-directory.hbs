@@ -1,0 +1,184 @@
+{{! Reformat the librarian data for proper compatibility. }}
+{{!--{{#each librarians}}
+
+  {{! Manipulate librarian option data if given. }}
+  {{#if options }}
+
+    {{! Handle config data given in array form. }}
+    {{#if (isArray config)}}
+
+      {{! Determine if the librarian has some image data. }}
+      {{#inArray config 'Profile Photo'}}
+        {{assign 'config.image' true}}
+        {{unassign (combine 'config.' (indexOf config 'Profile Photo'))}}
+      {{else}}
+        {{assign 'config.image' false}}
+      {{/inArray}}
+
+      {{! Determine if the librarian has some quote data. }}
+      {{#inArray config 'Quote'}}
+        {{assign 'config.quote' true}}
+        {{unassign (combine 'config.' (indexOf config 'Quote'))}}
+      {{else}}
+        {{assign 'config.quote' false}}
+      {{/inArray}}
+
+      {{! Determine if the librarian has some bio data. }}
+      {{#inArray config 'Description'}}
+        {{assign 'config.bio' true}}
+        {{unassign (combine 'config.' (indexOf config 'Description'))}}
+      {{else}}
+        {{assign 'config.bio' false}}
+      {{/inArray}}
+
+      {{! Determine if the librarian has some education data. }}
+      {{#inArray config 'Education'}}
+        {{assign 'config.education' true}}
+        {{unassign (combine 'config.' (indexOf config 'Education'))}}
+      {{else}}
+        {{assign 'config.education' false}}
+      {{/inArray}}
+
+      {{! Determine if the librarian has some contact info data. }}
+      {{#inArray config 'Contact Info'}}
+        {{assign 'config.contact' true}}
+        {{unassign (combine 'config.' (indexOf config 'Contact Info'))}}
+      {{else}}
+        {{assign 'config.contact' false}}
+      {{/inArray}}
+
+      {{! Determine if the librarian has some subject area data. }}
+      {{#inArray config 'Subject Areas'}}
+        {{assign 'config.subjects' true}}
+        {{unassign (combine 'config.' (indexOf config 'Subject Areas'))}}
+      {{else}}
+        {{assign 'config.subjects' false}}
+      {{/inArray}}
+
+      {{! Determine if the librarian has some CV data. }}
+      {{#inArray config 'CV'}}
+        {{assign 'config.cv' true}}
+        {{unassign (combine 'config.' (indexOf config 'CV'))}}
+      {{else}}
+        {{assign 'config.cv' false}}
+      {{/inArray}}
+
+    {{! Otherwise, handle config data given in string form. }}
+    {{else}}
+
+      {{! Determine if the librarian has some config data. }}
+      {{#if (eq config 'Profile Photo')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' true}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'Quote')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' true}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'Description')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' true}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'Education')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' true}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'Contact Info')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' true}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'Subject Areas')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' true}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'CV')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' true}}
+      {{/if}}
+
+    {{/if}}
+
+  {{/if}}
+
+  {{! Set the librarian's ID if not already set. }}
+  {{#unless id}}{{assign 'id' (dashcase (lowercase name))}}{{/unless}}
+
+  {{! Save the updated librarian to storage. }}
+  {{! NOTE: This is required as a patch for the templating engine. }}
+  {{storagePush 'librarians' this}}
+
+{{/each}}
+
+{{! Save the updated librarians. }}
+{{! NOTE: This is required as a patch for the templating engine. }}
+{{assign 'librarians' (storageGet 'librarians')}}
+
+{{! Create an index contianing the IDs of all librarians in order to enable filtering. }}
+{{assign 'index' (pluck librarians 'id')}}
+
+{{! Create a list of options for the dropdown filter. }}
+{{assign 'options' (sort (unique (condense (pluck librarians 'subjects'))))}}
+
+{{! Determine if the default selection in the dropdown filter menu. }}
+{{#if __params__}}{{assign 'selected' (default __params__.subject '')}}{{/if}}--}}
+
+<div class="subject-librarian-directory-page">
+  <header class="subject-librarian-directory-page-header"></header>
+  {{#extend 'organisms-main' type="subject-librarian-directory-page" classes="subject-librarian-directory-page-main"}}
+    {{#content 'section-main-body'}}
+
+      {{! Use a grid to better position stuff inside the main section. }}
+      {{!--#extend 'tokens-grid' cols='1fr' gap=(objectify cols='25px' rows='25px')}}
+        {{#content 'grid-items'}}
+
+          {{! Render a search filter. }}
+          {{> atoms-filter-dropdown key='subjects'
+                                    config=(objectify sort=true)
+                                    label=(default label 'View All')}}
+
+          {{! Render the bio cards. }}
+          {{> compounds-cards card-type='librarian' cards=librarians columns=1 classes="" filterable=true}}
+
+        {{/content}}
+      {{/extend--}}
+
+    {{/content}}
+  {{/extend}}
+  <footer class="subject-librarian-directory-page-footer"></footer>
+</div>

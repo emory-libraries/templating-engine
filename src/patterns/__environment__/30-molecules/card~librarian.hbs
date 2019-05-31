@@ -1,26 +1,37 @@
-<div class="card-librarian">
+<div class="card-librarian"{{#if filterable}} data-search-id="{{id}}"{{/if}}>
   <div class="card-librarian-about">
-    <div class="card-librarian-image">{{#with image}}{{> atoms-image src=(default src (combine '/images/avatars/placeholder.' (default ../gender 'male') '.jpg')) alt=../name}}{{/with}}</div>
+    <a href="{{link.href}}" class="card-librarian-image">{{> atoms-image src=(default image.src (combine '/images/avatars/placeholder.' (default gender 'male') '.jpg')) alt=name}}</a>
     {{#with link}}{{> atoms-link label=../name classes="card-librarian-name"}}{{/with}}
-    <span class="card-librarian-title">{{title}}</span>
-    <span class="card-librarian-library">{{library}}</span>
+    <span class="card-librarian-title"
+          {{#if filterable}} data-search-key="title"{{/if}}>
+      {{title}}
+    </span>
+    <span class="card-librarian-library"
+          {{#if filterable}} data-search-key="library"{{/if}}>
+      {{#if (isArray library)}}{{join library ', '}}{{else}}{{library}}{{/if}}
+    </span>
   </div>
   <div class="card-librarian-subjects">
     <span class="card-librarian-context">Subject Areas</span>
     <ul class="card-librarian-subjects-list">
       {{#each subjects as |subject|}}
-      <li class="card-librarian-subjects-list-item">{{subject}}</li>
+      <li class="card-librarian-subjects-list-item"
+          {{#if ../filterable}} data-search-key="subjects"{{/if}}>
+        {{> atoms-link label=subject href=(combine '?subject=' (plusify subject))}}
+      </li>
       {{/each}}
     </ul>
   </div>
   <div class="card-librarian-contact">
     <span class="card-librarian-context">Contact</span>
     <ul class="card-librarian-contact-info">
-      <li class="card-librarian-contact-info-item">
+      <li class="card-librarian-contact-info-item"
+          {{#if filterable}} data-search-key="phone"{{/if}}>
         {{> tokens-icon id='material-phone'}}
         {{> atoms-link href=(combine 'tel:+' phone) label=(formatPhone phone '000-000-0000')}}
       </li>
-      <li class="card-librarian-contact-info-item">
+      <li class="card-librarian-contact-info-item"
+          {{#if filterable}} data-search-key="email"{{/if}}>
         {{> tokens-icon id='material-email'}}
         {{> atoms-link href=(combine 'mailto:' email) label=email}}
       </li>
