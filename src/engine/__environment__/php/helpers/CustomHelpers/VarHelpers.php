@@ -38,7 +38,7 @@ trait VarHelpers {
   public static function assign( $key, $value, array $options ) {
    
     // Assign the value to the given key within the current context.
-    $options['_this'] = array_set($options['_this'], $key, $value);
+    $options['_this'] = array_set($options['_this'], $key, $value, true);
     
   }
   
