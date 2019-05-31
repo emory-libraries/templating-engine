@@ -10,7 +10,7 @@
     "librarians.@.first-name": "librarians.@.content.system-data-structure.given-name", 
     "librarians.@.middle-name": "librarians.@.content.system-data-structure.middle-name", 
     "librarians.@.last-name": "librarians.@.content.system-data-structure.family-name", 
-    "librarians.@.pronouns": "librarians.@.content.system-data-structure.preferred-pronouns", 
+    "librarians.@.pronoun": "librarians.@.content.system-data-structure.preferred-pronouns", 
     "librarians.@.title": "librarians.@.content.system-data-structure.job-title", 
     "librarians.@.library": "librarians.@.content.system-data-structure.location", 
     "librarians.@.address": "librarians.@.content.system-data-structure.contact-info.mailing-address",
@@ -28,7 +28,7 @@
     "librarians.@.bio": "librarians.@.content.system-data-structure.description.wysiwyg", 
     "librarians.@.subjects": "librarians.@.content.system-data-structure.subject-areas.expertise",
     "librarians.@.cv": "librarians.@.content.system-data-structure.cv",
-    "librarians.@.cv.href": "librarians.@.content.system-data-structure.cv.file.path",
+    "librarians.@.cv.href": "librarians.@.content.system-data-structure.cv.file.path"
   },
   "replace": {},
   "remove": [],
@@ -69,7 +69,7 @@
     "title-hero.hero-options",
     "cascade-page.@.content.system-data-structure.profile-options",
     "cascade-page.@.content.system-data-structure.location",
-    "cascade-page.@.content.system-data-structure.education.display-with-name",
+    "cascade-page.@.content.system-data-structure.education.display-with-name"
   ],
   "radio": [],
   "timestamp": [

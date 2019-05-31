@@ -19,7 +19,7 @@ class Mutator {
     
     // Look for any template-specific mutations.
     $mutations = array_get(CONFIG['config']['mutations'], $template);
-  
+
     // Return the unmutated data if no mutations exist.
     if( !isset($mutations) ) return $data;
 
@@ -522,12 +522,12 @@ class Mutator {
           foreach( $array as $index => $object ) {
             
             // Mutate the object's text keys.
-            $array[$index] = self::rename($object, [$newKeys[1] => $oldKeys[1]]);
+            $array = array_set($array, $index, self::rename($object, [$newKeys[1] => $oldKeys[1]]), true);
             
           }
           
           // Save the array.
-          $data = array_set($data, $oldKeys[0], $array);
+          $data = array_set($data, $oldKeys[0], $array, true);
           
         }
         
@@ -540,7 +540,7 @@ class Mutator {
         if( array_get($data, $new, false) !== false ) continue;
       
         // Save the renamed key.
-        $data = array_set($data, $new, array_get($data, $old));
+        $data = array_set($data, $new, array_get($data, $old), true);
         
         // Remove the old key.
         $data = array_unset($data, $old);
@@ -586,7 +586,7 @@ class Mutator {
           }
           
           // Save the array.
-          $data = array_set($data, $keys[0], $array);
+          $data = array_set($data, $keys[0], $array, true);
           
         }
         
@@ -677,11 +677,11 @@ class Mutator {
           foreach( $array as $index => $object ) {
             
             // Evaluate the array item's key with the new value.
-            $array[$index] = self::evaluate($array[$index], [[
+            $array = array_set($array, $index, self::evaluate($array[$index], [[
               'condition' => str_replace($keys[0].'.@.', '', $condition),
               'target' => $keys[1],
               'value' => $value
-            ]]);
+            ]]));
             
           }
           
