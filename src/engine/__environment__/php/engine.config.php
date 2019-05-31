@@ -81,7 +81,8 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), [
       'FLAG_SPVARS',
       'FLAG_RAWBLOCK'
     ], (DEVELOPMENT ? [
-      'FLAG_ERROR_LOG'
+      'FLAG_ERROR_LOG',
+      'FLAG_ERROR_EXCEPTION'
     ] : []))
   ],
   
