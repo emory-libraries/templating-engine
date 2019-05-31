@@ -2,7 +2,6 @@
   {{assign 'index' (passthrough index passthroughs)}}
 {{/if}}
 
-<div class="eul-vue">
 <eul-filter-dropdown inline-template
                      :index="{{JSONstringify index}}"
                      :field="'{{key}}'"
@@ -51,4 +50,3 @@
   </div>
 
 </eul-filter-dropdown>
-</div>

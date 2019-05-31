@@ -1,5 +1,4 @@
 {{#unless form}}
-<div class="eul-vue">
 <eul-search inline-template
             :services="{{JSONstringify services}}"
             :param="'{{default param ':query'}}'"
@@ -65,7 +64,6 @@
   </div>
 
 </eul-search>
-</div>
 {{/unless}}
 
 {{#unless form}}<noscript>{{/unless}}

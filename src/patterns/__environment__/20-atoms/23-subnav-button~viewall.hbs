@@ -1,7 +1,6 @@
 {{#unless overflow}}
 {{> atoms-subnav-button-main viewall=true}}
 {{else}}
-<div class="eul-vue">
 <eul-subnav-viewall inline-template :defaults="{
                                       isDisabled: {{default disabled false}},
                                       isActive: {{default active false}},
@@ -31,5 +30,4 @@
   </label>
 
 </eul-subnav-viewall>
-</div>
 {{/unless}}
