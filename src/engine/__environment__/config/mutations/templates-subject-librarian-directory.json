@@ -105,7 +105,6 @@
     "cascade-page.@.content.system-data-structure.contact-info.mailing-address.city",
     "cascade-page.@.content.system-data-structure.contact-info.mailing-address.state",
     "cascade-page.@.content.system-data-structure.contact-info.mailing-address.zip",
-    "cascade-page.@.content.system-data-structure.subject-areas.expertise",
     "cascade-page.@.content.system-data-structure.cv.file.path"
   ],
   "html": []
