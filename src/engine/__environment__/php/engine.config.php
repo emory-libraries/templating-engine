@@ -69,7 +69,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), [
   
   // Configures the handlebars engine.
   'handlebars' => [
-    'flags' => [
+    'flags' => array_merge([
       'FLAG_HANDLEBARSJS',
       'FLAG_THIS',
       'FLAG_ELSE',
@@ -80,7 +80,9 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), [
       'FLAG_JSLENGTH',
       'FLAG_SPVARS',
       'FLAG_RAWBLOCK'
-    ]
+    ], (DEVELOPMENT ? [
+      'FLAG_ERROR_LOG'
+    ] : []))
   ],
   
   // Configures the markdown engine.
