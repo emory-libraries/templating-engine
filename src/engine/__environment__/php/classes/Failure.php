@@ -18,8 +18,10 @@ class Failure extends Error {
   // Get the error page in lieu of an error message.
   function getErrorPage() {
     
-    // Get the error code.
+    // Get the error code, message, and trace.
     $code = $this->getCode();
+    $message = $this->getMessage();
+    $stack = $this->getTraceAsString();
     
     // Get the error data.
     $error = CONFIG['errors'][$code];
@@ -35,7 +37,11 @@ class Failure extends Error {
     // Simulate some error data.
     $data = new Data([
       'data' => array_merge($error, [
-        'code' => $code
+        'code' => $code,
+        'trace' => [
+          'message' => $message,
+          'stack' => $stack
+        ]
       ])
     ]);
 
@@ -51,7 +57,7 @@ class Failure extends Error {
     }, []);
 
     // Get the default error pattern.
-    $default = CONFIG['defaults']['errorTemplate'];
+    $default = CONFIG['defaults']['errorTemplate'].(DEVELOPMENT ? CONFIG['defaults']['traceTemplate'] : '');
 
     // Simulate an error pattern.
     $pattern = isset($error['template']) ? new Pattern([
