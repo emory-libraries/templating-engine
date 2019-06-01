@@ -32,6 +32,12 @@ class Failure extends Error {
     $message = isset($this->exception) ? $this->exception->getMessage() : $this->getMessage();
     $stack = isset($this->exception) ? $this->exception->getTraceAsString() : $this->getTraceAsString();
     
+    // Escape error message and trace to avoid collisions with Vue.
+    $message = strtr($message, [
+      '{' => '&#123;', 
+      '}' => '&#125;'
+    ]);
+    
     // Get the error data.
     $error = CONFIG['errors'][$code];
 

@@ -45,6 +45,20 @@ trait StringHelpers {
     
   }
   
+  // Encode a string to use HTML character codes as needed.
+  public static function encodeHTML( string $string ) {
+    
+    return htmlentities($string);
+    
+  }
+  
+  // Decode a string using HTML character codes.
+  public static function decodeHTML( string $string ) {
+    
+    return html_entity_decode($string);
+    
+  }
+  
 }
 
 ?>

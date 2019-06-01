@@ -88,10 +88,10 @@ return [
     ",
     
     "traceTemplate" => "
-      <table class=\"table\">
+      <table class=\"table\" v-pre>
         <thead class=\"table-header\">
           <tr class=\"table-row\">
-            <th class=\"table-cell -heading\">{{trace.message}}<th>
+            <th class=\"table-cell -heading\">{{{trace.message}}}<th>
           </tr>
         </thead>
         <tbody class=\"table-body\">
