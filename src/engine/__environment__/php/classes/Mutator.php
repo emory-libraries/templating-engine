@@ -508,15 +508,12 @@ class Mutator {
           return trim($key, '. ');
           
         }, explode('@', $old));
-        
+     
         // For array renames, only permit renaming within the same array item.
         if( count($newKeys) != count($oldKeys) or $newKeys[0] != $oldKeys[0] ) continue;
         
         // Look for the array of objects.
-        if( array_get($data, $oldKeys[0], false) !== false ) {
-          
-          // Get the array of objects.
-          $array = array_get($data, $oldKeys[0]);
+        if( ($array = array_get($data, $oldKeys[0], false)) !== false ) {
           
           // Mutate each object within the array.
           foreach( $array as $index => $object ) {
@@ -535,9 +532,6 @@ class Mutator {
       
       // Otherwise, only try to rename keys that actually exists.
       else if( array_get($data, $old, false) !== false ) {
-        
-        // Prevent renaming if the new key already exists.
-        if( array_get($data, $new, false) !== false ) continue;
       
         // Save the renamed key.
         $data = array_set($data, $new, array_get($data, $old), true);
