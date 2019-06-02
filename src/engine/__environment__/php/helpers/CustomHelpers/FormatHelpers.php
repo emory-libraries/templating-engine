@@ -79,13 +79,13 @@ trait FormatHelpers {
     $number = preg_replace('/[^0-9]/', '', (string) $number);
     
     // Get all digits by splitting the phone number into its digits.
-    $digits = explode('', $number);
+    $digits = str_split($number);
     
     // Initialize an index for counting digits.
     $i = 0;
     
     // Return the formatted phone number.
-    implode('', array_map(function($char) use ($i, $digits) {
+    return implode('', array_map(function($char) use (&$i, $digits) {
       
       // Only update placeholder characters.
       if( in_array(strtolower($char), ['x', '0', '#']) ) {
@@ -101,7 +101,7 @@ trait FormatHelpers {
       // Return the character.
       return $char;
       
-    }, explode('', (string) $format)));
+    }, str_split((string) $format)));
     
   }
   
