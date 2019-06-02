@@ -139,6 +139,20 @@
   {{! Set the librarian's ID if not already set. }}
   {{#unless id}}{{assign 'id' (dashcase (lowercase name))}}{{/unless}}
 
+  {{! Verify that the librarian has a valid image, or ignore it entirely. }}
+  {{#if (and image image.src)}}
+    {{#if (eq (indexOf (makeArray '.png' '.jpg' '.jpeg' '.gif') (extname image.src)) false)}}
+    {{assign 'image.src' null}}
+    {{/if}}
+  {{/if}}
+
+  {{! Verify that the librarian has a valid CV, or ignore it entirely. }}
+  {{#if (and cv cv.href)}}
+    {{#if (eq cv.href '/')}}
+    {{assign 'cv.href' null}}
+    {{/if}}
+  {{/if}}
+
   {{! Save the updated librarian to storage. }}
   {{! NOTE: This is required as a patch for the templating engine. }}
   {{storagePush 'librarians' this}}
@@ -155,7 +169,7 @@
 {{! Create a list of options for the dropdown filter. }}
 {{assign 'options' (sort (unique (condense (pluck librarians 'subjects'))))}}
 
-{{! Determine if the default selection in the dropdown filter menu. }}
+{{! Determine the default selection in the dropdown filter menu. }}
 {{#if __params__}}{{assign 'selected' (default __params__.subject '')}}{{/if}}
 
 <div class="subject-librarian-directory-page">

@@ -1417,14 +1417,16 @@ Components.register('filter-dropdown', {
     },
     cancel: function cancel() {
       // Clear the search results.
-      this.fuzzy.unfilter(); // Clear the selection.
+      if (this.fuzzy.filtering.filtered) this.fuzzy.unfilter(); // Clear the selection.
 
       this.selected = this.defaults.selected || '';
     }
   },
   mounted: function mounted() {
     // Initialize the search utility.
-    this.fuzzy = new Fuzzy(this.index, this.config);
+    this.fuzzy = new Fuzzy(this.index, this.config); // Initialize a filter if an initial selection was made.
+
+    if (this.valid) this.filter();
   },
   computed: {
     // Make sure a query was entered before searching.
@@ -1480,14 +1482,16 @@ Components.register('filter-search', {
     },
     cancel: function cancel() {
       // Clear the search results.
-      this.fuzzy.unsearch(); // Clear the query.
+      if (this.fuzzy.searching.searched) this.fuzzy.unsearch(); // Clear the query.
 
       this.query = '';
     }
   },
   mounted: function mounted() {
     // Initialize the search utility.
-    this.fuzzy = new Fuzzy(this.index, this.config);
+    this.fuzzy = new Fuzzy(this.index, this.config); // Initialize a search if an initial query was given.
+
+    if (this.valid) this.search();
   },
   computed: {
     // Make sure a query was entered before searching.

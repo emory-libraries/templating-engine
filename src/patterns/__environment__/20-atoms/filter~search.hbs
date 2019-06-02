@@ -17,7 +17,8 @@
                         isDisabled: {{default disabled false}},
                         isHover: {{default hover false}},
                         isFocus: {{default focus false}}
-                      }
+                      },
+                      query: '{{default query ''}}'
                    }">
 
   <div class="search{{#if mode}} -{{mode}}{{/if}}{{#if (and layout (eq layout 'contained'))}} -contained{{/if}}">
@@ -66,7 +67,7 @@
     <a @click="cancel"
        @keypress.enter="cancel"
        class="link -underline search-cancel"
-       v-show="fuzzy && fuzzy.searching.searched"
+       v-show="valid"
        tabindex="0">
       Cancel
     </a>
