@@ -27,7 +27,6 @@
     "librarians.@.quote": "librarians.@.content.system-data-structure.quote.quote-text", 
     "librarians.@.bio": "librarians.@.content.system-data-structure.description.wysiwyg", 
     "librarians.@.subjects": "librarians.@.content.system-data-structure.subject-areas.expertise",
-    "librarians.@.cv": "librarians.@.content.system-data-structure.cv",
     "librarians.@.cv.href": "librarians.@.content.system-data-structure.cv.file.path"
   },
   "replace": {},
