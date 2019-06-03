@@ -61,7 +61,7 @@
 {{! NOTE: This is required as a patch for the templating engine. }}
 {{assign 'accordions' (storageGet 'accordions')}}
 
-{{! Create an index contianing the IDs of all accordion panels in order to enable filtering. }}
+{{! Create an index containing the IDs of all accordion panels in order to enable filtering. }}
 {{assign 'index' (pluck (condense (pluck accordions 'panels')) 'id')}}
 
 {{! Reformat the button data for proper compatiblity. }}

@@ -1,0 +1,197 @@
+{{! Reformat the staff data for proper compatibility. }}
+{{#each staff}}
+
+  {{! Manipulate staff config data if given. }}
+  {{#if config }}
+
+    {{! Handle config data given in array form. }}
+    {{#if (isArray config)}}
+
+      {{! Determine if the librarian has some image data. }}
+      {{#inArray config 'Profile Photo'}}
+        {{assign 'config.image' true}}
+        {{unassign (combine 'config.' (indexOf config 'Profile Photo'))}}
+      {{else}}
+        {{assign 'config.image' false}}
+      {{/inArray}}
+
+      {{! Determine if the librarian has some quote data. }}
+      {{#inArray config 'Quote'}}
+        {{assign 'config.quote' true}}
+        {{unassign (combine 'config.' (indexOf config 'Quote'))}}
+      {{else}}
+        {{assign 'config.quote' false}}
+      {{/inArray}}
+
+      {{! Determine if the librarian has some bio data. }}
+      {{#inArray config 'Description'}}
+        {{assign 'config.bio' true}}
+        {{unassign (combine 'config.' (indexOf config 'Description'))}}
+      {{else}}
+        {{assign 'config.bio' false}}
+      {{/inArray}}
+
+      {{! Determine if the librarian has some education data. }}
+      {{#inArray config 'Education'}}
+        {{assign 'config.education' true}}
+        {{unassign (combine 'config.' (indexOf config 'Education'))}}
+      {{else}}
+        {{assign 'config.education' false}}
+      {{/inArray}}
+
+      {{! Determine if the librarian has some contact info data. }}
+      {{#inArray config 'Contact Info'}}
+        {{assign 'config.contact' true}}
+        {{unassign (combine 'config.' (indexOf config 'Contact Info'))}}
+      {{else}}
+        {{assign 'config.contact' false}}
+      {{/inArray}}
+
+      {{! Determine if the staff has some subject area data. }}
+      {{#inArray config 'Subject Areas'}}
+        {{assign 'config.subjects' true}}
+        {{unassign (combine 'config.' (indexOf config 'Subject Areas'))}}
+      {{else}}
+        {{assign 'config.subjects' false}}
+      {{/inArray}}
+
+      {{! Determine if the librarian has some CV data. }}
+      {{#inArray config 'CV'}}
+        {{assign 'config.cv' true}}
+        {{unassign (combine 'config.' (indexOf config 'CV'))}}
+      {{else}}
+        {{assign 'config.cv' false}}
+      {{/inArray}}
+
+    {{! Otherwise, handle config data given in string form. }}
+    {{else}}
+
+      {{! Determine if the librarian has some config data. }}
+      {{#if (eq config 'Profile Photo')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' true}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'Quote')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' true}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'Description')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' true}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'Education')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' true}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'Contact Info')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' true}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'Subject Areas')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' true}}
+        {{assign 'config.cv' false}}
+      {{else if (eq config 'CV')}}
+        {{assign 'config' (arrayify null)}}
+        {{assign 'config.image' false}}
+        {{assign 'config.quote' false}}
+        {{assign 'config.bio' false}}
+        {{assign 'config.education' false}}
+        {{assign 'config.contact' false}}
+        {{assign 'config.subjects' false}}
+        {{assign 'config.cv' true}}
+      {{/if}}
+
+    {{/if}}
+
+  {{/if}}
+
+  {{! Set the staff's ID if not already set. }}
+  {{#unless id}}{{assign 'id' (dashcase (lowercase name))}}{{/unless}}
+
+  {{! Verify that the staff has a valid image, or ignore it entirely. }}
+  {{#if (and image image.src)}}
+    {{#if (eq (indexOf (makeArray '.png' '.jpg' '.jpeg' '.gif') (extname image.src)) false)}}
+    {{assign 'image.src' null}}
+    {{/if}}
+  {{/if}}
+
+  {{! Verify that the staff has a valid CV, or ignore it entirely. }}
+  {{#if (and cv cv.href)}}
+    {{#if (eq cv.href '/')}}
+    {{assign 'cv.href' null}}
+    {{/if}}
+  {{/if}}
+
+  {{! Save the updated staff to storage. }}
+  {{! NOTE: This is required as a patch for the templating engine. }}
+  {{storagePush 'staff' this}}
+
+{{/each}}
+
+{{! Save the updated staff. }}
+{{! NOTE: This is required as a patch for the templating engine. }}
+{{assign 'staff' (storageGet 'staff')}}
+
+{{! Create an index contianing the IDs of all staff in order to enable filtering. }}
+{{assign 'index' (pluck staff 'id')}}
+
+{{! Determine the default query in the search filter menu. }}
+{{#if __params__}}{{assign 'query' (default __params__.q __params__.query '')}}{{/if}}
+
+<div class="staff-directory-page">
+  <header class="staff-directory-page-header"></header>
+  {{#extend 'organisms-main' type="staff-directory-page" classes="staff-directory-page-main"}}
+    {{#content 'section-main-body'}}
+
+      {{! Use a grid to better position stuff inside the main section. }}
+      {{#extend 'tokens-grid' cols='1fr' gap=(objectify cols='25px' rows='25px')}}
+        {{#content 'grid-items'}}
+
+          {{! Render a search filter. }}
+          {{> atoms-filter-search layout='contained'
+                                  mode='big'
+                                  keys=(makeArray 'name' 'title' 'library' 'phone' 'email')
+                                  config=(objectify sort=true)
+                                  placeholder=(default input-placeholder placeholder 'Search for a Staff Member')}}
+
+          {{! Render the bio cards. }}
+          {{> compounds-cards card-type='staff' cards=staff columns=1 classes="" filterable=true}}
+
+        {{/content}}
+      {{/extend}}
+
+    {{/content}}
+  {{/extend}}
+  <footer class="staff-directory-page-footer"></footer>
+</div>

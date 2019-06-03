@@ -19,6 +19,8 @@
       {{> molecules-card-contact classes="" filterable=(default ../filterable false)}}
     {{else if (eq (default ../card-type card-type) 'librarian')}}
       {{> molecules-card-librarian classes="" filterable=(default ../filterable false)}}
+    {{else if (eq (default ../card-type card-type) 'staff')}}
+      {{> molecules-card-staff classes="" filterable=(default ../filterable false)}}
     {{else if (eq (default ../card-type card-type) 'library-aid')}}
       {{> molecules-card-library-aid classes="" filterable=(default ../filterable false)}}
     {{else if (eq (default ../card-type card-type) 'library-guide')}}
