@@ -3260,6 +3260,11 @@ body {
   margin: 0 auto;
 }
 
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
 /*** INSERT NEW COMPOUNDS HERE ***/
 .intro-thumb {
   display: block;
@@ -3627,6 +3632,44 @@ body {
 .section-minor-title .icon:not(:first-child) {
   display: none;
 }
+.intro-hero {
+  display: grid;
+  grid-template-rows: 5fr repeat(3, -webkit-min-content) 1fr;
+  grid-template-rows: 5fr repeat(3, min-content) 1fr;
+  grid-template-columns: 1fr minmax(-webkit-min-content, 800px) 1fr;
+  grid-template-columns: 1fr minmax(min-content, 800px) 1fr;
+  background-size: cover;
+  height: 437px;
+}
+.intro-hero-image {
+  grid-row: 1/-1;
+  grid-column: 1/-1;
+  background-size: cover;
+  background-position: center center;
+}
+.intro-hero-gradient {
+  grid-row: 1/-1;
+  grid-column: 1/-1;
+}
+.intro-hero-badge {
+  grid-row: 2/span 1;
+  grid-column: 2/span 1;
+  -ms-flex-item-align: center;
+      align-self: center;
+}
+.intro-hero-title {
+  grid-row: 3/span 1;
+  grid-column: 2/span 1;
+  -ms-flex-item-align: center;
+      align-self: center;
+}
+.intro-hero-subtitle {
+  grid-row: 4/span 1;
+  grid-column: 2/span 1;
+  -ms-flex-item-align: center;
+      align-self: center;
+}
+
 /*** INSERT NEW ORGANISMS HERE ***/
 .info-page {
   margin: 0 auto;
@@ -12642,6 +12685,57 @@ button, input[type=button], input[type=submit], input[type=reset] {
   text-transform: uppercase;
   color: #082B73;
 }
+.tiles {
+  grid-column-gap: 25px;
+  grid-row-gap: 25px;
+  margin-top: 25px;
+  margin-bottom: 25px;
+  --cols-s: 1;
+  --cols-m: 2;
+  --cols-l: 3;
+}
+@media (max-width: 600px) {
+  .tiles {
+    grid-template-columns: repeat(var(--cols-s), 1fr);
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .tiles {
+    grid-template-columns: repeat(var(--cols-m), 1fr);
+  }
+}
+@media (min-width: 901px) {
+  .tiles {
+    grid-template-columns: repeat(var(--cols-l), 1fr);
+  }
+}
+
+.intro-hero-gradient {
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(-14.42%, #282828), color-stop(50%, rgba(40, 40, 40, 0)));
+  background-image: linear-gradient(0deg, #282828 -14.42%, rgba(40, 40, 40, 0) 50%);
+}
+.intro-hero-title {
+  margin: 0;
+  text-align: center;
+}
+.intro-hero-title {
+  font-family: "Cardo", serif !important;
+  font-size: 50px !important;
+  font-weight: bold !important;
+  font-style: normal !important;
+  line-height: 1.36 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  color: #FFFFFF !important;
+}
+.intro-hero-subtitle {
+  margin: 0;
+  color: #FFFFFF;
+  font-size: 16px;
+  text-align: center;
+  line-height: 1.5;
+}
+
 .intro-thumb {
   width: 150px;
   height: 150px;

@@ -1,0 +1,10 @@
+  <div class="tiles">
+    {{#each tiles}}
+    {{#if (eq ../type 'listing')}}
+    {{> molecules-tile-listing }}
+    {{/if}}
+    {{#if (eq ../type 'utility')}}
+    {{> molecules-tile-utility }}
+    {{/if}}
+    {{/each}}
+  </div>
