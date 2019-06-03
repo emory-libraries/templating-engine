@@ -2,6 +2,7 @@
 
 // Use dependencies.
 use LightnCandy\LightnCandy;
+use LightnCandy\Runtime;
 
 /*
  * Renderer
@@ -39,7 +40,7 @@ class Renderer {
   // Compiles a template string.
   public static function compile( string $template ) {
     
-    // Initialize a hleper method for getting flag constants.
+    // Initialize a helper method for getting flag constants.
     $flag = function( $flag ) {
       
       // Return the flag constant.
@@ -59,22 +60,30 @@ class Renderer {
       'partials' => API::get('/partials')
     ];
     
-    // Compile the template to a closure function.
-    $closure = LightnCandy::compile($template, $config);
+    // Try to compile the template.
+    try {
     
-    // If the compiler failed, then return an error page.
-    if( $closure === false ) throw new Failure(520);
-   
-    // Compile the template to PHP.
-    $php = "<?php $closure ?>";
+      // Compile the template to a closure function.
+      $closure = LightnCandy::compile($template, $config);
 
-    // Return the compiled template.
-    return $php;
+      // Compile the template to PHP.
+      $php = "<?php $closure ?>";
+
+      // Return the compiled template.
+      return $php;
+      
+    // Otherwise, throw a failure.
+    } catch( Throwable $exception ) { 
+      
+      // Throw a failure.
+      throw new Failure(520, $exception);
+      
+    }
     
   }
   
   // Renders a page for the requested endpoint, given its data and template.
-  public static function render( Endpoint $endpoint, $benchmarking = BENCHMARKING ) {
+  public static function render( Endpoint $endpoint, $benchmarking = BENCHMARKING ) { 
     
     // Add benchmark point.
     if( $benchmarking ) Performance\Performance::point('Renderer', true);
@@ -152,7 +161,7 @@ class Renderer {
     } catch( Throwable $exception ) {
       
       // Throw an error page.
-      throw new Failure(521);
+      throw new Failure(521, $exception);
       
     }
     

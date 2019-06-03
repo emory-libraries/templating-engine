@@ -296,7 +296,7 @@ class Index {
       
       // Get the pattern's ID.
       $id = array_get($types, array_get($data->data, '@attributes.definition-path'));
-        
+      
       // Mutate the contents based on its ID.
       if( isset($id) ) $data->data = Mutator::mutate($data->data, $id);
       

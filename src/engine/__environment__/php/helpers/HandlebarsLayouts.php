@@ -20,24 +20,35 @@ class HandlebarsLayouts {
     
     // Get the partial template.
     $template = array_get(API::get('/partials'), $partial, false);
-    
+
     // Throw an error if the template could not be found.
     if( $template === false ) throw new Error("Missing partial: '$partial'");
     
-    // Compile the partial.
-    $compiled = Renderer::compile($template);
+    // Try to compile the partial.
+    try {
     
-    // Initialize a temporary file name.
-    $tmp = "HandlebarsLayouts-extend_$partial";
+      // Compile the partial.
+      $compiled = Renderer::compile($template);
     
-    // Temporarily cache the partial.
-    $cached = Cache::tmp($compiled, $tmp);
-   
-    // Get the partial's renderer.
-    $renderer = $cached['include']();
+      // Initialize a temporary file name.
+      $tmp = "HandlebarsLayouts-extend_$partial";
+
+      // Temporarily cache the partial.
+      $cached = Cache::tmp($compiled, $tmp);
+
+      // Get the partial's renderer.
+      $renderer = $cached['include']();
+
+      // Delete the temporarily cached partial.
+      $cached['delete']();
     
-    // Delete the temporarily cached partial.
-    $cached['delete']();
+    // Otherwise, throw an error.
+    } catch( Throwable $exception ) {
+      
+      // Throw an error.
+      throw $exception;
+      
+    }
     
     // Ensure that the context's layout stack exists, or initialize it otherwise.
     if( !isset($context['__layoutStack']) ) $context = array_set($context, '__layoutStack', []);
@@ -49,7 +60,7 @@ class HandlebarsLayouts {
     $stack[] = $fn;
     
     // Override the layout stack.
-    $context = array_set($context, '__layoutStack', $stack); 
+    $context = array_set($context, '__layoutStack', $stack, true); 
 
     // Render the partial.
     return $renderer($context, ['data' => $data]);
@@ -114,8 +125,8 @@ class HandlebarsLayouts {
       // Run the action in the appropriate mode.
       switch($action['mode']) {
         
-        case 'append': return $content.$expand();
-        case 'prepend': return $expand().$content;
+        case 'append': return $content.$expand($action);
+        case 'prepend': return $expand($action).$content;
         case 'replace': return $expand($action);
         default: return $content;
           
@@ -127,9 +138,9 @@ class HandlebarsLayouts {
   
   // Determine if a placeholder content block exists, and if so, optionally modifies it.
   public static function content( $name, $options ) {
-    
+  
     // Capture the render function.
-    $fn = isset($options['fn']) ? $options['fn'] : '';
+    $fn = isset($options['fn']) ? $options['fn'] : null;
     
     // Get data.
     $data = array_merge([], array_get($options, 'data', []));

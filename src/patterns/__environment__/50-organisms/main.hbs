@@ -1,11 +1,16 @@
 <div class="section-main{{#if type}} -{{type}}{{/if}}{{#if classes}} {{classes}}{{/if}}">
+  <div class="section-main-breadcrumb"></div>
   {{> organisms-intro-alt-text}}
   <main class="section-main-body">
     {{#unless blocks}}
-    {{#block 'section-main-body'}}{{/block}}
+      {{#block 'section-main-body'}}{{/block}}
     {{else}}
-    {{> compounds-blocks}}
+      {{> compounds-blocks}}
     {{/unless}}
+    {{#if has-related}}
+      <div class="section-main-spacer"></div>
+      <div class="section-main-content">{{> compounds-related-cards}}</div>
+    {{/if}}
   </main>
   <aside class="section-main-sidebar"></aside>
 </div>

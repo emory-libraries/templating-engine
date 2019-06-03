@@ -4,7 +4,7 @@
     {{#if href}}
       {{#if data}}{{> atoms-link label=data }}{{else}}{{> atoms-link }}{{/if}}
     {{else if data}}
-      {{#if markdown}}{{{markdown data}}}{{else}}{{data}}{{/if}}
+      {{#if this.markdown}}{{{markdown data}}}{{else}}{{data}}{{/if}}
     {{else}}
       {{this}}
     {{/if}}

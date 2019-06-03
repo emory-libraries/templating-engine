@@ -96,6 +96,9 @@
 {{! NOTE: This is required as a patch for the templating engine. }}
 {{assign 'buttons' (storageGet 'buttons')}}
 
+{{! Determine the default query in the search filter menu. }}
+{{#if __params__}}{{assign 'query' (default __params__.q __params__.query '')}}{{/if}}
+
 <div class="service-directory-page">
   <header class="service-directory-page-header"></header>
   {{#extend 'organisms-main' type="service-directory-page" classes="service-directory-page-main"}}

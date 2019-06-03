@@ -16,7 +16,7 @@
   "templates-event": "",
   "templates-calendar": "",
   "templates-staff-directory": "",
-  "templates-subject-librarian-directory": "",
+  "templates-subject-librarian-directory": "Page Types/Subject Librarians Directory",
   "templates-bio": "Page Types/Employee Profile Page",
   "templates-service-directory": "Page Types/Services Directory",
   "templates-tool": "Page Types/Tool Page",

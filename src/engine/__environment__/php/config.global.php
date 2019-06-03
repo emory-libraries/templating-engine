@@ -68,7 +68,7 @@ return [
     'errorTemplate' => "
       <h1 class=\"heading -h1\">{{code}}</h1>
       <p class=\"text -lead\">{{status}}</p>
-      <p class=\"text\">{{message}}</p>
+      <p class=\"text\">{{{message}}}</p>
     ",
     
     'layoutTemplate' => "
@@ -85,6 +85,21 @@ return [
         <script>".file_get_contents(ENGINE_ROOT.'/js/bundle.min.js')."</script>
       </body>
       </html>
+    ",
+    
+    "traceTemplate" => "
+      <table class=\"table\" v-pre>
+        <thead class=\"table-header\">
+          <tr class=\"table-row\">
+            <th class=\"table-cell -heading\">{{{trace.message}}}<th>
+          </tr>
+        </thead>
+        <tbody class=\"table-body\">
+          <tr class=\"table-row\">
+            <td class=\"table-cell\"><pre>{{trace.stack}}</pre></td>
+          </tr>
+        </tbody>
+      </table>
     "
     
   ],
