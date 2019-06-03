@@ -1,0 +1,48 @@
+<div class="card-staff"{{#if filterable}} data-search-id="{{id}}"{{/if}}>
+  <div class="card-staff-about">
+    <a href="{{baseUrl}}{{link.href}}" class="card-staff-image">{{> atoms-image src=(combine (baseUrl) (default image.src (combine '/images/avatars/placeholder.' (default gender 'male') '.jpg'))) alt=name}}</a>
+    {{#with link}}
+    <a class="link card-staff-name"
+       href="{{baseUrl}}{{href}}"
+       {{#if filterable}} data-search-key="name"{{/if}}>
+      {{../name}}
+    </a>
+    {{/with}}
+    <span class="card-staff-title"
+          {{#if filterable}} data-search-key="title"{{/if}}>
+      {{title}}
+    </span>
+    {{#if library}}
+    <span class="card-staff-library"
+          {{#if filterable}} data-search-key="library"{{/if}}>
+      {{#if (isArray library)}}{{join library ', '}}{{else}}{{library}}{{/if}}
+    </span>
+    {{/if}}
+  </div>
+  <div class="card-staff-contact">
+    <span class="card-staff-context">Contact</span>
+    <ul class="card-staff-contact-info">
+      {{#if phone}}
+      <li class="card-staff-contact-info-item"
+          {{#if filterable}} data-search-key="phone"{{/if}}>
+        {{> tokens-icon id='material-phone'}}
+        {{> atoms-link href=(combine 'tel:+' phone) label=(formatPhone phone '000-000-0000') classes="" icon=false}}
+      </li>
+      {{/if}}
+      {{#if email}}
+      <li class="card-staff-contact-info-item"
+          {{#if filterable}} data-search-key="email"{{/if}}>
+        {{> tokens-icon id='material-email'}}
+        {{> atoms-link href=(combine 'mailto:' email) label=email classes="" icon=false}}
+      </li>
+      {{/if}}
+    </ul>
+    <ul class="card-staff-contact-links">
+      {{#if (and cv cv.href)}}
+      <li class="card-staff-contact-links-item">
+        {{#with cv}}{{> atoms-link label='Download CV' classes="" icon=false}}{{/with}}
+      </li>
+      {{/if}}
+    </ul>
+  </div>
+</div>

@@ -1114,7 +1114,9 @@ body {
   display: block;
 }
 
-.intro-link, .accordion-toggles-toggle, .tile-utility-title, .tile-listing-action, .tile-listing.has-description .tile-listing-title, .tile-listing:not(.has-description) .tile-listing-title, .flyout-feed-item-link, .feed-item-title, .card-multimedia-title, .card-library-guide-title, .card-library-aid-title, .card-librarian-name, .card-librarian-contact-links-item a,
+.intro-link, .accordion-toggles-toggle, .tile-utility-title, .tile-listing-action, .tile-listing.has-description .tile-listing-title, .tile-listing:not(.has-description) .tile-listing-title, .flyout-feed-item-link, .feed-item-title, .card-staff-name, .card-staff-contact-links-item a,
+.card-staff-contact-links-item .link, .card-staff-contact-info-item a,
+.card-staff-contact-info-item .link, .card-multimedia-title, .card-library-guide-title, .card-library-aid-title, .card-librarian-name, .card-librarian-contact-links-item a,
 .card-librarian-contact-links-item .link, .card-librarian-contact-info-item a,
 .card-librarian-contact-info-item .link, .card-librarian-subjects-list-item a,
 .card-librarian-subjects-list-item .link, .card-contact-email, .card-contact-name, .explorer-link, .link, a {
@@ -1127,14 +1129,16 @@ body {
   text-decoration: none;
   cursor: pointer;
 }
-.intro-link::after, .accordion-toggles-toggle::after, .tile-utility-title::after, .tile-listing-action::after, .tile-listing.has-description .tile-listing-title::after, .tile-listing:not(.has-description) .tile-listing-title::after, .flyout-feed-item-link::after, .feed-item-title::after, .card-multimedia-title::after, .card-library-guide-title::after, .card-library-aid-title::after, .card-librarian-name::after, .card-librarian-contact-links-item a::after,
+.intro-link::after, .accordion-toggles-toggle::after, .tile-utility-title::after, .tile-listing-action::after, .tile-listing.has-description .tile-listing-title::after, .tile-listing:not(.has-description) .tile-listing-title::after, .flyout-feed-item-link::after, .feed-item-title::after, .card-staff-name::after, .card-staff-contact-links-item a::after,
+.card-staff-contact-links-item .link::after, .card-staff-contact-info-item a::after,
+.card-staff-contact-info-item .link::after, .card-multimedia-title::after, .card-library-guide-title::after, .card-library-aid-title::after, .card-librarian-name::after, .card-librarian-contact-links-item a::after,
 .card-librarian-contact-links-item .link::after, .card-librarian-contact-info-item a::after,
 .card-librarian-contact-info-item .link::after, .card-librarian-subjects-list-item a::after,
 .card-librarian-subjects-list-item .link::after, .card-contact-email::after, .card-contact-name::after, .explorer-link::after, .link::after, a::after {
   content: attr(data-subtext);
   display: block;
 }
-.intro-link .icon, .accordion-toggles-toggle .icon, .tile-utility-title .icon, .tile-listing-action .icon, .tile-listing.has-description .tile-listing-title .icon, .tile-listing:not(.has-description) .tile-listing-title .icon, .flyout-feed-item-link .icon, .feed-item-title .icon, .card-multimedia-title .icon, .card-library-guide-title .icon, .card-library-aid-title .icon, .card-librarian-name .icon, .card-contact-email .icon, .card-contact-name .icon, .explorer-link .icon, .link .icon, a .icon {
+.intro-link .icon, .accordion-toggles-toggle .icon, .tile-utility-title .icon, .tile-listing-action .icon, .tile-listing.has-description .tile-listing-title .icon, .tile-listing:not(.has-description) .tile-listing-title .icon, .flyout-feed-item-link .icon, .feed-item-title .icon, .card-staff-name .icon, .card-multimedia-title .icon, .card-library-guide-title .icon, .card-library-aid-title .icon, .card-librarian-name .icon, .card-contact-email .icon, .card-contact-name .icon, .explorer-link .icon, .link .icon, a .icon {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -3137,6 +3141,136 @@ body {
   display: none;
 }
 
+.card-staff {
+  display: grid;
+  grid-template-areas: "about";
+  grid-template-columns: 1fr;
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .card-staff {
+    grid-template-areas: "about contact";
+    grid-template-columns: 2fr 1fr;
+  }
+}
+@media (min-width: 901px) {
+  .card-staff {
+    grid-template-areas: "about contact";
+    grid-template-columns: 2fr 1fr;
+  }
+}
+.card-staff-contact::before {
+  content: "";
+  display: block;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.card-staff-about {
+  grid-area: about;
+  display: grid;
+  grid-template-areas: "image" "name" "title" "library";
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(4, -webkit-min-content);
+  grid-template-rows: repeat(4, min-content);
+}
+.card-staff-contact {
+  display: none;
+  grid-area: contact;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+.card-staff-contact-info {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  grid-area: info;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: auto;
+}
+.card-staff-contact-info-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.card-staff-contact-links {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  grid-area: links;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: auto;
+}
+.card-staff-contact-links-item {
+  display: block;
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .card-staff-contact {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+}
+@media (min-width: 901px) {
+  .card-staff-contact {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+}
+.card-staff-image {
+  grid-area: image;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
+}
+.card-staff-image img {
+  width: 100%;
+}
+.card-staff-name {
+  grid-area: name;
+  margin: 0;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.card-staff-title {
+  grid-area: title;
+  margin: 0;
+}
+.card-staff-library {
+  grid-area: library;
+  margin: 0;
+}
+.card-staff-context {
+  grid-area: context;
+  margin: 0;
+}
+
 /*** INSERT NEW MOLECULES HERE ***/
 .utility-list-title {
   display: -webkit-box;
@@ -3388,47 +3522,47 @@ body {
   grid-column: main/sidebar;
   grid-row: section;
 }
-.-info-page.section-main .section-main-title, .-material-page.section-main .section-main-title, .-tool-page.section-main .section-main-title, .-research-help-page.section-main .section-main-title, .-service-directory-page.section-main .section-main-title, .-subject-librarian-directory-page.section-main .section-main-title {
+.-info-page.section-main .section-main-title, .-material-page.section-main .section-main-title, .-tool-page.section-main .section-main-title, .-research-help-page.section-main .section-main-title, .-service-directory-page.section-main .section-main-title, .-subject-librarian-directory-page.section-main .section-main-title, .-staff-directory-page.section-main .section-main-title {
   margin-bottom: 0;
 }
 @media (max-width: 600px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]) [sidebar-start] -webkit-min-content [sidebar-end];
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]) [sidebar-start] min-content [sidebar-end];
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]) [sidebar-start] -webkit-min-content [sidebar-end];
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]) [sidebar-start] min-content [sidebar-end];
   }
 }
 @media (min-width: 901px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]) [sidebar-start] -webkit-min-content [sidebar-end];
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]) [sidebar-start] min-content [sidebar-end];
   }
 }
 @media (min-width: 901px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end sidebar-start] 340px [sidebar-end];
     grid-template-rows: [main-start] [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) [main-end] repeat(10, [section-start] -webkit-min-content [section-end]);
     grid-template-rows: [main-start] [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) [main-end] repeat(10, [section-start] min-content [section-end]);
   }
 }
 @media (min-width: 901px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page) .section-main-breadcrumb, .-info-page.section-main .section-main-breadcrumb {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page) .section-main-breadcrumb, .-info-page.section-main .section-main-breadcrumb {
     grid-column: main/sidebar;
   }
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page) .section-main-title,
-.section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page) .section-main-subtitle, .-info-page.section-main .section-main-title,
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page) .section-main-title,
+.section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page) .section-main-subtitle, .-info-page.section-main .section-main-title,
 .-info-page.section-main .section-main-subtitle {
     grid-column: main/sidebar;
   }
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page) .section-main-sidebar, .-info-page.section-main .section-main-sidebar {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page) .section-main-sidebar, .-info-page.section-main .section-main-sidebar {
     grid-row: body/main;
   }
 }
@@ -3550,21 +3684,21 @@ body {
   display: none;
 }
 @media (max-width: 600px) {
-  .-subject-librarian-directory-page.section-main {
+  .-subject-librarian-directory-page.section-main, .-staff-directory-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
-  .-subject-librarian-directory-page.section-main {
+  .-subject-librarian-directory-page.section-main, .-staff-directory-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
   }
 }
 @media (min-width: 901px) {
-  .-subject-librarian-directory-page.section-main {
+  .-subject-librarian-directory-page.section-main, .-staff-directory-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
@@ -3573,32 +3707,36 @@ body {
 .-subject-librarian-directory-page.section-main .section-main-spacer,
 .-subject-librarian-directory-page.section-main .section-main-content,
 .-subject-librarian-directory-page.section-main .section-main-section,
-.-subject-librarian-directory-page.section-main .section-main-sidebar {
+.-subject-librarian-directory-page.section-main .section-main-sidebar, .-staff-directory-page.section-main .section-main-spacer,
+.-staff-directory-page.section-main .section-main-content,
+.-staff-directory-page.section-main .section-main-section,
+.-staff-directory-page.section-main .section-main-sidebar {
   display: none;
 }
 @media (max-width: 600px) {
-  .-subject-librarian-directory-page.without-intro.section-main {
+  .-subject-librarian-directory-page.without-intro.section-main, .-staff-directory-page.without-intro.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
-  .-subject-librarian-directory-page.without-intro.section-main {
+  .-subject-librarian-directory-page.without-intro.section-main, .-staff-directory-page.without-intro.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
   }
 }
 @media (min-width: 901px) {
-  .-subject-librarian-directory-page.without-intro.section-main {
+  .-subject-librarian-directory-page.without-intro.section-main, .-staff-directory-page.without-intro.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
   }
 }
 .-subject-librarian-directory-page.without-intro.section-main .section-main-title,
-.-subject-librarian-directory-page.without-intro.section-main .section-main-subtitle {
+.-subject-librarian-directory-page.without-intro.section-main .section-main-subtitle, .-staff-directory-page.without-intro.section-main .section-main-title,
+.-staff-directory-page.without-intro.section-main .section-main-subtitle {
   display: none;
 }
 
@@ -3914,6 +4052,47 @@ body {
           justify-content: center;
 }
 .subject-librarian-directory-page-footer::after {
+  content: "Footer";
+}
+
+.staff-directory-page {
+  margin: 0 auto;
+  display: grid;
+  grid-template-areas: "header" "main" "footer";
+  grid-template-rows: 150px 1fr 420px;
+  grid-template-columns: 1fr;
+}
+.staff-directory-page-header {
+  grid-area: header;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.staff-directory-page-header::after {
+  content: "Header";
+}
+.staff-directory-page-main {
+  grid-area: main;
+}
+.staff-directory-page-footer {
+  grid-area: footer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.staff-directory-page-footer::after {
   content: "Footer";
 }
 
@@ -10655,6 +10834,326 @@ button, input[type=button], input[type=submit], input[type=reset] {
   color: #605858;
 }
 
+.card-staff {
+  padding: 25px;
+  grid-gap: 50px;
+  font-size: 12px;
+  border: 1px solid #dbdee6;
+  border-left: 2px solid #336BE6;
+}
+.card-staff {
+  font-family: "Open Sans", sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1.6429;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  color: #082B73;
+}
+.card-staff-about:not(:first-child)::before, .card-staff-contact:not(:first-child)::before {
+  left: -25px;
+  height: 100%;
+  width: 1px;
+  background-color: #dbdee6;
+  -webkit-transform: translatex(-50%);
+          transform: translatex(-50%);
+}
+.card-staff-about {
+  grid-gap: 15px;
+}
+.card-staff-contact > *:not(:first-child) {
+  margin-top: 15px;
+}
+.card-staff-contact > *:last-child {
+  margin-top: auto;
+}
+.card-staff-contact-info {
+  grid-gap: 10px;
+}
+.card-staff-contact-info-item a,
+.card-staff-contact-info-item .link {
+  font-weight: normal;
+  font-style: normal;
+  color: #082B73;
+  -webkit-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+  background: none;
+  border: none;
+}
+.card-staff-contact-info-item a .icon,
+.card-staff-contact-info-item .link .icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 1ex;
+}
+.card-staff-contact-info-item a .icon svg,
+.card-staff-contact-info-item .link .icon svg {
+  fill: #082B73;
+}
+.card-staff-contact-info-item a:hover, .card-staff-contact-info-item a.is-hover, .card-staff-contact-info-item a:focus, .card-staff-contact-info-item a.is-focus,
+.card-staff-contact-info-item .link:hover,
+.card-staff-contact-info-item .link.is-hover,
+.card-staff-contact-info-item .link:focus,
+.card-staff-contact-info-item .link.is-focus {
+  color: #5387F7;
+}
+.card-staff-contact-info-item a:hover .icon svg, .card-staff-contact-info-item a.is-hover .icon svg, .card-staff-contact-info-item a:focus .icon svg, .card-staff-contact-info-item a.is-focus .icon svg,
+.card-staff-contact-info-item .link:hover .icon svg,
+.card-staff-contact-info-item .link.is-hover .icon svg,
+.card-staff-contact-info-item .link:focus .icon svg,
+.card-staff-contact-info-item .link.is-focus .icon svg {
+  fill: #5387F7;
+}
+.card-staff-contact-info-item a:active, .card-staff-contact-info-item a.is-active,
+.card-staff-contact-info-item .link:active,
+.card-staff-contact-info-item .link.is-active {
+  color: #5387F7;
+}
+.card-staff-contact-info-item a:active .icon svg, .card-staff-contact-info-item a.is-active .icon svg,
+.card-staff-contact-info-item .link:active .icon svg,
+.card-staff-contact-info-item .link.is-active .icon svg {
+  fill: #5387F7;
+}
+.card-staff-contact-info-item a::after,
+.card-staff-contact-info-item .link::after {
+  font-size: 12px !important;
+  line-height: 1 !important;
+}
+.card-staff-contact-info-item a::after,
+.card-staff-contact-info-item .link::after {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: italic;
+  line-height: 1.9375;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  color: #605858;
+}
+.card-staff-contact-info-item a.-popular,
+.card-staff-contact-info-item .link.-popular {
+  font-family: "Cardo", serif;
+  font-size: 20px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 2.05;
+  color: #FFFFFF;
+}
+.card-staff-contact-info-item a.-popular:hover, .card-staff-contact-info-item a.-popular.is-hover, .card-staff-contact-info-item a.-popular:focus, .card-staff-contact-info-item a.-popular.is-focus,
+.card-staff-contact-info-item .link.-popular:hover,
+.card-staff-contact-info-item .link.-popular.is-hover,
+.card-staff-contact-info-item .link.-popular:focus,
+.card-staff-contact-info-item .link.-popular.is-focus {
+  color: #336BE6;
+}
+.card-staff-contact-info-item a.-popular:active, .card-staff-contact-info-item a.-popular.is-active,
+.card-staff-contact-info-item .link.-popular:active,
+.card-staff-contact-info-item .link.-popular.is-active {
+  color: #336BE6;
+}
+.card-staff-contact-info-item a.-underline,
+.card-staff-contact-info-item .link.-underline {
+  text-decoration: underline;
+}
+.card-staff-contact-info-item .icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+}
+.card-staff-contact-info-item svg {
+  fill: #082B73;
+}
+.card-staff-contact-links {
+  grid-gap: 10px;
+}
+.card-staff-contact-links-item a,
+.card-staff-contact-links-item .link {
+  font-weight: bold;
+  font-style: normal;
+  color: #5387F7;
+  -webkit-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+  background: none;
+  border: none;
+}
+.card-staff-contact-links-item a .icon,
+.card-staff-contact-links-item .link .icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 1ex;
+}
+.card-staff-contact-links-item a .icon svg,
+.card-staff-contact-links-item .link .icon svg {
+  fill: #5387F7;
+}
+.card-staff-contact-links-item a:hover, .card-staff-contact-links-item a.is-hover, .card-staff-contact-links-item a:focus, .card-staff-contact-links-item a.is-focus,
+.card-staff-contact-links-item .link:hover,
+.card-staff-contact-links-item .link.is-hover,
+.card-staff-contact-links-item .link:focus,
+.card-staff-contact-links-item .link.is-focus {
+  color: #004990;
+}
+.card-staff-contact-links-item a:hover .icon svg, .card-staff-contact-links-item a.is-hover .icon svg, .card-staff-contact-links-item a:focus .icon svg, .card-staff-contact-links-item a.is-focus .icon svg,
+.card-staff-contact-links-item .link:hover .icon svg,
+.card-staff-contact-links-item .link.is-hover .icon svg,
+.card-staff-contact-links-item .link:focus .icon svg,
+.card-staff-contact-links-item .link.is-focus .icon svg {
+  fill: #004990;
+}
+.card-staff-contact-links-item a:active, .card-staff-contact-links-item a.is-active,
+.card-staff-contact-links-item .link:active,
+.card-staff-contact-links-item .link.is-active {
+  color: #004990;
+}
+.card-staff-contact-links-item a:active .icon svg, .card-staff-contact-links-item a.is-active .icon svg,
+.card-staff-contact-links-item .link:active .icon svg,
+.card-staff-contact-links-item .link.is-active .icon svg {
+  fill: #004990;
+}
+.card-staff-contact-links-item a::after,
+.card-staff-contact-links-item .link::after {
+  font-size: 12px !important;
+  line-height: 1 !important;
+}
+.card-staff-contact-links-item a::after,
+.card-staff-contact-links-item .link::after {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: italic;
+  line-height: 1.9375;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  color: #605858;
+}
+.card-staff-contact-links-item a.-popular,
+.card-staff-contact-links-item .link.-popular {
+  font-family: "Cardo", serif;
+  font-size: 20px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 2.05;
+  color: #FFFFFF;
+}
+.card-staff-contact-links-item a.-popular:hover, .card-staff-contact-links-item a.-popular.is-hover, .card-staff-contact-links-item a.-popular:focus, .card-staff-contact-links-item a.-popular.is-focus,
+.card-staff-contact-links-item .link.-popular:hover,
+.card-staff-contact-links-item .link.-popular.is-hover,
+.card-staff-contact-links-item .link.-popular:focus,
+.card-staff-contact-links-item .link.-popular.is-focus {
+  color: #336BE6;
+}
+.card-staff-contact-links-item a.-popular:active, .card-staff-contact-links-item a.-popular.is-active,
+.card-staff-contact-links-item .link.-popular:active,
+.card-staff-contact-links-item .link.-popular.is-active {
+  color: #336BE6;
+}
+.card-staff-contact-links-item a.-underline,
+.card-staff-contact-links-item .link.-underline {
+  text-decoration: underline;
+}
+.card-staff-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+}
+.card-staff-name {
+  text-align: center;
+  font-size: 18px;
+}
+.card-staff-name {
+  font-weight: bold;
+  font-style: normal;
+  color: #091C44;
+  -webkit-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+  background: none;
+  border: none;
+}
+.card-staff-name .icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 1ex;
+}
+.card-staff-name .icon svg {
+  fill: #091C44;
+}
+.card-staff-name:hover, .card-staff-name.is-hover, .card-staff-name:focus, .card-staff-name.is-focus {
+  color: #5387F7;
+}
+.card-staff-name:hover .icon svg, .card-staff-name.is-hover .icon svg, .card-staff-name:focus .icon svg, .card-staff-name.is-focus .icon svg {
+  fill: #5387F7;
+}
+.card-staff-name:active, .card-staff-name.is-active {
+  color: #5387F7;
+}
+.card-staff-name:active .icon svg, .card-staff-name.is-active .icon svg {
+  fill: #5387F7;
+}
+.card-staff-name::after {
+  font-size: 12px !important;
+  line-height: 1 !important;
+}
+.card-staff-name::after {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: italic;
+  line-height: 1.9375;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  color: #605858;
+}
+.card-staff-name.-popular {
+  font-family: "Cardo", serif;
+  font-size: 20px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 2.05;
+  color: #FFFFFF;
+}
+.card-staff-name.-popular:hover, .card-staff-name.-popular.is-hover, .card-staff-name.-popular:focus, .card-staff-name.-popular.is-focus {
+  color: #336BE6;
+}
+.card-staff-name.-popular:active, .card-staff-name.-popular.is-active {
+  color: #336BE6;
+}
+.card-staff-name.-underline {
+  text-decoration: underline;
+}
+.card-staff-title {
+  font-style: italic !important;
+  text-align: center !important;
+}
+.card-staff-title {
+  font-family: "Cardo", serif;
+  font-size: 18px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1.6111;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  color: #091C44;
+}
+.card-staff-library {
+  text-align: center;
+}
+.card-staff-context {
+  font-family: "Open Sans", sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  font-style: normal;
+  line-height: 1.6667;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #091C44;
+}
+
 .feed-item {
   grid-gap: 5px;
 }
@@ -13197,6 +13696,12 @@ button, input[type=button], input[type=submit], input[type=reset] {
   grid-gap: 20px;
 }
 .service-directory-page-header, .service-directory-page-footer {
+  border: 1px solid #B6BDCC;
+}
+.staff-directory-page {
+  grid-gap: 20px;
+}
+.staff-directory-page-header, .staff-directory-page-footer {
   border: 1px solid #B6BDCC;
 }
 .subject-librarian-directory-page {
