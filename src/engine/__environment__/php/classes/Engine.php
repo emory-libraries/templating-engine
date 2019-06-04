@@ -21,11 +21,17 @@ class Engine {
   // A router to handle page rendering, redirecting, and erroring.
   protected $router;
   
+  // The process ID of the current engine instance.
+  public static $pid = null;
+  
   // Constructor
   function __construct() {
     
     // Add benchmark point.
     if( BENCHMARKING ) Performance\Performance::point('Engine', true);
+    
+    // Set the process ID.
+    self::$pid = uniqid(DOMAIN.':', true);
     
     // Initialize the API.
     $this->api = new API();
