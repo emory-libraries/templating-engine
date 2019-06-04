@@ -117,6 +117,8 @@ return [
     SITE_DATA.'/assets' => true,
     SITE_DATA.'/documents' => true,
     SITE_DATA => true,
+    DATA_ROOT.'/_shared' => true,
+    DATA_ROOT.'/_global' => true,
     ENGINE_ROOT.'/css' => true,
     ENGINE_ROOT.'/js' => true,
     ENGINE_ROOT.'/php/scripts' => false,
