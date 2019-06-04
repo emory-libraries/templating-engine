@@ -1,0 +1,102 @@
+{
+  "alias": {
+    "system.title": "title"
+  },
+  "rename": {
+    "config": "profile-options",
+    "name": "display-name",
+    "first-name": "given-name", 
+    "middle-name": "middle-name", 
+    "last-name": "family-name", 
+    "pronoun": "preferred-pronouns", 
+    "title": "job-title", 
+    "library": "location", 
+    "address": "mailing-address",
+    "address.name": "address.place-name", 
+    "address.street": "address.street-address", 
+    "phone": "contact-info.phone", 
+    "email": "contact-info.email", 
+    "fax": "contact-info.fax", 
+    "libcal": "contact-info.libcal", 
+    "education": "education", 
+    "education.address" : "education.city-state-country",
+    "thumbnail": "image.image-file.path",
+    "quote": "quote.quote-text", 
+    "bio": "description.wysiwyg", 
+    "subjects": "subject-areas.expertise",
+    "cv.href": "cv.file.path"
+  },
+  "replace": {},
+  "remove": [],
+  "add": {},
+  "evaluate": [
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 2'",
+      "value": 2
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 3'",
+      "value": 3
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 4'",
+      "value": 4
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 5'",
+      "value": 5
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 6'",
+      "value": 6
+    }
+  ],
+  "repeatable": [
+    "education",
+    "subject-areas.expertise"
+  ],
+  "checkbox": [
+    "profile-options",
+    "location",
+    "education.display-with-name"
+  ],
+  "radio": [],
+  "timestamp": [
+    "system.created.datetime",
+    "system.modified.datetime",
+    "system.published.datetime"
+  ],
+  "text": [
+    "display-name",
+    "given-name",
+    "middle-name",
+    "family-name",
+    "preferred-pronouns",
+    "job-title",
+    "image.image-file.path",
+    "image.caption",
+    "image.photo-credit",
+    "quote.quote-text",
+    "education.@.degree",
+    "education.@.major",
+    "education.@.concentration",
+    "education.@.school",
+    "education.@.city-state-country",
+    "contact-info.email",
+    "contact-info.phone",
+    "contact-info.fax",
+    "contact-info.libcal",
+    "contact-info.mailing-address.place-name",
+    "contact-info.mailing-address.street-address",
+    "contact-info.mailing-address.city",
+    "contact-info.mailing-address.state",
+    "contact-info.mailing-address.zip",
+    "cv.file.path"
+  ],
+  "html": []
+}
