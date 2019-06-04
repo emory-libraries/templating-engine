@@ -1,6 +1,11 @@
 <div class="section-main{{#if type}} -{{type}}{{/if}}{{#if classes}} {{classes}}{{/if}}">
   <div class="section-main-breadcrumb"></div>
-  {{> organisms-intro-alt-text}}
+  {{#if (eq type 'bio-page')}}
+    {{> organisms-intro-bio}}
+    {{#if quote}}<p class="text -lead section-main-subtitle">&ldquo;{{quote}}&rdquo;</p>{{/if}}
+  {{else}}
+    {{> organisms-intro-alt-text}}
+  {{/if}}
   <main class="section-main-body">
     {{#unless blocks}}
       {{#block 'section-main-body'}}{{/block}}
@@ -12,5 +17,7 @@
       <div class="section-main-content">{{> compounds-related-cards}}</div>
     {{/if}}
   </main>
-  <aside class="section-main-sidebar"></aside>
+  <aside class="section-main-sidebar">
+    {{#block 'section-main-sidebar'}}{{/block}}
+  </aside>
 </div>
