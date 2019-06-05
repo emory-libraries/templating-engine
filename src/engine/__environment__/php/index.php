@@ -125,7 +125,7 @@ $environment = [
 if( !in_array($options['environment'], array_keys($environment)) ) done(1, 'Invalid environment.');
 
 // Set environment flag.
-if( !defined('DEVELOPMENT') ) define('ENVIRONMENT', $options['environment']);
+if( !defined('ENVIRONMENT') ) define('ENVIRONMENT', $options['environment']);
 
 // Set development mode flag.
 define('DEVELOPMENT', $options['development']);
