@@ -28,6 +28,12 @@ class Router {
     // Merge query parameters into the endpoint's data.
     $this->endpoint->data->data['__params__'] = $this->request->params;
     
+    // Merge configuration data into the endpoint's data.
+    $this->endpoint->data->data['__config__'] = CONFIG;
+    
+    // Merge the endpoint into the endpoint's data.
+    $this->endpoint->data->data['__endpoint__'] = object_to_array($this->endpoint);
+    
     // Set a global to indicate when an asset has been requested.
     define('ASSET', $this->endpoint->asset !== false);
 
