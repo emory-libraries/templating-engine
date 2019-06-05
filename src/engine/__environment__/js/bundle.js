@@ -387,16 +387,14 @@ function () {
         } // Otherwise, assume a list of IDs was given and index items need to be located and parsed.
         else {
             // Locate elements by ID.
-            return this.index(index.map(function (id) {
+            return this.index(_.compact(index.map(function (id) {
               // Attempt to find the element based on ID.
               var $el = $("[".concat(attr, "=\"").concat(id, "\"]")); // Save elements when found.
 
               if ($el.length > 0) return $el; // Otherwise, return nothing.
 
               return null;
-            }).filter(function (el) {
-              return !_.isNil(el);
-            }));
+            })));
           }
       },
       // Convert a list of elements to an index.
@@ -416,7 +414,9 @@ function () {
             return _.some(attrs, function (attr) {
               return attr.name.indexOf(_this3.attr('key')) === 0;
             });
-          }); // Find items with search data.
+          }); // Initialize the data for the item.
+
+          var data = {}; // Find items with search data.
 
           result.push(_.reduce(_.toArray(targets).map(function (target) {
             // Get all of the target's attributes.
@@ -429,14 +429,26 @@ function () {
             }); // Get the data
 
 
-            var data = rattrs.filter(function (attr) {
+            rattrs.filter(function (attr) {
               // Only use key attributes at the moment.
               return attr.name.indexOf(_this3.attr('key')) === 0;
-            }).reduce(function (data, attr) {
-              // Look for designated key-value pairs.
+            }).reduce(function (result, attr, index, source) {
+              // Initialize key and value.
+              var key, value; // Look for designated key-value pairs.
+
               if (attr.name.indexOf(':') > -1) {
-                // Capture the attribute key and value.
-                _.set(data, attr.name.split(':')[1], attr.value);
+                // Get the attribute key and value.
+                key = attr.name.split(':')[1];
+                value = attr.value; // Check to see if the key already exists in the data, and if so, form an array.
+
+                if (_.has(result, key)) {
+                  // Get the old value for the key.
+                  var old = _.get(result, key); // Merge the new value with the old value.
+
+
+                  _.set(result, key, _.isArray(old) ? _.concat(old, value) : [old, value]);
+                } // Otherwise, capture the attribute key and value.
+                else _.set(result, key, value);
               } // Otherwise, look for values elsewhere.
               else {
                   // Look for an attribute or value.
@@ -451,15 +463,22 @@ function () {
                   }), 0, false); // Get the attribute's key and value.
 
 
-                  var key = attr.value;
-                  var value = a ? attrs[a.value] : v ? v.value : null; // Save the data.
+                  key = attr.value;
+                  value = (a ? attrs[a.value] : v ? v.value : null) || target.value || target.textContent.trim(); // Check to see if the key already exists in the data, and if so, form an array.
 
-                  _.set(data, key, value || target.value || target.textContent.trim());
+                  if (_.has(result, key)) {
+                    // Get the old value for the key.
+                    var _old = _.get(result, key); // Merge the new value with the old value.
+
+
+                    _.set(result, key, _.isArray(_old) ? _.concat(_old, value) : [_old, value]);
+                  } // Otherwise, save the data.
+                  else _.set(result, key, value);
                 } // Return the parsed data.
 
 
-              return data;
-            }, {}); // Return data and element.
+              return result;
+            }, data); // Return data and element.
 
             return _.merge({
               __el: $(item)[0]
@@ -1261,17 +1280,8 @@ function () {
   }]);
 
   return Fuzzy;
-}(); // Export globals.
+}(); // Register a Button component.
 
-
-global._ = _;
-global.Vue = Vue;
-global.Events = Events;
-global.Components = Components;
-global.Store = Store;
-global.Leaflet = global.L = L;
-global.jQuery = global.$ = $;
-global.EUL = EUL; // Register a Button component.
 
 Components.register('button', {
   props: {},
@@ -1398,20 +1408,25 @@ Components.register('filter-dropdown', {
       if (this.valid) {
         // Filter the results.
         this.fuzzy.filter(function (item) {
-          return item[_this10.field] == _this10.selected;
+          // Get the item's corresponding field data.
+          var field = item[_this10.field]; // Determine if the field matches.
+
+          return _.isArray(field) ? field.includes(_this10.selected) : field == _this10.selected;
         });
       }
     },
     cancel: function cancel() {
       // Clear the search results.
-      this.fuzzy.unfilter(); // Clear the selection.
+      if (this.fuzzy.filtering.filtered) this.fuzzy.unfilter(); // Clear the selection.
 
       this.selected = this.defaults.selected || '';
     }
   },
   mounted: function mounted() {
     // Initialize the search utility.
-    this.fuzzy = new Fuzzy(this.index, this.config);
+    this.fuzzy = new Fuzzy(this.index, this.config); // Initialize a filter if an initial selection was made.
+
+    if (this.valid) this.filter();
   },
   computed: {
     // Make sure a query was entered before searching.
@@ -1467,14 +1482,16 @@ Components.register('filter-search', {
     },
     cancel: function cancel() {
       // Clear the search results.
-      this.fuzzy.unsearch(); // Clear the query.
+      if (this.fuzzy.searching.searched) this.fuzzy.unsearch(); // Clear the query.
 
       this.query = '';
     }
   },
   mounted: function mounted() {
     // Initialize the search utility.
-    this.fuzzy = new Fuzzy(this.index, this.config);
+    this.fuzzy = new Fuzzy(this.index, this.config); // Initialize a search if an initial query was given.
+
+    if (this.valid) this.search();
   },
   computed: {
     // Make sure a query was entered before searching.
@@ -1684,7 +1701,23 @@ Components.register('accordion', {
     // Find all accordion panels.
     this.panels = _.toArray($(this.$el).find('.accordion-panel'));
   }
-});
+}); // Initialize the Vue.
+
+var App; // Instantiate the Vue.
+
+if ($('#eul-vue').length > 0) App = new Vue({
+  el: '#eul-vue'
+}); // Export globals.
+
+global._ = _;
+global.Vue = Vue;
+global.Events = Events;
+global.Components = Components;
+global.Store = Store;
+global.Leaflet = global.L = L;
+global.jQuery = global.$ = $;
+global.EUL = EUL;
+global.App = App;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"jQuery":2,"leaflet":4,"leaflet-providers":3,"lodash":5,"string-similarity":7,"vue":10}],2:[function(require,module,exports){

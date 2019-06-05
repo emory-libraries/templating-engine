@@ -1,5 +1,8 @@
 <?php
 
+// Load shutdown functions.
+require_once ENGINE_ROOT."/php/error.php";
+
 // Load dependencies.
 require_once ENGINE_ROOT."/php/dependencies/autoload.php";
 
@@ -8,6 +11,7 @@ require_once ENGINE_ROOT."/php/libraries/autoload.php";
 
 // Load classes.
 require_once ENGINE_ROOT."/php/classes/autoload.php";
+require_once ENGINE_ROOT."/php/helpers/autoload.php";
 
 // Load configurations.
 require_once ENGINE_ROOT."/php/engine.config.php";

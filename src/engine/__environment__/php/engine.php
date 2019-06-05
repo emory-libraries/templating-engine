@@ -38,7 +38,24 @@ if( DEBUGGING ) {
   error_reporting(E_ALL);
   
   // Display all errors.
-  ini_set('display_errors', 1);
+  ini_set('display_errors', true);
+  
+  // Don't save them to the error log.
+  ini_set('log_errors', false);
+  
+}
+
+// Otherwise, only log errors to the error log.
+else {
+  
+  // Report all errors.
+  error_reporting(E_ALL);
+  
+  // Don't displayed them.
+  ini_set('display_errors', false);
+  
+  // Save them to the error log instead.
+  ini_set('log_errors', true);
   
 }
 

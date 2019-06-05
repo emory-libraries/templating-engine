@@ -1,0 +1,11 @@
+{{#unless (eq main false)}}
+  {{#if thumbnail}}{{> atoms-image classes="intro-thumb -bio" src=thumbnail alt=name}}{{/if}}
+  {{> tokens-heading level=1 alternate=true classes="section-main-title intro-title -bio" heading=name icon=false}}
+  {{> tokens-heading level=5 alternate=true classes="section-main-subtitle intro-subtitle -bio" heading=title icon=false}}
+  {{> atoms-link classes="intro-link -bio" href=(combine "mailto:" email) label=email}}
+{{else}}
+  {{#if thumbnail}}{{> atoms-image classes="intro-thumb -bio" src=thumbnail alt=name}}{{/if}}
+  {{> tokens-heading level=1 alternate=true classes="intro-title -bio" heading=name icon=false}}
+  {{> tokens-heading level=5 alternate=true classes="intro-subtitle -bio" heading=title icon=false}}
+  {{> atoms-link classes="intro-link -bio" href=(combine "mailto:" email) label=email}}
+{{/unless}}

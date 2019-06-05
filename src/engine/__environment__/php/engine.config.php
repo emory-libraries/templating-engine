@@ -1,26 +1,7 @@
 <?php
 
-// Get pattern groups.
-define('PATTERN_GROUPS', array_reduce(array_map(function($path) {
-
-    // Return pattern folder data.
-    return [
-      'group' => preg_replace('/^\d{1,2}-/', '', basename($path)),
-      'path' => $path
-    ];
-
-  }, Index::scan(PATTERNS_ROOT, false)), function($groups, $group) {
-
-    // Merge the group data into a single array.
-    $groups[$group['group']] = $group['path'];
-
-    // Continue reducing.
-    return $groups;
-
-  }, []));
-
 // Configure the templating engine.
-define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
+define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), [
   
   // Store some information about the current setup.
   'localhost' => LOCALHOST,
@@ -45,6 +26,22 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
     'path' => SERVER_PATH
   ],
   
+  // Configures data paths.
+  'data' => [
+    'environment' => [
+      'root' => DATA_ROOT,
+      'global' => DATA_ROOT.'/_global',
+      'meta' => DATA_ROOT.'/_meta',
+      'shared' => DATA_ROOT.'/_shared'
+    ],
+    'site' => [
+      'root' => SITE_DATA,
+      'global' => SITE_DATA.'/_global',
+      'meta' => SITE_DATA.'/_meta',
+      'shared' => SITE_DATA.'/_shared'
+    ]
+  ],
+  
   // Configures site paths.
   'site' => [
     'root' => SITE_ROOT
@@ -56,6 +53,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
     'config' => ENGINE_ROOT.'/config',
     'env' => ENGINE_ROOT.'/.env',
     'classes' => ENGINE_ROOT.'/php/classes',
+    'php' => ENGINE_ROOT.'/php',
     // TODO: Add helpers to index.
     'helpers' => ENGINE_ROOT.'/php/helpers',
     // TODO: Determine if icons and logos should be indexed.
@@ -71,7 +69,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
   
   // Configures the handlebars engine.
   'handlebars' => [
-    'flags' => [
+    'flags' => array_merge([
       'FLAG_HANDLEBARSJS',
       'FLAG_THIS',
       'FLAG_ELSE',
@@ -81,10 +79,11 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
       'FLAG_ADVARNAME',
       'FLAG_JSLENGTH',
       'FLAG_SPVARS',
-    ],
-    
-    // TODO: Move the autoloading of handlebars helper classes into a separate process that can be run during initialization rather than needing to be included here to allow helpers to be indexed properly.
-    'helpers' => (include ENGINE_ROOT.'/php/helpers/autoload.php')()
+      'FLAG_RAWBLOCK'
+    ], (DEVELOPMENT ? [
+      'FLAG_ERROR_LOG',
+      'FLAG_ERROR_EXCEPTION'
+    ] : []))
   ],
   
   // Configures the markdown engine.
@@ -107,8 +106,8 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
     
   ],
   
-  // Configures assets.
-  'assets' => [
+  // Configures asset headers.
+  'assetHeaders' => [
     
     // Sets the keep alive time for caching assets in the browser.
     'keepAlive' => Renderer::KEEP_ALIVE_MONTH
@@ -145,7 +144,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
     $svg = File::read($icon);
     
     // Get the icon's ID.
-    $id = File::id($icon);
+    $id = Path::filename($icon);
     
     // Save the icon.
     $icons[$id] = $svg;
@@ -163,7 +162,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.php'), [
     $svg = File::read($logo);
     
     // Get the logo's ID.
-    $id = File::id($logo);
+    $id = Path::filename($logo);
     
     // Save the logo.
     $logos[$id] = $svg;

@@ -17,13 +17,13 @@ class Route {
   public $id;
   
   // The site's environment.
-  public $environment = CONFIG['__site__']['environment'];
+  public $environment = ENVIRONMENT;
   
   // The site ID.
-  public $site = CONFIG['__site__']['site'];
+  public $site = SITE;
   
   // The site's domain.
-  public $domain = CONFIG['__site__']['domain'];
+  public $domain = DOMAIN;
   
   // The route's anticipated URL(s).
   public $url;
@@ -63,20 +63,17 @@ class Route {
       
       // Determine if the route is an asset.
       if( self::isAsset($path) ) {
-        
-        // Get the asset's extension.
-        $ext = pathinfo($path, PATHINFO_EXTENSION);
 
         // Set the asset flag to true.
         $this->asset = true;
 
         // Make sure the the asset's ID, endpoint, and URL includes its extension.
-        $this->id .= ".$ext";
-        $this->endpoint .= ".$ext";
-        $this->url .= ".$ext";
+        $this->id = Path::basename($this->path);
+        $this->endpoint = Path::dirname($this->endpoint).'/'.$this->id;
+        $this->url = Path::dirname($this->endpoint).'/'.$this->id;
         
         // Get the asset's mime type.
-        $this->mime = Mime::type($ext);
+        $this->mime = Mime::type(Path::extname($this->path));
 
       }
       
@@ -103,24 +100,21 @@ class Route {
       // Determine if the route is an asset.
       if( self::isAsset($path['endpoint']) ) {
         
-        // Get the asset's extension.
-        $ext = pathinfo($path['endpoint'], PATHINFO_EXTENSION);
-
         // Set the asset flag to true.
         $this->asset = true;
 
         // Make sure the the asset's ID, endpoint, and URL includes its extension.
-        $this->id .= ".$ext";
-        $this->endpoint .= ".$ext";
-        $this->url .= ".$ext";
+        $this->id = Path::basename($this->endpoint);
+        $this->endpoint = Path::dirname($this->endpoint).'/'.$this->id;
+        $this->url = Path::dirname($this->endpoint).'/'.$this->id;
         
         // Get the asset's mime type.
-        $this->mime = Mime::type($ext);
+        $this->mime = Mime::type(Path::extname($this->endpoint));
 
       }
       
       // Determine the route's cache location.
-      $this->cache = self::cache($this->endpoint);
+      $this->cache = array_key_exists('cache', $path) ? $path['cache'] : self::cache($this->endpoint);
       
       // Determine if the route is for an error page by assuming pages with integer IDs are errors.
       if( self::isError($this->endpoint) ) $this->error = true;

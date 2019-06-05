@@ -1,14 +1,21 @@
 {
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:laurenhamel/lightncandy"
+    }
+  ],
   "require": {
     "erusev/parsedown": "1.8.0-beta-5",
-    "zordius/lightncandy": "dev-master",
     "symfony/yaml": "^4.1",
-    "jeremeamia/SuperClosure": "^2.4",
+    "jeremeamia/superclosure": "^2.4",
     "mustache/mustache": "^2.12",
     "erusev/parsedown-extra": "0.8.0-beta-1",
     "fightbulc/moment": "^1.29",
     "vlucas/phpdotenv": "^3.3",
     "kint-php/kint": "^3.2",
-    "bvanhoekelen/performance": "^2.5"
+    "bvanhoekelen/performance": "^2.5",
+    "sabre/uri": "^2",
+    "laurenhamel/lightncandy": "^1.2"
   }
 }

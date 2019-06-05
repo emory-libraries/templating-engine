@@ -2,8 +2,6 @@
 
 namespace HandlebarsHelpers;
 
-use HTML;
-
 trait HtmlHelpers {
   
   // Stringify attributes in the options hash.

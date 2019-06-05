@@ -2,11 +2,10 @@
 
 namespace HandlebarsHelpers;
 
-use _;
-
 trait CodeHelpers {
   
   // Embed code from an external data file as preformatted text.
+  // FIXME: Because an `embed` helper also exists within the `HandlebarsLayouts` helpers, this gets overwritten.
   public static function embed( $path, $language ) {
     
     // Get extension from file when not give.

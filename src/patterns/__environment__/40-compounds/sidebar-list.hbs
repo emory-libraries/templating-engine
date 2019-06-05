@@ -1,0 +1,33 @@
+<div class="sidebar-list{{#if divider}}{{#if divider.start}} -divider-start{{/if}}{{#if divider.end}} -divider-end{{/if}}{{/if}}">
+
+  {{#each sections}}
+  <div class="sidebar-list-section">
+    <span class="sidebar-list-section-title{{#if icon}} has-icon{{/if}}">
+      {{#if icon}}{{> tokens-icon id=icon}}{{/if}}
+      {{title}}
+    </span>
+    <div class="sidebar-list-section-content">
+      {{#if (isArray this.content)}}
+        <ul class="list">
+          {{#each this.content}}<li class="list-item">{{this}}</li>{{/each}}
+        </ul>
+      {{else}}
+        {{#if this.markdown}}{{{markdown this.content}}}{{else}}{{this.content}}{{/if}}
+      {{/if}}
+      {{#if link}}
+        {{#with link}}{{> atoms-link}}{{/with}}
+      {{else if button}}
+        {{#with button}}{{> atoms-button-link icon=false}}{{/with}}
+      {{/if}}
+    </div>
+  </div>
+  {{/each}}
+
+  {{#if buttons}}
+    {{#each buttons}}{{> atoms-button-link classes="sidebar-list-button" icon=false}}{{/each}}
+  {{/if}}
+  {{#if button}}
+    {{#with button}}{{> atoms-button-link classes="sidebar-list-button" icon=false}}{{/with}}
+  {{/if}}
+
+</div>

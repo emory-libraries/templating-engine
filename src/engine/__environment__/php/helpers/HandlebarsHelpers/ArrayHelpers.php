@@ -146,7 +146,7 @@ trait ArrayHelpers {
   }
   
   // Returns true if `value` is a simple array (non-associative).
-  public static function isArray( $value ) {
+  public static function isArray( $value ) { 
     
     return (is_array($value) and !is_associative_array($value));
     
@@ -225,12 +225,13 @@ trait ArrayHelpers {
   
   // Returns a new array, created by calling `iteratee` on each element of the given `array`.
   public static function map( array $array, $iteratee ) {
-  
-    global $HELPERS;
+    
+    // Get a list of all helpers.
+    $helpers = API::get('/helpers');
     
     if( gettype($iteratee) == 'callable' ) return array_map_by($array, $iteratee);
     
-    if( array_key_exists($iteratee, $HELPERS) ) return array_map_by($array, $HELPERS[$iteratee]);
+    if( array_key_exists($iteratee, $helpers) ) return array_map_by($array, $helpers[$iteratee]);
     
     return $array;
     
@@ -267,7 +268,8 @@ trait ArrayHelpers {
   // Block helper that checks if the callback returns truthy for some value in the array.
   public static function some( array $array, $iteratee, $options ) {
     
-    global $HELPERS;
+    // Get a list of all helpers.
+    $helpers = API::get('/helpers');
     
     if( gettype($iteratee) == 'callable' ) {
       
@@ -277,9 +279,9 @@ trait ArrayHelpers {
       
     }
     
-    if( array_key_exists($iteratee, $HELPERS) ) {
+    if( array_key_exists($iteratee, $helpers) ) {
       
-      if( array_some($array, $HELPERS[$iteratee]) ) return $options['fn']();
+      if( array_some($array, $helpers[$iteratee]) ) return $options['fn']();
       
       return $options['inverse']();
       
@@ -305,7 +307,8 @@ trait ArrayHelpers {
   // Sort an `array` by `property`, or optionally passing a sorting function.
   public static function sortBy( array $array, $property, $options ) {
     
-    global $HELPERS;
+    // Get a list of all helpers.
+    $helpers = API::get('/helpers');
     
     $reverse = array_get($options, 'hash.reverse', false);
     
@@ -317,11 +320,11 @@ trait ArrayHelpers {
       
     }
     
-    if( array_key_exists($property, $HELPERS) ) {
+    if( array_key_exists($property, $helpers) ) {
       
-      if( $reverse ) return array_reverse(array_sort_by($array, $HELPERS[$property]));
+      if( $reverse ) return array_reverse(array_sort_by($array, $helpers[$property]));
       
-      return array_sort_by($array, $HELPERS[$property]);
+      return array_sort_by($array, $helpers[$property]);
       
     }
     

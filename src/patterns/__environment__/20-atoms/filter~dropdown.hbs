@@ -12,8 +12,7 @@
                         isFocus: {{default focus false}}
                      }">
 
-  <div class="input-container -row{{#if inline}} -inline{{/if}}"
-       style="--layout: 1fr auto">
+  <div class="input-container -row{{#if inline}} -inline{{/if}}" style="--layout: 1fr;">
 
     <select v-model="selected"
             @change="filter"
@@ -29,15 +28,21 @@
       {{#unless (eq viewall false)}}
       <option value="">{{default label 'View All'}}</option>
       {{/unless}}
-      {{#each (unique (pluck index key)) as |option|}}
-      <option value="{{option}}">{{option}}</option>
-      {{/each}}
+      {{#if (filterHas index key)}}
+        {{#each (unique (pluck index key)) as |option|}}
+        <option value="{{option}}">{{option}}</option>
+        {{/each}}
+      {{else}}
+        {{#each options}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      {{/if}}
     </select>
 
     <a @click="cancel"
        @keypress.enter="cancel"
        class="link -underline"
-       v-show="fuzzy.filtering.filtered"
+       v-show="valid"
        tabindex="0">
       Cancel
     </a>

@@ -42,7 +42,7 @@ do {
   
   // Execute all curl requests.
   curl_multi_exec($curl, $index);
-
+  
 }  while( $index > 0 );
   
 // Capture the responses.

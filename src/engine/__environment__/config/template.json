@@ -15,15 +15,13 @@
   "templates-gallery": "",
   "templates-event": "",
   "templates-calendar": "",
-  "templates-staff-directory": "",
-  "templates-subject-librarian-directory": "",
+  "templates-staff-directory": "Page Types/Staff Directory",
+  "templates-subject-librarian-directory": "Page Types/Subject Librarians Directory",
   "templates-bio": "Page Types/Employee Profile Page",
-  "templates-service-directory": "",
-  "templates-service-category": "",
+  "templates-service-directory": "Page Types/Services Directory",
   "templates-tool": "Page Types/Tool Page",
   "templates-video-tutorial": "",
   "templates-material": "Page Types/Materials Page",
   "templates-library-aid-directory": "",
-  "templates-library-aid-category": "",
   "templates-library-aid": "Page Types/Research Aid Page"
 }
