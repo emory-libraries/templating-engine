@@ -29,12 +29,9 @@ class HandlebarsLayouts {
     
       // Compile the partial.
       $compiled = Renderer::compile($template);
-    
-      // Initialize a temporary file name.
-      $tmp = "HandlebarsLayouts-extend_$partial";
 
       // Temporarily cache the partial.
-      $cached = Cache::tmp($compiled, $tmp);
+      $cached = Cache::tmp($compiled);
 
       // Get the partial's renderer.
       $renderer = $cached['include']();
@@ -78,18 +75,37 @@ class HandlebarsLayouts {
     
     // Get the context.
     $context = &$options['_this'];
-    
+
     // Ensure that the context's layout stack exists, or initialize it otherwise.
     if( !isset($context['__layoutStack']) ) $context['__layoutStack'] = [];
     
     // Get the context's layout stack.
     $stack = &$context['__layoutStack'];
-    
+
     // Capture rendered block contexts.
     $result = [];
 
     // Run the layout stack.
-    while( count($stack) > 0 ) { $result[] = json_decode(array_shift($stack)($context), true); }
+    while( count($stack) > 0 ) { 
+      
+      // Get an item off the stack.
+      $stackFn = array_shift($stack);
+      
+      // Run the stack item and get the result.
+      $stackResult = $stackFn($context);
+      
+      // Detect multiple content blocks and convert them to a decodable string.
+      preg_match_all('/\[.+?\]/', $stackResult, $stackMatches);
+      
+      // Decode and save all results.
+      foreach( $stackMatches[0] as $stackMatch ) {
+        
+        // Decode and save the result.
+        $result[] = json_decode($stackMatch, true);
+        
+      }
+    
+    }
     
     // Ensure that the context's layout actions exist, or initialize them otherwise.
     if( !isset($context['__layoutActions']) ) $context['__layoutActions'] = [];
@@ -110,7 +126,7 @@ class HandlebarsLayouts {
     
     // Get the layout actions.
     $actions = $context['__layoutActions'][$name];
-  
+
     // Initialize a helper to expand content blocks.
     $expand = function($action) use ($context) {
 
@@ -137,7 +153,7 @@ class HandlebarsLayouts {
   }
   
   // Determine if a placeholder content block exists, and if so, optionally modifies it.
-  public static function content( $name, $options ) {
+  public static function content( $name, $options ) { 
   
     // Capture the render function.
     $fn = isset($options['fn']) ? $options['fn'] : null;
@@ -156,7 +172,7 @@ class HandlebarsLayouts {
     
     // Get the context's layout stack.
     $stack = &$context['__layoutStack'];
-    
+  
     // Run the layout stack.
     while( count($stack) > 0 ) { array_shift($stack)($context); }
  
