@@ -1,16 +1,13 @@
 <?php
 
 // Get the request method.
-$method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : false;
+define('METHOD', isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : false);
 
 // Initialize a helper method for exiting gracefully.
 function done( int $status, $message = null, $code = null ) {
   
-  // Use the global method.
-  global $method;
-  
   // For command line usage, report errors to the command line.
-  if( $method === false ) {
+  if( METHOD === false ) {
   
     // Log messages if given.
     if( isset($message) ) {
@@ -51,20 +48,20 @@ function done( int $status, $message = null, $code = null ) {
 }
 
 // Disallow all other request types other than post.
-if( $method !== 'POST' and $method !== false ) done(1, 'Method not allowed.', 405);
+if( METHOD !== 'POST' and METHOD !== false ) done(1, 'Method not allowed.', 405);
 
 // Enable indexing via a post request.
-if( $method === 'POST' ) {
+if( METHOD === 'POST' ) {
   
   // Capture post arguments.
-  $options = [
+  define('OPTIONS', [
     'site' => defined(SITE) ? SITE : $_POST['site'],
     'environment' => defined(ENVIRONMENT) ? ENVIRONMENT : $_POST['environment'],
     'callback' => isset($_POST['callback']) ? $_POST['callback'] : false,
     'development' => isset($_POST['development']) ? filter_var($_POST['development'], FILTER_VALIDATE_BOOLEAN) : false,
     'username' => isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : null,
     'password' => isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : null,
-  ];
+  ]);
   
   // Initialize the response output.
   $output = [];
@@ -107,11 +104,14 @@ else {
   if( is_array($options['username']) ) $options['username'] = $options['username'][0];
   if( is_array($options['password']) ) $options['password'] = $options['password'][0];
   
+  // Save the options.
+  define('OPTIONS', $options);
+  
 }
 
 // Fail immediately if missing any arguments.
-if( !isset($options['site']) ) done(1, 'Missing site argument.', 400);
-if( !isset($options['environment']) ) done(1, 'Missing environment argument.', 400);
+if( !isset(OPTIONS['site']) ) done(1, 'Missing site argument.', 400);
+if( !isset(OPTIONS['environment']) ) done(1, 'Missing environment argument.', 400);
 
 // Set environment directories.
 $environment = [
@@ -122,13 +122,13 @@ $environment = [
 ];
 
 // Validate the given environment option.
-if( !in_array($options['environment'], array_keys($environment)) ) done(1, 'Invalid environment.');
+if( !in_array(OPTIONS['environment'], array_keys($environment)) ) done(1, 'Invalid environment.');
 
 // Set environment flag.
-if( !defined('ENVIRONMENT') ) define('ENVIRONMENT', $options['environment']);
+if( !defined('ENVIRONMENT') ) define('ENVIRONMENT', OPTIONS['environment']);
 
 // Set development mode flag.
-define('DEVELOPMENT', $options['development']);
+define('DEVELOPMENT', OPTIONS['development']);
 
 // Defines flags that can be switched on/off to force certain templating engine behaviors.
 define('FLAG', [
@@ -172,13 +172,13 @@ define('SITES', array_values(array_filter(scandir(DATA_ROOT), function($path) {
 })));
 
 // Validate the given site option.
-if( !in_array($options['site'], SITES) ) done(1, 'Invalid site.', 400);
+if( !in_array(OPTIONS['site'], SITES) ) done(1, 'Invalid site.', 400);
 
 // Derive the site's subdomain from the environment.
 $subdomain = str_replace('prod', '', $environment[ENVIRONMENT]);
 
 // Set the site and domain globals.
-if( !defined('SITE') ) define('SITE', $options['site']);
+if( !defined('SITE') ) define('SITE', OPTIONS['site']);
 if( !defined('DOMAIN') ) define('DOMAIN', ($subdomain !== '' ? "$subdomain." : '').SITE);
 
 // Set site-specific globals.
@@ -200,25 +200,14 @@ if( DEBUGGING ) {
 require ENGINE_ROOT."/php/index.init.php";
 
 // Prevent indexing if the given username and password are not acceptable.
-if( $options['username'] !== getenv('INDEX_USERNAME') ) done(1, 'Invalid username or password.', 401);
-if( $options['password'] !== getenv('INDEX_PASSWORD') ) done(1, 'Invalid username or password.', 401);
+if( OPTIONS['username'] !== getenv('INDEX_USERNAME') ) done(1, 'Invalid username or password.', 401);
+if( OPTIONS['password'] !== getenv('INDEX_PASSWORD') ) done(1, 'Invalid username or password.', 401);
 
 // Start indexing.
 new Index();
 
-// Fire any callbacks if given.
-if( $options['callback'] !== false ) {
-  
-  // Get the callback path.
-  $callback = __DIR__."/callbacks/{$options['callback']}.php";
-
-  // Look for the callback, and execute it if it exists.
-  if( file_exists($callback) ) include $callback;
-  
-}
-
 // If a post request was used, then return a JSON response.
-if( $method === 'POST' ) {
+if( METHOD === 'POST' ) {
   
   // Set the response code and message.
   $output['code'] = 200;

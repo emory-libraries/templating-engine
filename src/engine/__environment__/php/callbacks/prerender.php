@@ -63,14 +63,11 @@ foreach($requests as $i => $response) {
 // Close curl.
 curl_multi_close($curl);
 
-// Add benchmark point.
-if( BENCHMARKING ) Performance\Performance::point('Prerender callback completed.');
-
 // Output the responses.
 if( DEBUGGING ) {
   
   // Capture the results.
-  if( $method === 'POST' ) $output['prerender'] = $responses;
+  if( METHOD === 'POST' ) $output['prerender'] = $responses;
   
   // Otherwise, log the response to the command line.
   else d($responses);

@@ -188,6 +188,9 @@ class Index {
     // If additional indexing requests were received while the last process was running, then reindex everything.
     if( !empty(self::queue()) ) goto reindex;
     
+    // Fire any callbacks if given.
+    $this->runCallback(OPTIONS['callback']);
+    
     // Unlock the indexing process.
     self::lock(false);
     
@@ -1202,6 +1205,33 @@ class Index {
   protected function getHelperData() {
     
     return (include ENGINE_ROOT.'/php/helpers/index.php')();
+    
+  }
+  
+  // Run a callback.
+  protected function runCallback( string $callback ) {
+    
+    // Fire the callback if it exists.
+    if( isset($callback) and $callback !== false ) {
+
+      // Get the callback path.
+      $path = ENGINE_ROOT.'/php/callbacks/'.$callback.'.php';
+
+      // Look for the callback, and execute it if it exists.
+      if( File::exists($path) ) {
+        
+        // Add benchmark point.
+        if( $this->performance ) Performance\Performance::point("Running $callback callback...'");
+        
+        // Run the callback.
+        include $path;
+        
+        // Add benchmark point.
+        if( $this->performance ) Performance\Performance::finish();
+        
+      }
+
+    }
     
   }
   
