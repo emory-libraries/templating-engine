@@ -94,8 +94,11 @@ class Renderer {
     // Create a helper method for quickly compiling and saving a template to the cache.
     $compiler = function() use ($endpoint, $path, $benchmarking) {
       
+      // Determine the appropriate wrapper to use.
+      $wrapper = DEVELOPMENT ? 'development' : 'default';
+      
       // Get the template.
-      $template = self::prepare($endpoint->template, 'default', $benchmarking);
+      $template = self::prepare($endpoint->template, $wrapper, $benchmarking);
       
       // Compile the template.
       $compiled = self::compile($template);
