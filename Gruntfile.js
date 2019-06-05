@@ -230,7 +230,8 @@ module.exports = function(grunt) {
             cwd: PATHS.src.engine.environment.root, 
             src: ['**/*'], 
             dest: PATHS.dest.engine.environment.root,
-            dot: true
+            dot: true,
+            follow: true
           },
           {
             expand: true, 
