@@ -13,8 +13,14 @@ trait ApiHelpers {
     // Get the API method, or use a `GET` method by default.
     $method = func_num_args() > 2 ? strtolower($method) : 'get';
     
-    // Pass along the request to the API.
-    return API::$method($endpoint);
+    // Pass along the request to the API and get the response.
+    $response = API::$method($endpoint);
+    
+    // Convert any objects to arrays.
+    $response = object_to_array($response);
+    
+    // Return the API response.
+    return $response;
     
   }
   
