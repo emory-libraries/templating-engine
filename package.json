@@ -1,6 +1,6 @@
 {
   "name": "templating-engine",
-  "version": "1.0.0-dev",
+  "version": "1.0.0-dev.1",
   "description": "A PHP templating engine for powering a dynamic website",
   "main": "index.js",
   "scripts": {},
