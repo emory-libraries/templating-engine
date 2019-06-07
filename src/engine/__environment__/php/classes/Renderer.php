@@ -152,6 +152,7 @@ class Renderer {
     
     // Output a content type header.
     header('Content-Type: '.Mime::type('html'));
+    header('Last-Modified: '.gmdate('D, d M Y H:i:s T', File::modified($path)));
 
     // Attempt to render the page.
     try {
