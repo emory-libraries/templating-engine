@@ -326,7 +326,7 @@ module.exports = function(grunt) {
     symlink: {
       engine: {
         options: {
-          overwrite: false
+          overwrite: true
         },
           src: 'package.json',
           dest: path.join(PATHS.src.engine.environment.meta, 'package.json')
