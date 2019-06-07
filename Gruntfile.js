@@ -41,6 +41,7 @@ module.exports = function(grunt) {
           icons: `${SRC}/engine/__environment__/icons`,
           fonts: `${SRC}/engine/__environment__/fonts`,
           config: `${SRC}/engine/__environment__/config`,
+          meta: `${SRC}/engine/__environment__/meta`,
           dependencies: {
             php: `${SRC}/engine/__environment__/php/dependencies`,
             js: `${SRC}/engine/__environment__/js/dependencies`,
@@ -323,6 +324,13 @@ module.exports = function(grunt) {
     },
     
     symlink: {
+      engine: {
+        options: {
+          overwrite: false
+        },
+          src: 'package.json',
+          dest: path.join(PATHS.src.engine.environment.meta, 'package.json')
+      },
       cypress: {
         files: [{
           expand: true,
@@ -352,6 +360,7 @@ module.exports = function(grunt) {
   // Register tasks.
   grunt.registerTask('default', ['dev']);
   grunt.registerTask('build', [
+    'symlink:engine',
     'unlock',
     'clean',
     'copy',
@@ -380,7 +389,11 @@ module.exports = function(grunt) {
   grunt.registerTask('dist', [
     'build'
   ]);
-  grunt.registerTask('deploy', require(path.resolve('scripts/deploy.js')));
+  grunt.registerTask('deploy:hook', require(path.resolve('scripts/deploy.js')));
+  grunt.registerTask('deploy', [
+    'symlink:engine',
+    'deploy:hook'
+  ]);
   grunt.registerTask('index', "Runs the templating engine's indexer", function ( callback = null ) {
     
     // Make this task async.
