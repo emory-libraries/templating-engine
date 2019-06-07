@@ -127,6 +127,7 @@ class API {
   ];
   
   // Defines flags that can be used to tailor the API response.
+  const INDEXAPI_RESPONSE_ECHO = 0;
   const INDEXAPI_RESPONSE_RETURN = 1;
   
   //*********** MAGIC METHODS ***********//
@@ -178,85 +179,51 @@ class API {
   //*********** PUBLIC METHODS ***********//
   
   // Signal that the response is done and output the proper status code and messaging.
-  public static function done( int $code, string $message = null, array $response = [], $flags = null ) {
+  public static function done( int $code, string $message, array $response = [], $flags = API::INDEXAPI_RESPONSE_ECHO ) {
     
     // Get the response status.
     $status = static::$statuses[$code];
     
-    // Return the output if the flag is set.
-    if( $flags & static::INDEXAPI_RESPONSE_RETURN ) {
-      
-       // Build the response.
-      $response = array_merge([
-        'code' => $code,
-        'status' => $status,
-        'message' => $message
-      ], $response);
-      
-      // Return the response.
-      return $response;
-      
-    }
+    // Build the response.
+    $response = array_merge([
+      'code' => $code,
+      'status' => $status,
+      'message' => $message
+    ], $response);
     
-    // Otherwise, return standard API/CLI responses.
+    // Return the output if the flag is set.
+    if( $flags & API::INDEXAPI_RESPONSE_RETURN ) return $response;
+    
+    // Otherwise, echo a standard API/CLI responses.
     else {
       
       // Get the exit code.
       $exit = $code > 400 ? 1 : 0;
+      
+      // Add benchmarking into the response if enabled.
+      $response = array_merge($response,  (BENCHMARKING ? [
+        'performance' => json_decode((Performance::export())->toJson(), true)
+      ] : []));
 
       // Return a CLI response.
       if( static::$mode == 'CLI' ) {
-
-        // Get the exit code.
-        $exit = $code > 400 ? 1 : 0;
-
-        // Get the response status.
-        $status = static::$statuses[$code];
 
         // Get the I/O stream.
         $stream = static::$streams[$exit];
 
         // Write to the designated stream if available.
-        if( $stream ) {
-
-          // Write the message.
-          fwrite($stream, $message.PHP_EOL);
-          
-          // Build the response.
-          $response = array_merge($response, (BENCHMARKING ? [
-            'performance' => json_decode((Performance::export())->toJson(), true)
-          ] : []));
-
-          // Also, output any response data.
-          if( !empty($response) ) fwrite($stream, var_export($response, true).PHP_EOL);
-
-        }
+        if( $stream ) fwrite($stream, var_export($response, true).PHP_EOL);
 
       }
 
       // Otherwise, return an API response.
       else {
 
-        // Get the exit code.
-        $exit = $code > 400 ? 1 : 0;
-
-        // Get the response status.
-        $status = static::$statuses[$code];
-
         // Set the content type header to expect a JSON response.
         header('Content-Type: application/json');
 
         // Set the response code header.
         http_response_code($code);
-
-        // Build the response.
-        $response = array_merge([
-          'code' => $code,
-          'status' => $status,
-          'message' => $message
-        ], $response, (BENCHMARKING ? [
-          'performance' => json_decode((Performance::export())->toJson(), true)
-        ] : []));
 
         // Output any response data as JSON.
         echo json_encode($response, JSON_PRETTY_PRINT);
@@ -331,7 +298,7 @@ class API {
    *
    * @example /status - Retrieves the indexing status
    */
-  public static function get( string $endpoint, $flags = null ) {
+  public static function get( string $endpoint, $flags = API::INDEXAPI_RESPONSE_ECHO ) {
     
     // Initialize the API.
     self::init();
@@ -374,7 +341,7 @@ class API {
    *
    * @example /status - Creates or updates the indexing status
    */
-  public static function post( string $endpoint, $flags = null ) {
+  public static function post( string $endpoint, $flags = API::INDEXAPI_RESPONSE_ECHO ) {
     
     // Initialize the API.
     self::init();
