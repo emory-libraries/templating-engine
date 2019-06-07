@@ -1,5 +1,9 @@
 <?php
 
+// Use dependencies.
+use Engine\API;
+use Performance\Performance;
+
 /*
  * Router
  *
@@ -56,7 +60,7 @@ class Router {
   function render() {
 
     // Add benchmark point.
-    if( BENCHMARKING ) Performance\Performance::point('Router', true);
+    if( BENCHMARKING ) Performance::point('Router', true);
     
     // If the endpoint redirects, then redirect.
     if( $this->endpoint->redirect !== false ) return self::redirect($this->endpoint->redirect);
@@ -68,7 +72,7 @@ class Router {
     if( $this->endpoint->asset !== false ) return Renderer::asset($this->endpoint);
     
     // Add benchmark point.
-    if( BENCHMARKING ) Performance\Performance::finish('Router');
+    if( BENCHMARKING ) Performance::finish('Router');
     
     // Otherwise, render the endpoint.
     return Renderer::render($this->endpoint);

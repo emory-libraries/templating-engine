@@ -1,5 +1,9 @@
 <?php
 
+// Use dependencies.
+use Engine\API;
+use Performance\Performance;
+
 /*
  * Engine
  *
@@ -28,7 +32,7 @@ class Engine {
   function __construct() {
     
     // Add benchmark point.
-    if( BENCHMARKING ) Performance\Performance::point('Engine', true);
+    if( BENCHMARKING ) Performance::point('Engine', true);
     
     // Set the process ID.
     self::$pid = uniqid(DOMAIN.':', true);
@@ -40,7 +44,7 @@ class Engine {
     $this->request = new Request();
     
     // Add benchmark point.
-    if( BENCHMARKING ) Performance\Performance::point('Request processed.');
+    if( BENCHMARKING ) Performance::point('Request processed.');
     
     // Initialize the router.
     $this->router = new Router($this->request);
@@ -49,7 +53,7 @@ class Engine {
     $this->run();
     
     // Add benchmark point.
-    if( BENCHMARKING ) Performance\Performance::finish('Engine');
+    if( BENCHMARKING ) Performance::finish('Engine');
     
   }
   

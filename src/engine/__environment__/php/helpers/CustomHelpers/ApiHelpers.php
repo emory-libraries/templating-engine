@@ -1,5 +1,8 @@
 <?php
 
+// Use the engine's API.
+use Engine\API;
+
 namespace CustomHelpers;
 
 trait ApiHelpers {

@@ -363,7 +363,7 @@ module.exports = function(grunt) {
   grunt.registerTask('dev', [
     'build', 
     //'connect',
-    'test',
+    //'test',
     'watch'
   ]);
   grunt.registerTask('dist', [
@@ -377,6 +377,7 @@ module.exports = function(grunt) {
     
     // Initialize options.
     let options = _.merge({
+      method: 'POST',
       username: process.env.INDEX_USERNAME,
       password: process.env.INDEX_PASSWORD,
       environment: ENVSIM.environment,
@@ -400,14 +401,18 @@ module.exports = function(grunt) {
       return options;
 
     }, []);
+    
+    // Build arguments.
+    const args = [
+      path.join(PATHS.dest.engine.environment.php, 'index.php'),
+      '/index',
+      ...options
+    ];
 
     // Run the indexer.
     grunt.util.spawn({
       cmd: 'php',
-      args: [
-        path.join(PATHS.dest.engine.environment.php, 'index.php'),
-        ...options
-      ],
+      args,
       opts: {stdio: 'inherit'}
     }, () => done());
     

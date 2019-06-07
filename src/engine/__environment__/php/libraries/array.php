@@ -376,7 +376,7 @@ function array_first( array $array ) {
 // Get the last item of an array.
 function array_last( array $array ) {
   
-  return (isset($array) ? $array[count($array) - 1] : null);
+  return ((isset($array) and !empty($array)) ? $array[count($array) - 1] : null);
   
 }
 

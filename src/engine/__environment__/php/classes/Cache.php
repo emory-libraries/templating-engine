@@ -26,9 +26,27 @@ class Cache {
     
     // Caching is disabled, then reset the cache.
     if( !CACHING ) $this->reset();
-    
+
     // Load the cache into memory if it already exists.
-    if( File::isFile($path) ) $this->cache = (include $path);
+    if( File::isFile($path) ) {
+      
+      // Attempt to include the file.
+      try {
+      
+        // Include the cache file.
+        $this->cache = (include $path);
+        
+      }
+      
+      // If the include failed, then reset the cache.
+      catch( Throwable $exception ) {
+        
+        // Reset the cache.
+        $this->reset();
+        
+      }
+      
+    }
     
     // Otherwise, initialize the cache.
     else $this->save($this->cache);
@@ -203,7 +221,12 @@ class Cache {
     }
     
     // Otherwise, log an error.
-    catch( Exception $exception ) { error_log('Cache could not be updated.'); }
+    catch( Throwable $exception ) { 
+      
+      // Log the error.
+      error_log('Cache could not be updated.'); 
+    
+    }
     
     // Save the data to the cache path.
     return File::write($this->path, $php);
@@ -213,7 +236,10 @@ class Cache {
   // Reset the cache.
   protected function reset() {
     
-    // Reset the cache.
+    // Reset the in memory cache.
+    $this->cache = [];
+    
+    // Reset the stored cache.
     return $this->save([]);
     
   }
