@@ -17,7 +17,7 @@ function parse_argv() {
     
     // Extract the option and value if applicable.
     $option = str_starts_with($split[0], '-') ? $split[0] : false;
-    $value = $option ? $split[1] ?? $arguments[$index + 1] : $split[0];
+    $value = $option ? $split[1] ?? null : $split[0];
     
     // Save the named option if found.
     if( $option ) {
@@ -30,9 +30,6 @@ function parse_argv() {
       
       // Unset the original index.
       unset($arguments[$index]);
-      
-      // Also, unset the next argument if it was used.
-      if( !isset($split[1]) ) unset($arguments[$index + 1]);
       
     }
     
