@@ -47,24 +47,25 @@ if( DEBUGGING ) {
 }
 
 // Configure environment directories.
-define('ENVDIR', [
+define('ENVDIRS', [
   'development' => 'dev',
   'qa'          => 'qa',
   'staging'     => 'staging',
   'production'  => 'prod'
 ]);
 
-// Set environment constant.
+// Set environment constants.
 if( !defined('ENVIRONMENT') ) define('ENVIRONMENT', $options->environment);
+if( !defined('ENVDIR') ) define('ENVDIR', ENVDIRS[ENVIRONMENT] ?? null);
 
 // Set path contants.
 if( !defined('DOCUMENT_ROOT') ) define('DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
 if( !defined('SERVER_ROOT') ) define('SERVER_ROOT', dirname(dirname(dirname(__DIR__)))); 
 if( !defined('SERVER_PATH') ) define('SERVER_PATH', str_replace(DOCUMENT_ROOT.'/', '', SERVER_ROOT));
-if( !defined('DATA_ROOT') ) define('DATA_ROOT', SERVER_ROOT.'/data/'.ENVDIR[ENVIRONMENT]);
-if( !defined('PATTERNS_ROOT') ) define('PATTERNS_ROOT', SERVER_ROOT.'/patterns/'.ENVDIR[ENVIRONMENT]);
-if( !defined('ENGINE_ROOT') ) define('ENGINE_ROOT', SERVER_ROOT.'/engine/'.ENVDIR[ENVIRONMENT]);
-if( !defined('CACHE_ROOT') ) define('CACHE_ROOT', SERVER_ROOT.'/engine/'.ENVDIR[ENVIRONMENT].'/php/cache');
+if( !defined('DATA_ROOT') ) define('DATA_ROOT', SERVER_ROOT.'/data/'.ENVDIR);
+if( !defined('PATTERNS_ROOT') ) define('PATTERNS_ROOT', SERVER_ROOT.'/patterns/'.ENVDIR);
+if( !defined('ENGINE_ROOT') ) define('ENGINE_ROOT', SERVER_ROOT.'/engine/'.ENVDIR);
+if( !defined('CACHE_ROOT') ) define('CACHE_ROOT', SERVER_ROOT.'/engine/'.ENVDIR.'/php/cache');
 
 // Define a list of known sites.
 if( !defined('SITES') ) define('SITES', array_values(array_filter(scandir(DATA_ROOT), function($path) {
@@ -78,7 +79,7 @@ if( !defined('SITES') ) define('SITES', array_values(array_filter(scandir(DATA_R
 })));
 
 // Set site constants.
-if( !defined('SUBDOMAIN') ) define('SUBDOMAIN', str_replace('prod', '', ENVDIR[ENVIRONMENT]));
+if( !defined('SUBDOMAIN') ) define('SUBDOMAIN', str_replace('prod', '', ENVDIR));
 if( !defined('SITE') ) define('SITE', $options->site);
 if( !defined('DOMAIN') ) define('DOMAIN', (SUBDOMAIN !== '' ? SUBDOMAIN.'.' : '').SITE);
 if( !defined('SITE_DATA') ) define('SITE_DATA', DATA_ROOT.'/'.SITE);

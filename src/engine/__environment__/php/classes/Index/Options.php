@@ -115,8 +115,8 @@ class Options {
     $params = parse_argv($_SERVER['argv']);
 
     // Normalize and save CLI options.
-    $this->site = $params['site'] ?? $params['s'];
-    $this->environment = $params['environment'] ?? $params['e'];
+    $this->site = $params['site'] ?? $params['s'] ?? null;
+    $this->environment = $params['environment'] ?? $params['e'] ?? null;
     $this->development = (isset($params['development']) or isset($params['d'])) ? true : false;
     $this->callback = $params['callback'] ?? $params['c'] ?? false;
     $this->username = $params['username'] ?? $params['u'] ?? null;
@@ -124,7 +124,7 @@ class Options {
     $this->method = $params['method'] ?? $params['m'] ?? 'GET';
     
     // Finally, capture the endpoint.
-    $this->endpoint = $params[0];
+    $this->endpoint = $params[0] ?? '/';
     
   }
   

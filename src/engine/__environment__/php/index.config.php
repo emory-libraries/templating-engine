@@ -1,7 +1,7 @@
 <?php
 
 // Configure the templating engine.
-define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), (include ENGINE_ROOT.'/php/config.index.php'), [
+define('CONFIG', array_merge((include __DIR__.'/config.global.php'), (include __DIR__.'/config.index.php'), [
   
   // Capture data about the setup.
   'development' => DEVELOPMENT,
