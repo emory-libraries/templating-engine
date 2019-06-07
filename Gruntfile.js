@@ -159,7 +159,7 @@ module.exports = function(grunt) {
   
   // Load the templating engine's environment variables.
   require('dotenv').config({
-    path: path.resolve(PATHS.src.engine.environment.root, '.env')
+    path: path.resolve(PATHS.src.engine.environment.root, `.env.${ENVSIM.dir}`)
   });
 
   // Configure taks.
@@ -187,7 +187,7 @@ module.exports = function(grunt) {
           `${PATHS.src.engine.environment.root}/**/*`,
           `${PATHS.dependencies.composer}/**/*`
         ],
-        tasks: ['phplint', 'copy:engine', 'index']
+        tasks: ['phplint', 'copy:engine', 'rename:env', 'index']
       },
       patterns: {
         files: [
@@ -308,6 +308,16 @@ module.exports = function(grunt) {
       }
     },
     
+    rename: {
+      env: {
+        files: [{
+          src: path.join(PATHS.dest.engine.environment.root, `.env.${ENVSIM.dir}`),
+          dest: path.join(PATHS.dest.engine.environment.root, `.env`),
+          dot: true
+        }]
+      }
+    },
+    
     phplint: {
       php: [path.join(PATHS.src.engine.environment.php, '**/*.php')]
     },
@@ -345,6 +355,7 @@ module.exports = function(grunt) {
     'unlock',
     'clean',
     'copy',
+    'rename',
     'index:prerender'
   ]);
   grunt.registerTask('unlock', 'Unlock public directory for deletion', function () {
