@@ -5,6 +5,7 @@ namespace Index;
 
 // Use dependencies.
 use Request;
+use Path;
 
 /**
  * Options
@@ -95,8 +96,15 @@ class Options {
       $this->password = $_SERVER['PHP_AUTH_PW'] ?? null;
     }
     
+    // Get script path and name.
+    $scriptPath = $_SERVER['SCRIPT_NAME'];
+    $scriptName = '/'.Path::filename($scriptPath);
+    
     // Finally, capture the endpoint.
-    $this->endpoint = str_replace($_SERVER['SCRIPT_NAME'], '', Request::endpoint());
+    $this->endpoint = strtr(Request::endpoint(), [
+      $scriptPath => '',
+      $scriptName => ''
+    ]);
     
   }
   
