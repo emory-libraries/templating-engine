@@ -19,7 +19,7 @@ class HandlebarsLayouts {
     $data = array_merge([], array_get($options, 'data', []));
     
     // Get the partial template.
-    $template = array_get(API::get('/partials'), $partial, false);
+    $template = array_get(Engine\API::get('/partials'), $partial, false);
 
     // Throw an error if the template could not be found.
     if( $template === false ) throw new Error("Missing partial: '$partial'");

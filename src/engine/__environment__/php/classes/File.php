@@ -145,6 +145,9 @@ class File {
   // Get the last modified time of a file.
   public static function modified( $path ) {
     
+    // Clear any cached file states.
+    clearstatcache();
+    
     // Return the file's last modified time.
     return filemtime($path);
     
@@ -152,6 +155,9 @@ class File {
   
   // Get metadata for a file or array of files.
   public static function metadata( $path, $recursive = true ) {
+    
+    // Clear any cached file stats.
+    clearstatcache();
     
     // Create a helper method for getting path metadata.
     $metadata = function($path) {

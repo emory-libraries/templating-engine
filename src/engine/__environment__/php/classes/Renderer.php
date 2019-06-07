@@ -3,6 +3,8 @@
 // Use dependencies.
 use LightnCandy\LightnCandy;
 use LightnCandy\Runtime;
+use Engine\API;
+use Performance\Performance;
 
 /*
  * Renderer
@@ -30,7 +32,7 @@ class Renderer {
     $template = str_replace('{{template}}', $template, $wrapper);
     
     // Add benchmark point.
-    if( $benchmarking ) Performance\Performance::point('Template prepared.');
+    if( $benchmarking ) Performance::point('Template prepared.');
     
     // Return the prepared template.
     return $template;
@@ -86,7 +88,7 @@ class Renderer {
   public static function render( Endpoint $endpoint, $benchmarking = BENCHMARKING ) { 
     
     // Add benchmark point.
-    if( $benchmarking ) Performance\Performance::point('Renderer', true);
+    if( $benchmarking ) Performance::point('Renderer', true);
     
     // Get the cache path for the compiled template.
     $path = $endpoint->route->cache;
@@ -94,8 +96,11 @@ class Renderer {
     // Create a helper method for quickly compiling and saving a template to the cache.
     $compiler = function() use ($endpoint, $path, $benchmarking) {
       
+      // Determine the appropriate wrapper to use.
+      $wrapper = DEVELOPMENT ? 'development' : 'default';
+      
       // Get the template.
-      $template = self::prepare($endpoint->template, 'default', $benchmarking);
+      $template = self::prepare($endpoint->template, $wrapper, $benchmarking);
       
       // Compile the template.
       $compiled = self::compile($template);
@@ -104,7 +109,7 @@ class Renderer {
       Cache::write($path, $compiled);
       
       // Add benchmark point.
-      if( $benchmarking ) Performance\Performance::point('Template compiled.');
+      if( $benchmarking ) Performance::point('Template compiled.');
       
     };
     
@@ -143,10 +148,11 @@ class Renderer {
     $renderer = Cache::include($path);
     
     // Add benchmark point.
-    if( $benchmarking ) Performance\Performance::finish('Renderer');
+    if( $benchmarking ) Performance::finish('Renderer');
     
     // Output a content type header.
     header('Content-Type: '.Mime::type('html'));
+    header('Last-Modified: '.gmdate('D, d M Y H:i:s T', File::modified($path)));
 
     // Attempt to render the page.
     try {

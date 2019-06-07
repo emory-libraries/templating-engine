@@ -1,14 +1,18 @@
 <?php
 
+// Use dependencies.
+use Moment\Moment;
+use Moment\CustomFormats\MomentJs;
+use Index\API;
+use Index\Options;
+use Performance\Performance;
+
 /*
  * Index
  *
  * This indexes all of the site data and templates.
  */
 class Index {
-  
-  // Determine if performance data should be output.
-  public $performance = false;
   
   // An index of all environment data.
   public $environment = [];
@@ -34,10 +38,23 @@ class Index {
   // The index of all available handlebars helpers.
   public $helpers = [];
   
+  // Capture output.
+  public static $output = [];
+  
+  // Indicates when the initial indexing process has completed.
+  public static $indexed = false;
+  
+  // The process ID of the current indexing instance.
+  public static $pid = null;
+  
+  // The amount of time given before a lock expires in seconds.
+  public static $expires = 300;
+  
   // Defines flags for indexing modes.
   const INDEX_ONLY = 1;
   const INDEX_METADATA = 2;
   const INDEX_READ = 4;
+  const INDEX_CLASS = 8;
   
   // Defines flags that can be used for the merge method.
   const MERGE_PATHS = 1;
@@ -49,34 +66,56 @@ class Index {
   const MERGE_OVERRIDE = 64;
   
   // Constructs the index.
-  function __construct( $instance = false ) {
+  function __construct( Options $options ) {
     
-    // Set performance flag.
-    $this->performance = (!$instance and DEVELOPMENT);
-
-    // Add benchmark point.
-    if( $this->performance ) Performance\Performance::point('Index', true);
+    // Set the process ID.
+    self::$pid = uniqid(DOMAIN.':', true);
+    
+    // Save the process ID to the process log.
+    self::log(true, self::$pid);
+    
+    // Determine if the indexing process is locked, and if so, prevent reindexing.
+    if( ($owner = self::lock()) !== false and $owner !== self::$pid ) {
+      
+      // Push the request onto the queue.
+      self::queue(true);
+      
+      // Remove the process from the process log.
+      self::log(false, self::$pid);
+      
+      // Exit.
+      API::done(202, "The indexing process is currently active for '".DOMAIN."'. Your request was added to a queue.");
+      
+    }
+    
+     // Add benchmark point.
+    if( BENCHMARKING ) Performance::point('Index', true);
+    
+    // Lock the indexing process.
+    self::lock(true);
+    
+    // Reset the index flag.
+    self::$indexed = false;
+    
+    // Reset the output.
+    self::$output = [];
+    
+    // Set a anchor point where reindexing should start if and when triggered.
+    reindex:
+    
+    // Wipe the queue.
+    self::queue(false);
     
     // Get an index of all environment-wide data files, and cache it.
     $this->environment = [
-      'metadata' => ($environment = $this->getEnvironmentData(self::INDEX_METADATA)),
-      'data' => array_map(function($files) {
-       
-        // Read all environment data files.
-        return self::read($files, 'Data');
-        
-      }, $environment)
+      'metadata' => ($environment = self::getEnvironmentData(self::INDEX_METADATA)),
+      'data' => self::classify($environment, 'Data')
     ];
 
     // Get an index of all site-wide data files, and cache it.
     $this->site = [
-      'metadata' => ($site = $this->getSiteData(self::INDEX_METADATA)),
-      'data' => array_map(function($files) {
-       
-        // Read all site data files.
-        return self::read($files, 'Data');
-        
-      }, $site)
+      'metadata' => ($site = self::getSiteData(self::INDEX_METADATA)),
+      'data' => self::classify($site, 'Data')
     ];
     
     // Mutate the site data.
@@ -84,94 +123,102 @@ class Index {
     
     // Get an index of all patterns, and cache it.
     $this->patterns = [
-      'metadata' => ($patterns = $this->getPatternData(self::INDEX_METADATA)),
-      'data' => array_map(function($files) {
-       
-        // Read all pattern files.
-        return self::read($files, 'Pattern');
-        
-      }, $patterns)
+      'metadata' => ($patterns = self::getPatternData(self::INDEX_METADATA)),
+      'data' => self::classify($patterns, 'Pattern')
     ];
     
     // Build partials based on the pattern index.
     $this->partials = [
       'metadata' => null,
-      'data' => ($partials = $this->getPartialData($this->patterns['data']))
+      'data' => ($partials = self::getPartialData($this->patterns['data']))
     ];
     
     // Get an index of all assets, and cache it.
     $this->assets = [
-      'metadata' => ($assets = $this->getAssetData(self::INDEX_METADATA)),
-      'data' => array_combine(array_keys($assets), array_map(function($file) {
-       
-        // Read all pattern files.
-        return self::read($file, 'Asset');
-        
-      }, array_keys($assets))), 
+      'metadata' => ($assets = self::getAssetData(self::INDEX_METADATA)),
+      'data' => array_combine(array_keys($assets), Index::classify(array_keys($assets), 'Asset'))
     ];
     
     // Get routes from the site and asset indices, and cache it.
     $this->routes = [
       'metadata' => null,
-      'data' => ($routes = $this->getRouteData($site, $assets))
+      'data' => ($routes = self::getRouteData($site, $assets))
     ];
     
     // Build endpoints based on the environment, site, pattern, and route indices.
     $this->endpoints = [
       'metadata' => null,
-      'data' => ($endpoints = $this->getEndpointData($this->environment['data'], $this->site['data'], $this->patterns['data'], $routes))
+      'data' => ($endpoints = self::getEndpointData($this->environment['data'], $this->site['data'], $this->patterns['data'], $routes))
     ];
     
     // Get an index of handlebars helpers, and cache it.
     $this->helpers = [
       'metadata' => null,
-      'data' => ($helpers = $this->getHelperData())
+      'data' => ($helpers = self::getHelperData())
     ];
     
     // Cache everything.
-    if( !$instance ) {
-      self::cache('environment', $this->environment);
-      self::cache('site', $this->site);
-      self::cache('patterns', $this->patterns);
-      self::cache('partials', $this->partials);
-      self::cache('assets', $this->assets);
-      self::cache('routes', $this->routes);
-      self::cache('endpoints', $this->endpoints);
-      self::cache('helpers', $this->helpers);
-    }
+    self::cache('environment', $this->environment);
+    self::cache('site', $this->site);
+    self::cache('patterns', $this->patterns);
+    self::cache('partials', $this->partials);
+    self::cache('assets', $this->assets);
+    self::cache('routes', $this->routes);
+    self::cache('endpoints', $this->endpoints);
+    self::cache('helpers', $this->helpers);
+    
+    // Set the indexed flag.
+    self::$indexed = true;
+    
+    // If additional indexing requests were received while the last process was running, then reindex everything.
+    if( !empty(self::queue()) ) goto reindex;
+    
+    // Fire any callbacks if given, and save the output.
+    self::runCallback($options->callback);
+    
+    // Unlock the indexing process.
+    self::lock(false);
+    
+    // Remove the process from the process log.
+    self::log(false, self::$pid);
     
     // Add benchmark point.
-    if( $this->performance ) Performance\Performance::finish('Index');
+    if( BENCHMARKING ) Performance::finish('Index');
   
   }
   
   // Call methods as static functions.
   public static function __callStatic( $method, $arguments ) { 
     
-    // Get an instance of the class.
-    $instance = new self(true);
-    
     // Make some protected methods public.
     switch($method) {
-      case 'getPartialData': return $instance->partials['data'];
-      case 'getHelperData': return $instance->helpers['data'];
-      case 'getAssetData': return $instance->assets['data'];
-      case 'getEndpointData': return $instance->endpoints['data'];
-      case 'getAssetEndpointData': return array_values(array_filter($instance->endpoints['data'], function($endpoint) {
+      case 'getPartialData': 
+        return static::getPartialData();
+      case 'getHelperData': 
+        return static::getHelperData();
+      case 'getAssetData': 
+        return static::getAssetData(static::INDEX_CLASS, 'Pattern');
+      case 'getEndpointData': 
+        return static::getEndpointData(static::INDEX_CLASS, 'Data');
+      case 'getAssetEndpointData': 
+        return array_values(array_filter(static::getEndpointData(static::INDEX_CLASS, 'Data'), function($endpoint) {
 
-        // Locate all asset endpoints.
-        return $endpoint->asset;
+          // Locate all asset endpoints.
+          return $endpoint->asset;
 
-      }));
-      case 'getAssetEndpoint': return array_get(array_values(array_filter($instance->endpoints['data'], function($endpoint) use ($arguments) {
+        }));
+      case 'getAssetEndpoint': 
+        return array_get(array_values(array_filter(static::getEndpointData(static::INDEX_CLASS, 'Data'), function($endpoint) use ($arguments) {
         
-        // Find asset endpoints.
-        if( !$endpoint->asset ) return false;
+          // Find asset endpoints.
+          if( !$endpoint->asset ) return false;
 
-        // Find the endpoint data for the given endpoint path.
-        return (is_array($endpoint->endpoint) ? in_array($arguments[0], $endpoint->endpoint) : $endpoint->endpoint == $arguments[0]);
+          // Find the endpoint data for the given endpoint path.
+          return (is_array($endpoint->endpoint) ? in_array($arguments[0], $endpoint->endpoint) : $endpoint->endpoint == $arguments[0]);
 
-      })), 0);
+        })), 0);
+      case 'getLockStatus':
+        return static::lock();
     }
     
   }
@@ -285,6 +332,22 @@ class Index {
     
   }
   
+  // Classify one or more set of files.
+  protected static function classify( $files, $class = null ) {
+    
+    // Classify a single file.
+    if( is_string($files) ) return self::read($files, $class);
+    
+    // Otherwise, classify an array of files.
+    return array_map(function($files) use ($class) {
+       
+      // Read all site data files.
+      return self::read($files, $class);
+
+    }, $files);
+    
+  }
+  
   // Mutate one or more files.
   protected static function mutate( $files ) {
     
@@ -326,7 +389,7 @@ class Index {
     
   }
   
-    // Merge data files.
+  // Merge data files.
   protected static function merge( ...$arrays/*, $flags = self::MERGE_KEYED | self::MERGE_RECURSIVE*/ ) {
 
     // Get flags, or set the default.
@@ -433,6 +496,10 @@ class Index {
     // Get the index's filename with the proper extension.
     $phpFilename = "$name.php";
     $jsonFilename = "$name.json";
+    
+    // Set the index file's destination path.
+    $phpDest = CONFIG['engine']['cache']['index']."/$phpFilename";
+    $jsonDest = CONFIG['engine']['cache']['index']."/$jsonFilename";
 
     // Convert the index to a PHP string and JSON string.
     $php = '<?php return '.var_export($index, true).'; ?>';
@@ -446,8 +513,8 @@ class Index {
       $jsonTmp = Cache::tmp($json, $jsonFilename, 0777);
 
       // Move the temporary file to the index, and overwrite any existing index file that's there.
-      $phpTmp['move'](CONFIG['engine']['cache']['index']."/$phpFilename");
-      $jsonTmp['move'](CONFIG['engine']['cache']['index']."/$jsonFilename");
+      $phpTmp['move']($phpDest);
+      $jsonTmp['move']($jsonDest);
 
     } 
 
@@ -461,11 +528,221 @@ class Index {
     
   }
   
+  // Keep a log of all active indexing processes.
+  protected static function log( bool $state = null, $pid = null ) {
+    
+    // Set the processes filename.
+    $phpFilename = 'processes.php';
+    $jsonFilename = 'processes.json';
+
+    // Set the processes file's destination path.
+    $phpDest = CONFIG['engine']['cache']['index']."/$phpFilename";
+    $jsonDest = CONFIG['engine']['cache']['index']."/$jsonFilename";
+
+    // If a state was given, then log the process with the given state.
+    if( isset($state) ) {
+
+      // Get the current list of running processes if available, or initialize an empty list otherwise.
+      $processes = Cache::exists($phpDest) ? Cache::include($phpDest) : [];
+
+      // Add the PID to the process list if the state indicates that it should be added.
+      if( $state === true and isset($pid) and !in_array($pid, $processes) ) $processes[] = $pid;
+
+      // Otherwise, remove the PID from the process list.
+      else if( $state === false and isset($pid) and in_array($pid, $processes) ) unset($processes[array_search($pid, $processes)]);
+
+      // Convert the processes to a PHP string and JSON string.
+      $php = '<?php return '.var_export($processes, true).'; ?>';
+      $json = json_encode($processes, JSON_PRETTY_PRINT);
+
+      // Try to save the processes as a temporary file, and make sure no errors were thrown.
+      try {
+
+        // Create the temporary file.
+        $phpTmp = Cache::tmp($php, $phpFilename, 0777);
+        $jsonTmp = Cache::tmp($json, $jsonFilename, 0777);
+
+        // Move the temporary file to the index, and overwrite any existing index file that's there.
+        $phpTmp['move']($phpDest);
+        $jsonTmp['move']($jsonDest);
+
+      }
+
+      // Otherwise, throw an error if one occurred when attempting to save the list of processes.
+      catch( Exception $e ) {
+
+        // Log the error.
+        error_log("Something went wrong while trying to create the process index.");
+
+      }
+      
+    }
+    
+    // Otherwise, return list of all currently running processes.
+    else return (Cache::exists($phpDest) ? Cache::include($phpDest) : []);
+    
+  }
+  
+  // Set or get the lock state of the indexing process.
+  protected static function lock( bool $state = null ) {
+    
+    // Get the lock file path.
+    $path = CONFIG['engine']['cache']['index'].'/indexing.lock';
+    
+    // Get the lock status.
+    $status = Cache::exists($path);
+    
+    // If a lock file exists, then determine if it is invalid and/or expired, and adjust the lock status accordingly.
+    if( $status ) {
+      
+      // Get the owner of the cache file and a list of all running processes.
+      $owner = Cache::read($path);
+      $processes = self::log();
+     
+      // If the process list is empty or the owner cannot be found within the process list, then assume the lock file is invalid.
+      if( empty($processes) or !in_array($owner, $processes) ) {
+        
+        // Unlock the indexing process.
+        Cache::delete($path);
+
+        // Update the lock status.
+        $status = false;
+        
+      }
+      
+      // Otherwise, determine if the lock file has expired.
+      else {
+      
+        // Otherwise, get the expiry time of the lock file.
+        $expiration = Moment::fromDateTime((new DateTime())->setTimestamp(Cache::modified($path)))->addSeconds(self::$expires)->format('X', new MomentJs());
+
+        // Determine if the lock file has expired, and if so, unlock the indexing process and update the status.
+        if( $expiration < time() ) {
+
+          // Unlock the indexing process.
+          Cache::delete($path);
+
+          // Update the lock status.
+          $status = false;
+
+        }
+        
+      }
+      
+    }
+    
+    // Return the status if a state was not given.
+    if( !isset($state) ) {
+      
+      // If the indexing process is unlocked, then simply return the status as being unlocked.
+      if( !$status ) return false;
+      
+      // Otherwise, if the indexing process is locked, then return the ID of the lock owner.
+      else return Cache::read($path);
+      
+    }
+    
+    // Otherwise, if state was given, then attempt to lock or unlock the indexing process.
+    else {
+      
+      // Attempt to lock the indexing process if not previously locked.
+      if( !$status and $state === true ) Cache::write($path, self::$pid);
+        
+      // Otheriwse, attempt to unlock the indexing process if previously locked.
+      else if( $status and $state === false ) {
+        
+        // Get the ID of lock file's owner process.
+        $owner = Cache::read($path);
+        
+        // Unlock the indexing process only if the lock file's owner is the current process.
+        if( self::$pid === $owner ) Cache::delete($path);
+        
+      }
+      
+    }
+    
+  }
+  
+  // Queue multiple incoming requests.
+  protected static function queue( $q = null ) {
+    
+    // Set the queue filename.
+    $phpFilename = 'queue.php';
+    $jsonFilename = 'queue.json';
+
+    // Set the queue file's destination path.
+    $phpDest = CONFIG['engine']['cache']['index']."/$phpFilename";
+    $jsonDest = CONFIG['engine']['cache']['index']."/$jsonFilename";
+    
+    // Initialize a helper for saving queue data.
+    $save = function( $queue ) use ($phpFilename, $jsonFilename, $phpDest, $jsonDest) {
+      
+      // Convert the queue to a PHP string and JSON string.
+      $php = '<?php return '.var_export($queue, true).'; ?>';
+      $json = json_encode($queue, JSON_PRETTY_PRINT);
+
+      // Try to save the queue as a temporary file, and make sure no errors were thrown.
+      try {
+
+        // Create the temporary file.
+        $phpTmp = Cache::tmp($php, $phpFilename, 0777);
+        $jsonTmp = Cache::tmp($json, $jsonFilename, 0777);
+
+        // Move the temporary file to the index, and overwrite any existing index file that's there.
+        $phpTmp['move']($phpDest);
+        $jsonTmp['move']($jsonDest);
+
+      }
+
+      // Otherwise, throw an error if one occurred when attempting to queue the request.
+      catch( Exception $e ) { throw $e; }
+      
+    };
+    
+    // If a push was requested, then queue the current request.
+    if( $q === true ) {
+    
+      // Get the current timestamp.
+      $timestamp = time();
+
+      // If a queue already exists then get its contents, or initialize an empty queue otherwise.
+      $queue = Cache::exists($phpDest) ? Cache::include($phpDest) : [];
+
+      // Add the current request to the queue.
+      $queue[] = $timestamp;
+
+      // Try to save the queue as a temporary file, and make sure no errors were thrown.
+      try { $save($queue); }
+
+      // Otherwise, log that an error occurred when attempting to queue the request.
+      catch( Exception $e ) { error_log("Something went wrong while trying to queue the incoming indexing request at '$timestamp'."); }
+      
+    }
+    
+    // Otherwise, if a wipe was requested, then reset the queue.
+    else if( $q === false ) {
+      
+      // Get the queue's contents.
+      $queue = [];
+      
+      // Try to save the queue as a temporary file, and make sure no errors were thrown.
+      try { $save($queue); }
+
+      // Otherwise, log that an error occurred when attempting to queue the request.
+      catch( Exception $e ) { error_log('Something went wrong while trying to wipe the indexing queue.'); }
+      
+    }
+    
+    // Otherwise, get the contents of the queue.
+    else return (Cache::exists($phpDest) ? Cache::include($phpDest) : []);
+    
+  }
+  
   // Locate environment-specific data files.
-  protected function getEnvironmentData( $flag = Index::INDEX_ONLY ) {
+  protected static function getEnvironmentData( $flag = Index::INDEX_ONLY, string $class = null ) {
     
     // Add benchmark point.
-    if( $this->performance ) Performance\Performance::point('Indexing environment data...');
+    if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing environment data...');
     
     // Get meta data.
     $meta = isset(CONFIG['meta']) ? CONFIG['meta'] : (include CONFIG['engine']['php'].'/config.index.php')['meta'];
@@ -499,14 +776,31 @@ class Index {
       
     }, $environment);
     
+    // Return the files with their contents loaded into the given class.
+    if( $flag & Index::INDEX_CLASS ) {
+      
+      // Get metadata for all site data files.
+      $environment = array_map('Index::metadata', $environment);
+      
+      // Instatiate an instance of the given class for each file. 
+      $environment = Index::classify($environment, $class);
+      
+      // Add benchmark point.
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
+      
+      // Return all files with their class instances.
+      return $environment;
+      
+    }
+    
     // Return the files with their contents.
-    if( $flag & Index::INDEX_READ ) {
+    else if( $flag & Index::INDEX_READ ) {
       
       // Read all environment data files.
       $environment = array_map('Index::read', $environment);
     
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
     
       // Return all files with their contents.
       return $environment;
@@ -520,7 +814,7 @@ class Index {
       $environment = array_map('Index::metadata', $environment);
     
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
     
       // Return all files with their metadata.
       return $environment;
@@ -531,7 +825,7 @@ class Index {
     else {
       
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
       
       // Return the file listing.
       return $environment;
@@ -541,10 +835,10 @@ class Index {
   }
   
   // Locate site-specific data files.
-  protected function getSiteData( $flag = Index::INDEX_ONLY ) {
+  protected static function getSiteData( $flag = Index::INDEX_ONLY, string $class = null ) {
     
     // Add benchmark point.
-    if( $this->performance ) Performance\Performance::point('Indexing site data...');
+    if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing site data...');
     
     // Get site-specific data files.
     $site = [
@@ -584,8 +878,25 @@ class Index {
       
     }));
 
+    // Return the files with their contents loaded into the given class.
+    if( $flag & Index::INDEX_CLASS ) {
+      
+      // Get metadata for all site data files.
+      $site = array_map('Index::metadata', $site);
+      
+      // Instatiate an instance of the given class for each file. 
+      $site = Index::classify($site, $class);
+      
+      // Add benchmark point.
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
+      
+      // Return all files with their class instances.
+      return $site;
+      
+    }
+    
     // Return the files with their contents.
-    if( $flag & Index::INDEX_READ ) {
+    else if( $flag & Index::INDEX_READ ) {
       
       // Get a list of page types with their respective template IDs.
       $types = array_flip(CONFIG['config']['template']);
@@ -594,7 +905,7 @@ class Index {
       $site = array_map('Index::read', $site);
     
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
     
       // Return all files with their contents.
       return $site;
@@ -608,7 +919,7 @@ class Index {
       $site = array_map('Index::metadata', $site);
     
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
     
       // Return all files with their metadata.
       return $site;
@@ -619,7 +930,7 @@ class Index {
     else {
       
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
       
       // Return the file listing.
       return $site;
@@ -629,22 +940,39 @@ class Index {
   }
   
   // Locate all patterns.
-  protected function getPatternData( $flag = Index::INDEX_ONLY ) {
+  protected static function getPatternData( $flag = Index::INDEX_ONLY, string $class = null ) {
     
     // Add benchmark point.
-    if( $this->performance ) Performance\Performance::point('Indexing pattern data...');
+    if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing pattern data...');
     
     // Get all pattern files.
     $patterns = array_map('Index::scan', PATTERN_GROUPS);
     
+    // Return the files with their contents loaded into the given class.
+    if( $flag & Index::INDEX_CLASS ) {
+      
+      // Get metadata for all site data files.
+      $patterns = array_map('Index::metadata', $patterns);
+      
+      // Instatiate an instance of the given class for each file. 
+      $patterns = Index::classify($patterns, $class);
+      
+      // Add benchmark point.
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
+      
+      // Return all files with their class instances.
+      return $patterns;
+      
+    }
+    
     // Return the files with their contents.
-    if( $flag & Index::INDEX_READ ) {
+    else if( $flag & Index::INDEX_READ ) {
       
       // Read all pattern files.
       $patterns = array_map('Index::read', $patterns);
     
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
     
       // Return all files with their contents.
       return $patterns;
@@ -658,7 +986,7 @@ class Index {
       $patterns = array_map('Index::metadata', $patterns);
     
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
     
       // Return all files with their metadata.
       return $patterns;
@@ -669,7 +997,7 @@ class Index {
     else {
       
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( $this->performance and !Index::$indexed ) Performance::finish();
       
       // Return the file listing.
       return $patterns;
@@ -679,7 +1007,15 @@ class Index {
   }
   
   // Convert pattern data into partial data.
-  protected function getPartialData( array $patterns ) {
+  protected static function getPartialData( array $patterns = null ) {
+    
+    // Get patterns if not given.
+    $patterns = isset($patterns) ? $patterns : array_map(function($files) {
+       
+      // Read all pattern files.
+      return self::read($files, 'Pattern');
+
+    }, self::getPatternData(self::INDEX_METADATA));
     
     // Get all patterns without their groupings.
     $patterns = array_merge(...array_values($patterns));
@@ -702,10 +1038,10 @@ class Index {
   }
   
   // Locate all assets used by the site.
-  protected function getAssetData( $flag = Index::INDEX_ONLY ) {
+  protected static function getAssetData( $flag = Index::INDEX_ONLY ) {
     
     // Add benchmark point.
-    if( $this->performance ) Performance\Performance::point('Indexing asset data...');
+    if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing asset data...');
     
     // Get asset files.
     $assets = array_merge(...array_values(array_map(function($path, $recursive) {
@@ -735,14 +1071,31 @@ class Index {
 
     }));
 
+    // Return the files with their contents loaded into the given class.
+    if( $flag & Index::INDEX_CLASS ) {
+      
+      // Get metadata for all site data files.
+      $assets = array_map('Index::metadata', $assets);
+      
+      // Instatiate an instance of the given class for each file. 
+      $assets = array_combine(array_keys($assets), Index::classify(array_keys($assets), $class));
+      
+      // Add benchmark point.
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
+      
+      // Return all files with their class instances.
+      return $assets;
+      
+    }
+    
     // Return the files with their contents.
-    if( $flag & self::INDEX_READ ) {
+    else if( $flag & self::INDEX_READ ) {
       
       // Read all template data files.
       $assets = Index::read($assets);
     
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
     
       // Return all files with their contents.
       return $assets;
@@ -756,7 +1109,7 @@ class Index {
       $assets = Index::metadata($assets);
     
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
     
       // Return all files with their metadata.
       return $assets;
@@ -767,7 +1120,7 @@ class Index {
     else {
       
       // Add benchmark point.
-      if( $this->performance ) Performance\Performance::finish();
+      if( BENCHMARKING and !Index::$indexed ) Performance::finish();
       
       // Return the file listing.
       return $assets;
@@ -777,10 +1130,10 @@ class Index {
   }
   
   // Identifies all known routes within a site from a precompiled set of indices.
-  protected function getRouteData( array $site, array $assets = [] ) {
+  protected static function getRouteData( array $site, array $assets = [] ) {
     
     // Add benchmark point.
-    if( $this->performance ) Performance\Performance::point('Indexing route data...');
+    if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing route data...');
     
     // Initialize a helper method for converting a single file or array of files to routes.
     $route = function($files) {
@@ -840,7 +1193,7 @@ class Index {
     }, ARRAY_FILTER_USE_KEY));
     
     // Add benchmark point.
-    if( $this->performance ) Performance\Performance::finish();
+    if( BENCHMARKING and !Index::$indexed ) Performance::finish();
     
     // Merge the error routes, and return all routes.
     return array_merge($routes, $errors);
@@ -848,7 +1201,13 @@ class Index {
   }
   
   // Transforms all index data into actual endpoint data.
-  protected function getEndpointData( array $environment, array $site, array $patterns, array $routes ) {
+  protected static function getEndpointData( array $environment = null, array $site = null, array $patterns = null, array $routes = null ) {
+    
+    // Initialize arguments if not given.
+    if( !isset($environment) ) $environment = Index::getEnvironmentData(Index::INDEX_CLASS, 'Data');
+    if( !isset($site) ) $site = Index::getSiteData(Index::INDEX_CLASS, 'Data');
+    if( !isset($patterns) ) $patterns = Index::getPatternData(Index::INDEX_CLASS, 'Pattern');
+    if( !isset($routes) ) $routes = Index::getRouteData($site, Index::getAssetData(Index::INDEX_METADATA));
     
     // Initialize endpoints.
     $endpoints = [];
@@ -942,9 +1301,40 @@ class Index {
   }
   
   // Get all handlebars helpers.
-  protected function getHelperData() {
+  protected static function getHelperData() {
     
+    // Load helpers.
     return (include ENGINE_ROOT.'/php/helpers/index.php')();
+    
+  }
+  
+  // Run a callback.
+  protected static function runCallback( string $callback ) {
+    
+    // Fire the callback if it exists.
+    if( isset($callback) and $callback !== false ) {
+
+      // Get the callback path.
+      $path = ENGINE_ROOT.'/php/callbacks/'.$callback.'.php';
+
+      // Look for the callback, and execute it if it exists.
+      if( File::exists($path) ) {
+        
+        // Add benchmark point.
+        if( BENCHMARKING ) Performance::point("Running $callback callback...'");
+        
+        // Include the callback, and run it.
+        $result = (include $path)();
+        
+        // Save the output.
+        if( isset($result) ) Index::$output[$callback] = $result;
+        
+        // Add benchmark point.
+        if( BENCHMARKING ) Performance::finish();
+        
+      }
+
+    }
     
   }
   
