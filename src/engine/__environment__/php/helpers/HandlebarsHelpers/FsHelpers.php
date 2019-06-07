@@ -27,7 +27,7 @@ trait FsHelpers {
     $filter = func_num_args() == 3 ? $filter : false;
     
     // Get a list of all helpers.
-    $helpers = API::get('/helpers');
+    $helpers = Engine\API::get('/helpers');
     
     // Initialize the result.
     $contents = [];

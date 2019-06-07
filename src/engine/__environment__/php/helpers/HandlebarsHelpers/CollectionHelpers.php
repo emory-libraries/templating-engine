@@ -41,7 +41,7 @@ trait CollectionHelpers {
   public static function iterate( $collection, $options ) {
     
     // Get a list of all helpers.
-    $helpers = API::get('/helpers');
+    $helpers = Engine\API::get('/helpers');
     
     // Iterate over a collection.
     if( is_associative_array($collection) ) return $helpers['forOwn']($collection, $options);

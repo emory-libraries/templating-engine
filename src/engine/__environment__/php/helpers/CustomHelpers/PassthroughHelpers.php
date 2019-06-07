@@ -30,7 +30,7 @@ trait PassthroughHelpers {
     else {
       
       // Get all helpers.
-      $helpers = API::get('/helpers');
+      $helpers = Engine\API::get('/helpers');
       
       // Initialize binding data.
       $bind = [];

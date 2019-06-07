@@ -1,8 +1,5 @@
 <?php
 
-// Use the engine's API.
-use Engine\API;
-
 namespace CustomHelpers;
 
 trait ApiHelpers {
@@ -17,7 +14,7 @@ trait ApiHelpers {
     $method = func_num_args() > 2 ? strtolower($method) : 'get';
     
     // Pass along the request to the API and get the response.
-    $response = API::$method($endpoint);
+    $response = Engine\API::$method($endpoint);
     
     // Convert any objects to arrays.
     $response = object_to_array($response);
