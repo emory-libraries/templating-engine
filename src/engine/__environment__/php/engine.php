@@ -1,5 +1,8 @@
 <?php
 
+// Autoload dependencies.
+require __DIR__.'/engine.autoload.php';
+
 // Set a localhost and development mode flag.
 define('LOCALHOST', ($_SERVER['HTTP_HOST'] == 'localhost' or $_SERVER['SERVER_NAME'] == 'localhost'));
 define('NGROK', strpos($_SERVER['HTTP_HOST'], 'ngrok') !== false or strpos($_SERVER['HTTP_HOST'], 'ngrok') !== false);
@@ -60,7 +63,7 @@ else {
 }
 
 // Initialize the templating engine.
-require ENGINE_ROOT."/php/engine.init.php";
+require __DIR__."/engine.init.php";
 
 // Start the templating engine.
 new Engine();
