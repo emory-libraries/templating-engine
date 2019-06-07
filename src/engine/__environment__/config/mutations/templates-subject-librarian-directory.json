@@ -1,5 +1,7 @@
 {
-  "alias": {},
+  "alias": {
+    "system.title": "title"
+  },
   "rename": {
     "subtitle": "introduction",
     "librarians": "cascade-page",

@@ -10,11 +10,8 @@ trait FsHelpers {
     // Initialize the result.
     $contents = '';
     
-    // Set the root location to read from.
-    $root = CONFIG['data']['site']['root'];
-    
     // Verify that the file exists, and read it.
-    if( File::isFile("$root/$path") ) $contents = File::read("$root/$path");
+    if( File::isFile($path) ) $contents = File::read($path);
     
     // Return the file contents.
     return $contents;
@@ -30,22 +27,16 @@ trait FsHelpers {
     $filter = func_num_args() == 3 ? $filter : false;
     
     // Get a list of all helpers.
-    $helpers = API::get('/helpers');
+    $helpers = Engine\API::get('/helpers');
     
     // Initialize the result.
     $contents = [];
     
-    // Set the root location to read from.
-    $root = CONFIG['data']['site']['root'];
-    
-    // Clean up the directory path.
-    $directory = ltrim($directory, '/');
-    
     // Verify that the directory exists.
-    if( File::isDirectory("$root/$directory") ) {
+    if( File::isDirectory($directory) ) {
       
       // Get directory contents.
-      $contents = Index::scan("$root/$directory");
+      $contents = Index::scan($directory);
       
       // Apply any filters if given.
       if( $filter ) {
@@ -70,11 +61,7 @@ trait FsHelpers {
         if( is_string($filter) ) { 
           
           // Find files based on the globbing pattern.
-          $glob = array_map(function($glob) {
-            
-            return str_replace("$root/", '', $glob);
-            
-          }, glob("$root/$directory/$filter"));
+          $glob = glob("$directory/$filter");
           
           // Filter out globbed files.
           $contents = array_filter($contents, function($file) use ($glob) {

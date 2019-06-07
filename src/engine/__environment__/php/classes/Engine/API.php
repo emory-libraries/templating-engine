@@ -1,5 +1,15 @@
 <?php
 
+// Set the namespace.
+namespace Engine;
+
+// Use dependencies.
+use Cache;
+use Request;
+use Route;
+use Index\API as IndexAPI;
+use Engine\API as EngineAPI;
+
 /*
  * API
  *
@@ -26,11 +36,11 @@ class API {
   // Register known API endpoints and their respective methods.
   protected static $endpoints = [
     'GET' => [
-      '/endpoint'   => 'API::getEndpoint',
-      '/asset'      => 'API::getAsset',
-      '/error'      => 'API::getError',
-      '/partials'   => 'API::getPartials',
-      '/helpers'    => 'API::getHelpers',
+      '/endpoint'   => 'Engine\API::getEndpoint',
+      '/asset'      => 'Engine\API::getAsset',
+      '/error'      => 'Engine\API::getError',
+      '/partials'   => 'Engine\API::getPartials',
+      '/helpers'    => 'Engine\API::getHelpers',
     ]
   ];
   
@@ -94,9 +104,9 @@ class API {
     
     // Check to see if the necessary index data exists within the cache.
     $cached = self::$cache->get($index);
-    
+   
     // If index data has not yet been cached or is outdated, then (re)cache it now, and return the cached data.
-    if( !isset($cached) or self::outdated($index) ) return [
+    if( !isset($cached) or self::outdated($index)  ) return [
       'outdated' => true,
       'index' => self::cache($index)
     ];
@@ -117,12 +127,28 @@ class API {
     
     // Verify that the data was included.
     if( $data !== false ) {
+      
+      // Only cache the data if not currently indexing.
+      if( IndexAPI::get('/status', IndexAPI::INDEXAPI_RESPONSE_RETURN)['state'] == 'READY' ) {
     
-      // Cache the data, then return it.
-      if( self::$cache->set($index, $data) ) return self::$cache->get($index);
+        // Cache the data, then return it.
+        if( self::$cache->set($index, $data) ) return self::$cache->get($index);
 
-      // Otherwise, throw an error if the data could not be cached.
-      else throw new Error("Failed to cache $index data");
+        // Otherwise, log an error if the data could not be cached.
+        else error_log("Failed to cache $index data.");
+        
+      }
+      
+      // Otherwise, log an error if the data could not be cached, and return the data as is.
+      else {
+        
+        // Log an error that caching was skipped.
+        error_log("Skipped caching $index data because index was running.");
+        
+        // Return the data.
+        return $data;
+        
+      }
       
     }
     

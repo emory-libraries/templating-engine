@@ -159,7 +159,7 @@ module.exports = function(grunt) {
   
   // Load the templating engine's environment variables.
   require('dotenv').config({
-    path: path.resolve(PATHS.src.engine.environment.root, '.env')
+    path: path.resolve(PATHS.src.engine.environment.root, `.env.${ENVSIM.dir}`)
   });
 
   // Configure taks.
@@ -187,7 +187,7 @@ module.exports = function(grunt) {
           `${PATHS.src.engine.environment.root}/**/*`,
           `${PATHS.dependencies.composer}/**/*`
         ],
-        tasks: ['phplint', 'copy:engine', 'index']
+        tasks: ['phplint', 'copy:engine', 'rename:env', 'index']
       },
       patterns: {
         files: [
@@ -230,7 +230,8 @@ module.exports = function(grunt) {
             cwd: PATHS.src.engine.environment.root, 
             src: ['**/*'], 
             dest: PATHS.dest.engine.environment.root,
-            dot: true
+            dot: true,
+            follow: true
           },
           {
             expand: true, 
@@ -307,6 +308,16 @@ module.exports = function(grunt) {
       }
     },
     
+    rename: {
+      env: {
+        files: [{
+          src: path.join(PATHS.dest.engine.environment.root, `.env.${ENVSIM.dir}`),
+          dest: path.join(PATHS.dest.engine.environment.root, `.env`),
+          dot: true
+        }]
+      }
+    },
+    
     phplint: {
       php: [path.join(PATHS.src.engine.environment.php, '**/*.php')]
     },
@@ -344,6 +355,7 @@ module.exports = function(grunt) {
     'unlock',
     'clean',
     'copy',
+    'rename',
     'index:prerender'
   ]);
   grunt.registerTask('unlock', 'Unlock public directory for deletion', function () {
@@ -362,7 +374,7 @@ module.exports = function(grunt) {
   grunt.registerTask('dev', [
     'build', 
     //'connect',
-    'test',
+    //'test',
     'watch'
   ]);
   grunt.registerTask('dist', [
@@ -376,6 +388,7 @@ module.exports = function(grunt) {
     
     // Initialize options.
     let options = _.merge({
+      method: 'POST',
       username: process.env.INDEX_USERNAME,
       password: process.env.INDEX_PASSWORD,
       environment: ENVSIM.environment,
@@ -399,14 +412,18 @@ module.exports = function(grunt) {
       return options;
 
     }, []);
+    
+    // Build arguments.
+    const args = [
+      path.join(PATHS.dest.engine.environment.php, 'index.php'),
+      '/index',
+      ...options
+    ];
 
     // Run the indexer.
     grunt.util.spawn({
       cmd: 'php',
-      args: [
-        path.join(PATHS.dest.engine.environment.php, 'index.php'),
-        ...options
-      ],
+      args,
       opts: {stdio: 'inherit'}
     }, () => done());
     

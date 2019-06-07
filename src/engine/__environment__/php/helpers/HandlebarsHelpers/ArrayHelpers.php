@@ -227,7 +227,7 @@ trait ArrayHelpers {
   public static function map( array $array, $iteratee ) {
     
     // Get a list of all helpers.
-    $helpers = API::get('/helpers');
+    $helpers = Engine\API::get('/helpers');
     
     if( gettype($iteratee) == 'callable' ) return array_map_by($array, $iteratee);
     
@@ -269,7 +269,7 @@ trait ArrayHelpers {
   public static function some( array $array, $iteratee, $options ) {
     
     // Get a list of all helpers.
-    $helpers = API::get('/helpers');
+    $helpers = Engine\API::get('/helpers');
     
     if( gettype($iteratee) == 'callable' ) {
       
@@ -308,7 +308,7 @@ trait ArrayHelpers {
   public static function sortBy( array $array, $property, $options ) {
     
     // Get a list of all helpers.
-    $helpers = API::get('/helpers');
+    $helpers = Engine\API::get('/helpers');
     
     $reverse = array_get($options, 'hash.reverse', false);
     
