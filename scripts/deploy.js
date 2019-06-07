@@ -107,7 +107,7 @@ module.exports = async function () {
 
         // Get the file's paths and contents.
         return {
-          src: file,
+          src: fs.realpathSync(file),
           dest: path.join(remote, file.replace(local, ''))
         };
 
