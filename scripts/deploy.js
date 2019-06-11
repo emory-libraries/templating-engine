@@ -165,7 +165,7 @@ module.exports = async function () {
         else {
 
           // Get the file's contents.
-          const contents = fs.readFileSync(src, 'utf8');
+          const contents = fs.readFileSync(src);
 
           // For meta, global, and shared content, force the user to confirm before overwriting.
           if( src.indexOf('/_meta/') > -1 || src.indexOf('/_global/') > -1 || src.indexOf('/_shared/') > -1 ) {
