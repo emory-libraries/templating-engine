@@ -79,7 +79,7 @@ class Request {
   public static function domain() {
     
     // Return the request domain.
-    return CONFIG['__site__']['domain'];
+    return DOMAIN;
     
   }
   
@@ -87,7 +87,7 @@ class Request {
   public static function site() {
     
     // Return the request site.
-    return CONFIG['__site__']['site'];
+    return SITE;
     
   }
   
@@ -95,7 +95,7 @@ class Request {
   public static function environment() {
     
     // Return the request environment.
-    return CONFIG['__site__']['environment'];
+    return ENVIRONMENT;
     
   }
   
@@ -103,7 +103,7 @@ class Request {
   public static function path( $path = null ) {
     
     // Get the server's $base path, if applicable.
-    $base = (isset(CONFIG['server']['path']) ? CONFIG['server']['path'].'/' : '').self::domain().'/';
+    $base = (defined('SERVER_PATH') ? SERVER_PATH.'/' : '').self::domain().'/';
     
     // Otherwise, return the path portion of the request without the server's base path.
     return str_replace($base, '', (isset($path) ? $path : $_SERVER['REQUEST_URI']));

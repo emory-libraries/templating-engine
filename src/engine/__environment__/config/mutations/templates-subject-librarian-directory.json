@@ -1,0 +1,112 @@
+{
+  "alias": {
+    "system.title": "title"
+  },
+  "rename": {
+    "subtitle": "introduction",
+    "librarians": "cascade-page",
+    "librarians.@.id": "librarians.@.name",
+    "librarians.@.link.href": "librarians.@.path",
+    "librarians.@.config": "librarians.@.content.system-data-structure.profile-options",
+    "librarians.@.name": "librarians.@.content.system-data-structure.display-name",
+    "librarians.@.first-name": "librarians.@.content.system-data-structure.given-name", 
+    "librarians.@.middle-name": "librarians.@.content.system-data-structure.middle-name", 
+    "librarians.@.last-name": "librarians.@.content.system-data-structure.family-name", 
+    "librarians.@.pronoun": "librarians.@.content.system-data-structure.preferred-pronouns", 
+    "librarians.@.title": "librarians.@.content.system-data-structure.job-title", 
+    "librarians.@.library": "librarians.@.content.system-data-structure.location", 
+    "librarians.@.address": "librarians.@.content.system-data-structure.contact-info.mailing-address",
+    "librarians.@.address.name": "librarians.@.address.place-name", 
+    "librarians.@.address.street": "librarians.@.address.street-address", 
+    "librarians.@.phone": "librarians.@.content.system-data-structure.contact-info.phone", 
+    "librarians.@.email": "librarians.@.content.system-data-structure.contact-info.email", 
+    "librarians.@.fax": "librarians.@.content.system-data-structure.contact-info.fax", 
+    "librarians.@.libcal": "librarians.@.content.system-data-structure.contact-info.libcal", 
+    "librarians.@.education": "librarians.@.content.system-data-structure.education", 
+    "librarians.@.education.address" : "librarians.@.education.city-state-country",
+    "librarians.@.image": "librarians.@.content.system-data-structure.image", 
+    "librarians.@.image.src" : "librarians.@.image.image-file.path",
+    "librarians.@.quote": "librarians.@.content.system-data-structure.quote.quote-text", 
+    "librarians.@.bio": "librarians.@.content.system-data-structure.description.wysiwyg", 
+    "librarians.@.subjects": "librarians.@.content.system-data-structure.subject-areas.expertise",
+    "librarians.@.cv.href": "librarians.@.content.system-data-structure.cv.file.path"
+  },
+  "replace": {},
+  "remove": [],
+  "add": {},
+  "evaluate": [
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 2'",
+      "value": 2
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 3'",
+      "value": 3
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 4'",
+      "value": 4
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 5'",
+      "value": 5
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 6'",
+      "value": 6
+    }
+  ],
+  "repeatable": [
+    "cascade-page",
+    "cascade-page.@.content.system-data-structure.education",
+    "cascade-page.@.content.system-data-structure.subject-areas.expertise"
+  ],
+  "checkbox": [
+    "title-hero.hero-options",
+    "cascade-page.@.content.system-data-structure.profile-options",
+    "cascade-page.@.content.system-data-structure.location",
+    "cascade-page.@.content.system-data-structure.education.display-with-name"
+  ],
+  "radio": [],
+  "timestamp": [
+    "system.created.datetime",
+    "system.modified.datetime",
+    "system.published.datetime"
+  ],
+  "text": [
+    "introduction",
+    "cascade-page.@.path",
+    "cascade-page.@.name",
+    "cascade-page.@.content.system-data-structure.display-name",
+    "cascade-page.@.content.system-data-structure.given-name",
+    "cascade-page.@.content.system-data-structure.middle-name",
+    "cascade-page.@.content.system-data-structure.family-name",
+    "cascade-page.@.content.system-data-structure.preferred-pronouns",
+    "cascade-page.@.content.system-data-structure.job-title",
+    "cascade-page.@.content.system-data-structure.image.image-file.path",
+    "cascade-page.@.content.system-data-structure.image.caption",
+    "cascade-page.@.content.system-data-structure.image.photo-credit",
+    "cascade-page.@.content.system-data-structure.quote.quote-text",
+    "cascade-page.@.content.system-data-structure.education.@.degree",
+    "cascade-page.@.content.system-data-structure.education.@.major",
+    "cascade-page.@.content.system-data-structure.education.@.concentration",
+    "cascade-page.@.content.system-data-structure.education.@.school",
+    "cascade-page.@.content.system-data-structure.education.@.city-state-country",
+    "cascade-page.@.content.system-data-structure.contact-info.email",
+    "cascade-page.@.content.system-data-structure.contact-info.phone",
+    "cascade-page.@.content.system-data-structure.contact-info.fax",
+    "cascade-page.@.content.system-data-structure.contact-info.libcal",
+    "cascade-page.@.content.system-data-structure.contact-info.mailing-address.place-name",
+    "cascade-page.@.content.system-data-structure.contact-info.mailing-address.street-address",
+    "cascade-page.@.content.system-data-structure.contact-info.mailing-address.city",
+    "cascade-page.@.content.system-data-structure.contact-info.mailing-address.state",
+    "cascade-page.@.content.system-data-structure.contact-info.mailing-address.zip",
+    "cascade-page.@.content.system-data-structure.cv.file.path"
+  ],
+  "html": []
+}

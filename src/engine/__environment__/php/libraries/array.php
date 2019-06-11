@@ -103,13 +103,13 @@ function array_unset( array $array, $keys, $index = 0 ) {
   foreach( $array as $key => $value ) {
     
     // See if the keys match, and ignore it only if its the target endpoint within the array.
-    if( $key == $keys[$index] ) {
+    if( $key == $keys[$index] ) { 
 
       // Ignore the value if it's the target endpoint within the array.
       if( $index + 1 == count($keys) ) continue;
       
       // Otherwise, recursively look inside arrays.
-      else if( is_array($value) ) $result[$key] = array_unset($value, $keys, $index + 1);
+      else if( is_array($value) ) $result[$key] = array_unset($value, implode($delimiter, $keys), $index + 1);
       
     }
     
@@ -281,7 +281,7 @@ function array_map_use_both( callable $callback, array $array ) {
   
 }
 
-// Quickly filter an associate array by key based on a given value.
+// Quickly filter an associative array by key based on a given value.
 function array_filter_key( $key, $value, array $array ) {
   
   // Filter the array by key and value.
@@ -376,7 +376,7 @@ function array_first( array $array ) {
 // Get the last item of an array.
 function array_last( array $array ) {
   
-  return (isset($array) ? $array[count($array) - 1] : null);
+  return ((isset($array) and !empty($array)) ? $array[count($array) - 1] : null);
   
 }
 
@@ -668,6 +668,31 @@ function array_subset( array $array, $keys, $flag = ARRAY_SUBSET_INCLUDE ) {
   
   // Return the subset.
   return $subset;
+  
+}
+
+// Group an array of associative arrays by a given key.
+function array_key_by( array $array, $keys ) {
+  
+  // Initialize the result.
+  $result = [];
+  
+  // Look through array items.
+  foreach( $array as $item ) {
+    
+    // Get the item's value for the given key.
+    $value = array_get($item, $keys);
+    
+    // Initialize the key's value if not already initialized.
+    if( !isset($result[$value]) ) $result[$value] = [];
+    
+    // Group the item by the key's value.
+    $result[$value][] = $item;
+    
+  }
+  
+  // Return the result.
+  return $result;
   
 }
 

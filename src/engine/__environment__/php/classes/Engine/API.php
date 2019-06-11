@@ -1,5 +1,15 @@
 <?php
 
+// Set the namespace.
+namespace Engine;
+
+// Use dependencies.
+use Cache;
+use Request;
+use Route;
+use Index\API as IndexAPI;
+use Engine\API as EngineAPI;
+
 /*
  * API
  *
@@ -26,11 +36,11 @@ class API {
   // Register known API endpoints and their respective methods.
   protected static $endpoints = [
     'GET' => [
-      '/endpoint'   => 'API::getEndpoint',
-      '/asset'      => 'API::getAsset',
-      '/error'      => 'API::getError',
-      '/partials'   => 'API::getPartials',
-      '/helpers'    => 'API::getHelpers',
+      '/endpoint'   => 'Engine\API::getEndpoint',
+      '/asset'      => 'Engine\API::getAsset',
+      '/error'      => 'Engine\API::getError',
+      '/partials'   => 'Engine\API::getPartials',
+      '/helpers'    => 'Engine\API::getHelpers',
     ]
   ];
   
@@ -41,12 +51,8 @@ class API {
   // Construct the API.
   function __construct( ) {
     
-    // Get the cache root path, and site's domain.
-    $cache = CONFIG['engine']['cache']['root'];
-    $domain = CONFIG['__site__']['domain'];
-    
-    // Initialize the cache.
-    self::$cache = new Cache($cache.'/'.$domain.'.php');
+    // Initialize the API.
+    self::init();
     
   }
   
@@ -74,20 +80,42 @@ class API {
     
   }
   
-  
   //*********** PROTECTED METHODS ***********//
+  
+  // Initialize the API if not already initialized.
+  protected static function init( ) {
+    
+    // If the cache has not yet been initialized, then initialize it.
+    if( !isset(self::$cache) ) {
+    
+      // Get the cache root path, and site's domain.
+      $cache = CONFIG['engine']['cache']['root'];
+      $domain = CONFIG['__site__']['domain'];
+
+      // Initialize the cache.
+      self::$cache = new Cache($cache.'/'.$domain.'.php');
+      
+    }
+    
+  }
   
   // Ensure that some index data existing within the cache and is up-to-date.
   protected static function ensure( string $index ) {
     
     // Check to see if the necessary index data exists within the cache.
     $cached = self::$cache->get($index);
-    
+   
     // If index data has not yet been cached or is outdated, then (re)cache it now, and return the cached data.
-    if( !isset($cached) or self::outdated($index) ) return self::cache($index);
+    if( !isset($cached) or self::outdated($index)  ) return [
+      'outdated' => true,
+      'index' => self::cache($index)
+    ];
     
     // Otherwise, return the cached data.
-    return $cached;
+    return [
+      'outdated' => false,
+      'index' => $cached
+    ];
     
   }
   
@@ -99,17 +127,33 @@ class API {
     
     // Verify that the data was included.
     if( $data !== false ) {
+      
+      // Only cache the data if not currently indexing.
+      if( IndexAPI::get('/status', IndexAPI::INDEXAPI_RESPONSE_RETURN)['state'] == 'READY' ) {
     
-      // Cache the data, then return it.
-      if( self::$cache->set($index, $data) ) return self::$cache->get($index);
+        // Cache the data, then return it.
+        if( self::$cache->set($index, $data) ) return self::$cache->get($index);
 
-      // Otherwise, throw an error if the data could not be cached.
-      else throw new Error("Failed to cache $index data");
+        // Otherwise, log an error if the data could not be cached.
+        else error_log("Failed to cache $index data.");
+        
+      }
+      
+      // Otherwise, log an error if the data could not be cached, and return the data as is.
+      else {
+        
+        // Log an error that caching was skipped.
+        error_log("Skipped caching $index data because index was running.");
+        
+        // Return the data.
+        return $data;
+        
+      }
       
     }
     
     // Otherwise, throw an error if there was no data to cache.
-    else throw new Erorr("Index $index not available");
+    else throw new Failure(514);
     
   }
   
@@ -118,7 +162,7 @@ class API {
     
     // Get the index's last modified date from the cache.
     $cached = self::$cache->get("$index.modified");
-    
+   
     // Convert the index's last modified time to a timestamp.
     if( is_a($cached, 'DateTime') ) $cached = $cached->getTimestamp();
     
@@ -168,6 +212,9 @@ class API {
    * @example /asset/css/style.css - Retrieves asset data for asset `css/style.css`.
    */
   public static function get( string $endpoint ) {
+    
+    // Initialize the cache if not previously initialized.
+    self::init();
 
     // Parse the request.
     $request = self::parse('GET', $endpoint);
@@ -187,13 +234,15 @@ class API {
     if( Route::isAsset($path) ) return self::getAsset($path);
     
     // Ensure that endpoint data exists within the cache.
-    $endpoints = self::ensure('endpoints');
+    $ensured = self::ensure('endpoints');
+    $endpoints = $ensured['index'];
+    $outdated = $ensured['outdated'];
 
     // Attempt to retrieve the page data for the endpoint from the cache.
     $endpoint = self::$cache->get("pages.$path");
 
     // If the endpoint was not found, then check to see if relevant index data has been cached.
-    if( !isset($endpoint) ) {
+    if( !isset($endpoint) or $outdated ) {
       
       // Find the endpoint for the given path.
       $endpoint = array_get(array_values(array_filter($endpoints['data'], function($endpoint) use ($path) {
@@ -210,7 +259,7 @@ class API {
       if( !isset($endpoint->pattern) ) return self::getError(515);
         
       // Cache the endpoint, or throw an error if caching fails.
-      if( !self::$cache->set("pages.$path", $endpoint) ) throw new Error("Failed to cache endpoint $path");
+      if( !self::$cache->set("pages.$path", $endpoint) ) error_log("Failed to cache endpoint $path");
 
     }
     
@@ -222,41 +271,60 @@ class API {
   // Derive some asset data from the cached index data.
   protected static function getAsset( string $path ) {
     
-    // Ensure that endpoint data exists within the cache.
-    $endpoints = self::ensure('endpoints');
+    // Try to get assets from the index.
+    try {
     
-    // Attempt to retrieve the asset data from the cache.
-    $asset = self::$cache->get("assets.$path");
-    
-    // If the asset was not found, either use the given endpoint or retrieve one from the index.
-    if( !isset($asset) ) {
+      // Ensure that endpoint data exists within the cache.
+      $ensured = self::ensure('endpoints');
+      $endpoints = $ensured['index'];
+      $outdated = $ensured['outdated'];
+
+      // Attempt to retrieve the asset data from the cache.
+      $asset = self::$cache->get("assets.$path");
+
+      // If the asset was not found, either use the given endpoint or retrieve one from the index.
+      if( !isset($asset) or $outdated ) {
+
+        // Get the endpoints for assets only.
+        $assets = array_values(array_filter($endpoints['data'], function($endpoint) {
+
+          // Locate all asset endpoints.
+          return $endpoint->asset;
+
+        }));
+
+        // Find the endpoint for the given path.
+        $asset = array_get(array_values(array_filter($assets, function($endpoint) use ($path) {
+
+          // Find the endpoint data for the given endpoint path.
+          return (is_array($endpoint->endpoint) ? in_array($path, $endpoint->endpoint) : $endpoint->endpoint == $path);
+
+        })), 0);
+
+        // If the endpoint doesn't exist, then return a 404 error page instead.
+        if( !isset($asset) ) return self::getError(404);
+
+        // Cache the asset, or throw an error if caching fails.
+        if( !self::$cache->set("assets.$path", $asset) ) error_log("Failed to cache asset $path");
+
+      }
+
+      // Return the asset.
+      return (is_array($asset) ? $asset['data'] : $asset);
       
-      // Get the endpoints for assets only.
-      $assets = array_values(array_filter($endpoints['data'], function($endpoint) {
-        
-        // Locate all asset endpoints.
-        return $endpoint->asset;
-        
-      }));
+    // Otherwise, get assets from the file system.
+    } catch( Failure $exception ) {
+ 
+      // Get asset from the file system.
+      $asset = Index::getAssetEndpoint($path);
       
-      // Find the endpoint for the given path.
-      $asset = array_get(array_values(array_filter($assets, function($endpoint) use ($path) {
-        
-        // Find the endpoint data for the given endpoint path.
-        return (is_array($endpoint->endpoint) ? in_array($path, $endpoint->endpoint) : $endpoint->endpoint == $path);
-        
-      })), 0);
+      // Throw an error if the asset is not available.
+      if( !isset($asset) ) throw new Failure(404);
       
-      // If the endpoint doesn't exist, then return a 404 error page instead.
-      if( !isset($asset) ) return self::getError(404);
-      
-      // Cache the asset, or throw an error if caching fails.
-      if( !self::$cache->set("assets.$path", $asset) ) throw new Error("Failed to cache asset $path");
+      // Otherwise, return the asset.
+      return $asset;
       
     }
-    
-    // Return the asset.
-    return (is_array($asset) ? $asset['data'] : $asset);
     
   }
   
@@ -264,7 +332,9 @@ class API {
   protected static function getError( $code ) {
     
     // Ensure that endpoint data exists within the cache.
-    $endpoints = self::ensure('endpoints');
+    $ensured = self::ensure('endpoints');
+    $endpoints = $ensured['index'];
+    $outdated = $ensured['outdated'];
     
     // Make sure the error code is an integer.
     $code = is_int($code) ? $code : (int) trim($code, '/');
@@ -273,7 +343,7 @@ class API {
     $error = self::$cache->get("errors.$code");
     
     // If the error was not found, either use the given endpoint or retrieve one from the index.
-    if( !isset($error) ) {
+    if( !isset($error) or $outdated ) {
       
       // Get the endpoints for errors only.
       $errors = array_values(array_filter($endpoints['data'], function($endpoint) {
@@ -295,7 +365,7 @@ class API {
       if( !isset($error) ) return self::getError(404);
       
       // Cache the error, or throw an error if caching fails.
-      if( !self::$cache->set("errors.$code", $error) ) throw new Error("Failed to cache error $code");
+      if( !self::$cache->set("errors.$code", $error) ) error_log("Failed to cache error $code");
       
     }
     
@@ -307,22 +377,44 @@ class API {
   // Derive partial data from cached index data.
   protected static function getPartials() {
     
-    // Ensure that partial data exists within the cache.
-    $partials = self::ensure('partials');
+    // Try to get the partials from the index.
+    try {
     
-    // Then, return the partial data.
-    return $partials['data'];
+      // Ensure that partial data exists within the cache.
+      $partials = self::ensure('partials');
+
+      // Then, return the partial data.
+      return $partials['index']['data'];
+      
+    // Otherwise, get the partials form the file system.
+    } catch( Failure $exception ) {
+      
+      // Get HElpers form the file system.
+      return Index::getPartialData();
+      
+    }
     
   }
   
   // Derive helper data from cached index data.
   protected static function getHelpers() {
     
-    // Ensure that helper data exists within the cache.
-    $helpers = self::ensure('helpers');
-    
-    // Then, return the helper data.
-    return $helpers['data'];
+    // Try to get the helpers from the index.
+    try {  
+      
+      // Ensure that helper data exists within the cache.
+      $helpers = self::ensure('helpers');
+
+      // Then, return the helper data.
+      return $helpers['index']['data'];
+      
+    // Otherwise, get the helpers from the file system.
+    } catch( Failure $exception ) {
+      
+      // Get helpers from the file system.
+      return Index::getHelperData();
+      
+    }
     
   }
   

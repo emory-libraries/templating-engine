@@ -1,0 +1,13 @@
+{{#unless (eq main false)}}
+  <div class="section-main-title">
+    {{#if thumbnail}}{{> atoms-image classes="intro-thumb -bio" src=thumbnail alt=name}}{{/if}}
+    {{> tokens-heading level=1 alternate=false classes="intro-title -bio" heading=name icon=false}}
+    {{> tokens-heading level=5 alternate=false classes="intro-subtitle -bio" heading=title icon=false}}
+    {{> atoms-link classes="intro-link -bio" href=(combine "mailto:" email) label=email}}
+  </div>
+{{else}}
+  {{#if thumbnail}}{{> atoms-image classes="intro-thumb -bio" src=thumbnail alt=name}}{{/if}}
+  {{> tokens-heading level=1 alternate=false classes="intro-title -bio" heading=name icon=false}}
+  {{> tokens-heading level=5 alternate=false classes="intro-subtitle -bio" heading=title icon=false}}
+  {{> atoms-link classes="intro-link -bio" href=(combine "mailto:" email) label=email}}
+{{/unless}}

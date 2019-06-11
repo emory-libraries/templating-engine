@@ -1,0 +1,224 @@
+{{! Manipulate config data if given. }}
+{{#if config }}
+
+  {{! Handle config data given in array form. }}
+  {{#if (isArray config)}}
+
+    {{! Determine if the librarian has some image data. }}
+    {{#if (not (eq (indexOf config 'Profile Photo') false))}}
+      {{assign '_config.image' true}}
+    {{else}}
+      {{assign '_config.image' false}}
+    {{/if}}
+
+    {{! Determine if the librarian has some quote data. }}
+    {{#if (not (eq (indexOf config 'Quote') false))}}
+      {{assign '_config.quote' true}}
+    {{else}}
+      {{assign '_config.quote' false}}
+    {{/if}}
+
+    {{! Determine if the librarian has some bio data. }}
+    {{#if (not (eq (indexOf config 'Description') false))}}
+      {{assign '_config.bio' true}}
+    {{else}}
+      {{assign '_config.bio' false}}
+    {{/if}}
+
+    {{! Determine if the librarian has some education data. }}
+    {{#if (not (eq (indexOf config 'Education') false))}}
+      {{assign '_config.education' true}}
+    {{else}}
+      {{assign '_config.education' false}}
+    {{/if}}
+
+    {{! Determine if the librarian has some contact info data. }}
+    {{#if (not (eq (indexOf config 'Contact Info') false))}}
+      {{assign '_config.contact' true}}
+    {{else}}
+      {{assign '_config.contact' false}}
+    {{/if}}
+
+    {{! Determine if the staff has some subject area data. }}
+    {{#if (not (eq (indexOf config 'Subject Areas') false))}}
+      {{assign '_config.subjects' true}}
+    {{else}}
+      {{assign '_config.subjects' false}}
+    {{/if}}
+
+    {{! Determine if the librarian has some CV data. }}
+    {{#if (not (eq (indexOf config 'CV') false))}}
+      {{assign '_config.cv' true}}
+    {{else}}
+      {{assign '_config.cv' false}}
+    {{/if}}
+
+    {{! Override config data. }}
+    {{assign 'config' _config}}
+    {{unassign '_config'}}
+
+  {{! Otherwise, handle config data given in string form. }}
+  {{else}}
+
+    {{! Determine if the librarian has some config data. }}
+    {{#if (eq config 'Profile Photo')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' true}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'Quote')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' true}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'Description')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' true}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'Education')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' true}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'Contact Info')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' true}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'Subject Areas')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' true}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'CV')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.cv' true}}
+    {{/if}}
+
+  {{/if}}
+
+{{/if}}
+
+{{! Verify that a valid thumbnail was given, or ignore it entirely. }}
+{{#if (and thumbnail (eq thumbnail '/'))}}{{assign 'thumbnail' null}}{{/if}}
+
+{{! Verify that a valid CV was given, or ignore it entirely. }}
+{{#if (and cv cv.href)}}
+  {{#if (eq cv.href '/')}}
+  {{assign 'cv.href' null}}
+  {{/if}}
+{{/if}}
+
+{{! Initialize some sidebar list section data. }}
+{{assign 'sections' (arrayify null)}}
+
+{{! Build the first sidebar list section if applicable. }}
+{{#if (or (or (and (and config config.contact) (or phone fax)) (and (and config config.cv) cv)) (and (not config) (or phone fax cv)))}}
+
+  {{! Build the sidebar list section's content. }}
+  {{assign 'sections.0' (objectify icon=false title=null content=(arrayify null))}}
+  {{#if phone}}{{assign 'sections.0.content.0' (combine 'P: ' (formatPhone phone '000-000-0000'))}}{{/if}}
+  {{#if fax}}{{assign 'sections.0.content.1' (combine 'F: ' (formatPhone fax '000-000-0000'))}}{{/if}}
+  {{#if (and cv cv.href)}}{{assign 'sections.0.button' (objectify href=cv.href label='Download Full CV')}}{{/if}}
+
+{{/if}}
+
+{{! Build the second sidebar list section if applicable. }}
+{{#if (or (and (and config config.contact) address) (and (not config) address))}}
+
+  {{! Build the sidebar list section's content. }}
+  {{assign 'sections.1' (objectify icon=false title='Mailing Address' content=(arrayify null))}}
+  {{#if address.name}}{{assign 'sections.1.content.0' address.name}}{{/if}}
+  {{#if address.street}}{{assign 'sections.1.content.1' address.street}}{{/if}}
+  {{#if (and address.city address.state address.zip)}}{{assign 'sections.1.content.2' (combine address.city ', ' address.state address.zip)}}{{/if}}
+
+{{/if}}
+
+{{! Build the third sidebar list section if applicable. }}
+{{#if (or (and (and config config.subjects) subjects) (and (not config) subjects))}}
+
+  {{! Build the sidebar list section's content. }}
+  {{assign 'sections.2' (objectify icon=false title='Areas of Expertise' links=(arrayify null))}}
+  {{#each subjects}}
+    {{storagePush 'sections.2.links' (objectify href=(combine (baseUrl) '/services/subject-librarians?subject=' (plusify this)) label=this)}}
+  {{/each}}
+  {{assign 'sections.2.links' (storageGet 'sections.2.links')}}
+
+{{/if}}
+
+{{! Build the last sidebar list section if applicable. }}
+{{#if (or (or (and (and config config.contact) libcal) (and (and config config.guides) guides)) (and (not config) (or libcal guides)))}}
+
+  {{assign 'sections.3' (objectify icon=false title='Research Help' links=(arrayify null))}}
+  {{#if (and guides guides.href)}}{{assign 'sections.3.links.0' (objectify href=guides.href label='View Research Guides')}}{{/if}}
+  {{#if libcal}}{{assign 'sections.3.links.1' (objectify href=libcal label='Schedule a Research Consultation')}}{{/if}}
+
+{{/if}}
+
+<div class="bio-page">
+  <header class="bio-page-header"></header>
+  {{#extend 'organisms-main' type="bio-page" classes="bio-page-main"}}
+    {{#content 'section-main-body'}}
+
+      {{! Insert education if given. }}
+      {{#if (or (and (and config config.education) education) (and (not config) education))}}
+
+        {{> tokens-heading level=2 heading='Education' classes='' alternate=false icon=false}}
+
+        <ul class="list -bulleted">
+        {{#each education}}
+          <li class="list-item">{{degree}}{{#if major}}, {{major}}{{/if}}{{#if concentration}} (emphasis on {{concentration}}){{/if}}{{#if school}}, {{school}}{{/if}}{{#if address}}, {{address}}{{/if}}</li>
+        {{/each}}
+        </ul>
+
+      {{/if}}
+
+      {{! Insert biography if given. }}
+      {{#if (or (and (and config config.bio) bio) (and (not config) bio))}}
+
+         {{> tokens-heading level=2 heading='Professional Profile' classes='' alternate=false icon=false}}
+
+        {{#if markdown}}{{{markdown bio}}}{{else}}{{{bio}}}{{/if}}
+
+      {{/if}}
+
+    {{/content}}
+    {{#content 'section-main-sidebar'}}
+
+      {{> compounds-sidebar-list divider=(objectify start=true end=true)}}
+
+    {{/content}}
+  {{/extend}}
+  <footer class="bio-page-footer"></footer>
+</div>

@@ -1,5 +1,11 @@
 RewriteEngine On
 
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteCond %{REQUEST_URI} ^/indexer
+RewriteRule ^indexer(.*)$ /indexer.php$1 [NC,QSA,L]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/indexer
 RewriteRule ^(.*)$ index.php [NC,QSA,L]

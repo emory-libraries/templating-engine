@@ -6,7 +6,7 @@
                    :index="{{JSONstringify index}}"
                    :config="{{default (JSONstringify config) '{}'}}"
                    :defaults="{
-                      selected: {{default (indexOf buttons (lookup (filterWhere buttons 'selected' true) 0)) 0}},
+                      selected: {{default (indexOf buttons (get (filterWhere buttons 'selected' true) 0)) 0}},
                       buttons: [
                         {{#each buttons as |button|}}
                         {

@@ -108,6 +108,12 @@ class Icon {
   // Constructor
   function __construct( $path ) {
     
+    // Get the root path of the icons folder.
+    $root = dirname(dirname(__DIR__));
+    
+    // Get the icon path.
+    $path = $root.'/'.ltrim($path, '/');
+    
     // Save the path.
     $this->path = $path;
     

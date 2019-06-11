@@ -26,7 +26,7 @@ module.exports = async function () {
   
   // Identify the local and remote paths to deploy.
   const paths = {
-    'src/engine/__environment__/.env': 'engine/{{environment}}/.env',
+    'src/engine/__environment__/.env.{{environment}}': 'engine/{{environment}}/.env',
     'src/engine/__environment__/meta': 'engine/{{environment}}/meta',
     'src/engine/__environment__/config': 'engine/{{environment}}/config',
     'src/engine/__environment__/layout': 'engine/{{environment}}/layout',
@@ -94,7 +94,7 @@ module.exports = async function () {
 
       // Get the remote and local paths
       remote = remote.replace('{{environment}}', env[answers.environment]);
-      local = path.resolve(local);
+      local = path.resolve(local.replace('{{environment}}', env[answers.environment]));
       
       // Find the local file.
       if( fs.statSync(local).isFile() ) files.push({
@@ -107,7 +107,7 @@ module.exports = async function () {
 
         // Get the file's paths and contents.
         return {
-          src: file,
+          src: fs.realpathSync(file),
           dest: path.join(remote, file.replace(local, ''))
         };
 
@@ -165,7 +165,7 @@ module.exports = async function () {
         else {
 
           // Get the file's contents.
-          const contents = fs.readFileSync(src, 'utf8');
+          const contents = fs.readFileSync(src);
 
           // For meta, global, and shared content, force the user to confirm before overwriting.
           if( src.indexOf('/_meta/') > -1 || src.indexOf('/_global/') > -1 || src.indexOf('/_shared/') > -1 ) {

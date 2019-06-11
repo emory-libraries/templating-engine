@@ -1,5 +1,8 @@
 <?php
 
+// Autoload dependencies.
+require __DIR__.'/engine.autoload.php';
+
 // Set a localhost and development mode flag.
 define('LOCALHOST', ($_SERVER['HTTP_HOST'] == 'localhost' or $_SERVER['SERVER_NAME'] == 'localhost'));
 define('NGROK', strpos($_SERVER['HTTP_HOST'], 'ngrok') !== false or strpos($_SERVER['HTTP_HOST'], 'ngrok') !== false);
@@ -38,12 +41,29 @@ if( DEBUGGING ) {
   error_reporting(E_ALL);
   
   // Display all errors.
-  ini_set('display_errors', 1);
+  ini_set('display_errors', true);
+  
+  // Don't save them to the error log.
+  ini_set('log_errors', false);
+  
+}
+
+// Otherwise, only log errors to the error log.
+else {
+  
+  // Report all errors.
+  error_reporting(E_ALL);
+  
+  // Don't displayed them.
+  ini_set('display_errors', false);
+  
+  // Save them to the error log instead.
+  ini_set('log_errors', true);
   
 }
 
 // Initialize the templating engine.
-require ENGINE_ROOT."/php/engine.init.php";
+require __DIR__."/engine.init.php";
 
 // Start the templating engine.
 new Engine();
