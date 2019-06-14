@@ -1,0 +1,49 @@
+{{! Modify current exhibitions to adhere to the proper format. }}
+{{#each current}}
+
+  {{! Make sure all current exhibition cards have a dark theme and vertical layout. }}
+  {{assign 'theme' 'dark'}}
+  {{assign 'vertical' true}}
+
+  {{! Save the updated exhibition data. }}
+  {{storagePush 'current' this}}
+
+{{/each}}
+
+{{! Save exhibitions. }}
+{{assign 'current' (storageGet 'current')}}
+
+{{! Set a limit on the number of past exhibitions that should be displayed if not given.}}
+{{#unless limit}}
+  {{assign 'limit' 6}}
+{{/unless}}
+
+<div class="gallery-page">
+  <header class="gallery-page-header"></header>
+  <div class="gallery-page-main">
+    {{> organisms-main type='gallery-page'}}
+    {{#extend 'organisms-major' theme='dark' heading='Current Exhibitions'}}
+      {{#content 'section-major-body'}}
+
+        {{> compounds-cards columns=(objectify m=1 l=1 xl=2) card-type='listing' cards=current}}
+
+      {{/content}}
+    {{/extend}}
+    {{#extend 'organisms-major' theme='light' heading='Past Exhibitions'}}
+      {{#content 'section-major-body'}}
+
+        {{> compounds-tiles columns=(objectify m=2 l=2 xl=3) tile-type='listing' tiles=(before past limit)}}
+
+        {{#if (gt (length (after past (minus limit 1))) 0)}}
+          {{#extend 'tokens-reveal' once=true label='View All Past Exhibitions'}}
+            {{#content 'big-reveal-content'}}
+              {{> compounds-tiles columns=(objectify m=2 l=2 xl=3) tile-type='listing' tiles=(after past (minus limit 1))}}
+            {{/content}}
+          {{/extend}}
+        {{/if}}
+
+      {{/content}}
+    {{/extend}}
+  </div>
+  <footer class="gallery-page-footer"></footer>
+</div>

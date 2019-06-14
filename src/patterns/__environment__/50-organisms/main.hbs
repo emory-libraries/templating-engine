@@ -1,8 +1,12 @@
 <div class="section-main{{#if type}} -{{type}}{{/if}}{{#if classes}} {{classes}}{{/if}}">
-  <div class="section-main-breadcrumb"></div>
+  <div class="section-main-breadcrumb">
+    {{> molecules-breadcrumbs}}
+  </div>
   {{#if (eq type 'bio-page')}}
     {{> organisms-intro-bio}}
     {{#if quote}}<p class="text -lead section-main-subtitle">&ldquo;{{quote}}&rdquo;</p>{{/if}}
+  {{else if (eq type 'gallery-page')}}
+    {{> organisms-intro-heading}}
   {{else}}
     {{> organisms-intro-alt-text}}
   {{/if}}
