@@ -2,5 +2,8 @@
   {{> tokens-heading level=2 classes="section-major-title" icon=false}}
   <div class="section-major-body">
     {{#block "section-major-body"}}{{/block}}
+    {{#if has-related}}
+    {{> compounds-related-cards card-type=related.card-type heading=related.heading icon-type=related.icon-type cards=related.cards}}
+    {{/if}}
   </div>
 </div>

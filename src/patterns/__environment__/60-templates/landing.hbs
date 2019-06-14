@@ -1,0 +1,11 @@
+<div class="landing-page">
+  <header class="landing-page-header"></header>
+  <div class="landing-page-main">
+  {{#if background-image}}
+  {{> organisms-intro-hero classes="landing-page-intro"}}
+  {{/if}}
+    {{> organisms-main flow-content-box=main.flow-content-box wayfinder=main.wayfinder type="landing-page" classes="-dark without-intro"}}
+    {{> organisms-major heading=section-major.heading theme=section-major.theme has-related=section-major.has-related related=section-major.related type="landing-page"}}
+  </div>
+  <footer class="landing-page-footer"></footer>
+</div>

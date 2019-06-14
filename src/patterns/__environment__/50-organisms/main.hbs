@@ -1,5 +1,5 @@
 <div class="section-main{{#if type}} -{{type}}{{/if}}{{#if classes}} {{classes}}{{/if}}">
-  <div class="section-main-breadcrumb"></div>
+  {{> molecules-breadcrumbs classes="section-main-breadcrumb" }}
   {{#if (eq type 'bio-page')}}
     {{> organisms-intro-bio}}
     {{#if quote}}<p class="text -lead section-main-subtitle">&ldquo;{{quote}}&rdquo;</p>{{/if}}
@@ -12,10 +12,17 @@
     {{else}}
       {{> compounds-blocks}}
     {{/unless}}
+    {{#if flow-content-box }}
+    {{> organisms-flow-content-boxes feature=flow-content-box.feature explorer=flow-content-box.explorer }}
+    {{/if}}
+    {{#if wayfinder }}
+    {{> molecules-wayfinder image=wayfinder.image heading=wayfinder.heading text=wayfinder.text buttons=wayfinder.buttons}}
+    {{/if}}
     {{#if has-related}}
       <div class="section-main-spacer"></div>
       <div class="section-main-content">{{> compounds-related-cards}}</div>
     {{/if}}
+
   </main>
   <aside class="section-main-sidebar">
     {{#block 'section-main-sidebar'}}{{/block}}

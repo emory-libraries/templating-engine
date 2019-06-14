@@ -12174,12 +12174,6 @@ return jQuery;
 			},
 			variants: {
 				Mapnik: {},
-				BlackAndWhite: {
-					url: 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png',
-					options: {
-						maxZoom: 18
-					}
-				},
 				DE: {
 					url: 'https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png',
 					options: {
