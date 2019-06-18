@@ -1,3 +1,29 @@
+{{#if (eq main.flow-content-box.feature.image.src '/')}}
+  {{assign 'main.flow-content-box.feature.image.src' null}}
+{{/if}}
+
+{{#each main.flow-content-box.explorer.links}}
+
+  {{#if (eq link-type 'Cascade Page')}}
+    {{assign 'href' (combine (baseUrl) cascade-page.path)}}
+    {{assign 'label' cascade-page.title}}
+    {{#if link-customizations}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+        {{assign 'label' link-label}}
+      {{/if}}
+    {{/if}}
+  {{else if (eq link-type 'Cascade File')}}
+
+  {{else if (eq link-type 'External URL')}}
+
+  {{/if}}
+
+  {{storagePush 'explorer-links' this}}
+
+{{/each}}
+
+{{assign 'main.flow-content-box.explorer.links' (storageGet 'explorer-links')}}
+
 <div class="landing-page">
   <header class="landing-page-header"></header>
   <div class="landing-page-main">
