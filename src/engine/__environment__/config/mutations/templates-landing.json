@@ -1,0 +1,89 @@
+{
+  "alias": {
+    "system.title": "title"
+  },
+  "rename": {
+    "subtitle": "introduction",
+    "main.flow-content-box.feature": "image-heavy-card",
+    "main.flow-content-box.feature.image.src": "main.flow-content-box.feature.image.image-file.path",
+    "main.flow-content-box.explorer": "links-list",
+    "main.flow-content-box.explorer.links": "main.flow-content-box.explorer.link",
+    "main.wayfinder": "full-width-feature",
+    "main.wayfinder.image.src": "main.wayfinder.image.image-file.path",
+    "section-major.related.cards": "research-aid-link"
+  },
+  "replace": {},
+  "remove": [],
+  "add": {},
+  "evaluate": [
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 2'",
+      "value": 2
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 3'",
+      "value": 3
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 4'",
+      "value": 4
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 5'",
+      "value": 5
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 6'",
+      "value": 6
+    }
+  ],
+  "repeatable": [
+    "link-list.link",
+    "research-aid-link"
+  ],
+  "checkbox": [
+    "title-hero.hero-options",
+    "image-heavy-card.link.link-customizations",
+    "links-list.link.@.link-customizations",
+    "full-width-feature.link.link-customizations",
+    "add-research-aids",
+    "research-aid-link.@.customize-label"
+  ],
+  "radio": [
+    "links-list.link.@.link-type",
+    "image-heavy-card.link.link-type",
+    "full-width-feature.link.link-type",
+    "research-aid-link.@.link-type"
+  ],
+  "timestamp": [
+    "system.created.datetime",
+    "system.modified.datetime",
+    "system.published.datetime"
+  ],
+  "text": [
+    "introduction",
+    "links-list.heading",
+    "links-list.link.@.link-label",
+    "links-list.link.@.link-description",
+    "links-list.link.@.external-url",
+    "image-heavy-card.link.link-label",
+    "image-heavy-card.link.link-description",
+    "image-heavy-card.link.external-url",
+    "image-heavy-card.image.caption",
+    "image-heavy-card.image.photo-credit",
+    "image-heavy-card.button.button-label",
+    "full-width-feature.link.link-label",
+    "full-width-feature.link.link-description",
+    "full-width-feature.link.external-url",
+    "full-width-feature.image.caption",
+    "full-width-feature.image.photo-credit",
+    "full-width-feature.button.button-label",
+    "research-aid-link.@.link-label"
+  ],
+  "html": []
+}
