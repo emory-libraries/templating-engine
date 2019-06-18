@@ -5,6 +5,46 @@
 {{! Group exhibits by date as either current or past. }}
 {{#each exhibits}}
 
+  {{! Set link data. }}
+  {{#unless link.href}}
+
+    {{! For cascade pages, use the page's path. }}
+    {{#if (eq link-type 'Cascade Page')}}
+      {{assign 'link.href' cascade-page.path}}
+      {{#if (and link-customizations (isArray link-customization))}}
+        {{#if (gte (indexOf link-customizations 'Label') 0)}}
+          {{assign 'link.label' link-label}}
+        {{else}}
+          {{assign 'link.label' 'Exhibition Details'}}
+        {{/if}}
+      {{/if}}
+    {{/if}}
+
+    {{! For cascade files, use the file's path. }}
+    {{#if (eq link-type 'Cascade File')}}
+      {{assign 'link.href' cascade-file.path}}
+      {{#if (and link-customizations (isArray link-customization))}}
+        {{#if (gte (indexOf link-customizations 'Label') 0)}}
+          {{assign 'link.label' link-label}}
+        {{else}}
+          {{assign 'link.label' 'Exhibition Details'}}
+        {{/if}}
+      {{/if}}
+    {{/if}}
+
+    {{! For external URLs, use the link given. }}
+    {{#if (eq link-type 'External URL')}}
+      {{assign 'link.href' external-url}}
+      {{assign 'link.label' (default link-label 'Exhibition Details')}}
+    {{/if}}
+
+  {{/unless}}
+
+  {{! Set image data. }}
+  {{#if (and (eq image.src '/') (eq link-type 'Cascade Page'))}}
+    {{assign 'image.src' cascade-page.content.system-data-structure.image.image-file.path}}
+  {{/if}}
+
   {{! Format the start date for display. }}
   {{#if date.start.date}}
     {{#if date.start.month}}
@@ -30,7 +70,7 @@
   {{! Format the date range for display. }}
   {{#if (and date.start.date date.end.date)}}
     {{#if (momentIsSame date.start.date date.end.date)}}
-      {{assign 'date.display' date.start.date}}
+      {{assign 'date.display' date.start.display}}
     {{else}}
       {{assign 'date.display' (combine date.start.display ' - ' date.end.display)}}
     {{/if}}
@@ -42,6 +82,8 @@
     {{/if}}
   {{else if date.end.date}}
     {{assign 'date.display' (combine 'Through ' date.end.display)}}
+  {{else}}
+    {{assign 'date.display' 'TBD'}}
   {{/if}}
 
   {{! Start categorizing exhibits based on their start date. }}
@@ -154,10 +196,28 @@
 
 {{/each}}
 
-{{! Save exhibits. }}
+{{! Save current exhibits. }}
 {{assign 'current' (storageGet 'current')}}
 
-{{! Set a limit on the number of past exhibitions that should be displayed if not given.}}
+{{! Modifiy past exhibits to adhere to the proper format. }}
+{{#each past}}
+
+  {{! Unset link labels for past exhibits. }}
+  {{assign 'link.label' null}}
+
+  {{! Save the updated exhibit data. }}
+  {{storagePush 'past' this}}
+
+{{/each}}
+
+{{! Save past exhibits. }}
+{{assign 'past' (storageGet 'past')}}
+
+{{! Force empty data to use an empty array. }}
+{{#unless current}}{{assign 'current' (arrayify null)}}{{/unless}}
+{{#unless past}}{{assign 'past' (arrayify null)}}{{/unless}}
+
+{{! Set a limit on the number of past exhibitions that should be displayed if not given. }}
 {{#unless limit}}
   {{assign 'limit' 6}}
 {{/unless}}
