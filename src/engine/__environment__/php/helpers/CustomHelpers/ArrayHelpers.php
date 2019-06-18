@@ -102,6 +102,50 @@ trait ArrayHelpers {
     
   }
   
+  // Get the first `n` items from an array.
+  public static function firstN( array $array, int $n ) {
+    
+    // Return the first `n` items within the array.
+    return array_slice($array, 0, $n);
+    
+  }
+  
+  // Get the last `n` items from an array.
+  public static function lastN( array $array, int $n ) {
+    
+    // Return the last `n` items within the array.
+    return array_slice($array, -$n);
+    
+  }
+  
+  // Slice an array at the given beginning and ending indices.
+  public static function slice( array $array, $begin = null, $end = null ) {
+    
+    // Set the beginning and end by default.
+    $begin = is_int($begin) ? $begin : 0;
+    $end = is_int($end) ? $end : count($array);
+    
+    // Return the slice of the array.
+    return array_slice($array, $begin, $end);
+    
+  }
+  
+  // Limit an array to the given length.
+  public static function limit( array $array, int $limit ) {
+    
+    // Return the array with the limit applied.
+    return array_slice($array, 0, $limit);
+    
+  }
+  
+  // Get the difference of an array after a limit has been applied.
+  public static function limitDifference( array $array, int $limit ) {
+    
+    // Return the difference of the array with the limit applied.
+    return array_slice($array, $limit);
+    
+  }
+  
   // Push an item onto the end of an array.
   // FIXME: This `push` helper will not work because of the current limitations LightnCandy places on custom helpers. See issue [#167](https://github.com/zordius/lightncandy/issues/167).
   /*public static function push( $value, &$array, array $options ) {
