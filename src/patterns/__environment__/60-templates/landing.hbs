@@ -2,8 +2,64 @@
   {{assign 'main.flow-content-box.feature.image.src' null}}
 {{/if}}
 
-{{#each main.flow-content-box.explorer.links}}
+{{!-- Feature --}}
+{{#each main.flow-content-box.feature.buttons }}
+  {{#if (eq link-type 'Cascade Page')}}
+    {{storageSet 'feature-heading' cascade-page.title}}
+    {{storageSet 'feature-description' cascade-page.description}}
+    {{assign 'href' (combine (baseUrl) cascade-page.path)}}
+    {{assign 'label' button-label}}
+    {{#if link-customizations}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+        {{assign 'heading' link-label}}
+      {{/if}}
+      {{#if (gte (indexOf link-customizations 'Description') 0)}}
+        {{storageSet 'feature-description' link-description}}
+      {{/if}}
+    {{/if}}
+  {{else if (eq link-type 'Cascade File')}}
+    {{assign 'href' (combine (baseUrl) cascade-file.path)}}
+    {{storageSet 'feature-heading' cascade-file.heading}}
+    {{storageSet 'feature-description' cascade-file.description}}
+    {{assign 'href' (combine (baseUrl) cascade-file.path)}}
+    {{assign 'label' button-label}}
+    {{#if link-customizations}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+        {{storageSet 'feature-heading' link-label}}
+      {{/if}}
+      {{#if (gte (indexOf link-customizations 'Description') 0)}}
+        {{storageSet 'feature-description' link-description}}
+      {{/if}}
+    {{/if}}
+  {{else if (eq link-type 'External URL')}}
+    {{assign 'heading' link-label}}
+    {{assign 'context' link-description}}
+    {{assign 'href' external-url}}
+    {{assign 'label' button-label}}
+  {{/if}}
 
+  {{assign 'hollow' true}}
+  {{storageSet 'feature-context' context}}
+  {{storagePush 'feature-buttons' this}}
+
+{{/each}}
+
+{{assign 'main.flow-content-box.feature.buttons' (storageGet 'feature-buttons')}}
+
+{{#unless main.flow-content-box.feature.context}}
+  {{assign 'main.flow-content-box.feature.context' (storageGet 'feature-context')}}
+{{/unless}}
+
+{{#unless main.flow-content-box.feature.heading}}
+  {{assign 'main.flow-content-box.feature.heading' (storageGet 'feature-heading')}}
+{{/unless}}
+
+{{#unless main.flow-content-box.feature.description}}
+  {{assign 'main.flow-content-box.feature.description' (storageGet 'feature-description')}}
+{{/unless}}
+
+{{!-- Explorer Links --}}
+{{#each main.flow-content-box.explorer.links }}
   {{#if (eq link-type 'Cascade Page')}}
     {{assign 'href' (combine (baseUrl) cascade-page.path)}}
     {{assign 'label' cascade-page.title}}
@@ -13,9 +69,16 @@
       {{/if}}
     {{/if}}
   {{else if (eq link-type 'Cascade File')}}
-
+    {{assign 'href' (combine (baseUrl) cascade-file.path)}}
+    {{assign 'label' cascade-file.title}}
+    {{#if link-customizations}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+        {{assign 'label' link-label}}
+      {{/if}}
+    {{/if}}
   {{else if (eq link-type 'External URL')}}
-
+    {{assign 'href' external-url}}
+    {{assign 'label' link-label}}
   {{/if}}
 
   {{storagePush 'explorer-links' this}}
@@ -24,14 +87,69 @@
 
 {{assign 'main.flow-content-box.explorer.links' (storageGet 'explorer-links')}}
 
+{{!-- Wayfinder Links --}}
+{{#each main.wayfinder.buttons }}
+  {{#if (eq link-type 'Cascade Page')}}
+    {{assign 'href' (combine (baseUrl) cascade-page.path)}}
+    {{assign 'label' cascade-page.title}}
+    {{#if link-customizations}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+        {{assign 'label' link-label}}
+      {{/if}}
+    {{/if}}
+  {{else if (eq link-type 'Cascade File')}}
+    {{assign 'href' (combine (baseUrl) cascade-file.path)}}
+    {{assign 'label' cascade-file.title}}
+    {{#if link-customizations}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+        {{assign 'label' link-label}}
+      {{/if}}
+    {{/if}}
+  {{else if (eq link-type 'External URL')}}
+    {{assign 'href' external-url}}
+    {{assign 'label' link-label}}
+  {{/if}}
+
+  {{storagePush 'wayfinder-buttons' this}}
+
+{{/each}}
+
+{{assign 'main.wayfinder.buttons' (storageGet 'wayfinder-buttons')}}
+
+{{!-- Related Links --}}
+{{#if section-major.has-related}}
+
+  {{assign 'section-major.related.card-type' "library-aid"}}
+
+  {{#each section-major.related.cards }}
+    {{assign 'link.href' (combine (baseUrl) cascade-page.path)}}
+    {{assign 'title' cascade-page.title}}
+    {{#if customize-label}}
+      {{assign 'title' link-label}}
+    {{/if}}
+
+    {{storagePush 'related-cards' this}}
+
+  {{/each}}
+{{/if}}
+
+{{assign 'section-major.related.cards' (storageGet 'related-cards')}}
+
 <div class="landing-page">
   <header class="landing-page-header"></header>
+
   <div class="landing-page-main">
-  {{#if background-image}}
-  {{> organisms-intro-hero classes="landing-page-intro"}}
-  {{/if}}
+    {{#if (eq background-image.src '/')}}
+    {{> organisms-intro-heading classes="landing-page-intro"}}
+    {{> tokens-text type="lead" classes="landing-page-main-subtitle intro-subtitle" text=subtitle}}
+    {{else}}
+    {{> organisms-intro-hero classes="landing-page-intro"}}
+    {{/if}}
+
     {{> organisms-main flow-content-box=main.flow-content-box wayfinder=main.wayfinder type="landing-page" classes="-dark without-intro"}}
-    {{> organisms-major heading=section-major.heading theme=section-major.theme has-related=section-major.has-related related=section-major.related type="landing-page"}}
+    {{#if section-major.has-related}}
+    {{> organisms-major heading=section-major.heading classes="-light" has-related=section-major.has-related related=section-major.related type="landing-page"}}
+    {{/if}}
   </div>
   <footer class="landing-page-footer"></footer>
 </div>

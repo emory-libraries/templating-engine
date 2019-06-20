@@ -4,12 +4,17 @@
   },
   "rename": {
     "subtitle": "introduction",
+    "background-image.src": "background-image.path",
     "main.flow-content-box.feature": "image-heavy-card",
     "main.flow-content-box.feature.image.src": "main.flow-content-box.feature.image.image-file.path",
+    "main.flow-content-box.feature.buttons": "main.flow-content-box.feature.link",
     "main.flow-content-box.explorer": "links-list",
     "main.flow-content-box.explorer.links": "main.flow-content-box.explorer.link",
-    "main.wayfinder": "full-width-feature",
+    "main.wayfinder": "wayfinder",
     "main.wayfinder.image.src": "main.wayfinder.image.image-file.path",
+    "main.wayfinder.text": "main.wayfinder.description",
+    "main.wayfinder.buttons": "main.wayfinder.link",
+    "section-major.has-related": "add-research-aids",
     "section-major.related.cards": "research-aid-link"
   },
   "replace": {},
@@ -44,20 +49,22 @@
   ],
   "repeatable": [
     "link-list.link",
-    "research-aid-link"
+    "wayfinder.link",
+    "research-aid-link",
+    "image-heavy-card.link"
   ],
   "checkbox": [
     "title-hero.hero-options",
     "image-heavy-card.link.link-customizations",
-    "links-list.link.@.link-customizations",
-    "full-width-feature.link.link-customizations",
+    "links-list.link.link-customizations",
+    "wayfinder.link.link-customizations",
     "add-research-aids",
-    "research-aid-link.@.customize-label"
+    "research-aid-link.customize-label"
   ],
   "radio": [
     "links-list.link.@.link-type",
     "image-heavy-card.link.link-type",
-    "full-width-feature.link.link-type",
+    "wayfinder.link.@.link-type",
     "research-aid-link.@.link-type"
   ],
   "timestamp": [
@@ -68,21 +75,25 @@
   "text": [
     "introduction",
     "links-list.heading",
+    "links-list.link.@.external-url",
     "links-list.link.@.link-label",
     "links-list.link.@.link-description",
-    "links-list.link.@.external-url",
+    "image-heavy-card.link.context",
+    "image-heavy-card.link.button-label",
+    "image-heavy-card.link.external-url",
     "image-heavy-card.link.link-label",
     "image-heavy-card.link.link-description",
-    "image-heavy-card.link.external-url",
     "image-heavy-card.image.caption",
     "image-heavy-card.image.photo-credit",
     "image-heavy-card.button.button-label",
-    "full-width-feature.link.link-label",
-    "full-width-feature.link.link-description",
-    "full-width-feature.link.external-url",
-    "full-width-feature.image.caption",
-    "full-width-feature.image.photo-credit",
-    "full-width-feature.button.button-label",
+    "wayfinder.heading",
+    "wayfinder.description",
+    "wayfinder.image.caption",
+    "wayfinder.image.photo-credit",
+    "wayfinder.link.@.external-url",
+    "wayfinder.link.@.link-label",
+    "wayfinder.link.@.link-description",
+    "research-aid-link.@.cascade-page.title",
     "research-aid-link.@.link-label"
   ],
   "html": []
