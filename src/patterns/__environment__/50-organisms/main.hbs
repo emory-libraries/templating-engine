@@ -1,5 +1,5 @@
 <div class="section-main{{#if type}} -{{type}}{{/if}}{{#if classes}} {{classes}}{{/if}}">
-  <div class="section-main-breadcrumb"></div>
+  {{> molecules-breadcrumbs classes="section-main-breadcrumb" }}
   {{#if (eq type 'bio-page')}}
     {{> organisms-intro-bio}}
     {{#if quote}}<p class="text -lead section-main-subtitle">&ldquo;{{quote}}&rdquo;</p>{{/if}}
