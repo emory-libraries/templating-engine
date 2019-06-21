@@ -1166,7 +1166,7 @@ body {
           align-items: flex-start;
 }
 
-.intro-link, .accordion-toggles-toggle, .tile-utility-title, .tile-listing-action, .tile-listing.has-description .tile-listing-title, .tile-listing:not(.has-description) .tile-listing-title, .flyout-feed-item-link, .feed-item-title, .card-staff-name, .card-staff-contact-links-item a,
+.exhibition-page-main-sidenote-link, .intro-link, .accordion-toggles-toggle, .tile-utility-title, .tile-listing-action, .tile-listing.has-description .tile-listing-title, .tile-listing:not(.has-description) .tile-listing-title, .flyout-feed-item-link, .feed-item-title, .card-staff-name, .card-staff-contact-links-item a,
 .card-staff-contact-links-item .link, .card-staff-contact-info-item a,
 .card-staff-contact-info-item .link, .card-multimedia-title, .card-library-guide-title, .card-library-aid-title, .card-librarian-name, .card-librarian-contact-links-item a,
 .card-librarian-contact-links-item .link, .card-librarian-contact-info-item a,
@@ -1181,7 +1181,7 @@ body {
   text-decoration: none;
   cursor: pointer;
 }
-.intro-link::after, .accordion-toggles-toggle::after, .tile-utility-title::after, .tile-listing-action::after, .tile-listing.has-description .tile-listing-title::after, .tile-listing:not(.has-description) .tile-listing-title::after, .flyout-feed-item-link::after, .feed-item-title::after, .card-staff-name::after, .card-staff-contact-links-item a::after,
+.exhibition-page-main-sidenote-link::after, .intro-link::after, .accordion-toggles-toggle::after, .tile-utility-title::after, .tile-listing-action::after, .tile-listing.has-description .tile-listing-title::after, .tile-listing:not(.has-description) .tile-listing-title::after, .flyout-feed-item-link::after, .feed-item-title::after, .card-staff-name::after, .card-staff-contact-links-item a::after,
 .card-staff-contact-links-item .link::after, .card-staff-contact-info-item a::after,
 .card-staff-contact-info-item .link::after, .card-multimedia-title::after, .card-library-guide-title::after, .card-library-aid-title::after, .card-librarian-name::after, .card-librarian-contact-links-item a::after,
 .card-librarian-contact-links-item .link::after, .card-librarian-contact-info-item a::after,
@@ -1190,7 +1190,7 @@ body {
   content: attr(data-subtext);
   display: block;
 }
-.intro-link .icon, .accordion-toggles-toggle .icon, .tile-utility-title .icon, .tile-listing-action .icon, .tile-listing.has-description .tile-listing-title .icon, .tile-listing:not(.has-description) .tile-listing-title .icon, .flyout-feed-item-link .icon, .feed-item-title .icon, .card-staff-name .icon, .card-multimedia-title .icon, .card-library-guide-title .icon, .card-library-aid-title .icon, .card-librarian-name .icon, .card-contact-email .icon, .card-contact-name .icon, .explorer-link .icon, .link .icon, a .icon {
+.exhibition-page-main-sidenote-link .icon, .intro-link .icon, .accordion-toggles-toggle .icon, .tile-utility-title .icon, .tile-listing-action .icon, .tile-listing.has-description .tile-listing-title .icon, .tile-listing:not(.has-description) .tile-listing-title .icon, .flyout-feed-item-link .icon, .feed-item-title .icon, .card-staff-name .icon, .card-multimedia-title .icon, .card-library-guide-title .icon, .card-library-aid-title .icon, .card-librarian-name .icon, .card-contact-email .icon, .card-contact-name .icon, .explorer-link .icon, .link .icon, a .icon {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
@@ -2321,13 +2321,6 @@ body {
   grid-template-areas: "image" "date" "title" "description" "action";
   grid-template-columns: 1fr;
 }
-@media (min-width: 601px) and (max-width: 900px) {
-  .has-description.card-listing:not(.-vertical) {
-    grid-template-areas: "date image" "title image" "description image" "action image";
-    grid-template-rows: repeat(2, -webkit-min-content) 1fr;
-    grid-template-rows: repeat(2, min-content) 1fr;
-  }
-}
 @media (min-width: 901px) {
   .has-description.card-listing:not(.-vertical) {
     grid-template-areas: "date image" "title image" "description image" "action image";
@@ -2407,13 +2400,6 @@ body {
     height: auto;
   }
 }
-@media (min-width: 601px) and (max-width: 900px) {
-  .card-listing-image {
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-  }
-}
 @media (min-width: 901px) {
   .card-listing-image {
     -webkit-box-align: center;
@@ -2426,14 +2412,6 @@ body {
   height: auto;
   min-width: auto;
   min-height: auto;
-}
-@media (min-width: 601px) and (max-width: 900px) {
-  .-portrait.card-listing-image img {
-    width: auto;
-    height: auto;
-    min-width: auto;
-    min-height: 100%;
-  }
 }
 @media (min-width: 901px) {
   .-portrait.card-listing-image img {
@@ -2448,14 +2426,6 @@ body {
   height: 100%;
   min-width: auto;
   min-height: auto;
-}
-@media (min-width: 601px) and (max-width: 900px) {
-  .-landscape.card-listing-image img {
-    width: auto;
-    height: auto;
-    min-width: auto;
-    min-height: 100%;
-  }
 }
 @media (min-width: 901px) {
   .-landscape.card-listing-image img {
@@ -3565,12 +3535,7 @@ body {
 .section-main-sidebar {
   grid-column: main;
   grid-row: sidebar;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  display: block;
 }
 @media (min-width: 901px) {
   .section-main-sidebar {
@@ -3594,43 +3559,43 @@ body {
   margin-bottom: 0;
 }
 @media (max-width: 600px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page):not(.-exhibition-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]) [sidebar-start] -webkit-min-content [sidebar-end];
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]) [sidebar-start] min-content [sidebar-end];
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page):not(.-exhibition-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]) [sidebar-start] -webkit-min-content [sidebar-end];
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]) [sidebar-start] min-content [sidebar-end];
   }
 }
 @media (min-width: 901px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page):not(.-exhibition-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]) [sidebar-start] -webkit-min-content [sidebar-end];
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]) [sidebar-start] min-content [sidebar-end];
   }
 }
 @media (min-width: 901px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page):not(.-exhibition-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end sidebar-start] 340px [sidebar-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end main-start title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) [main-end] repeat(10, [section-start] -webkit-min-content [section-end]);
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end main-start title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) [main-end] repeat(10, [section-start] min-content [section-end]);
   }
 }
 @media (min-width: 901px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page) .section-main-breadcrumb, .-info-page.section-main .section-main-breadcrumb {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page):not(.-exhibition-page) .section-main-breadcrumb, .-info-page.section-main .section-main-breadcrumb {
     grid-column: main/sidebar;
   }
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page) .section-main-title,
-.section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page) .section-main-subtitle, .-info-page.section-main .section-main-title,
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page):not(.-exhibition-page) .section-main-title,
+.section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page):not(.-exhibition-page) .section-main-subtitle, .-info-page.section-main .section-main-title,
 .-info-page.section-main .section-main-subtitle {
     grid-column: main/sidebar;
   }
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page) .section-main-sidebar, .-info-page.section-main .section-main-sidebar {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-gallery-page):not(.-exhibition-page) .section-main-sidebar, .-info-page.section-main .section-main-sidebar {
     grid-row: body/main;
   }
 }
@@ -3720,22 +3685,22 @@ body {
 @media (max-width: 600px) {
   .-service-directory-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
-    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
-    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end];
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end];
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
   .-service-directory-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
-    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
-    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end];
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end];
   }
 }
 @media (min-width: 901px) {
   .-service-directory-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
-    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
-    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end];
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end];
   }
 }
 .-service-directory-page.section-main .section-main-spacer,
@@ -3798,22 +3763,22 @@ body {
 @media (max-width: 600px) {
   .-subject-librarian-directory-page.section-main, .-staff-directory-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
-    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
-    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end];
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end];
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
   .-subject-librarian-directory-page.section-main, .-staff-directory-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
-    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
-    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end];
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end];
   }
 }
 @media (min-width: 901px) {
   .-subject-librarian-directory-page.section-main, .-staff-directory-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
-    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
-    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end];
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end];
   }
 }
 .-subject-librarian-directory-page.section-main .section-main-spacer,
@@ -3880,6 +3845,65 @@ body {
 .-gallery-page.section-main .section-main-sidebar {
   display: none;
 }
+@media (max-width: 600px) {
+  .-exhibition-page.section-main {
+    grid-template-columns: [main-start] 1fr [main-end];
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) [sidebar-start] -webkit-min-content [sidebar-end];
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) [sidebar-start] min-content [sidebar-end];
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .-exhibition-page.section-main {
+    grid-template-columns: [main-start] 1fr [main-end];
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) [sidebar-start] -webkit-min-content [sidebar-end];
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) [sidebar-start] min-content [sidebar-end];
+  }
+}
+@media (min-width: 901px) {
+  .-exhibition-page.section-main {
+    grid-template-columns: [main-start] 1fr [main-end];
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) [sidebar-start] -webkit-min-content [sidebar-end];
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) [sidebar-start] min-content [sidebar-end];
+  }
+}
+@media (min-width: 901px) {
+  .-exhibition-page.section-main {
+    grid-template-columns: [main-start] 1fr [main-end sidebar-start] 340px [sidebar-end];
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end main-start subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) [main-end];
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end main-start subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) [main-end];
+  }
+}
+.-exhibition-page.section-main .section-main-title,
+.-exhibition-page.section-main .section-main-section,
+.-exhibition-page.section-main .section-main-spacer {
+  display: none;
+}
+.-exhibition-page.section-main .section-main-content {
+  grid-row: sidebar-end;
+}
+.-exhibition-page.section-main .section-main-body,
+.-exhibition-page.section-main .section-main-sidebar {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+@media (min-width: 901px) {
+  .-exhibition-page.section-main {
+    grid-template-columns: [main-start] 1fr [main-end divider-start] 0.25fr [divider-end sidebar-start] 1fr [sidebar-end] !important;
+  }
+  .-exhibition-page.section-main .section-main-breadcrumb {
+    grid-column: main/sidebar;
+  }
+  .-exhibition-page.section-main .section-main-subtitle {
+    grid-column: main/sidebar;
+  }
+  .-exhibition-page.section-main .section-main-sidebar {
+    grid-row: body;
+  }
+  .-exhibition-page.section-main .section-main-spacer,
+.-exhibition-page.section-main .section-main-content {
+    grid-column: main/sidebar;
+  }
+}
 
 .section-major {
   display: block;
@@ -3922,17 +3946,8 @@ body {
   grid-template-columns: 1fr minmax(-webkit-min-content, 800px) 1fr;
   grid-template-columns: 1fr minmax(min-content, 800px) 1fr;
   background-size: cover;
-  height: 437px;
-}
-.intro-hero-image {
-  grid-row: 1/-1;
-  grid-column: 1/-1;
-  background-size: cover;
   background-position: center center;
-}
-.intro-hero-gradient {
-  grid-row: 1/-1;
-  grid-column: 1/-1;
+  height: 437px;
 }
 .intro-hero-badge {
   grid-row: 2/span 1;
@@ -3951,6 +3966,7 @@ body {
   grid-column: 2/span 1;
   -ms-flex-item-align: center;
       align-self: center;
+  margin: 0;
 }
 
 .flow-content-boxes {
@@ -4332,6 +4348,101 @@ body {
   grid-template-rows: 150px 1fr 420px;
   grid-template-columns: 1fr;
 }
+.exhibition-page {
+  margin: 0 auto;
+  display: grid;
+  grid-template-areas: "header" "main" "footer";
+  grid-template-rows: 150px 1fr 420px;
+  grid-template-columns: 1fr;
+}
+.exhibition-page-header {
+  grid-area: header;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.exhibition-page-header::after {
+  content: "Header";
+}
+.exhibition-page-main {
+  grid-area: main;
+}
+.exhibition-page-main-context, .exhibition-page-main-quote, .exhibition-page-main-date, .exhibition-page-main-sidenote {
+  display: block;
+}
+.exhibition-page-main-context {
+  margin-top: 4em;
+  margin-bottom: 2em;
+}
+.exhibition-page-main-quote {
+  margin-top: 0;
+}
+.exhibition-page-main-sidenote {
+  display: block;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+.exhibition-page-main-sidenote-heading, .exhibition-page-main-sidenote-content, .exhibition-page-main-sidenote-link {
+  display: block;
+}
+.exhibition-page-main-sidenote-heading {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+.exhibition-page-main-sidenote-content {
+  margin: 0;
+}
+.exhibition-page-main-divider {
+  display: none;
+}
+@media (min-width: 901px) {
+  .exhibition-page-main-divider {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    grid-column: divider;
+    grid-row: body;
+  }
+  .exhibition-page-main-divider::after {
+    content: "";
+    display: block;
+    height: calc(100% - 4em);
+  }
+}
+.exhibition-page-main .section-main {
+  padding-top: 0 !important;
+}
+.exhibition-page-main .section-main-body > *:first-child, .exhibition-page-main .section-main-sidebar > *:first-child {
+  margin-top: 0;
+}
+.exhibition-page-footer {
+  grid-area: footer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.exhibition-page-footer::after {
+  content: "Footer";
+}
+
 /*** INSERT NEW TEMPLATES HERE ***/
 [v-cloak] {
   display: none;
@@ -10742,17 +10853,17 @@ button, input[type=button], input[type=submit], input[type=reset] {
 .card-listing .card-listing-date, .card-listing.-vertical .card-listing-date {
   margin-top: 50px;
 }
-@media (min-width: 601px) and (max-width: 900px) {
+@media (min-width: 901px) {
   .card-listing:not(.-vertical) {
-    grid-template-columns: 1fr 40%;
+    grid-template-columns: 1fr 50%;
   }
   .card-listing:not(.-vertical) .card-listing-date {
     margin-top: 0;
   }
 }
-@media (min-width: 901px) {
+@media (min-width: 1200px) {
   .card-listing:not(.-vertical) {
-    grid-template-columns: 1fr 40%;
+    grid-template-columns: 1fr 55%;
   }
   .card-listing:not(.-vertical) .card-listing-date {
     margin-top: 0;
@@ -10896,22 +11007,6 @@ button, input[type=button], input[type=submit], input[type=reset] {
   bottom: 0;
   border: 1px solid rgba(96, 88, 88, 0.2);
   border-bottom: none;
-}
-@media (min-width: 601px) and (max-width: 900px) {
-  .card-listing:not(.-vertical) .card-listing-image {
-    left: 0;
-    right: -40px;
-    bottom: -40px;
-    top: -65px;
-  }
-  .card-listing:not(.-vertical) .card-listing-image::after {
-    left: 0;
-    right: 14px;
-    bottom: 14px;
-    top: 14px;
-    border: 1px solid rgba(96, 88, 88, 0.2);
-    border-left: none;
-  }
 }
 @media (min-width: 901px) {
   .card-listing:not(.-vertical) .card-listing-image {
@@ -13484,9 +13579,9 @@ button, input[type=button], input[type=submit], input[type=reset] {
     grid-row-gap: 0;
   }
 }
-.intro-hero-gradient {
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(-14.42%, #282828), color-stop(50%, rgba(40, 40, 40, 0)));
-  background-image: linear-gradient(0deg, #282828 -14.42%, rgba(40, 40, 40, 0) 50%);
+.intro-hero {
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(-14.42%, #282828), color-stop(50%, transparent)), var(--image);
+  background-image: linear-gradient(0deg, #282828 -14.42%, transparent 50%), var(--image);
 }
 .intro-hero-title {
   margin: 0;
@@ -13503,11 +13598,15 @@ button, input[type=button], input[type=submit], input[type=reset] {
   color: #FFFFFF !important;
 }
 .intro-hero-subtitle {
-  margin: 0;
-  color: #FFFFFF;
+  font-family: "Open Sans", sans-serif;
   font-size: 16px;
-  text-align: center;
+  font-weight: normal;
+  font-style: normal;
   line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: center;
+  color: #FFFFFF;
 }
 
 .intro-thumb {
@@ -13946,6 +14045,182 @@ button, input[type=button], input[type=submit], input[type=reset] {
   color: #FFFFFF;
 }
 
+.exhibition-page {
+  grid-gap: 20px;
+}
+.exhibition-page-header, .exhibition-page-footer {
+  border: 1px solid #B6BDCC;
+}
+.exhibition-page-main-context {
+  text-align: center;
+}
+.exhibition-page-main-context {
+  font-family: "Open Sans", sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  font-style: normal;
+  line-height: 1.6667;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #605858;
+}
+.exhibition-page-main-quote {
+  font-family: "Cardo", serif;
+  font-size: 48px;
+  font-weight: bold;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: center;
+  color: #004990;
+}
+.exhibition-page-main-date {
+  font-family: "Cardo", serif;
+  font-size: 28px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  color: #082B73;
+}
+.exhibition-page-main-sidenote-heading {
+  font-family: "Open Sans", sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  font-style: normal;
+  line-height: 1.6667;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #082B73;
+}
+.exhibition-page-main-sidenote-link {
+  font-weight: bold;
+  font-style: normal;
+  color: #5387F7;
+  -webkit-transition: all 0.25s ease;
+  transition: all 0.25s ease;
+  background: none;
+  border: none;
+}
+.exhibition-page-main-sidenote-link .icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 1ex;
+}
+.exhibition-page-main-sidenote-link .icon svg {
+  fill: #5387F7;
+}
+.exhibition-page-main-sidenote-link:hover, .exhibition-page-main-sidenote-link.is-hover, .exhibition-page-main-sidenote-link:focus, .exhibition-page-main-sidenote-link.is-focus {
+  color: #004990;
+}
+.exhibition-page-main-sidenote-link:hover .icon svg, .exhibition-page-main-sidenote-link.is-hover .icon svg, .exhibition-page-main-sidenote-link:focus .icon svg, .exhibition-page-main-sidenote-link.is-focus .icon svg {
+  fill: #004990;
+}
+.exhibition-page-main-sidenote-link:active, .exhibition-page-main-sidenote-link.is-active {
+  color: #004990;
+}
+.exhibition-page-main-sidenote-link:active .icon svg, .exhibition-page-main-sidenote-link.is-active .icon svg {
+  fill: #004990;
+}
+.exhibition-page-main-sidenote-link::after {
+  font-size: 12px !important;
+  line-height: 1 !important;
+}
+.exhibition-page-main-sidenote-link::after {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: italic;
+  line-height: 1.9375;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  color: #605858;
+}
+.exhibition-page-main-sidenote-link.-popular {
+  font-family: "Cardo", serif;
+  font-size: 20px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 2.05;
+  color: #FFFFFF;
+}
+.exhibition-page-main-sidenote-link.-popular:hover, .exhibition-page-main-sidenote-link.-popular.is-hover, .exhibition-page-main-sidenote-link.-popular:focus, .exhibition-page-main-sidenote-link.-popular.is-focus {
+  color: #336BE6;
+}
+.exhibition-page-main-sidenote-link.-popular:active, .exhibition-page-main-sidenote-link.-popular.is-active {
+  color: #336BE6;
+}
+.exhibition-page-main-sidenote-link.-underline {
+  text-decoration: underline;
+}
+.exhibition-page-main-divider::after {
+  width: 1px;
+  background-color: #E7EAF1;
+}
+.exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+  -webkit-transition: padding 0.25s ease;
+  transition: padding 0.25s ease;
+}
+@media (max-width: 600px) {
+  .exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+    padding-left: 50px;
+    padding-right: 50px;
+  }
+}
+@media (min-width: 901px) {
+  .exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+    padding-left: 60px;
+    padding-right: 60px;
+  }
+}
+@media (min-width: 1200px) {
+  .exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+    padding-left: 70px;
+    padding-right: 70px;
+  }
+}
+@media (max-width: 600px) {
+  .exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+}
+@media (min-width: 901px) {
+  .exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+}
+@media (min-width: 1200px) {
+  .exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+}
 .gallery-page {
   grid-gap: 20px;
 }
