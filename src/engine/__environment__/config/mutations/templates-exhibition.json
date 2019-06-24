@@ -18,7 +18,11 @@
     "parking.location": "parking.parking-location",
     "visitation": "visitor-hours",
     "contact": "contact-info.contact-email",
-    "trumba": "calendar-import.url-id"
+    "trumba": "calendar-import.url-id",
+    "extras.heading": "supplemental-content.section-title",
+    "extras.content": "supplemental-content.column",
+    "extras.content.@.text": "extras.content.@.wysiwyg",
+    "sponsor": "sponsorship.sponsorship-statement"
   },
   "replace": {},
   "remove": [],
@@ -50,12 +54,15 @@
       "value": 6
     }
   ],
-  "repeatable": [],
+  "repeatable": [
+    "supplemental-content.column"
+  ],
   "checkbox": [
     "title-hero.hero-options",
     "dates.start-date.month-only",
     "dates.end-date.month-only",
-    "parking-info.link.link-customizations"
+    "parking-info.link.link-customizations",
+    "insert-supplemental-content"
   ],
   "radio": [
     "parking-info.link.link-type",
@@ -82,9 +89,12 @@
     "visitor-hours.link.external-url",
     "visitor-hours.link.link-label",
     "contact-info.contact-email",
-    "calendar-import.url-id"
+    "calendar-import.url-id",
+    "supplemental-content.section-title",
+    "supplemental-content.column.@.heading"
   ],
   "html": [
-    "description.details"
+    "description.details",
+    "sponsorship.sponsorship-statement"
   ]
 }
