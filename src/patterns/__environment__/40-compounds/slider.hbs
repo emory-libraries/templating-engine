@@ -1,0 +1,64 @@
+{{! Generate a slider ID if none was given. This is needed to create a toggle group. }}
+{{#unless id}}
+  {{assign 'id' (uid 'slider-')}}
+{{/unless}}
+
+<eul-slider inline-template :defaults="{
+                              active: 0,
+                              slides: {{length slides}}
+                             }">
+
+  <div class="slider">
+
+    {{#each slides}}
+    <input type="radio"
+           v-model="active"
+           :value="{{@index}}"
+           class="slider-indicator"
+           id="{{default id (dashcase (lowercase title))}}"
+           :tabindex="active === {{@index}} ? 0 : -1"
+           @keydown.right="forward"
+           @keydown.left="backward">
+    {{/each}}
+
+    {{#unless (eq arrows false)}}
+    <button class="slider-toggle -previous"
+                          @click="previous"
+                          :disabled="active === 0"></button>
+    <button class="slider-toggle -next"
+                          @click="next"
+                          :disabled="active === slides - 1"></button>
+    {{/unless}}
+
+    <div class="slider-slides">
+      {{#each slides}}
+        {{> molecules-slide}}
+      {{/each}}
+    </div>
+
+  </div>
+
+</eul-slider>
+
+<noscript>
+
+  <div class="slider">
+
+    {{#each slides}}
+    <input type="radio"
+           name="{{../id}}"
+           class="slider-indicator"
+           id="{{default id (dashcase (lowercase title))}}"
+           tabindex="0"
+           {{#if @first}}checked{{/if}}>
+    {{/each}}
+
+    <div class="slider-slides">
+      {{#each slides}}
+        {{> molecules-slide}}
+      {{/each}}
+    </div>
+
+  </div>
+
+</noscript>

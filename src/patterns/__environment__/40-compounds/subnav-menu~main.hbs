@@ -1,0 +1,80 @@
+{{! Create data for the back button. }}
+{{assign 'back.for' (combine 'nav-menu-main-' (lowercase (dashcase heading)))}}
+{{assign 'back.label' 'Back to Main Menu'}}
+
+{{! Add links to resources. }}
+{{#each navigation}}
+
+  {{#if (hasOwn this 'resource')}}
+    {{assign 'options' (arrayify null)}}
+    {{assign 'options.0' (objectify label='About' href=href)}}
+    {{assign 'options.1' (objectify label='Access' href=resource target='_blank' icon=(objectify id='material-open_in_new' position='right'))}}
+  {{/if}}
+
+  {{storagePush 'navigation' this}}
+
+{{/each}}
+
+{{assign 'navigation' (storageGet 'navigation')}}
+
+{{! Create data for the search if grouped. }}
+{{#if (and (eq layout 'grouped') search)}}
+  {{assign 'search.services' (arrayify null)}}
+  {{#make 'search.services.0'}}
+    {
+      label: '{{heading}}',
+      placeholder: '{{default search.placeholder 'Enter keyword...'}}',
+      id: '{{lowercase (dashcase heading)}}',
+      src: '{{search.src}}',
+      default: true
+    }
+  {{/make}}
+  {{assign 'search.button' (objectify label='Search')}}
+{{/if}}
+
+<nav class="subnav-menu-main{{#if layout}} -{{layout}}{{/if}}{{#if (and (eq layout 'grouped') search)}} has-search{{/if}}">
+  
+  {{#with back}}{{> atoms-subnav-button-back classes=''}}{{/with}}
+  
+  <span class="subnav-menu-main-heading">{{heading}}</span>
+  
+  {{#if (eq layout 'grouped')}}
+  
+    {{#if search}}
+      <div class="subnav-button-group -stretch">
+        <span class="subnav-button-group-heading">{{search.heading}}</span>
+        {{#with search}}{{> atoms-search-small}}{{/with}}
+      </div>
+    {{/if}}
+  
+    {{#each groups}}
+      <div class="subnav-button-group">
+        <span class="subnav-button-group-heading">{{heading}}</span>
+        {{#each navigation}}{{> atoms-subnav-button-main classes=''}}{{/each}}
+      </div>
+    {{/each}}
+    
+    {{#if (hasOwn this 'viewall')}}
+      {{> atoms-subnav-button-viewall href=viewall label=(combine 'View All ' heading) classes="-span"}}
+    {{/if}}
+  
+  {{else}}
+  
+    {{#each (filterHasNot navigation 'category')}}
+      {{#if (hasOwn this 'resource')}}
+        {{> atoms-subnav-button-resource classes=''}}
+      {{else}}
+        {{> atoms-subnav-button-main classes=''}}
+      {{/if}}
+    {{/each}}
+  
+    {{#each (filterHas navigation 'category')}}
+      <div class="subnav-button-category">
+        <span class="subnav-button-category-heading">{{heading}}</span>
+        {{#each navigation}}{{> atoms-subnav-button-main classes=''}}{{/each}}
+      </div>
+    {{/each}}
+  
+  {{/if}}
+  
+</nav>
