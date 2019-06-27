@@ -2,7 +2,11 @@
   <div class="section-main-breadcrumb">
     {{> molecules-breadcrumbs}}
   </div>
-  {{#if (eq type 'bio-page')}}
+  {{#if (eq type 'exhibition-page')}}
+    <div class="section-main-subtitle">
+      {{#block 'section-main-subtitle'}}{{/block}}
+    </div>
+  {{else if (eq type 'bio-page')}}
     {{> organisms-intro-bio}}
     {{#if quote}}<p class="text -lead section-main-subtitle">&ldquo;{{quote}}&rdquo;</p>{{/if}}
   {{else if (eq type 'gallery-page')}}
@@ -21,7 +25,9 @@
       <div class="section-main-content">{{> compounds-related-cards}}</div>
     {{/if}}
   </main>
+  {{#block 'section-main-divider'}}{{/block}}
   <aside class="section-main-sidebar">
     {{#block 'section-main-sidebar'}}{{/block}}
   </aside>
+  {{#block 'section-main-other'}}{{/block}}
 </div>
