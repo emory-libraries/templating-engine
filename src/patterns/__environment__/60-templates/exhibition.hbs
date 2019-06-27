@@ -197,9 +197,9 @@
 {{/if}}
 
 {{! Format extras. }}
-{{#each extras}}
+{{#each extras.content}}
 
-  {{! Remove any empty extra data.}}
+  {{! Remove any empty extra data. }}
   {{#unless (or (eq heading '') (not (isString text)) (eq text ''))}}
     {{storagePush 'extras' this}}
   {{/unless}}
@@ -207,7 +207,7 @@
 {{/each}}
 
 {{! Save extras. }}
-{{assign 'extras' (storageGet 'extras')}}
+{{assign 'extras.content' (storageGet 'extras')}}
 
 <div class="exhibition-page">
   <header class="exhibition-page-header"></header>
