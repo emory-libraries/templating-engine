@@ -1,0 +1,253 @@
+{{! Initialize current and past groups. }}
+{{assign 'current' (arrayify null)}}
+{{assign 'past' (arrayify null)}}
+
+{{! Group exhibits by date as either current or past. }}
+{{#each exhibits}}
+
+  {{! Set link data. }}
+  {{#unless link.href}}
+
+    {{! For cascade pages, use the page's path. }}
+    {{#if (eq link-type 'Cascade Page')}}
+      {{assign 'link.href' cascade-page.path}}
+      {{#if (and link-customizations (isArray link-customization))}}
+        {{#if (gte (indexOf link-customizations 'Label') 0)}}
+          {{assign 'link.label' link-label}}
+        {{else}}
+          {{assign 'link.label' 'Exhibition Details'}}
+        {{/if}}
+      {{/if}}
+    {{/if}}
+
+    {{! For cascade files, use the file's path. }}
+    {{#if (eq link-type 'Cascade File')}}
+      {{assign 'link.href' cascade-file.path}}
+      {{#if (and link-customizations (isArray link-customization))}}
+        {{#if (gte (indexOf link-customizations 'Label') 0)}}
+          {{assign 'link.label' link-label}}
+        {{else}}
+          {{assign 'link.label' 'Exhibition Details'}}
+        {{/if}}
+      {{/if}}
+    {{/if}}
+
+    {{! For external URLs, use the link given. }}
+    {{#if (eq link-type 'External URL')}}
+      {{assign 'link.href' external-url}}
+      {{assign 'link.label' (default link-label 'Exhibition Details')}}
+    {{/if}}
+
+  {{/unless}}
+
+  {{! Set image data. }}
+  {{#if (and (eq image.src '/') (eq link-type 'Cascade Page'))}}
+    {{assign 'image.src' cascade-page.content.system-data-structure.image.image-file.path}}
+  {{/if}}
+
+  {{! Format the start date for display. }}
+  {{#if date.start.date}}
+    {{#if date.start.month}}
+      {{assign 'date.start.display' (moment date.start.date 'MMMM YYYY')}}
+    {{else}}
+      {{assign 'date.start.display' (moment date.start.date 'MMMM D, YYYY')}}
+    {{/if}}
+  {{else}}
+    {{assign 'date.start.display' null}}
+  {{/if}}
+
+  {{! Format the end date for display. }}
+  {{#if date.end.date}}
+    {{#if date.end.month}}
+      {{assign 'date.end.display' (moment date.end.date 'MMMM YYYY')}}
+    {{else}}
+      {{assign 'date.end.display' (moment date.end.date 'MMMM D, YYYY')}}
+    {{/if}}
+  {{else}}
+    {{assign 'date.end.display' null}}
+  {{/if}}
+
+  {{! Format the date range for display. }}
+  {{#if (and date.start.date date.end.date)}}
+    {{#if (momentIsSame date.start.date date.end.date)}}
+      {{assign 'date.display' date.start.display}}
+    {{else}}
+      {{assign 'date.display' (combine date.start.display ' - ' date.end.display)}}
+    {{/if}}
+  {{else if date.start.date}}
+    {{#if (momentIsAfterToday date.start.date)}}
+      {{assign 'date.display' (combine 'Opens ' date.start.display)}}
+    {{else}}
+      {{assign 'date.display' (combine 'Since ' date.start.display)}}
+    {{/if}}
+  {{else if date.end.date}}
+    {{assign 'date.display' (combine 'Through ' date.end.display)}}
+  {{else}}
+    {{assign 'date.display' 'TBD'}}
+  {{/if}}
+
+  {{! Start categorizing exhibits based on their start date. }}
+  {{#if date.start.date}}
+
+    {{! Handle dates where month only should be used. }}
+    {{#if date.start.month}}
+
+      {{! A current exhibit should have a start date of either today or before. }}
+      {{#if (momentIsSameOrBeforeToday date.start.date 'month')}}
+
+        {{! It should also have an end date of either today or after or no end date at all. }}
+        {{#if (or (momentIsSameOrAfterToday date.end.date 'month') (not date.end.date))}}
+
+          {{storagePush 'current' this}}
+
+        {{! Otherwise, assume the date is in the past. }}
+        {{else}}
+
+          {{storagePush 'past' this}}
+
+        {{/if}}
+
+      {{! Otherwise, assume the exhibit is in the past. }}
+      {{else}}
+
+        {{storagePush 'past' this}}
+
+      {{/if}}
+
+    {{! Otherwise, handle dates where the full date should be used. }}
+    {{else}}
+
+      {{! A current exhibit should have a start date of either today or before. }}
+      {{#if (momentIsSameOrBeforeToday date.start.date)}}
+
+        {{! It should also have an end date of either today or after or no end date at all. }}
+        {{#if (or (momentIsSameOrAfterToday date.end.date) (not date.end.date))}}
+
+          {{storagePush 'current' this}}
+
+        {{! Otherwise, assume the date is in the past. }}
+        {{else}}
+
+          {{storagePush 'past' this}}
+
+        {{/if}}
+
+      {{! Otherwise, assume the exhibit is in the past. }}
+      {{else}}
+
+        {{storagePush 'past' this}}
+
+      {{/if}}
+
+    {{/if}}
+
+  {{! Otherwise, categorize exhibits without a start date. }}
+  {{else if date.end.date}}
+
+    {{! Handle dates where month only should be used. }}
+    {{#if date.end.month}}
+
+      {{! A current exhibit should have an end date of either today or after. }}
+      {{#if (momentIsSameOrAfterToday date.end.date 'month')}}
+
+        {{storagePush 'current' this}}
+
+      {{! Otherwise, assume the date is in the past. }}
+      {{else}}
+
+        {{storagePush 'past' this}}
+
+      {{/if}}
+
+    {{! Otherwise, handle dates where the full date should be used. }}
+    {{else}}
+
+      {{! A current exhibit should have an end date of either today or after. }}
+      {{#if (momentIsSameOrAfterToday date.end.date)}}
+
+        {{storagePush 'current' this}}
+
+      {{! Otherwise, assume the date is in the past. }}
+      {{else}}
+
+        {{storagePush 'past' this}}
+
+      {{/if}}
+
+    {{/if}}
+
+  {{/if}}
+
+{{/each}}
+
+{{! Capture current and past exhibits. }}
+{{assign 'current' (storageGet 'current')}}
+{{assign 'past' (storageGet 'past')}}
+
+{{! Modify current exhibits to adhere to the proper format. }}
+{{#each current}}
+
+  {{! Make sure all current exhibits cards have a dark theme and vertical layout. }}
+  {{assign 'theme' 'dark'}}
+  {{assign 'vertical' true}}
+
+  {{! Save the updated exhibit data. }}
+  {{storagePush 'current' this}}
+
+{{/each}}
+
+{{! Save current exhibits. }}
+{{assign 'current' (storageGet 'current')}}
+
+{{! Modifiy past exhibits to adhere to the proper format. }}
+{{#each past}}
+
+  {{! Unset link labels for past exhibits. }}
+  {{assign 'link.label' null}}
+
+  {{! Save the updated exhibit data. }}
+  {{storagePush 'past' this}}
+
+{{/each}}
+
+{{! Save past exhibits. }}
+{{assign 'past' (storageGet 'past')}}
+
+{{! Force empty data to use an empty array. }}
+{{#unless current}}{{assign 'current' (arrayify null)}}{{/unless}}
+{{#unless past}}{{assign 'past' (arrayify null)}}{{/unless}}
+
+{{! Set a limit on the number of past exhibitions that should be displayed if not given. }}
+{{#unless limit}}
+  {{assign 'limit' 6}}
+{{/unless}}
+
+<div class="gallery-page">
+  <header class="gallery-page-header"></header>
+  <div class="gallery-page-main">
+    {{> organisms-main type='gallery-page'}}
+    {{#extend 'organisms-major' theme='dark' heading='Current Exhibitions'}}
+      {{#content 'section-major-body'}}
+
+        {{> compounds-cards columns=(objectify m=1 l=1 xl=2) card-type='listing' cards=current}}
+
+      {{/content}}
+    {{/extend}}
+    {{#extend 'organisms-major' theme='light' heading='Past Exhibitions'}}
+      {{#content 'section-major-body'}}
+
+        {{> compounds-tiles columns=(objectify m=2 l=2 xl=3) tile-type='listing' tiles=(limit past this.limit)}}
+
+        {{#if (gt (length (limitDifference past this.limit)) 0)}}
+          {{#extend 'tokens-reveal' once=true label='View All Past Exhibitions'}}
+            {{#content 'big-reveal-content'}}
+              {{> compounds-tiles columns=(objectify m=2 l=2 xl=3) tile-type='listing' tiles=(limitDifference past this.limit)}}
+            {{/content}}
+          {{/extend}}
+        {{/if}}
+
+      {{/content}}
+    {{/extend}}
+  </div>
+  <footer class="gallery-page-footer"></footer>
+</div>

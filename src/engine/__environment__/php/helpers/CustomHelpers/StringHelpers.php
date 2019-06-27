@@ -59,6 +59,33 @@ trait StringHelpers {
     
   }
   
+  // Generate a unique ID.
+  public static function uid( $prefix ) {
+    
+    // Use an empty prefix is none was given.
+    $prefix = is_string($prefix) ? $prefix : '';
+    
+    // Return a unique ID with the prefix prepended.
+    return uniqid($prefix, true);
+    
+  }
+  
+  // Determine if a string starts with another substring.
+  public static function startsWithSubstring( $string, $substring, $options ) {
+    
+    // Determine if the string starts with the substring.
+    return str_starts_with($string, $substring);
+    
+  }
+  
+  // Determine if a string ends with another substring.
+  public static function endsWithSubstring( $string, $substring, $options ) {
+    
+    // Determine if the string starts with the substring.
+    return str_ends_with($string, $substring);
+    
+  }
+  
 }
 
 ?>
