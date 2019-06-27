@@ -3929,6 +3929,7 @@ body {
 .-gallery-page.section-main .section-main-content,
 .-gallery-page.section-main .section-main-section,
 .-gallery-page.section-main .section-main-sidebar {
+=======
   display: none;
 }
 
@@ -4376,13 +4377,48 @@ body {
   content: "Footer";
 }
 
-.gallery-page {
+.gallery-page,
+.research-help-directory-page {
   margin: 0 auto;
   display: grid;
   grid-template-areas: "header" "main" "footer";
   grid-template-rows: 150px 1fr 420px;
   grid-template-columns: 1fr;
 }
+.research-help-directory-page-header {
+  grid-area: header;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.research-help-directory-page-header::after {
+  content: "Header";
+}
+.research-help-directory-page-main {
+  grid-area: main;
+}
+.research-help-directory-page-footer {
+  grid-area: footer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.research-help-directory-page-footer::after {
+  content: "Footer";
+}
+
 /*** INSERT NEW TEMPLATES HERE ***/
 [v-cloak] {
   display: none;
@@ -13248,6 +13284,11 @@ button, input[type=button], input[type=submit], input[type=reset] {
   font-weight: normal !important;
 }
 
+.grouping-files-heading {
+  color: #082B73 !important;
+  font-weight: normal !important;
+}
+
 .sidebar-list-section {
   padding-top: 35px;
   padding-bottom: 35px;
@@ -14017,6 +14058,12 @@ button, input[type=button], input[type=submit], input[type=reset] {
   grid-gap: 20px;
 }
 .material-page-header, .material-page-footer {
+  border: 1px solid #B6BDCC;
+}
+.research-help-directory-page {
+  grid-gap: 20px;
+}
+.research-help-directory-page-header, .research-help-directory-page-footer {
   border: 1px solid #B6BDCC;
 }
 .research-help-page {

@@ -22,6 +22,6 @@
   "templates-tool": "Page Types/Tool Page",
   "templates-video-tutorial": "",
   "templates-material": "Page Types/Materials Page",
-  "templates-library-aid-directory": "",
-  "templates-library-aid": "Page Types/Research Aid Page"
+  "templates-research-help-directory": "Page Types/Research Help Directory",
+  "templates-research-help": "Page Types/Research Help Page"
 }
