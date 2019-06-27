@@ -610,8 +610,45 @@ class Mutator {
     // Remove keys with the data set.
     foreach( $removes as $remove ) {
       
-      // Remove any keys that exist.
-      $data = array_unset($data, $remove);
+      // Remove values within an array.
+      if( strpos($remove, '@') !== false ) {
+        
+        // Get the keys.
+        $keys = array_map(function($key) {
+          
+          // Strip trailing and leading dots from the keys.
+          return trim($key, '. ');
+          
+        }, explode('@', $remove));
+        
+        // Look for the array of objects.
+        if( array_get($data, $keys[0], false) !== false ) {
+          
+          // Get the array of objects.
+          $array = array_get($data, $keys[0]);
+          
+          // Mutate each object within the array.
+          foreach( $array as $index => $object ) {
+            
+            // Remove the array item's key with the new value.
+            $array[$index] = array_unset($array[$index], $keys[1], true);
+            
+          }
+          
+          // Save the array.
+          $data = array_set($data, $keys[0], $array, true);
+          
+        }
+        
+      }
+      
+      // Otherwise, remove any keys that may exist.
+      else {
+      
+        // Remove any keys that exist.
+        $data = array_unset($data, $remove);
+        
+      }
       
     }
     
@@ -626,8 +663,45 @@ class Mutator {
     // Add keys to the data set.
     foreach( $adds as $key => $value ) {
       
-      // Add any keys that don't already exist.
-      $data = array_set($data, $key, $value);
+      // Replace values within an array.
+      if( strpos($key, '@') !== false ) {
+        
+        // Get the keys.
+        $keys = array_map(function($key) {
+          
+          // Strip trailing and leading dots from the keys.
+          return trim($key, '. ');
+          
+        }, explode('@', $key));
+        
+        // Look for the array of objects.
+        if( array_get($data, $keys[0], false) !== false ) {
+          
+          // Get the array of objects.
+          $array = array_get($data, $keys[0]);
+          
+          // Mutate each object within the array.
+          foreach( $array as $index => $object ) {
+            
+            // Replace the array item's key with the new value.
+            $array[$index] = array_set($array[$index], $keys[1], $value);
+            
+          }
+          
+          // Save the array.
+          $data = array_set($data, $keys[0], $array, true);
+          
+        }
+        
+      }
+      
+      // Otherwise, add any keys that don't already exist.
+      else {
+      
+        // Add any keys that don't already exist.
+        $data = array_set($data, $key, $value);
+        
+      }
       
     }
     

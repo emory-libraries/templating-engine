@@ -1,6 +1,6 @@
 <div class="cards{{#if classes}} {{classes}}{{/if}}"
      {{#if columns}}style="
-        {{#if (isObject size)}}
+        {{#if (isObject columns)}}
           {{#each columns as |size screen|}}
           --cols-{{screen}}: {{size}};
           {{/each}}
