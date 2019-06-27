@@ -267,7 +267,7 @@
 
     {{/extend}}
 
-    {{#if (or sponsor (gt (length extras.content) 0))}}
+    {{#if (or (and sponsor (not (eq sponsor '')))  (gt (length extras.content) 0))}}
     {{> organisms-deep-dive heading=(default extras.heading 'Dive Deeper') columns=extras.content footer=(objectify text=sponsor)}}
     {{/if}}
 
