@@ -33,33 +33,33 @@
 {{/if}}
 
 <nav class="subnav-menu-main{{#if layout}} -{{layout}}{{/if}}{{#if (and (eq layout 'grouped') search)}} has-search{{/if}}">
-  
+
   {{#with back}}{{> atoms-subnav-button-back classes=''}}{{/with}}
-  
+
   <span class="subnav-menu-main-heading">{{heading}}</span>
-  
+
   {{#if (eq layout 'grouped')}}
-  
+
     {{#if search}}
       <div class="subnav-button-group -stretch">
         <span class="subnav-button-group-heading">{{search.heading}}</span>
         {{#with search}}{{> atoms-search-small}}{{/with}}
       </div>
     {{/if}}
-  
+
     {{#each groups}}
       <div class="subnav-button-group">
         <span class="subnav-button-group-heading">{{heading}}</span>
         {{#each navigation}}{{> atoms-subnav-button-main classes=''}}{{/each}}
       </div>
     {{/each}}
-    
+
     {{#if (hasOwn this 'viewall')}}
       {{> atoms-subnav-button-viewall href=viewall label=(combine 'View All ' heading) classes="-span"}}
     {{/if}}
-  
+
   {{else}}
-  
+
     {{#each (filterHasNot navigation 'category')}}
       {{#if (hasOwn this 'resource')}}
         {{> atoms-subnav-button-resource classes=''}}
@@ -67,14 +67,14 @@
         {{> atoms-subnav-button-main classes=''}}
       {{/if}}
     {{/each}}
-  
+
     {{#each (filterHas navigation 'category')}}
       <div class="subnav-button-category">
         <span class="subnav-button-category-heading">{{heading}}</span>
         {{#each navigation}}{{> atoms-subnav-button-main classes=''}}{{/each}}
       </div>
     {{/each}}
-  
+
   {{/if}}
-  
+
 </nav>
