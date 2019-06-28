@@ -21,48 +21,55 @@
 {{#each feature.buttons}}
 
   {{#if (eq link-type 'Cascade Page')}}
-    {{assign 'href' (combine (baseUrl) cascade-page.path)}}
+    {{assign 'href' cascade-page.path}}
     {{assign 'label' button-label}}
     {{#unless (storageHas 'feature.context')}}
-      {{storageSet 'feature.context' cascade-page.title}}
-      {{#if (and link-customizations (isArray link-customizations))}}
+      {{storageSet 'feature.context' context}}
+    {{/unless}}
+    {{#unless (storageHas 'feature.heading')}}
+      {{storageSet 'feature.heading' cascade-page.title}}
+      {{#if link-customizations}}
         {{#if (gte (indexOf link-customizations 'Label') 0)}}
-          {{storageSet 'feature.context' link-label}}
+          {{storageSet 'feature.heading' link-label}}
         {{/if}}
       {{/if}}
     {{/unless}}
-    {{#unless (storageHas 'feature.heading')}}
-      {{storageSet 'feature.heading' cascade-page.description}}
-      {{#if (and link-customizations (isArray link-customizations))}}
+    {{#unless (storageHas 'feature.description')}}
+      {{storageSet 'feature.description' cascade-page.description}}
+      {{#if link-customizations}}
         {{#if (gte (indexOf link-customizations 'Description') 0)}}
-          {{storageSet 'feature.heading' link-description}}
+          {{storageSet 'feature.description' link-description}}
         {{/if}}
       {{/if}}
     {{/unless}}
   {{else if (eq link-type 'Cascade File')}}
-    {{assign 'href' (combine (baseUrl) cascade-file.path)}}
+    {{assign 'href' cascade-file.path}}
     {{assign 'label' button-label}}
     {{#unless (storageHas 'feature.context')}}
-      {{storageSet 'feature.context' (stem cascade-file.display-name)}}
-      {{#if (and link-customizations (isArray link-customizations))}}
-        {{#if (gte (indexOf link-customizations 'Label') 0)}}
-          {{storageSet 'feature.context' link-label}}
-        {{/if}}
-      {{/if}}
+      {{storageSet 'feature.context' context}}
     {{/unless}}
     {{#unless (storageHas 'feature.heading')}}
       {{storageSet 'feature.heading' (stem cascade-file.display-name)}}
-      {{#if (and link-customizations (isArray link-customizations))}}
+      {{#if link-customizations}}
+        {{#if (gte (indexOf link-customizations 'Label') 0)}}
+          {{storageSet 'feature.heading' link-label}}
+        {{/if}}
+      {{/if}}
+    {{/unless}}
+    {{#unless (storageHas 'feature.description')}}
+      {{storageSet 'feature.description' (stem cascade-file.display-name)}}
+      {{#if link-customizations}}
         {{#if (gte (indexOf link-customizations 'Description') 0)}}
-          {{storageSet 'feature.heading' link-description}}
+          {{storageSet 'feature.description' link-description}}
         {{/if}}
       {{/if}}
     {{/unless}}
   {{else if (eq link-type 'External URL')}}
     {{assign 'href' external-url}}
     {{assign 'label' button-label}}
-    {{#unless (storageHas 'feature.context')}}{{storageSet 'feature.context' link-label}}{{/unless}}
-    {{#unless (storageHas 'feature.heading')}}{{storageSet 'feature.heading' link-description}}{{/unless}}
+    {{#unless (storageHas 'feature.context')}}{{storageSet 'feature.context' context}}{{/unless}}
+    {{#unless (storageHas 'feature.heading')}}{{storageSet 'feature.heading' link-label}}{{/unless}}
+    {{#unless (storageHas 'feature.description')}}{{storageSet 'feature.description' link-description}}{{/unless}}
   {{/if}}
 
   {{! Always use hollow button styles. }}
@@ -75,24 +82,25 @@
 
 {{! Update feature buttons, context, heading, and/or description. }}
 {{assign 'feature.buttons' (storageGet 'feature.buttons')}}
-{{#unless 'feature.context'}}{{assign 'feature.context' (storageGet 'feature.context')}}{{/unless}}
-{{#unless 'feature.heading'}}{{assign 'feature.heading' (storageGet 'feature.heading')}}{{/unless}}
+{{#unless feature.context}}{{assign 'feature.context' (storageGet 'feature.context')}}{{/unless}}
+{{#unless feature.heading}}{{assign 'feature.heading' (storageGet 'feature.heading')}}{{/unless}}
+{{#unless feature.description}}{{assign 'feature.description' (storageGet 'feature.description')}}{{/unless}}
 
 {{! Reformat explorer links. }}
 {{#each explorer.links }}
 
   {{#if (eq link-type 'Cascade Page')}}
-    {{assign 'href' (combine (baseUrl) cascade-page.path)}}
+    {{assign 'href' cascade-page.path}}
     {{assign 'label' cascade-page.title}}
-    {{#if (and link-customizations (isArray link-customizations))}}
+    {{#if link-customizations}}
       {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
     {{/if}}
   {{else if (eq link-type 'Cascade File')}}
-    {{assign 'href' (combine (baseUrl) cascade-file.path)}}
+    {{assign 'href' cascade-file.path}}
     {{assign 'label' cascade-file.title}}
-    {{#if (and link-customizations (isArray link-customizations))}}
+    {{#if link-customizations}}
       {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
@@ -114,17 +122,17 @@
 {{#each wayfinder.buttons}}
 
   {{#if (eq link-type 'Cascade Page')}}
-    {{assign 'href' (combine (baseUrl) cascade-page.path)}}
+    {{assign 'href' cascade-page.path}}
     {{assign 'label' cascade-page.title}}
-    {{#if (and link-customizations (isArray link-customizations))}}
+    {{#if link-customizations}}
       {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
     {{/if}}
   {{else if (eq link-type 'Cascade File')}}
-    {{assign 'href' (combine (baseUrl) cascade-file.path)}}
+    {{assign 'href' cascade-file.path}}
     {{assign 'label' cascade-file.title}}
-    {{#if (and link-customizations (isArray link-customizations))}}
+    {{#if link-customizations}}
       {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
@@ -148,11 +156,9 @@
   {{! Capture the card title and link if applicable. }}
   {{#if cascade-page}}
     {{assign 'title' cascade-page.title}}
-    {{assign 'link.href' (combine (baseUrl) cascade-page.path)}}
-    {{#if (and customize-label (isArray customize-label))}}
-      {{#if (gte (indexOf customize-label 'Yes') 0)}}
-        {{assign 'title' link-label}}
-      {{/if}}
+    {{assign 'link.href' cascade-page.path}}
+    {{#if customize-label}}
+      {{assign 'title' link-label}}
     {{/if}}
   {{/if}}
 
@@ -190,7 +196,7 @@
 
     {{! Load the major section if applicable. }}
     {{#if (gt (length section.cards) 0)}}
-    {{#extend 'organisms-major' theme='light' heading=section.heading}}
+    {{#extend 'organisms-major' theme='light' heading=(default section.heading 'Get Help Using the Library')}}
       {{#content 'section-major-body'}}
         {{> compounds-cards cards=section.cards card-type='library-aid' filterable=false classes=''}}
       {{/content}}
