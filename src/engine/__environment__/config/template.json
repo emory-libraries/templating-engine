@@ -11,8 +11,8 @@
   "templates-archive-results": "",
   "templates-article": "Page Types/News Page",
   "templates-periodical": "Page Types/Periodicals Page",
-  "templates-exhibit": "Page Types/Exhibition Page",
-  "templates-gallery": "",
+  "templates-exhibition": "Page Types/Exhibition Page",
+  "templates-gallery": "Page Types/Exhibition Gallery",
   "templates-event": "",
   "templates-calendar": "",
   "templates-staff-directory": "Page Types/Staff Directory",
@@ -22,6 +22,6 @@
   "templates-tool": "Page Types/Tool Page",
   "templates-video-tutorial": "",
   "templates-material": "Page Types/Materials Page",
-  "templates-library-aid-directory": "",
-  "templates-library-aid": "Page Types/Research Aid Page"
+  "templates-research-help-directory": "Page Types/Research Help Directory",
+  "templates-research-help": "Page Types/Research Help Page"
 }

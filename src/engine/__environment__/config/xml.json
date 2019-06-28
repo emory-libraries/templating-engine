@@ -30,7 +30,8 @@
   "data": "calling-page.system-page.system-data-structure",
   "config": {
     "html": [
-      "wysiwyg"
+      "wysiwyg",
+      "details"
     ]
   }
 }
