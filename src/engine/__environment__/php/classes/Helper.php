@@ -37,8 +37,16 @@ class Helper {
   public static function has( string $helper, string $key ) {
 
     // Look for the key within the temporary data set.
-    return array_has(self::$data, $key);
-    
+    return array_has(self::$data, "$helper.$key");
+
+  }
+
+  // Inspect all items in storage.
+  public static function _inspect( string $helper = null, string $key = null ) {
+
+    // Dump all items from storage.
+    return (isset($helper) ? array_get(self::$data, isset($key) ? "$helper.$key" : $helper) : self::$data);
+
   }
 
 }

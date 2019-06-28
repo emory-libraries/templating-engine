@@ -57,6 +57,13 @@ trait StorageHelpers {
 
   }
 
+  // Inspect all items in storage.
+  public static function _storageInspect() {
+
+    return Helper::_inspect('CustomHelpers\VarHelpers::storage');
+
+  }
+
 }
 
 ?>
