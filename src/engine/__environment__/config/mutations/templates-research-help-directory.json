@@ -1,0 +1,63 @@
+{
+  "alias": {
+    "system.title": "title"
+  },
+  "rename": {
+    "subtitle": "introduction",
+    "cards": "links-list.link"
+  },
+  "replace": {},
+  "remove": [],
+  "add": {
+    "cards.@.context": "Research Help"
+  },
+  "evaluate": [
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 2'",
+      "value": 2
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 3'",
+      "value": 3
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 4'",
+      "value": 4
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 5'",
+      "value": 5
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 6'",
+      "value": 6
+    }
+  ],
+  "repeatable": [
+    "links-list.link"
+  ],
+  "checkbox": [
+    "title-hero.background-image",
+    "links-list.link.@.link-customizations"
+  ],
+  "radio": [
+    "links-list.link.@.link-type"
+  ],
+  "timestamp": [
+    "system.created.datetime",
+    "system.modified.datetime",
+    "system.published.datetime"
+  ],
+  "text": [
+    "introduction",
+    "links-list.link.@.external-url",
+    "links-list.link.@.link-label",
+    "links-list.link.@.link-description"
+  ],
+  "html": []
+}

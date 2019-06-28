@@ -11,6 +11,9 @@ use Moment\Moment;
  */
 class Mutator {
   
+  // Sets a constant to a known undefined value.
+  public static $undefined = 'MUTATOR_UNDEFINED';
+  
   // Mutate some data based on a set of template-specific data mutations.
   public static function mutate( array $data, $template ) {
     
@@ -85,7 +88,7 @@ class Mutator {
         }, explode('@', $repeatable));
 
         // Look for the array of objects.
-        if( array_get($data, $keys[0], false) !== false ) {
+        if( array_get($data, $keys[0], self::$undefined) !== self::$undefined ) {
 
           // Get the array of objects.
           $array = array_get($data, $keys[0]);
@@ -109,7 +112,7 @@ class Mutator {
       else {
         
         // Look for the key within the data set.
-        if( array_get($data, $repeatable, false) !== false ) {
+        if( array_get($data, $repeatable, self::$undefined) !== self::$undefined ) {
         
           // Get the existing value.
           $value = array_get($data, $repeatable);
@@ -154,7 +157,7 @@ class Mutator {
         }, explode('@', $checkbox));
         
         // Look for the array of objects.
-        if( array_get($data, $keys[0], false) !== false ) {
+        if( array_get($data, $keys[0], self::$undefined) !== self::$undefined ) {
           
           // Get the array of objects.
           $array = array_get($data, $keys[0]);
@@ -178,7 +181,7 @@ class Mutator {
       else {
       
         // Look for the key within the data set.
-        if( array_get($data, $checkbox, false) !== false ) { 
+        if( array_get($data, $checkbox, self::$undefined) !== self::$undefined ) { 
 
           // Get the checkbox item.
           $item = array_get($data, $checkbox); 
@@ -232,7 +235,7 @@ class Mutator {
         }, explode('@', $radio));
         
         // Look for the array of objects.
-        if( array_get($data, $keys[0], false) !== false ) {
+        if( array_get($data, $keys[0], self::$undefined) !== self::$undefined ) {
           
           // Get the array of objects.
           $array = array_get($data, $keys[0]);
@@ -256,7 +259,7 @@ class Mutator {
       else {
       
         // Look for the key within the data set.
-        if( array_get($data, $radio, false) !== false ) { 
+        if( array_get($data, $radio, self::$undefined) !== self::$undefined ) { 
 
           // Get the radio item.
           $item = array_get($data, $radio);
@@ -296,7 +299,7 @@ class Mutator {
         }, explode('@', $timestamp));
         
         // Look for the array of objects.
-        if( array_get($data, $keys[0], false) !== false ) {
+        if( array_get($data, $keys[0], self::$undefined) !== self::$undefined ) {
           
           // Get the array of objects.
           $array = array_get($data, $keys[0]);
@@ -320,7 +323,7 @@ class Mutator {
       else {
       
         // Look for the key within the data set.
-        if( array_get($data, $timestamp, false) !== false ) { 
+        if( array_get($data, $timestamp, self::$undefined) !== self::$undefined ) { 
 
           // Get the timestamp value.
           $value = array_get($data, $timestamp); 
@@ -381,7 +384,7 @@ class Mutator {
         }, explode('@', $text));
         
         // Look for the array of objects.
-        if( array_get($data, $keys[0], false) !== false ) {
+        if( array_get($data, $keys[0], self::$undefined) !== self::$undefined ) {
           
           // Get the array of objects.
           $array = array_get($data, $keys[0]);
@@ -405,7 +408,7 @@ class Mutator {
       else {
       
         // Look for the key within the data set.
-        if( array_get($data, $text, false) !== false ) { 
+        if( array_get($data, $text, self::$undefined) !== self::$undefined ) { 
 
           // Get the text item.
           $item = array_get($data, $text); 
@@ -451,7 +454,7 @@ class Mutator {
         if( count($aliasKeys) != count($sourceKeys) or $aliasKeys[0] != $sourceKeys[0] ) continue;
  
         // Look for the array of objects.
-        if( array_get($data, $sourceKeys[0], false) !== false ) {
+        if( array_get($data, $sourceKeys[0], self::$undefined) !== self::$undefined ) {
           
           // Get the array of objects.
           $array = array_get($data, $sourceKeys[0]);
@@ -472,7 +475,7 @@ class Mutator {
       }
       
       // Otherwise, only try to alias keys that actually exists.
-      else if( array_get($data, $source, false) !== false ) {
+      else if( array_get($data, $source, self::$undefined) !== self::$undefined ) {
       
         // Save the alias, but disallow overwriting of keys that already exist.
         $data = array_set($data, $alias, array_get($data, $source));
@@ -513,7 +516,7 @@ class Mutator {
         if( count($newKeys) != count($oldKeys) or $newKeys[0] != $oldKeys[0] ) continue;
         
         // Look for the array of objects.
-        if( ($array = array_get($data, $oldKeys[0], false)) !== false ) {
+        if( ($array = array_get($data, $oldKeys[0], self::$undefined)) !== self::$undefined ) {
           
           // Mutate each object within the array.
           foreach( $array as $index => $object ) {
@@ -531,7 +534,7 @@ class Mutator {
       }
       
       // Otherwise, only try to rename keys that actually exists.
-      else if( array_get($data, $old, false) !== false ) {
+      else if( array_get($data, $old, self::$undefined) !== self::$undefined ) {
       
         // Save the renamed key.
         $data = array_set($data, $new, array_get($data, $old), true);
@@ -566,7 +569,7 @@ class Mutator {
         }, explode('@', $key));
         
         // Look for the array of objects.
-        if( array_get($data, $keys[0], false) !== false ) {
+        if( array_get($data, $keys[0], self::$undefined) !== self::$undefined ) {
           
           // Get the array of objects.
           $array = array_get($data, $keys[0]);
@@ -587,7 +590,7 @@ class Mutator {
       }
       
       // Otherwise, only try to replace keys that actually exists.
-      else if( array_get($data, $key, false) !== false ) {
+      else if( array_get($data, $key, self::$undefined) !== self::$undefined ) {
       
         // Replace the key's existing value with the new value.
         $data = array_set($data, $key, $value, true);
@@ -610,8 +613,45 @@ class Mutator {
     // Remove keys with the data set.
     foreach( $removes as $remove ) {
       
-      // Remove any keys that exist.
-      $data = array_unset($data, $remove);
+      // Remove values within an array.
+      if( strpos($remove, '@') !== false ) {
+        
+        // Get the keys.
+        $keys = array_map(function($key) {
+          
+          // Strip trailing and leading dots from the keys.
+          return trim($key, '. ');
+          
+        }, explode('@', $remove));
+        
+        // Look for the array of objects.
+        if( array_get($data, $keys[0], false) !== false ) {
+          
+          // Get the array of objects.
+          $array = array_get($data, $keys[0]);
+          
+          // Mutate each object within the array.
+          foreach( $array as $index => $object ) {
+            
+            // Remove the array item's key with the new value.
+            $array[$index] = array_unset($array[$index], $keys[1], true);
+            
+          }
+          
+          // Save the array.
+          $data = array_set($data, $keys[0], $array, true);
+          
+        }
+        
+      }
+      
+      // Otherwise, remove any keys that may exist.
+      else {
+      
+        // Remove any keys that exist.
+        $data = array_unset($data, $remove);
+        
+      }
       
     }
     
@@ -626,8 +666,45 @@ class Mutator {
     // Add keys to the data set.
     foreach( $adds as $key => $value ) {
       
-      // Add any keys that don't already exist.
-      $data = array_set($data, $key, $value);
+      // Replace values within an array.
+      if( strpos($key, '@') !== false ) {
+        
+        // Get the keys.
+        $keys = array_map(function($key) {
+          
+          // Strip trailing and leading dots from the keys.
+          return trim($key, '. ');
+          
+        }, explode('@', $key));
+        
+        // Look for the array of objects.
+        if( array_get($data, $keys[0], false) !== false ) {
+          
+          // Get the array of objects.
+          $array = array_get($data, $keys[0]);
+          
+          // Mutate each object within the array.
+          foreach( $array as $index => $object ) {
+            
+            // Replace the array item's key with the new value.
+            $array[$index] = array_set($array[$index], $keys[1], $value);
+            
+          }
+          
+          // Save the array.
+          $data = array_set($data, $keys[0], $array, true);
+          
+        }
+        
+      }
+      
+      // Otherwise, add any keys that don't already exist.
+      else {
+      
+        // Add any keys that don't already exist.
+        $data = array_set($data, $key, $value);
+        
+      }
       
     }
     
@@ -662,7 +739,7 @@ class Mutator {
         }, explode('@', $target));
         
         // Look for the array of objects.
-        if( array_get($data, $keys[0], false) !== false ) {
+        if( array_get($data, $keys[0], self::$undefined) !== self::$undefined ) {
           
           // Get the array of objects.
           $array = array_get($data, $keys[0]);
@@ -687,7 +764,7 @@ class Mutator {
       }
       
       // Otherwise, only try to evaluate keys that actually exists.
-      else if( ($source = array_get($data, $target, false)) !== false ) {
+      else if( ($source = array_get($data, $target, self::$undefined)) !== self::$undefined ) {
         
         // Parse the expression.
         $exp = Conditional::parse($condition);

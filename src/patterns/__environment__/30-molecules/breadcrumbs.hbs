@@ -1,0 +1,6 @@
+<ul class="breadcrumbs {{#if classes}}{{ classes }}{{/if}}">
+  {{#each ancestors}}
+  <li class="breadcrumbs-crumb">{{> atoms-link classes='' icon=false href=url}}</li>
+  {{/each}}
+  <li class="breadcrumbs-crumb">{{> atoms-link classes='' icon=false href=url label=title}}</li>
+</ul>

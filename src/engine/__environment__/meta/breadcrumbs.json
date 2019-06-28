@@ -1,0 +1,14 @@
+{
+  "title": "Page Title",
+  "url": "#",
+  "ancestors": [
+    {
+      "label": "Main Section",
+      "url": "#"
+    },
+    {
+      "label": "Subsection",
+      "url": "#"
+    }
+  ]
+}

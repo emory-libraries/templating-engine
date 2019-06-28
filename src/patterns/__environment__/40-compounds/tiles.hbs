@@ -1,10 +1,21 @@
-  <div class="tiles">
+<div class="tiles{{#if classes}} {{classes}}{{/if}}"
+     {{#if columns}}style="
+        {{#if (isObject columns)}}
+          {{#each columns as |size screen|}}
+          --cols-{{screen}}: {{size}};
+          {{/each}}
+        {{else}}
+          --cols-s: {{columns}};
+          --cols-m: {{columns}};
+          --cols-l: {{columns}};
+        {{/if}}
+     "{{/if}}>
     {{#each tiles}}
-    {{#if (eq ../type 'listing')}}
-    {{> molecules-tile-listing }}
-    {{/if}}
-    {{#if (eq ../type 'utility')}}
-    {{> molecules-tile-utility }}
-    {{/if}}
+      {{#if (eq (default ../tile-type tile-type) 'listing')}}
+        {{> molecules-tile-listing }}
+      {{/if}}
+      {{#if (eq (default ../tile-type tile-type) 'utility')}}
+        {{> molecules-tile-utility }}
+      {{/if}}
     {{/each}}
   </div>
