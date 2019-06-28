@@ -4,18 +4,16 @@
   },
   "rename": {
     "subtitle": "introduction",
-    "background-image.src": "background-image.path",
-    "main.flow-content-box.feature": "image-heavy-card",
-    "main.flow-content-box.feature.image.src": "main.flow-content-box.feature.image.image-file.path",
-    "main.flow-content-box.feature.buttons": "main.flow-content-box.feature.link",
-    "main.flow-content-box.explorer": "links-list",
-    "main.flow-content-box.explorer.links": "main.flow-content-box.explorer.link",
-    "main.wayfinder": "wayfinder",
-    "main.wayfinder.image.src": "main.wayfinder.image.image-file.path",
-    "main.wayfinder.text": "main.wayfinder.description",
-    "main.wayfinder.buttons": "main.wayfinder.link",
-    "section-major.has-related": "add-research-aids",
-    "section-major.related.cards": "research-aid-link"
+    "hero": "background-image.path",
+    "feature": "image-heavy-card",
+    "feature.image.src": "feature.image.image-file.path",
+    "feature.buttons": "feature.link",
+    "explorer": "links-list",
+    "explorer.links": "explorer.link",
+    "wayfinder.image.src": "wayfinder.image.image-file.path",
+    "wayfinder.text": "wayfinder.description",
+    "wayfinder.buttons": "wayfinder.link",
+    "section.cards": "research-aid-link"
   },
   "replace": {},
   "remove": [],
@@ -56,10 +54,10 @@
   "checkbox": [
     "title-hero.hero-options",
     "image-heavy-card.link.link-customizations",
-    "links-list.link.link-customizations",
-    "wayfinder.link.link-customizations",
+    "links-list.link.@.link-customizations",
+    "wayfinder.link.@.link-customizations",
     "add-research-aids",
-    "research-aid-link.customize-label"
+    "research-aid-link.@.customize-label"
   ],
   "radio": [
     "links-list.link.@.link-type",
