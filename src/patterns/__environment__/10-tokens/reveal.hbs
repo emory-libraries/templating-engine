@@ -1,0 +1,19 @@
+{{#unless id}}
+  {{assign 'id' (uid 'reveal-')}}
+{{/unless}}
+
+<div class="big-reveal">
+  <input type="{{#if once}}radio{{else}}checkbox{{/if}}"  class="big-reveal-toggle" id="{{id}}">
+  <div class="big-reveal-content">
+    {{#unless this.content}}
+      {{#block 'big-reveal-content'}}{{/block}}
+    {{else}}
+      {{{this.content}}}
+    {{/unless}}
+  </div>
+  <label class="button big-reveal-button{{#if once}} -once{{/if}}"
+         for="{{id}}"
+         {{#unless once}}data-show="{{default prefix.show 'View All'}}" data-hide="{{default prefix.hide 'View Fewer'}}"{{/unless}}>
+    {{label}}
+  </label>
+</div>

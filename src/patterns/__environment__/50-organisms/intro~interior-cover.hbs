@@ -1,0 +1,5 @@
+<header class="intro-interior-cover">
+    {{> tokens-heading level="1" alternate=false classes="intro-interior-cover-title" heading=title icon=false}}
+    {{#if subtitle}}<p class="intro-interior-cover-subtitle{{#if date}} -date{{/if}}">{{subtitle}}</p>{{/if}}
+    <div class="intro-interior-cover-image">{{> atoms-image src=hero}}</div>
+</header>

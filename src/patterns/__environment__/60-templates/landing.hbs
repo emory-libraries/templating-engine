@@ -1,69 +1,90 @@
-{{#if (eq main.flow-content-box.feature.image.src '/')}}
-  {{assign 'main.flow-content-box.feature.image.src' null}}
+{{! Validation feature image. }}
+{{#if (eq feature.image.src '/')}}
+  {{assign 'feature.image.src' null}}
 {{/if}}
 
-{{!-- Feature --}}
-{{#each main.flow-content-box.feature.buttons }}
+{{! Initialize the feature's buttons if they don't already exist. }}
+{{#unless (isArray feature.buttons)}}
+  {{assign 'feature.buttons' (arrayify null)}}
+{{/unless}}
+
+{{! Adds any feature buttons or links into the buttons collection. }}
+{{#if feature.link }}
+  {{assign 'feature.buttons.0' feature.link}}
+  {{unassign 'feature.link'}}
+{{else if feature.button }}
+  {{assign 'feature.buttons.0' feature.button}}
+  {{unassign 'feature.button'}}
+{{/if}}
+
+{{! Reformat feature buttons as needed. }}
+{{#each feature.buttons}}
+
   {{#if (eq link-type 'Cascade Page')}}
-    {{storageSet 'feature-heading' cascade-page.title}}
-    {{storageSet 'feature-description' cascade-page.description}}
     {{assign 'href' (combine (baseUrl) cascade-page.path)}}
     {{assign 'label' button-label}}
-    {{#if link-customizations}}
-      {{#if (gte (indexOf link-customizations 'Label') 0)}}
-        {{assign 'heading' link-label}}
+    {{#unless (storageHas 'feature.context')}}
+      {{storageSet 'feature.context' cascade-page.title}}
+      {{#if (and link-customizations (isArray link-customizations))}}
+        {{#if (gte (indexOf link-customizations 'Label') 0)}}
+          {{storageSet 'feature.context' link-label}}
+        {{/if}}
       {{/if}}
-      {{#if (gte (indexOf link-customizations 'Description') 0)}}
-        {{storageSet 'feature-description' link-description}}
+    {{/unless}}
+    {{#unless (storageHas 'feature.heading')}}
+      {{storageSet 'feature.heading' cascade-page.description}}
+      {{#if (and link-customizations (isArray link-customizations))}}
+        {{#if (gte (indexOf link-customizations 'Description') 0)}}
+          {{storageSet 'feature.heading' link-description}}
+        {{/if}}
       {{/if}}
-    {{/if}}
+    {{/unless}}
   {{else if (eq link-type 'Cascade File')}}
     {{assign 'href' (combine (baseUrl) cascade-file.path)}}
-    {{storageSet 'feature-heading' cascade-file.heading}}
-    {{storageSet 'feature-description' cascade-file.description}}
-    {{assign 'href' (combine (baseUrl) cascade-file.path)}}
     {{assign 'label' button-label}}
-    {{#if link-customizations}}
-      {{#if (gte (indexOf link-customizations 'Label') 0)}}
-        {{storageSet 'feature-heading' link-label}}
+    {{#unless (storageHas 'feature.context')}}
+      {{storageSet 'feature.context' (stem cascade-file.display-name)}}
+      {{#if (and link-customizations (isArray link-customizations))}}
+        {{#if (gte (indexOf link-customizations 'Label') 0)}}
+          {{storageSet 'feature.context' link-label}}
+        {{/if}}
       {{/if}}
-      {{#if (gte (indexOf link-customizations 'Description') 0)}}
-        {{storageSet 'feature-description' link-description}}
+    {{/unless}}
+    {{#unless (storageHas 'feature.heading')}}
+      {{storageSet 'feature.heading' (stem cascade-file.display-name)}}
+      {{#if (and link-customizations (isArray link-customizations))}}
+        {{#if (gte (indexOf link-customizations 'Description') 0)}}
+          {{storageSet 'feature.heading' link-description}}
+        {{/if}}
       {{/if}}
-    {{/if}}
+    {{/unless}}
   {{else if (eq link-type 'External URL')}}
-    {{assign 'heading' link-label}}
-    {{assign 'context' link-description}}
     {{assign 'href' external-url}}
     {{assign 'label' button-label}}
+    {{#unless (storageHas 'feature.context')}}{{storageSet 'feature.context' link-label}}{{/unless}}
+    {{#unless (storageHas 'feature.heading')}}{{storageSet 'feature.heading' link-description}}{{/unless}}
   {{/if}}
 
+  {{! Always use hollow button styles. }}
   {{assign 'hollow' true}}
-  {{storageSet 'feature-context' context}}
-  {{storagePush 'feature-buttons' this}}
+
+  {{! Save the button. }}
+  {{storagePush 'feature.buttons' this}}
 
 {{/each}}
 
-{{assign 'main.flow-content-box.feature.buttons' (storageGet 'feature-buttons')}}
+{{! Update feature buttons, context, heading, and/or description. }}
+{{assign 'feature.buttons' (storageGet 'feature.buttons')}}
+{{#unless 'feature.context'}}{{assign 'feature.context' (storageGet 'feature.context')}}{{/unless}}
+{{#unless 'feature.heading'}}{{assign 'feature.heading' (storageGet 'feature.heading')}}{{/unless}}
 
-{{#unless main.flow-content-box.feature.context}}
-  {{assign 'main.flow-content-box.feature.context' (storageGet 'feature-context')}}
-{{/unless}}
+{{! Reformat explorer links. }}
+{{#each explorer.links }}
 
-{{#unless main.flow-content-box.feature.heading}}
-  {{assign 'main.flow-content-box.feature.heading' (storageGet 'feature-heading')}}
-{{/unless}}
-
-{{#unless main.flow-content-box.feature.description}}
-  {{assign 'main.flow-content-box.feature.description' (storageGet 'feature-description')}}
-{{/unless}}
-
-{{!-- Explorer Links --}}
-{{#each main.flow-content-box.explorer.links }}
   {{#if (eq link-type 'Cascade Page')}}
     {{assign 'href' (combine (baseUrl) cascade-page.path)}}
     {{assign 'label' cascade-page.title}}
-    {{#if link-customizations}}
+    {{#if (and link-customizations (isArray link-customizations))}}
       {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
@@ -71,7 +92,7 @@
   {{else if (eq link-type 'Cascade File')}}
     {{assign 'href' (combine (baseUrl) cascade-file.path)}}
     {{assign 'label' cascade-file.title}}
-    {{#if link-customizations}}
+    {{#if (and link-customizations (isArray link-customizations))}}
       {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
@@ -81,18 +102,21 @@
     {{assign 'label' link-label}}
   {{/if}}
 
-  {{storagePush 'explorer-links' this}}
+  {{! Save the explorer link. }}
+  {{storagePush 'explorer.links' this}}
 
 {{/each}}
 
-{{assign 'main.flow-content-box.explorer.links' (storageGet 'explorer-links')}}
+{{! Update explorer links. }}
+{{assign 'explorer.links' (storageGet 'explorer.links')}}
 
-{{!-- Wayfinder Links --}}
-{{#each main.wayfinder.buttons }}
+{{! Reformat wayfinder buttons. }}
+{{#each wayfinder.buttons}}
+
   {{#if (eq link-type 'Cascade Page')}}
     {{assign 'href' (combine (baseUrl) cascade-page.path)}}
     {{assign 'label' cascade-page.title}}
-    {{#if link-customizations}}
+    {{#if (and link-customizations (isArray link-customizations))}}
       {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
@@ -100,7 +124,7 @@
   {{else if (eq link-type 'Cascade File')}}
     {{assign 'href' (combine (baseUrl) cascade-file.path)}}
     {{assign 'label' cascade-file.title}}
-    {{#if link-customizations}}
+    {{#if (and link-customizations (isArray link-customizations))}}
       {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
@@ -110,46 +134,71 @@
     {{assign 'label' link-label}}
   {{/if}}
 
-  {{storagePush 'wayfinder-buttons' this}}
+  {{! Save the wayfinder button. }}
+  {{storagePush 'wayfinder.buttons' this}}
 
 {{/each}}
 
-{{assign 'main.wayfinder.buttons' (storageGet 'wayfinder-buttons')}}
+{{! Update wayfinder buttons. }}
+{{assign 'wayfinder.buttons' (storageGet 'wayfinder.buttons')}}
 
-{{!-- Related Links --}}
-{{#if section-major.has-related}}
+{{! Reformat cards for section major. }}
+{{#each section.cards}}
 
-  {{assign 'section-major.related.card-type' "library-aid"}}
-
-  {{#each section-major.related.cards }}
-    {{assign 'link.href' (combine (baseUrl) cascade-page.path)}}
+  {{! Capture the card title and link if applicable. }}
+  {{#if cascade-page}}
     {{assign 'title' cascade-page.title}}
-    {{#if customize-label}}
-      {{assign 'title' link-label}}
+    {{assign 'link.href' (combine (baseUrl) cascade-page.path)}}
+    {{#if (and customize-label (isArray customize-label))}}
+      {{#if (gte (indexOf customize-label 'Yes') 0)}}
+        {{assign 'title' link-label}}
+      {{/if}}
     {{/if}}
+  {{/if}}
 
-    {{storagePush 'related-cards' this}}
+  {{! Remove invalid cards, and save valid cards. }}
+  {{#unless (or (eq title '') (eq link.href '/'))}}{{storagePush 'section.cards' this}}{{/unless}}
 
-  {{/each}}
+{{/each}}
+
+{{! Update cards for section major. }}
+{{assign 'section.cards' (storageGet 'section.cards')}}
+
+{{! Validate hero images. }}
+{{#if (eq hero '/')}}
+  {{assign 'hero' false}}
+{{else}}
+  {{assign 'main-classes' 'without-intro'}}
 {{/if}}
-
-{{assign 'section-major.related.cards' (storageGet 'related-cards')}}
 
 <div class="landing-page">
+
   <header class="landing-page-header"></header>
 
   <div class="landing-page-main">
-    {{#if (eq background-image.src '/')}}
-    {{> organisms-intro-heading classes="landing-page-intro"}}
-    {{> tokens-text type="lead" classes="landing-page-main-subtitle intro-subtitle" text=subtitle}}
-    {{else}}
-    {{> organisms-intro-hero background-image=background-image.src classes="landing-page-intro"}}
+
+    {{! Load a hero if applicable. }}
+    {{#if hero}}{{> organisms-intro-hero classes='landing-page-intro' background-image=hero}}{{/if}}
+
+    {{! Load the main section. }}
+    {{#extend 'organisms-main' type='landing-page' theme='dark' classes=main-classes}}
+      {{#content 'section-main-body'}}
+        {{> organisms-flow-content-boxes}}
+        {{#with wayfinder}}{{> molecules-wayfinder}}{{/with}}
+      {{/content}}
+    {{/extend}}
+
+    {{! Load the major section if applicable. }}
+    {{#if (gt (length section.cards) 0)}}
+    {{#extend 'organisms-major' theme='light' heading=section.heading}}
+      {{#content 'section-major-body'}}
+        {{> compounds-cards cards=section.cards card-type='library-aid' filterable=false classes=''}}
+      {{/content}}
+    {{/extend}}
     {{/if}}
 
-    {{> organisms-main flow-content-box=main.flow-content-box wayfinder=main.wayfinder type="landing-page" classes="-dark without-intro"}}
-    {{#if section-major.has-related}}
-    {{> organisms-major heading=section-major.heading classes="-light" has-related=section-major.has-related related=section-major.related type="landing-page"}}
-    {{/if}}
   </div>
+
   <footer class="landing-page-footer"></footer>
+
 </div>

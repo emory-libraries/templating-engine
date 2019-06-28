@@ -1,0 +1,20 @@
+  <section class="section-deep-dive -dark">
+
+    {{> tokens-heading level=2 classes="section-deep-dive-title" icon=false alternate=false hero=false}}
+
+    <div class="section-deep-dive-body">
+      {{#each columns}}
+      <div class="section-deep-dive-column">
+        {{> tokens-heading level=3 classes="section-deep-dive-column-heading" icon=false alternate=false hero=false}}
+        {{#if ../markdown}}{{{markdown text}}}{{else}}{{{text}}}{{/if}}
+      </div>
+      {{/each}}
+    </div>
+
+    {{#if (and footer (not (eq footer.text '')))}}
+    <footer class="section-deep-dive-footer">
+      {{#if this.markdown}}{{{markdown footer.text}}}{{else}}{{{footer.text}}}{{/if}}
+    </footer>
+    {{/if}}
+
+  </section>

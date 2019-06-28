@@ -1,30 +1,51 @@
-<div class="section-main{{#if type}} -{{type}}{{/if}}{{#if classes}} {{classes}}{{/if}}">
-  {{> molecules-breadcrumbs classes="section-main-breadcrumb" }}
-  {{#if (eq type 'bio-page')}}
+<div class="section-main{{#if type}} -{{type}}{{/if}}{{#if theme}} -{{theme}}{{/if}}{{#if classes}} {{classes}}{{/if}}">
+
+  <div class="section-main-breadcrumb">
+    {{> molecules-breadcrumbs}}
+  </div>
+
+  {{! Exhibition page intro }}
+  {{#if (eq type 'exhibition-page')}}
+    <div class="section-main-subtitle">
+      {{#block 'section-main-subtitle'}}{{/block}}
+    </div>
+
+  {{! Bio page intro }}
+  {{else if (eq type 'bio-page')}}
     {{> organisms-intro-bio}}
     {{#if quote}}<p class="text -lead section-main-subtitle">&ldquo;{{quote}}&rdquo;</p>{{/if}}
+
+  {{! Gallery page intro }}
+  {{else if (eq type 'gallery-page')}}
+    {{> organisms-intro-heading}}
+
+  {{! Landing page intro }}
+  {{else if (eq type 'landing-page')}}
+    {{#unless hero}}{{> organisms-intro-heading }}{{/unless}}
+
+  {{! Default page intro }}
   {{else}}
     {{> organisms-intro-alt-text}}
   {{/if}}
+
   <main class="section-main-body">
     {{#unless blocks}}
       {{#block 'section-main-body'}}{{/block}}
     {{else}}
       {{> compounds-blocks}}
     {{/unless}}
-    {{#if flow-content-box }}
-    {{> organisms-flow-content-boxes feature=flow-content-box.feature explorer=flow-content-box.explorer }}
-    {{/if}}
-    {{#if wayfinder }}
-    {{> molecules-wayfinder image=wayfinder.image heading=wayfinder.heading text=wayfinder.text buttons=wayfinder.buttons}}
-    {{/if}}
     {{#if has-related}}
       <div class="section-main-spacer"></div>
       <div class="section-main-content">{{> compounds-related-cards}}</div>
     {{/if}}
-
   </main>
+
+  {{#block 'section-main-divider'}}{{/block}}
+
   <aside class="section-main-sidebar">
     {{#block 'section-main-sidebar'}}{{/block}}
   </aside>
+
+  {{#block 'section-main-other'}}{{/block}}
+
 </div>
