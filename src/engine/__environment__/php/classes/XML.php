@@ -46,7 +46,7 @@ class XML {
     $result = $xml;
 
     // Build the regex use to locate query strings.
-    $regex = '/(\?[[:word:][:punct:]]+?\=.+)(\&(?!amp;).+\=.+?(?=\<|\&|$))+/';
+    $regex = '/(\?[[:word:][:punct:]]+?\=[[:word:][:punct:]]+?)(\&(?!amp;)[[:word:][:punct:]]+?\=[[:word:][:punct:]]+?(?=\<|\&|$))+/';
 
     // Look for query strings within the XML.
     if( preg_match_all($regex, $result, $matches, PREG_SET_ORDER) ) {
