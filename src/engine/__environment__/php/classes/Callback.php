@@ -42,7 +42,7 @@ use Cocur\BackgroundProcess\BackgroundProcess;
     $this->callback = $this->prepare($file, $constants);
 
     // Convert the callback to a command.
-    $this->command = 'php -f '.$this->callback['path'];
+    $this->command = (DEVELOPMENT ? 'php' : '/opt/rh/rh-php70/root/usr/bin/php').' -f '.$this->callback['path'];
 
     // Initialize the callback as a background process.
     parent::__construct($this->command);
