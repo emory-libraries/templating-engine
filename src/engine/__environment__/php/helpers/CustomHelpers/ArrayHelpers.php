@@ -70,6 +70,33 @@ trait ArrayHelpers {
 
   }
 
+  // Filter an array of objects to extract only items missing a given key.
+  public static function filterHasNot( array $collection, $key, array $options ) {
+
+    // Extract all items within the array collection.
+    $items = array_values(array_filter($collection, function($item) {
+
+      // Capture only array items that are associative.
+      return (is_array($item) and is_associative_array($item));
+
+    }));
+
+    // Ignore arrays that don't contain any filterable items.
+    if( empty($items) ) return [];
+
+    // Filter the items by key-value pair.
+    $items = array_filter($items, function($item) use ($key, $undefined) {
+
+      // Verify that the key was found and set.
+      return !array_has($item, $key);
+
+    });
+
+    // Return the filtered collection.
+    return $items;
+
+  }
+
   // Get the index of an item within an array or string.
   public static function indexOf( $haystack, $needle, array $options ) {
 

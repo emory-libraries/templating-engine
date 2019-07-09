@@ -73,15 +73,16 @@
       {{assign 'date.display' date.start.display}}
       {{#if (and date.start.time date.end.time)}}
         {{assign 'date.display' (combine date.display ' ' (moment date.start.time 'h:mm A') ' - ' (moment date.end.time 'h:mm A'))}}
-      {{else if date.start.time}}
+      {{/if}}
+      {{#if (and date.start.time (not date.end.date))}}
         {{assign 'date.display' (combine date.display ' ' (moment date.start.time 'h:mm A'))}}
-      {{else if date.end.time}}
+      {{/if}}
+      {{#if (and not(date.start.time) date.end.time)}}
         {{assign 'date.display' (combine date.display ' Until' (moment date.end.time 'h:mm A'))}}
       {{/if}}
     {{else}}
       {{assign 'date.display' (combine date.start.display ' - ' date.end.display)}}
     {{/if}}
-
   {{else if date.start.date}}
     {{#if (momentIsAfterToday date.start.date)}}
       {{assign 'date.display' (combine 'Opens ' date.start.display)}}
@@ -91,7 +92,6 @@
     {{#if date.start.time}}
       {{assign 'date.display' (combine date.display ' ' (moment date.start.time 'h:mm A'))}}
     {{/if}}
-
   {{else if date.end.date}}
     {{assign 'date.display' (combine 'Through ' date.end.display)}}
     {{#if date.end.time}}
