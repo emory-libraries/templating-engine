@@ -235,6 +235,12 @@ class Index {
         })), 0);
       case 'getLockStatus':
         return static::lock();
+      case 'getMetaData':
+        return static::compile(
+          static::getEnvironmentData(static::INDEX_CLASS, 'Data'),
+          Index::getSiteData(Index::INDEX_CLASS, 'Data'),
+          (isset($arguments[0]) and is_array($arguments[0])) ? $arguments[0] : []
+        );
     }
 
   }
@@ -483,7 +489,7 @@ class Index {
   }
 
   // Compile the meta data set for a request.
-  protected static function compile( array $environment, array $site, array $endpoint ) {
+  protected static function compile( array $environment, array $site, array $endpoint = [] ) {
 
     // Get global, meta, and shared data.
     $global = self::merge($environment['global'], $site['global'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
