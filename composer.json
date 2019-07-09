@@ -16,6 +16,7 @@
     "kint-php/kint": "^3.2",
     "bvanhoekelen/performance": "^2.5",
     "sabre/uri": "^2",
-    "laurenhamel/lightncandy": "^1.2"
+    "laurenhamel/lightncandy": "^1.2",
+    "cocur/background-process": "^0.7.0"
   }
 }
