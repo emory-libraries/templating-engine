@@ -140,6 +140,9 @@ class Renderer {
 
         }
 
+        // Otherwise, if a template file was not found, recompile for safe keeping.
+        else $compiler();
+
       }
 
       // Otherwise, compile the template for the first time.
