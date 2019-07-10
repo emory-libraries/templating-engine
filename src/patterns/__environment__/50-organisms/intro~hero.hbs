@@ -1,3 +1,9 @@
+{{#if background-image}}
+  {{#if (and (startsWithSubstring background-image '/') (not (startsWithSubstring background-image '//')))}}
+    {{assign 'background-image' (combine (baseUrl) background-image)}}
+  {{/if}}
+{{/if}}
+
 <header class="intro-hero" style="--image: url({{background-image}});">
   {{#if badge}}{{> atoms-badge label=badge.label white=true square=true classes="intro-hero-badge"}}{{/if}}
   {{> tokens-heading level=1 alternate=true classes="intro-hero-title" heading=title icon=false hero=true}}
