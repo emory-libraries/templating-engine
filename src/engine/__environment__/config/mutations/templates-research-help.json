@@ -1,0 +1,65 @@
+{
+  "alias": {
+    "system.title": "title"
+  },
+  "rename": {
+    "subtitle": "introduction",
+    "blocks": "content-block",
+    "blocks.@.type": "blocks.@.block-type"
+  },
+  "replace": {},
+  "remove": [],
+  "add": {},
+  "evaluate": [
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 2'",
+      "value": 2
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 3'",
+      "value": 3
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 4'",
+      "value": 4
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 5'",
+      "value": 5
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 6'",
+      "value": 6
+    }
+  ],
+  "repeatable": [
+    "content-block",
+    "library-aid-link"
+  ],
+  "checkbox": [
+    "add-library-aids"
+  ],
+  "radio": [
+    "content-block.@.block-type"
+  ],
+  "timestamp": [
+    "system.created.datetime",
+    "system.modified.datetime",
+    "system.published.datetime"
+  ],
+  "text": [
+    "introduction",
+    "content-block.@.heading-label",
+    "content-block.@.image.caption",
+    "content-block.@.image.photo-credit",
+    "content-block.@.video-url"
+  ],
+  "html": [
+    "content-block.@.wysiwyg"
+  ]
+}
