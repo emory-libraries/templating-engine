@@ -1,0 +1,56 @@
+{{! Reformat tile data for better compatability. }}
+{{#each tiles}}
+
+  {{! Catch invalid tile images. }}
+  {{#if (eq image.src '/')}}
+    {{assign 'image.src' false}}
+  {{/if}}
+
+  {{! Determine tile links. }}
+  {{#if (eq link-type 'Cascade Page')}}
+    {{assign 'link.href' cascade-page.path}}
+    {{assign 'title' cascade-page.title}}
+    {{assign 'description' cascade-page.description}}
+    {{#if link-customizations}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+        {{assign 'title' link-label}}
+      {{/if}}
+      {{#if (gte (indexOf link-customizations 'Description') 0)}}
+        {{assign 'title' link-description}}
+      {{/if}}
+    {{/if}}
+  {{else if (eq link-type 'Cascade File')}}
+    {{assign 'link.href' cascade-file.path}}
+    {{assign 'title' (stem cascade-file.display-name)}}
+    {{assign 'description' null}}
+    {{#if link-customizations}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+        {{assign 'title' link-label}}
+      {{/if}}
+      {{#if (gte (indexOf link-customizations 'Description') 0)}}
+        {{assign 'title' link-description}}
+      {{/if}}
+    {{/if}}
+  {{else if (eq link-type 'External URL')}}
+    {{assign 'link.href' external-url}}
+    {{assign 'title' link-label}}
+    {{assign 'description' link-description}}
+  {{/if}}
+
+  {{! Save the updated tile. }}
+  {{storagePush 'tiles' this}}
+
+{{/each}}
+
+{{! Update tile data. }}
+{{assign 'tiles' (storageGet 'tiles')}}
+
+<div class="index-page">
+  <header class="index-page-header"></header>
+  {{#extend 'organisms-main' type='index-page' classes='index-page-main'}}
+    {{#content 'section-main-body'}}
+      {{> compounds-tiles columns=(objectify s=1 m=2 l=3) tile-type='utility'}}
+    {{/content}}
+  {{/extend}}
+  <footer class="index-page-footer"></footer>
+</div>

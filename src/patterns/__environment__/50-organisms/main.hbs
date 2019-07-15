@@ -19,6 +19,11 @@
   {{else if (eq type 'gallery-page')}}
     {{> organisms-intro-heading}}
 
+  {{! Index page intro }}
+  {{else if (eq type 'index-page')}}
+    {{> organisms-intro-heading}}
+    <p class="text -lead section-main-subtitle">{{subtitle}}</p>
+
   {{! Landing page intro }}
   {{else if (eq type 'landing-page')}}
     {{#unless hero}}{{> organisms-intro-heading }}{{/unless}}
