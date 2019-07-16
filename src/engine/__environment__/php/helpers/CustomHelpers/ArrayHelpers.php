@@ -22,7 +22,7 @@ trait ArrayHelpers {
     if( empty($items) ) return [];
 
     // Set the comparator to unstrict equals by default.
-    if( !in_array($comparator, ['==', '===', '>', '>=', '<=', '<', '>']) ) $comparator = '==';
+    if( !in_array($comparator, ['==', '===', '>', '>=', '<=', '<', '>', '!==', '!=']) ) $comparator = '==';
 
     // Filter the items by key-value pair.
     $items = array_filter($items, function($item) use ($key, $value, $comparator, $undefined) {
@@ -32,6 +32,57 @@ trait ArrayHelpers {
 
       // If the value was not found, then immediately filter out the item.
       if( $val === $undefined ) return false;
+
+      // Otherwise, verify that the value passes the filter comparison.
+      return Conditional::expression("$val $comparator $value");
+
+    });
+
+    // Return the filtered collection.
+    return $items;
+
+  }
+
+  // Filter an array of objects to extract only items not containing a given key-value pair.
+  public static function filterWhereNot( array $collection, $key, $value, $comparator, array $options ) {
+
+    // Initialize an internally recognized value of undefined to help with filtering.
+    $undefined = 'FILTERWHERE_UNDEFINED';
+
+    // Extract all items within the array collection.
+    $items = array_values(array_filter($collection, function($item) {
+
+      // Capture only array items that are associative.
+      return (is_array($item) and is_associative_array($item));
+
+    }));
+
+    // Ignore arrays that don't contain any filterable items.
+    if( empty($items) ) return [];
+
+    // Set the comparator to unstrict equals by default.
+    if( !in_array($comparator, ['==', '===', '>', '>=', '<=', '<', '>', '!==', '!=']) ) $comparator = '==';
+
+    // Filter the items by key-value pair.
+    $items = array_filter($items, function($item) use ($key, $value, $comparator, $undefined) {
+
+      // Look for the value by key within the item.
+      $val = array_get($item, $key, $undefined);
+
+      // If the value was not found, then immediately filter out the item.
+      if( $val === $undefined ) return false;
+
+      // Swap the given comparator for it's opposite.
+      $comparator = [
+        '==' => '!=',
+        '===' => '!==',
+        '>' => '<=',
+        '>=' => '<',
+        '<' => '>=',
+        '<=' => '>',
+        '!==' => '===',
+        '!=' => '=='
+      ][$comparator];
 
       // Otherwise, verify that the value passes the filter comparison.
       return Conditional::expression("$val $comparator $value");
