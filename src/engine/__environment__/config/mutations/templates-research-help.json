@@ -5,7 +5,11 @@
   "rename": {
     "subtitle": "introduction",
     "blocks": "content-block",
-    "blocks.@.type": "blocks.@.block-type"
+    "blocks.@.type": "blocks.@.block-type",
+    "contacts": "links-list-contacts",
+    "contacts.cards": "contacts.link-contact",
+    "resources": "links-list-resources",
+    "resource.cardss": "resources.link-resource"
   },
   "replace": {},
   "remove": [],
@@ -39,13 +43,17 @@
   ],
   "repeatable": [
     "content-block",
-    "library-aid-link"
+    "links-list-contacts.link-contact",
+    "links-list-resources.link-resource"
   ],
   "checkbox": [
-    "add-library-aids"
+    "add-contact",
+    "add-resource-links",
+    "link-list-resources.link-resource.@.link-customizations"
   ],
   "radio": [
-    "content-block.@.block-type"
+    "content-block.@.block-type",
+    "link-list-resources.link-resource.@.link-type"
   ],
   "timestamp": [
     "system.created.datetime",
@@ -57,7 +65,9 @@
     "content-block.@.heading-label",
     "content-block.@.image.caption",
     "content-block.@.image.photo-credit",
-    "content-block.@.video-url"
+    "content-block.@.video-url",
+    "link-list-resources.link-resource.@.link-label",
+    "link-list-resources.link-resource.@.external-url"
   ],
   "html": [
     "content-block.@.wysiwyg"
