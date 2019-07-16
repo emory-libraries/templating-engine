@@ -45,6 +45,25 @@
 {{! Update tile data. }}
 {{assign 'tiles' (storageGet 'tiles')}}
 
+{{! Require that all tiles have images, or don't display images at all. }}
+{{#if (not (eq (length (filterWhereNot tiles 'image.src' false '===')) (length tiles)))}}
+
+  {{! Remove images from all tiles. }}
+  {{#each tiles}}
+
+    {{! Remove the tile image. }}
+    {{assign 'image.src' false}}
+
+    {{! Save the updated tile. }}
+    {{storagePush 'tiles' this}}
+
+  {{/each}}
+
+  {{! Update tile data. }}
+  {{assign 'tiles' (storageGet 'tiles')}}
+
+{{/if}}
+
 <div class="index-page">
   <header class="index-page-header"></header>
   {{#extend 'organisms-main' type='index-page' classes='index-page-main'}}
