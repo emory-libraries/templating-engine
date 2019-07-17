@@ -5,7 +5,18 @@
   "rename": {
     "subtitle": "introduction",
     "blocks": "content-block",
-    "blocks.@.type": "blocks.@.block-type"
+    "blocks.@.type": "blocks.@.block-type",
+    "blocks.@.image.src": "blocks.@.image.image-file.path",
+    "contacts": "link-list-contacts",
+    "contacts.cards": "contacts.link-contact",
+    "contacts.cards.@.name": "contacts.cards.@.cascade-page.content.system-data-structure.display-name",
+    "contacts.cards.@.title": "contacts.cards.@.cascade-page.content.system-data-structure.job-title",
+    "contacts.cards.@.image.src": "contacts.cards.@.cascade-page.content.system-data-structure.image.image-file.path",
+    "contacts.cards.@.link.href": "contacts.cards.@.cascade-page.path",
+    "contacts.heading": "contacts.heading-label",
+    "resources": "link-list-resources",
+    "resources.cards": "resources.link-resource",
+    "resources.heading": "resources.heading-label"
   },
   "replace": {},
   "remove": [],
@@ -39,18 +50,23 @@
   ],
   "repeatable": [
     "content-block",
-    "link-contact",
-    "sidebar.links-list.link"
+    "sidebar.links-list.link",
+    "link-list-contacts.link-contact",
+    "link-list-resources.link-resource"
   ],
   "checkbox": [
     "add-sidebar",
     "sidebar.action-box",
-    "sidebar.image-heavy-card.link-customizations"
+    "sidebar.image-heavy-card.link-customizations",
+    "add-contact",
+    "add-resource-links",
+    "link-list-resources.link-resource.@.link-customizations"
   ],
   "radio": [
     "content-block.@.block-type",
     "sidebar.links-list.link.@.link-type",
-    "sidebar.image-heavy-card.link.link-type"
+    "sidebar.image-heavy-card.link.link-type",
+    "link-list-resources.link-resource.@.link-type"
   ],
   "timestamp": [
     "system.created.datetime",
@@ -73,7 +89,9 @@
     "sidebar.image-heavy-card.link.link-label",
     "sidebar.image-heavy-card.image.caption",
     "sidebar.image-heavy-card.image.photo-credit",
-    "sidebar.image-heavy-card.button.label"
+    "sidebar.image-heavy-card.button.label",
+    "link-list-resources.link-resource.@.link-label",
+    "link-list-resources.link-resource.@.external-url"
   ],
   "html": [
     "content-block.@.wysiwyg"
