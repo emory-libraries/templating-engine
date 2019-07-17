@@ -1,4 +1,23 @@
-{{#unless (eq main false)}}
+{{#if (eq main false)}}
+
+  {{#if (eq type 'research-help-page')}}
+    <div>
+      {{> tokens-heading level="1" alternate=true classes="intro-title" heading=question icon=false}}
+      {{> atoms-rule}}
+    </div>
+  {{else if (eq type 'info-page')}}
+    {{> tokens-heading level="1" alternate=true classes="section-main-title intro-title" heading=title icon=false}}
+    <div class="section-main-subtitle">
+      {{> tokens-text type="lead" classes="intro-subtitle" text=subtitle}}
+      {{> atoms-rule}}
+    </div>
+  {{else}}
+    {{> tokens-heading level="1" alternate=true classes="intro-title" heading=title icon=false}}
+    {{> tokens-text type="lead" classes="intro-subtitle" text=subtitle}}
+  {{/if}}
+
+{{else}}
+
   {{#if (eq type 'research-help-page')}}
     <div class="section-main-title">
       {{> tokens-heading level="1" alternate=true classes="intro-title" heading=question icon=false}}
@@ -14,20 +33,5 @@
     {{> tokens-heading level="1" alternate=true classes="section-main-title intro-title" heading=title icon=false}}
     {{> tokens-text type="lead" classes="section-main-subtitle intro-subtitle" text=subtitle}}
   {{/if}}
-{{else}}
-  {{#if (eq type 'research-help-page')}}
-    <div>
-      {{> tokens-heading level="1" alternate=true classes="intro-title" heading=question icon=false}}
-      {{> atoms-rule}}
-    </div>
-  {{else if (eq type 'info-page')}}
-    {{> tokens-heading level="1" alternate=true classes="section-main-title intro-title" heading=title icon=false}}
-    <div class="section-main-subtitle">
-      {{> tokens-text type="lead" classes="intro-subtitle" text=subtitle}}
-      {{> atoms-rule}}
-    </div>
-  {{else}}
-  {{> tokens-heading level="1" alternate=true classes="intro-title" heading=title icon=false}}
-  {{> tokens-text type="lead" classes="intro-subtitle" text=subtitle}}
-  {{/if}}
-{{/unless}}
+
+{{/if}}
