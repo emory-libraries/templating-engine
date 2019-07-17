@@ -1,13 +1,13 @@
 {{#each blocks}}
-  {{#if (or (eq (lowercase type) 'rich-text') (eq (lowercase type) 'rich text'))}}
+  {{#if (eq (dashcase (lowercase type)) 'rich-text')}}
     {{> tokens-text rich=true text=(default wysiwyg text)}}
-  {{else if (eq (lowercase type) 'text')}}
+  {{else if (eq (dashcase (lowercase type)) 'text')}}
     {{> tokens-text}}
-  {{else if (eq (lowercase type) 'image')}}
+  {{else if (eq (dashcase (lowercase type)) 'image')}}
     {{> atoms-image src=(default image.image-file.path src)}}
-  {{else if (eq (lowercase type) 'heading')}}
+  {{else if (eq (dashcase (lowercase type)) 'heading')}}
     {{> tokens-heading heading=(default heading-label heading) level=(default heading-level level)}}
-  {{else if (eq (lowercase type) 'video')}}
+  {{else if (eq (dashcase (lowercase type)) 'video')}}
     {{> atoms-video-youtube id=(default video-url id)}}
   {{/if}}
 {{/each}}

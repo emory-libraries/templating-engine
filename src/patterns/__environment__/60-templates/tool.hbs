@@ -1,5 +1,32 @@
 <div class="tool-page">
   <header class="tool-page-header"></header>
-  {{> organisms-main type="tool-page" classes="tool-page-main"}}
+  <div class="tool-page-main">
+
+    {{#extend 'organisms-main' type='tool-page' classes='tool-page-main'}}
+      {{#content 'section-main-body'}}
+        {{> compounds-blocks}}
+      {{/content}}
+      {{#content 'section-main-sidebar'}}
+        {{! TODO: Add in sidebar list (`compounds-sidebar-list`)}}
+      {{/content}}
+    {{/extend}}
+
+    {{#if (and resources (gt (length resources.cards) 0))}}
+    {{#extend 'organisms-minor' theme='dark' heading=resources.heading}}
+      {{#content 'section-minor-body'}}
+        {{> compounds-cards card-type='library-guide' cards=resources.cards}}
+      {{/content}}
+    {{/extend}}
+    {{/if}}
+
+    {{#if (and contacts (gt (length contacts.cards) 0))}}
+    {{#extend 'organisms-minor' theme='light' heading=contacts.heading}}
+    {{#content 'section-minor-body'}}
+      {{> compounds-cards card-type='contact' cards=contacts.cards}}
+    {{/content}}
+    {{/extend}}
+    {{/if}}
+
+  </div>
   <footer class="tool-page-footer"></footer>
 </div>

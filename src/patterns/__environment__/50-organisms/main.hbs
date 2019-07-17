@@ -29,15 +29,7 @@
   {{/if}}
 
   <main class="section-main-body">
-    {{#unless blocks}}
-      {{#block 'section-main-body'}}{{/block}}
-    {{else}}
-      {{> compounds-blocks}}
-    {{/unless}}
-    {{#if has-related}}
-      <div class="section-main-spacer"></div>
-      <div class="section-main-content">{{> compounds-related-cards}}</div>
-    {{/if}}
+    {{#block 'section-main-body'}}{{/block}}
   </main>
 
   {{#block 'section-main-divider'}}{{/block}}

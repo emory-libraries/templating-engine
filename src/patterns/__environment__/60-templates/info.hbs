@@ -1,5 +1,37 @@
 <div class="info-page">
   <header class="info-page-header"></header>
-  {{> organisms-main type="info-page" classes="info-page-main"}}
+  <div class="info-page-main">
+
+    {{#extend 'organisms-main' type='info-page' classes='info-page-main'}}
+      {{#content 'section-main-body'}}
+        {{> compounds-blocks}}
+      {{/content}}
+      {{#content 'section-main-sidebar'}}
+        {{#if (and explorer (gt (length explorer.links) 0))}}
+          {{#with explorer}}{{> molecules-explorer}}{{/with}}
+        {{/if}}
+        {{#if action}}
+          {{#with action}}{{> molecules-card-action}}{{/with}}
+        {{/if}}
+      {{/content}}
+    {{/extend}}
+
+    {{#if (and resources (gt (length resources.cards) 0))}}
+    {{#extend 'organisms-minor' theme='dark' heading=resources.heading}}
+      {{#content 'section-minor-body'}}
+        {{> compounds-cards card-type='library-guide' cards=resources.cards}}
+      {{/content}}
+    {{/extend}}
+    {{/if}}
+
+    {{#if (and contacts (gt (length contacts.cards) 0))}}
+    {{#extend 'organisms-minor' theme='light' heading=contacts.heading}}
+    {{#content 'section-minor-body'}}
+      {{> compounds-cards card-type='contact' cards=contacts.cards}}
+    {{/content}}
+    {{/extend}}
+    {{/if}}
+
+  </div>
   <footer class="info-page-footer"></footer>
 </div>

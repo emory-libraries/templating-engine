@@ -1,5 +1,29 @@
 <div class="research-help-page">
   <header class="research-help-page-header"></header>
-  {{> organisms-main type="research-help-page" classes="research-help-page-main"}}
+  <div class="research-help-page-main">
+
+    {{#extend 'organisms-main' type='research-help-page' classes=''}}
+      {{#content 'section-main-body'}}
+        {{> compounds-blocks}}
+      {{/content}}
+    {{/extend}}
+
+    {{#if (and resources (gt (length resources.cards) 0))}}
+    {{#extend 'organisms-minor' theme='dark' heading=resources.heading}}
+      {{#content 'section-minor-body'}}
+        {{> compounds-cards card-type='library-guide' cards=resources.cards}}
+      {{/content}}
+    {{/extend}}
+    {{/if}}
+
+    {{#if (and contacts (gt (length contacts.cards) 0))}}
+    {{#extend 'organisms-minor' theme='light' heading=contacts.heading}}
+    {{#content 'section-minor-body'}}
+      {{> compounds-cards card-type='contact' cards=contacts.cards}}
+    {{/content}}
+    {{/extend}}
+    {{/if}}
+
+  </div>
   <footer class="research-help-page-footer"></footer>
 </div>
