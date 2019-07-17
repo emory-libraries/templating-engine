@@ -2,7 +2,7 @@
   {{#if badge}}{{> atoms-badge label=badge}}{{/if}}
   <div class="card-listing-image{{#if image.orientation}} -{{image.orientation}}{{/if}}{{#if image.align.x}} -align-x-{{image.align.x}}{{/if}}{{#if image.align.y}} -align-y-{{image.align.y}}{{/if}}">{{#with image}}{{> atoms-image decorative=true}}{{/with}}</div>
   <span class="card-listing-date">{{default this.date.display this.date}}</span>
-  <span class="card-listing-title">{{{sanitize title}}}</span>
+  <a class="card-listing-title" href="{{baseUrl}}{{#if buttons}}{{itemAt (pluck buttons 'href') 0}}{{else}}{{link.href}}{{/if}}">{{{sanitize title}}}</a>
   {{#if description}}<p class="card-listing-description">{{ellipsis (sanitize description) 150}}</p>{{/if}}
   <div class="card-listing-action button-group">
     {{#if buttons}}
