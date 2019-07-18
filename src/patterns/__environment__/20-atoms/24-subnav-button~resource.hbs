@@ -1,3 +1,4 @@
+{{#unless (eq noscript true)}}
 <eul-subnav-resource inline-template>
 
   <label class="subnav-button -resource{{#if hover}} is-hover{{/if}}{{#if focus}} is-focus{{/if}}{{#if active}} is-active{{/if}}{{#if disabled}} is-disabled{{/if}}"{{#if disabled}} disabled{{/if}}
@@ -18,9 +19,9 @@
   </label>
 
 </eul-subnav-resource>
+{{/unless}}
 
-<noscript>
-
+{{#unless (eq noscript true)}}<noscript>{{/unless}}
   <label class="subnav-button -resource{{#if hover}} is-hover{{/if}}{{#if focus}} is-focus{{/if}}{{#if active}} is-active{{/if}}{{#if disabled}} is-disabled{{/if}}"{{#if disabled}} disabled{{/if}}>
     {{label}}
     {{#if alias}}<span class="subnav-button-alias">({{alias}})</span>{{/if}}
@@ -35,5 +36,4 @@
       {{/each}}
     </div>
   </label>
-
-</noscript>
+{{#unless (eq noscript true)}}</noscript>{{/unless}}

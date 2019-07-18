@@ -1805,6 +1805,74 @@ Components.register('slider', {
       return _.toArray($(this.$el).find('.slider-indicator'));
     }
   }
+}); // Register a Navigation Menu component.
+
+Components.register('nav-menu', {
+  props: {},
+  data: function data() {
+    return {
+      toggles: [],
+      delay: 100
+    };
+  },
+  methods: {
+    open: function open($event) {
+      // Locate the element that triggered the the event.
+      var element = $($event.target); // Capture the nearest button.
+
+      var button; // Always check for navigation groups, and if found, update the element and button.
+
+      if (element.closest('.nav-menu-main-nav-group').length > 0) {
+        element = element.closest('.nav-menu-main-nav-group').first();
+        button = element.children('.nav-button').first();
+      } // For navigation groups, locate the nearest button.
+      else if (element.is('.nav-menu-main-nav-group')) button = element.children('.nav-button').first(); // Locate the nearest navigation button.
+        else if (element.is('.nav-button')) button = element; // For all other elements, find the proper element, then locate the nearest button.
+          else {
+              element = element.closest('.subnav-menu-main, .nav-button').first();
+              button = element.is('.nav-button') ? element : element.prev('.nav-button');
+            } // For navigation groups, locate the nearest button.
+
+
+      if (element.is('.nav-menu-main-nav-group')) button = element.children('.nav-button').first(); // Locate the button's target toggle.
+
+      var toggle = this.toggles.filter("[id=\"".concat(button.attr('for'), "\"]")); // Indicate the element that toggled the button.
+
+      toggle.data('toggled-by', element); // Open the subnavigation dropdown menu for that button.
+
+      toggle.prop('checked', true);
+    },
+    close: function close($event) {
+      // Locate the element that triggered the the event.
+      var element = $($event.target); // Capture the nearest button.
+
+      var button; // Always check for navigation groups, and if found, update the element and button.
+
+      if (element.closest('.nav-menu-main-nav-group').length > 0) {
+        element = element.closest('.nav-menu-main-nav-group').first();
+        button = element.children('.nav-button').first();
+      } // For navigation groups, locate the nearest button.
+      else if (element.is('.nav-menu-main-nav-group')) button = element.children('.nav-button').first(); // Locate the nearest navigation button.
+        else if (element.is('.nav-button')) button = element; // For all other elements, find the proper element, then locate the nearest button.
+          else {
+              element = element.closest('.subnav-menu-main, .nav-button').first();
+              button = element.is('.nav-button') ? element : element.prev('.nav-button');
+            } // Locate the button's target toggle.
+
+
+      var toggle = this.toggles.filter("[id=\"".concat(button.attr('for'), "\"]")); // Use a slight delay before closing dropdown menus.
+
+      setTimeout(function () {
+        // Close the subnavigation dropdown menu for that button if not toggled by another element.
+        if (toggle.data('toggled-by').is(element)) toggle.prop('checked', false);
+      }, this.delay);
+    }
+  },
+  filters: {},
+  mounted: function mounted() {
+    // Find the toggles.
+    this.toggles = $(this.$el).children('.input.-toggle');
+  }
 }); // Initialize the Vue.
 
 var App; // Instantiate the Vue.
