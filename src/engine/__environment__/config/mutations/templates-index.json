@@ -5,7 +5,7 @@
   "rename": {
     "subtitle": "introduction",
     "tiles": "links-list.link",
-    "tiles.@.image.src": "tiles.image.image-file.path"
+    "tiles.@.image.src": "tiles.@.image.image-file.path"
   },
   "replace": {},
   "remove": [],
