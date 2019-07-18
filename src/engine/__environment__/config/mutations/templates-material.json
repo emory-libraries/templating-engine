@@ -10,6 +10,7 @@
     "contacts": "link-list-contacts",
     "contacts.cards": "contacts.link-contact",
     "contacts.cards.@.name": "contacts.cards.@.cascade-page.content.system-data-structure.display-name",
+    "contacts.cards.@.email": "contacts.cards.@.cascade-page.content.system-data-structure.contact-info.email",
     "contacts.cards.@.title": "contacts.cards.@.cascade-page.content.system-data-structure.job-title",
     "contacts.cards.@.image.src": "contacts.cards.@.cascade-page.content.system-data-structure.image.image-file.path",
     "contacts.cards.@.link.href": "contacts.cards.@.cascade-page.path",
