@@ -34,7 +34,7 @@ trait ArrayHelpers {
       if( $val === $undefined ) return false;
 
       // Otherwise, verify that the value passes the filter comparison.
-      return Conditional::expression("$val $comparator $value");
+      return Conditional::expression(var_export(strtr($val, ['/' => '\/']), true)." $comparator ".var_export($value, true));
 
     });
 
@@ -85,7 +85,7 @@ trait ArrayHelpers {
       ][$comparator];
 
       // Otherwise, verify that the value passes the filter comparison.
-      return Conditional::expression("$val $comparator $value");
+      return Conditional::expression(var_export(strtr($val, ['/' => '\/']), true)." $comparator ".var_export($value, true));
 
     });
 
