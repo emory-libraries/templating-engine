@@ -1,3 +1,4 @@
+{{#if (or desktop-only (not mobile-only))}}
 <nav class="nav-menu-utility -desktop">
   <div class="nav-menu-utility-left">
     {{#each utilities}}{{> atoms-nav-button-utility}}{{/each}}
@@ -7,8 +8,11 @@
     {{#each flyouts}}{{> atoms-nav-button-flyout}}{{/each}}
   </div>
 </nav>
+{{/if}}
+{{#if (or mobile-only (not desktop-only))}}
 <nav class="nav-menu-utility -mobile">
   <div class="nav-menu-utility-right">
     {{#each flyouts}}{{> atoms-nav-button-flyout}}{{/each}}
   </div>
 </nav>
+{{/if}}

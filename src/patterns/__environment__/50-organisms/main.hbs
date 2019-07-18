@@ -4,40 +4,42 @@
     {{> molecules-breadcrumbs}}
   </div>
 
-  {{! Exhibition page intro }}
-  {{#if (eq type 'exhibition-page')}}
-    <div class="section-main-subtitle">
-      {{#block 'section-main-subtitle'}}{{/block}}
-    </div>
+  {{! Identify pages with special case intro variants. }}
+  {{assign 'variants' (makeArray 'exhibition-page' 'bio-page' 'gallery-page' 'landing-page')}}
 
-  {{! Bio page intro }}
-  {{else if (eq type 'bio-page')}}
-    {{> organisms-intro-bio}}
-    {{#if quote}}<p class="text -lead section-main-subtitle">&ldquo;{{quote}}&rdquo;</p>{{/if}}
+  {{! Handle special cases. }}
+  {{#inArray variants type}}
 
-  {{! Gallery page intro }}
-  {{else if (eq type 'gallery-page')}}
-    {{> organisms-intro-heading}}
+    {{! Exhibition page intro }}
+    {{#if (eq type 'exhibition-page')}}
+      <div class="section-main-subtitle">
+        {{#block 'section-main-subtitle'}}{{/block}}
+      </div>
+    {{/if}}
 
-  {{! Landing page intro }}
-  {{else if (eq type 'landing-page')}}
-    {{#unless hero}}{{> organisms-intro-heading }}{{/unless}}
+    {{! Bio page intro }}
+    {{#if (eq type 'bio-page')}}
+      {{> organisms-intro-bio}}
+      {{#if quote}}<p class="text -lead section-main-subtitle">&ldquo;{{quote}}&rdquo;</p>{{/if}}
+    {{/if}}
 
-  {{! Default page intro }}
+    {{! Gallery page intro }}
+    {{#if (eq type 'gallery-page')}}
+      {{> organisms-intro-heading}}
+    {{/if}}
+
+    {{! Landing page intro }}
+    {{#if (eq type 'landing-page')}}
+      {{#unless hero}}{{> organisms-intro-heading }}{{/unless}}
+    {{/if}}
+
+  {{! Otherwise, use the default intro. }}
   {{else}}
-    {{> organisms-intro-alt-text}}
-  {{/if}}
+    {{> organisms-intro-alt-text }}
+  {{/inArray}}
 
   <main class="section-main-body">
-    {{#unless blocks}}
-      {{#block 'section-main-body'}}{{/block}}
-    {{else}}
-      {{> compounds-blocks}}
-    {{/unless}}
-    {{#if has-related}}
-      <div class="section-main-spacer"></div>
-      <div class="section-main-content">{{> compounds-related-cards}}</div>
-    {{/if}}
+    {{#block 'section-main-body'}}{{/block}}
   </main>
 
   {{#block 'section-main-divider'}}{{/block}}

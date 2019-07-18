@@ -1,5 +1,5 @@
 {{! Create data for the back button. }}
-{{assign 'back.for' (combine 'nav-menu-main-' (lowercase (dashcase heading)))}}
+{{assign 'back.for' (combine 'nav-menu-main--' (lowercase (dashcase heading)))}}
 {{assign 'back.label' 'Back to Main Menu'}}
 
 {{! Add links to resources. }}
@@ -17,6 +17,20 @@
 
 {{assign 'navigation' (storageGet 'navigation')}}
 
+{{! Determine subnavigation menu layout. }}
+{{#if (gt (length (filterHas navigation 'category')) 0)}}
+  {{assign 'layout' 'categorized'}}
+{{else if (gt (length (filterHas navigation 'group')) 0)}}
+  {{assign 'layout' 'grouped'}}
+{{else}}
+  {{assign 'layout' false}}
+{{/if}}
+
+{{! Determine if subnavigation menus have resources. }}
+{{#if (gt (length (pluck navigation 'resource')) 0)}}
+  {{assign 'resources' true}}
+{{/if}}
+
 {{! Create data for the search if grouped. }}
 {{#if (and (eq layout 'grouped') search)}}
   {{assign 'search.services' (arrayify null)}}
@@ -32,7 +46,9 @@
   {{assign 'search.button' (objectify label='Search')}}
 {{/if}}
 
-<nav class="subnav-menu-main{{#if layout}} -{{layout}}{{/if}}{{#if (and (eq layout 'grouped') search)}} has-search{{/if}}">
+<nav class="subnav-menu-main{{#if layout}} -{{layout}}{{/if}}{{#if (and (eq layout 'grouped') search)}} has-search{{else if resources}} has-resources{{/if}}"
+     {{#if mouseover}}@mouseover.stop="{{mouseover}}"{{/if}}
+     {{#if mouseleave}}@mouseleave.stop="{{mouseleave}}"{{/if}}>
 
   {{#with back}}{{> atoms-subnav-button-back classes=''}}{{/with}}
 
@@ -47,10 +63,16 @@
       </div>
     {{/if}}
 
-    {{#each groups}}
+    {{#if (gt (length (filterHasNot navigation 'group')) 0)}}
+    <div class="subnav-button-group">
+      {{#each (filterHasNot navigation 'group')}}{{> atoms-subnav-button-main classes=''}}{{/each}}
+    </div>
+    {{/if}}
+
+    {{#each (filterHas navigation 'group')}}
       <div class="subnav-button-group">
-        <span class="subnav-button-group-heading">{{heading}}</span>
-        {{#each navigation}}{{> atoms-subnav-button-main classes=''}}{{/each}}
+        <span class="subnav-button-group-heading">{{group}}</span>
+        {{#each subnavigation}}{{> atoms-subnav-button-main classes=''}}{{/each}}
       </div>
     {{/each}}
 
@@ -62,7 +84,7 @@
 
     {{#each (filterHasNot navigation 'category')}}
       {{#if (hasOwn this 'resource')}}
-        {{> atoms-subnav-button-resource classes=''}}
+        {{> atoms-subnav-button-resource classes='' noscript=(default ../noscript false)}}
       {{else}}
         {{> atoms-subnav-button-main classes=''}}
       {{/if}}
@@ -70,8 +92,8 @@
 
     {{#each (filterHas navigation 'category')}}
       <div class="subnav-button-category">
-        <span class="subnav-button-category-heading">{{heading}}</span>
-        {{#each navigation}}{{> atoms-subnav-button-main classes=''}}{{/each}}
+        <span class="subnav-button-category-heading">{{category}}</span>
+        {{#each subnavigation}}{{> atoms-subnav-button-main classes=''}}{{/each}}
       </div>
     {{/each}}
 
