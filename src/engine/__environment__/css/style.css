@@ -2735,10 +2735,10 @@ body {
   grid-auto-rows: min-content;
   overflow: hidden;
 }
-.tile-utility:not(.has-description):not(.has-image) {
+.tile-utility:not(.has-description) {
   grid-template-areas: "title";
 }
-.tile-utility:not(.has-description):not(.has-image) .tile-utility-description {
+.tile-utility:not(.has-description) .tile-utility-description {
   display: none;
 }
 .has-description.tile-utility {
