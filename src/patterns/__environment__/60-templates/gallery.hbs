@@ -77,7 +77,7 @@
       {{#if (and date.start.time (not date.end.date))}}
         {{assign 'date.display' (combine date.display ' ' (moment date.start.time 'h:mm A'))}}
       {{/if}}
-      {{#if (and not(date.start.time) date.end.time)}}
+      {{#if (and (not date.start.time) date.end.time)}}
         {{assign 'date.display' (combine date.display ' Until' (moment date.end.time 'h:mm A'))}}
       {{/if}}
     {{else}}
