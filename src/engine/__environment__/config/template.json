@@ -10,7 +10,7 @@
   "templates-archive-directory": "",
   "templates-archive-results": "",
   "templates-article": "Page Types/News Page",
-  "templates-periodical": "Page Types/Periodicals Page",
+  "templates-periodicals": "Page Types/Periodicals Page",
   "templates-exhibition": "Page Types/Exhibition Page",
   "templates-gallery": "Page Types/Exhibition Gallery",
   "templates-event": "",
@@ -23,5 +23,6 @@
   "templates-video-tutorial": "",
   "templates-material": "Page Types/Materials Page",
   "templates-research-help-directory": "Page Types/Research Help Directory",
-  "templates-research-help": "Page Types/Research Help Page"
+  "templates-research-help": "Page Types/Research Help Page",
+  "templates-form": "Page Types/Form Page"
 }
