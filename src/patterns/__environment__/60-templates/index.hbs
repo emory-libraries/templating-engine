@@ -16,7 +16,7 @@
         {{assign 'title' link-label}}
       {{/if}}
       {{#if (gte (indexOf link-customizations 'Description') 0)}}
-        {{assign 'description' link-description}}
+        {{assign 'title' link-description}}
       {{/if}}
     {{/if}}
   {{else if (eq link-type 'Cascade File')}}
@@ -28,7 +28,7 @@
         {{assign 'title' link-label}}
       {{/if}}
       {{#if (gte (indexOf link-customizations 'Description') 0)}}
-        {{assign 'description' link-description}}
+        {{assign 'title' link-description}}
       {{/if}}
     {{/if}}
   {{else if (eq link-type 'External URL')}}

@@ -6074,26 +6074,27 @@ body {
 @media (max-width: 600px) {
   .-periodicals-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
-    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]);
-    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]);
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
   .-periodicals-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
-    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]);
-    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]);
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
   }
 }
 @media (min-width: 901px) {
   .-periodicals-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
-    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]);
-    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]);
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
   }
 }
 .-periodicals-page.section-main .section-main-subtitle,
-.-periodicals-page.section-main .section-main-sidebar {
+.-periodicals-page.section-main .section-main-sidebar,
+.-periodicals-page.section-main .section-main-section {
   display: none;
 }
 @media (max-width: 600px) {

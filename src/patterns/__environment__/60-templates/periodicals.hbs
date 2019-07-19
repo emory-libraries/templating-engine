@@ -1,5 +1,3 @@
-
-
 {{! Reformat blocks for improved compatability. }}
 {{#each blocks}}
 
@@ -18,24 +16,28 @@
 {{! Assign recent issues type and heading}}
 {{assign 'recent-issues.type' 'utility'}}
 
-
 <div class="periodicals-page">
   <header class="periodicals-page-header"></header>
-  {{#extend 'organisms-main' type="periodicals-page" classes="periodicals-page-main"}}
-    {{#content 'section-main-body'}}
-    {{> compounds-blocks}}
-    {{/content}}
-    {{#content 'section-main-other'}}
-    <div class="section-main-spacer"></div>
-    <section class="section-main-content">
-      {{>tokens-heading level=2 heading=recent-issues.heading}}
-      {{>compounds-tiles tile-type=recent-issues.type tiles=recent-issues.tiles}}
-    </section>
-    <section class="section-main-content">
-      {{>tokens-heading level=2 heading=past-issues.heading}}
-      {{>compounds-files items=past-issues.items}}
-    </section>
-    {{/content}}
-  {{/extend}}
+  <div class="periodicals-page-main">
+    {{#extend 'organisms-main' type="periodicals-page" classes=""}}
+      {{#content 'section-main-body'}}
+        {{> compounds-blocks}}
+      {{/content}}
+      {{#content 'section-main-other'}}
+        <div class="section-main-spacer"></div>
+        <section class="section-main-content">
+          {{#embed 'compounds-files' heading=(default recent-issues.heading 'Recent Issues')}}
+            {{#content 'grouping-files-content'}}
+              {{> compounds-tiles tile-type=recent-issues.type tiles=recent-issues.tiles}}
+            {{/content}}
+          {{/embed}}
+        </section>
+        <div class="section-main-spacer"></div>
+        <section class="section-main-content">
+          {{> compounds-files heading=(default past-issues.heading 'Past Issues') items=past-issues.items icon='material-import_contacts'}}
+        </section>
+      {{/content}}
+    {{/extend}}
+  </div>
   <footer class="periodicals-page-footer"></footer>
 </div>
