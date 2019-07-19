@@ -17,7 +17,7 @@ class XML {
     foreach( $escape as $tag ) {
 
       // Build the regex used to locate the HTML.
-      $regex = "/(?:\<{$tag}\>)((?:(?:\n\r?)*?|.*?)*?)(?:\<\/{$tag}\>)/";
+      $regex = "/\<{$tag}\>([\S\s]*?)\<\/{$tag}\>/";
 
       // Find any HTML that should be escaped.
       if( preg_match_all($regex, $result, $matches, PREG_SET_ORDER) ) {
