@@ -40,17 +40,6 @@
 
   <main class="section-main-body">
     {{#block 'section-main-body'}}{{/block}}
-    {{#if (eq type 'periodicals-page')}}
-      <div class="section-main-spacer"></div>
-      <section class="section-main-content">
-        {{>tokens-heading level=2 heading=recent-issues.heading}}
-        {{>compounds-tiles type=recent-issues.type tiles=recent-issues.tiles}}
-      </section>
-      <section class="section-main-content">
-        {{>tokens-heading level=2 heading=past-issues.heading}}
-        {{>compounds-files items=past-issues.items}}
-      </section>
-    {{/if}}
   </main>
 
   {{#block 'section-main-divider'}}{{/block}}

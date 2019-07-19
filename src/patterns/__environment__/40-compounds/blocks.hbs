@@ -4,7 +4,7 @@
   {{else if (eq (dashcase (lowercase type)) 'text')}}
     {{> tokens-text}}
   {{else if (eq (dashcase (lowercase type)) 'image')}}
-    {{> atoms-image src=(default image.image-file.path src)}}
+    {{> atoms-image src=(default image.src src)}}
   {{else if (eq (dashcase (lowercase type)) 'heading')}}
     {{> tokens-heading heading=(default heading-label heading) level=(default heading-level level)}}
   {{else if (eq (dashcase (lowercase type)) 'video')}}
