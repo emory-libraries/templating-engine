@@ -15,7 +15,7 @@ class Helper {
   public static function set( string $helper, string $key, $value ) {
 
     // Temporarily store the data.
-    self::$data = array_set(self::$data, "$helper.$key", $value);
+    self::$data = array_set(self::$data, "$helper.$key", $value, true);
 
   }
 
