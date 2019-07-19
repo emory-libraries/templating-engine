@@ -48,7 +48,7 @@
       {{assign 'link.href' cascade-page.path}}
       {{assign 'title' cascade-page.title}}
       {{#if link-customizations}}
-        {{#if (gte (indexOf link-customizations 'Label') 0)}}
+        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
           {{assign 'title' link-label}}
         {{/if}}
       {{/if}}
@@ -57,7 +57,7 @@
     {{#if link-customizations}}
       {{assign 'link.href' cascade-file.path}}
       {{assign 'title' (stem cascade-file.display-name)}}
-      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
         {{assign 'title' link-label}}
       {{/if}}
     {{/if}}
