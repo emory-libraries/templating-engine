@@ -29,7 +29,7 @@
     {{#unless (storageHas 'feature.heading')}}
       {{storageSet 'feature.heading' cascade-page.title}}
       {{#if link-customizations}}
-        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+        {{#if (gte (indexOf link-customizations 'Label') 0)}}
           {{storageSet 'feature.heading' link-label}}
         {{/if}}
       {{/if}}
@@ -37,7 +37,7 @@
     {{#unless (storageHas 'feature.description')}}
       {{storageSet 'feature.description' cascade-page.description}}
       {{#if link-customizations}}
-        {{#if (not (eq (indexOf link-customizations 'Description') false))}}
+        {{#if (gte (indexOf link-customizations 'Description') 0)}}
           {{storageSet 'feature.description' link-description}}
         {{/if}}
       {{/if}}
@@ -51,7 +51,7 @@
     {{#unless (storageHas 'feature.heading')}}
       {{storageSet 'feature.heading' (stem cascade-file.display-name)}}
       {{#if link-customizations}}
-        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+        {{#if (gte (indexOf link-customizations 'Label') 0)}}
           {{storageSet 'feature.heading' link-label}}
         {{/if}}
       {{/if}}
@@ -59,7 +59,7 @@
     {{#unless (storageHas 'feature.description')}}
       {{storageSet 'feature.description' (stem cascade-file.display-name)}}
       {{#if link-customizations}}
-        {{#if (not (eq (indexOf link-customizations 'Description') false))}}
+        {{#if (gte (indexOf link-customizations 'Description') 0)}}
           {{storageSet 'feature.description' link-description}}
         {{/if}}
       {{/if}}
@@ -93,7 +93,7 @@
     {{assign 'href' cascade-page.path}}
     {{assign 'label' cascade-page.title}}
     {{#if link-customizations}}
-      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
     {{/if}}
@@ -101,7 +101,7 @@
     {{assign 'href' cascade-file.path}}
     {{assign 'label' cascade-file.title}}
     {{#if link-customizations}}
-      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
     {{/if}}
@@ -125,7 +125,7 @@
     {{assign 'href' cascade-page.path}}
     {{assign 'label' cascade-page.title}}
     {{#if link-customizations}}
-      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
     {{/if}}
@@ -133,7 +133,7 @@
     {{assign 'href' cascade-file.path}}
     {{assign 'label' cascade-file.title}}
     {{#if link-customizations}}
-      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+      {{#if (gte (indexOf link-customizations 'Label') 0)}}
         {{assign 'label' link-label}}
       {{/if}}
     {{/if}}
