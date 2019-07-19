@@ -4,16 +4,16 @@
   {{#if (eq link-type 'Cascade Page')}}
     {{assign 'title' cascade-page.title}}
     {{assign 'link.href' (combine (baseUrl) cascade-page.path)}}
-    {{#if (and link-customizations (isArray link-customizations))}}
-      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+    {{#if link-customizations}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
         {{assign 'title' link-label}}
       {{/if}}
     {{/if}}
   {{else if (eq link-type 'Cascade File')}}
     {{assign 'title' (stem cascade-file.name)}}
     {{assign 'link.href' (combine (baseUrl) cascade-file.path)}}
-    {{#if (and link-customizations (isArray link-customizations))}}
-      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+    {{#if link-customizations}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
         {{assign 'title' link-label}}
       {{/if}}
     {{/if}}
