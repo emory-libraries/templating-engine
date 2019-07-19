@@ -2,19 +2,19 @@
 {{#if (eq parking.link.link-type 'Cascade Page')}}
   {{assign 'parking.link.href' (combine (baseUrl) parking.link.cascade-page.path)}}
   {{assign 'parking.link.label' parking.link.cascade-page.name}}
-  {{#if (and parking.link.link-customizations (isArray parking.link.link-customizations))}}
-    {{#if (gte (indexOf parking.link.link-customization 'Description') 0)}}
+  {{#if parking.link.link-customizations}}
+    {{#if (not (eq (indexOf parking.link.link-customizations 'Description') false))}}
       {{assign 'parking.link.label' parking.link.link-description}}
     {{/if}}
-    {{#if (gte (indexOf parking.link.link-customization 'Label') 0)}}
+    {{#if (not (eq (indexOf parking.link.link-customizations 'Label') false))}}
       {{assign 'parking.link.label' parking.link.link-label}}
     {{/if}}
   {{/if}}
 {{else if (eq parking.link.link-type 'Cascade File')}}
   {{assign 'parking.link.href' (combine (baseUrl) parking.link.cascade-file.path)}}
   {{assign 'parking.link.label' (stem parking.link.display-name)}}
-  {{#if (and parking.link.link-customizations (isArray parking.link.link-customizations))}}
-    {{#if (gte (indexOf parking.link.link-customization 'Description') 0)}}
+  {{#if parking.link.link-customizations}}
+    {{#if (not (eq (indexOf parking.link.link-customizations 'Description') false))}}
       {{assign 'parking.link.label' parking.link.link-description}}
     {{/if}}
     {{#if (gte (indexOf parking.link.link-customization 'Label') 0)}}
@@ -34,22 +34,22 @@
 {{#if (eq visitation.link.link-type 'Cascade Page')}}
   {{assign 'visitation.link.href' (combine (baseUrl) visitation.link.cascade-page.path)}}
   {{assign 'visitation.link.label' visitation.link.cascade-page.name}}
-  {{#if (and visitation.link.link-customizations (isArray visitation.link.link-customizations))}}
-    {{#if (gte (indexOf visitation.link.link-customization 'Description') 0)}}
+  {{#if visitation.link.link-customizations}}
+    {{#if (not (eq (indexOf visitation.link.link-customizations 'Description') false))}}
       {{assign 'visitation.link.label' visitation.link.link-description}}
     {{/if}}
-    {{#if (gte (indexOf visitation.link.link-customization 'Label') 0)}}
+    {{#if (not (eq (indexOf visitation.link.link-customizations 'Label') false))}}
       {{assign 'visitation.link.label' visitation.link.link-label}}
     {{/if}}
   {{/if}}
 {{else if (eq visitation.link.link-type 'Cascade File')}}
   {{assign 'visitation.link.href' (combine (baseUrl) visitation.link.cascade-file.path)}}
   {{assign 'visitation.link.label' (stem visitation.link.display-name)}}
-  {{#if (and visitation.link.link-customizations (isArray visitation.link.link-customizations))}}
-    {{#if (gte (indexOf visitation.link.link-customization 'Description') 0)}}
+  {{#if visitation.link.link-customizations}}
+    {{#if (not (eq (indexOf visitation.link.link-customizations 'Description') false))}}
       {{assign 'visitation.link.label' visitation.link.link-description}}
     {{/if}}
-    {{#if (gte (indexOf visitation.link.link-customization 'Label') 0)}}
+    {{#if (not (eq (indexOf visitation.link.link-customizations 'Label') false))}}
       {{assign 'visitation.link.label' visitation.link.link-label}}
     {{/if}}
   {{/if}}

@@ -11,8 +11,8 @@
     {{! For cascade pages, use the page's path. }}
     {{#if (eq link-type 'Cascade Page')}}
       {{assign 'link.href' cascade-page.path}}
-      {{#if (and link-customizations (isArray link-customization))}}
-        {{#if (gte (indexOf link-customizations 'Label') 0)}}
+      {{#if link-customizations}}
+        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
           {{assign 'link.label' link-label}}
         {{else}}
           {{assign 'link.label' 'Exhibition Details'}}
@@ -23,8 +23,8 @@
     {{! For cascade files, use the file's path. }}
     {{#if (eq link-type 'Cascade File')}}
       {{assign 'link.href' cascade-file.path}}
-      {{#if (and link-customizations (isArray link-customization))}}
-        {{#if (gte (indexOf link-customizations 'Label') 0)}}
+      {{#if isArray link-customization}}
+        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
           {{assign 'link.label' link-label}}
         {{else}}
           {{assign 'link.label' 'Exhibition Details'}}

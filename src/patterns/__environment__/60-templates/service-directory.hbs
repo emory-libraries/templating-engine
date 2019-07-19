@@ -21,12 +21,14 @@
 
     {{! Override the panel title and/or content if applicable. }}
     {{#if (and (and link-type (eq link-type 'Cascade Page')) link-customizations)}}
-      {{#contains link-customizations 'Label'}}
-        {{#if link-label}}{{assign 'title' link-label}}{{/if}}
-      {{/contains}}
-      {{#contains link-customizations 'Description'}}
-        {{#if link-description}}{{assign 'content' link-description}}{{/if}}
-      {{/contains}}
+      {{#if link-customizations}}
+        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+          {{assign 'title' link-label}}
+        {{/if}}
+        {{#if (not (eq (indexOf link-customizations 'Description') false))}}
+          {{assign 'content' link-description}}
+        {{/if}}
+      {{/if}}
     {{/if}}
 
     {{! Set the panel's ID, and save it to the index. }}
@@ -81,9 +83,11 @@
 
   {{! Override the button label if applicable. }}
   {{#if (and (and link-type (eq link-type 'Cascade Page')) link-customizations)}}
-    {{#contains link-customizations 'Label'}}
-      {{#if link-label}}{{assign 'label' link-label}}{{/if}}
-    {{/contains}}
+    {{#if link-customizations}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+        {{assign 'title' link-label}}
+      {{/if}}
+    {{/if}}
   {{/if}}
 
   {{! Save the updated button to storage. }}

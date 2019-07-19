@@ -12,10 +12,10 @@
     {{assign 'title' cascade-page.title}}
     {{assign 'description' cascade-page.description}}
     {{#if link-customizations}}
-      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
         {{assign 'title' link-label}}
       {{/if}}
-      {{#if (gte (indexOf link-customizations 'Description') 0)}}
+      {{#if (not (eq (indexOf link-customizations 'Description') false))}}
         {{assign 'description' link-description}}
       {{/if}}
     {{/if}}
@@ -24,10 +24,10 @@
     {{assign 'title' (stem cascade-file.display-name)}}
     {{assign 'description' null}}
     {{#if link-customizations}}
-      {{#if (gte (indexOf link-customizations 'Label') 0)}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
         {{assign 'title' link-label}}
       {{/if}}
-      {{#if (gte (indexOf link-customizations 'Description') 0)}}
+      {{#if (not (eq (indexOf link-customizations 'Description') false))}}
         {{assign 'description' link-description}}
       {{/if}}
     {{/if}}
