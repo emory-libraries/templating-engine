@@ -1,63 +1,41 @@
 
+
 {{! Reformat blocks for improved compatability. }}
-{{#each content-block}}
+{{#each blocks}}
 
   {{! Find invalid image paths, and remove them. }}
-  {{#if (eq image.image-file.path '/')}}
-    {{assign 'image.src' null}}
+  {{#if (eq src '/')}}
+    {{assign 'src' null}}
   {{/if}}
 
   {{! Save the updated block. }}
   {{storagePush 'blocks' this}}
-
 {{/each}}
 
 {{! Update the blocks data. }}
 {{assign 'blocks' (storageGet 'blocks')}}
 
-{{{ _inspect this}}}
-
 {{! Assign recent issues type and heading}}
 {{assign 'recent-issues.type' 'utility'}}
-{{assign 'recent-issues.heading' links-list-recent-issues.heading}}
 
-{{!Build array of recent issues links }}
-{{#each links-list-recent-issues.link}}
-  {{assign 'image.src' image-file.path}}
-  {{assign 'link.href' cascade-file.path}}
-  {{assign 'title' link-label}}
-  {{#if description}}{{assign 'description' description}}{{/if}}
-  
-  {{storagePush 'tiles' this}}
-{{/each}}
-
-{{! Update recent issues list}}
-{{assign 'recent-issues.tiles' (storageGet 'tiles')}}
-
-{{! }}
-{{#each recent-issues.tiles}}
-  {{#if (eq img.src '/')}}
-    {{assign 'img.src' null}}
-  {{/if}}
-{{/each}}
-
-{{! Assign past issues type and heading}}
-{{assign 'past-issues.type' 'utility'}}
-{{assign 'past-issues.heading' links-list-past-issues.heading}}
-
-{{!Build array of past issues links }}
-{{#each links-list-past-issues.link}}
-  {{assign 'link.href' cascade-file.path}}
-  {{assign 'title' link-label}}
-  
-  {{storagePush 'items' this}}
-{{/each}}
-
-{{! Update past issues list}}
-{{assign 'past-issues.items' (storageGet 'items')}}
 
 <div class="periodicals-page">
   <header class="periodicals-page-header"></header>
-  {{>organisms-main type="periodicals-page" classes="periodicals-page-main"}}
+  {{#extend 'organisms-main' type="periodicals-page" classes="periodicals-page-main"}}
+    {{#content 'section-main-body'}}
+    {{> compounds-blocks}}
+    {{/content}}
+    {{#content 'section-main-other'}}
+    <div class="section-main-spacer"></div>
+    <section class="section-main-content">
+      {{>tokens-heading level=2 heading=recent-issues.heading}}
+      {{>compounds-tiles tile-type=recent-issues.type tiles=recent-issues.tiles}}
+    </section>
+    <section class="section-main-content">
+      {{>tokens-heading level=2 heading=past-issues.heading}}
+      {{>compounds-files items=past-issues.items}}
+    </section>
+    {{/content}}
+  {{/extend}}
   <footer class="periodicals-page-footer"></footer>
 </div>
