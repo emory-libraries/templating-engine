@@ -1,6 +1,6 @@
 {{#if background-image}}
   {{#if (and (startsWithSubstring background-image '/') (not (startsWithSubstring background-image '//')))}}
-    {{assign 'background-image' (combine (baseUrl) background-image)}}
+    {{assign 'background-image' (absolutePath background-image)}}
   {{/if}}
 {{/if}}
 
