@@ -39,7 +39,62 @@
   {{/inArray}}
 
   <main class="section-main-body">
-    {{#block 'section-main-body'}}{{/block}}
+
+    {{#if toc}}
+
+      {{! build an array of heading blocks }}
+      {{> tokens-heading level=2 heading="Table of Contents" type="toc"}}
+      {{#forEach blocks}}
+       {{#if  (eq type 'heading')}}
+       {{storagePush 'headings' this}}
+       {{/if}}
+      {{/forEach}}
+
+      {{assign 'headingBlocks' (storageGet 'headings')}}
+
+      {{! Open an ordered list }}
+      <ol class="section-main-toc">
+        {{!-- Loop through headings --}}
+        {{#forEach headingBlocks}}        
+
+          {{! Capture next and prev index values}}
+          {{assign 'nextIndex' (add @index 1)}}
+          {{assign 'prevIndex' (subtract @index 1)}}
+
+          {{! Capture the data for the next heading }}
+          {{assign 'nextHeading' (itemAt ../headingBlocks nextIndex)}}
+          {{! Write the list item for link to this heading along with it's anchor slug for the href }}
+          <li>
+          <a href="#{{dashcase (lowercase heading)}}">{{heading}}</a>
+
+          {{#if (or (lte nextHeading.level level) (isFalsey nextHeading)) }}
+            {{! If the next heading is higher level or same level as this one, or if it's the last heading, close the li }}
+            </li>
+          {{/if}}
+          {{#if (gt nextHeading.level level)}}
+            {{! If the next heading is lower level than this one, open a new ol }}
+            <ol>
+          {{/if}}
+          {{! Close sublists based on difference of heading levels }}
+          {{#if (or (lt nextHeading.level level) (isFalsey nextHeading) )}}
+            {{#if (or (eq nextHeading.level (subtract level 1)) (and (isFalsey nextHeading) (eq level '3'))) }}
+              </ol></li>
+            {{else if (or (eq nextHeading.level (subtract level 2)) (and (eq nextHeading undefined) (eq level '4')))}}
+              </ol></li></ol></li>
+            {{else if (or (eq nextHeading.level (subtract level 3)) (and (eq nextHeading undefined) (eq level '5')))}}
+              </ol></li></ol></li></ol></li>
+            {{else if (or (eq nextHeading.level (subtract level 4)) (and (eq nextHeading undefined) (eq level '6')))}}
+              </ol></li></ol></li></ol></li></ol></li>
+            {{/if}}
+          {{/if}}
+       {{/forEach}}
+      </ol>
+      {{>atoms-rule}}
+    {{/if}}
+    
+    {{#block 'section-main-body'}}
+    {{>compounds-blocks}}
+    {{/block}}
   </main>
 
   {{#block 'section-main-divider'}}{{/block}}
