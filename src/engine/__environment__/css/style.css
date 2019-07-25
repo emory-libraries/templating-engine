@@ -16085,6 +16085,16 @@ button, input[type=button], input[type=submit], input[type=reset] {
   margin-bottom: 7.5px;
 }
 
+.table-of-contents {
+  padding-left: 0;
+}
+.table-of-contents, .table-of-contents ol {
+  list-style-type: none;
+}
+.table-of-contents ol {
+  padding-left: 1.5em;
+}
+
 .tile-listing {
   padding: 40px 25px;
   padding-top: calc(55% + 40px);
@@ -17920,15 +17930,6 @@ button, input[type=button], input[type=submit], input[type=reset] {
   letter-spacing: normal;
   text-transform: none;
   color: #082B73;
-}
-.section-main-toc {
-  padding-left: 0;
-}
-.section-main-toc, .section-main-toc ol {
-  list-style-type: none;
-}
-.section-main-toc ol {
-  padding-left: 1.5em;
 }
 .section-main-spacer {
   height: 40px;
