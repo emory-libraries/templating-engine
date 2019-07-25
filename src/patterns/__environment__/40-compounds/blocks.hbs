@@ -6,7 +6,7 @@
   {{else if (eq (dashcase (lowercase type)) 'image')}}
     {{> atoms-image src=(default image.image-file.path src)}}
   {{else if (eq (dashcase (lowercase type)) 'heading')}}
-    {{> tokens-heading heading=(default heading-label heading) type=../type level=(default heading-level level)}}
+    {{> tokens-heading heading=(default heading-label heading) toc=../toc level=(default heading-level level)}}
   {{else if (eq (dashcase (lowercase type)) 'video')}}
     {{> atoms-video-youtube id=(default video-url id)}}
   {{/if}}

@@ -43,31 +43,40 @@
     {{#if toc}}
 
       {{! build an array of heading blocks }}
-      {{> tokens-heading level=2 heading="Table of Contents" type="toc"}}
-      {{#forEach blocks}}
-       {{#if  (eq type 'heading')}}
+      {{> tokens-heading level=2 heading="Table of Contents" toc=false}}
+      {{#each blocks}}
+       {{#if  (eq (dashcase (lowercase type)) 'heading')}}
        {{storagePush 'headings' this}}
        {{/if}}
-      {{/forEach}}
+      {{/each}}
+
 
       {{assign 'headingBlocks' (storageGet 'headings')}}
-
       {{! Open an ordered list }}
       <ol class="section-main-toc">
         {{!-- Loop through headings --}}
-        {{#forEach headingBlocks}}        
-
+        {{#each headingBlocks}}
           {{! Capture next and prev index values}}
+          {{#if (eq level undefined)}}
+          {{assign 'level' heading-level}}
+          {{/if}}
+          {{#if (eq heading undefined)}}
+          {{assign 'heading' heading-label}}
+          {{/if}}
           {{assign 'nextIndex' (add @index 1)}}
           {{assign 'prevIndex' (subtract @index 1)}}
 
           {{! Capture the data for the next heading }}
           {{assign 'nextHeading' (itemAt ../headingBlocks nextIndex)}}
+          {{#if (eq nextHeading.level undefined)}}
+          {{assign 'nextHeading.level' nextHeading.heading-level}}
+          {{/if}}
+
           {{! Write the list item for link to this heading along with it's anchor slug for the href }}
           <li>
           <a href="#{{dashcase (lowercase heading)}}">{{heading}}</a>
 
-          {{#if (or (lte nextHeading.level level) (isFalsey nextHeading)) }}
+          {{#if (or (lte nextHeading.level level) (eq nextHeading undefined)) }}
             {{! If the next heading is higher level or same level as this one, or if it's the last heading, close the li }}
             </li>
           {{/if}}
@@ -76,18 +85,18 @@
             <ol>
           {{/if}}
           {{! Close sublists based on difference of heading levels }}
-          {{#if (or (lt nextHeading.level level) (isFalsey nextHeading) )}}
-            {{#if (or (eq nextHeading.level (subtract level 1)) (and (isFalsey nextHeading) (eq level '3'))) }}
+          {{#if (or (lt nextHeading.level level) (eq nextHeading undefined) )}}
+            {{#if (or (eq nextHeading.level (subtract level 1)) (and (eq nextHeading undefined) (eq level 3))) }}
               </ol></li>
-            {{else if (or (eq nextHeading.level (subtract level 2)) (and (eq nextHeading undefined) (eq level '4')))}}
+            {{else if (or (eq nextHeading.level (subtract level 2)) (and (eq nextHeading undefined) (eq level 4)))}}
               </ol></li></ol></li>
-            {{else if (or (eq nextHeading.level (subtract level 3)) (and (eq nextHeading undefined) (eq level '5')))}}
+            {{else if (or (eq nextHeading.level (subtract level 3)) (and (eq nextHeading undefined) (eq level 5)))}}
               </ol></li></ol></li></ol></li>
-            {{else if (or (eq nextHeading.level (subtract level 4)) (and (eq nextHeading undefined) (eq level '6')))}}
+            {{else if (or (eq nextHeading.level (subtract level 4)) (and (eq nextHeading undefined) (eq level 6)))}}
               </ol></li></ol></li></ol></li></ol></li>
             {{/if}}
           {{/if}}
-       {{/forEach}}
+        {{/each}}
       </ol>
       {{>atoms-rule}}
     {{/if}}
