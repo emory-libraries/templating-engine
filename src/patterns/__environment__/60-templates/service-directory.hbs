@@ -73,21 +73,22 @@
   {{#if (and link-type (eq link-type 'Cascade Page'))}}
     {{assign 'label' cascade-page.title}}
     {{assign 'href' cascade-page.path}}
+    {{#if link-customizations}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+        {{assign 'label' link-label}}
+      {{/if}}
+    {{/if}}
   {{else if (and link-type (eq link-type 'Cascade File'))}}
-    {{assign 'label' link-label}}
+    {{assign 'label' (stem cascade-file.display-name)}}
     {{assign 'href' cascade-file.path}}
+    {{#if link-customizations}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+        {{assign 'label' link-label}}
+      {{/if}}
+    {{/if}}
   {{else if (and link-type (eq link-type 'External URL'))}}
     {{assign 'label' link-label}}
     {{assign 'href' external-url}}
-  {{/if}}
-
-  {{! Override the button label if applicable. }}
-  {{#if (and (and link-type (eq link-type 'Cascade Page')) link-customizations)}}
-    {{#if link-customizations}}
-      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
-        {{assign 'title' link-label}}
-      {{/if}}
-    {{/if}}
   {{/if}}
 
   {{! Save the updated button to storage. }}
