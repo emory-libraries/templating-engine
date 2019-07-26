@@ -1,0 +1,17 @@
+{{#if background-image}}
+  {{#if (and (startsWithSubstring background-image '/') (not (startsWithSubstring background-image '//')))}}
+    {{assign 'background-image' (absolutePath background-image)}}
+  {{/if}}
+{{/if}}
+
+<header class="intro-home" style="--image: url({{background-image}});">
+  <div class="intro-home-search">
+    {{> organisms-search-menu home=true}}
+  </div>
+  {{#if badge}}
+    {{> atoms-badge label=badge white=true square=true classes="intro-home-badge"}}
+  {{/if}}
+  <a class="intro-home-title" href="{{link.href}}" target="_self">
+    {{> tokens-heading level=1 alternate=true heading=link.title icon=false}}
+  </a>
+</header>
