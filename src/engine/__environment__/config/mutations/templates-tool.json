@@ -5,7 +5,19 @@
   "rename": {
     "subtitle": "introduction",
     "blocks": "content-block",
-    "blocks.@.type": "blocks.@.block-type"
+    "blocks.@.type": "blocks.@.block-type",
+    "blocks.@.image.src": "blocks.@.image.image-file.path",
+    "contacts": "link-list-contacts",
+    "contacts.cards": "contacts.link-contact",
+    "contacts.cards.@.name": "contacts.cards.@.cascade-page.content.system-data-structure.display-name",
+    "contacts.cards.@.email": "contacts.cards.@.cascade-page.content.system-data-structure.contact-info.email",
+    "contacts.cards.@.title": "contacts.cards.@.cascade-page.content.system-data-structure.job-title",
+    "contacts.cards.@.image.src": "contacts.cards.@.cascade-page.content.system-data-structure.image.image-file.path",
+    "contacts.cards.@.link.href": "contacts.cards.@.cascade-page.path",
+    "contacts.heading": "contacts.heading-label",
+    "resources": "link-list-resources",
+    "resources.cards": "resources.link-resource",
+    "resources.heading": "resources.heading-label"
   },
   "replace": {},
   "remove": [],
@@ -39,25 +51,26 @@
   ],
   "repeatable": [
     "content-block",
-    "link-contact",
     "sidebar.link",
     "sidebar.links-list-learn.link",
     "sidebar.links-list-materials.link",
-    "link-research-aid"
+    "link-list-contacts.link-contact",
+    "link-list-resources.link-resource"
   ],
   "checkbox": [
     "add-contact",
-    "add-research-aids",
+    "add-resource-links",
     "sidebar.link.@.link-customizations",
     "sidebar.links-list-learn.link.@.link-customizations",
     "sidebar.links-list-materials.link.@.link-customizations",
-    "link-research-aid.@.customize-label"
+    "link-list-resources.link-resource.@.link-customizations"
   ],
   "radio": [
     "content-block.@.block-type",
     "sidebar.link.@.link-type",
     "sidebar.links-list-learn.link.@.link-type",
-    "sidebar.links-list-materials.link.@.link-type"
+    "sidebar.links-list-materials.link.@.link-type",
+    "link-list-resources.link-resource.@.link-type"
   ],
   "timestamp": [
     "system.created.datetime",
@@ -81,7 +94,8 @@
     "sidebar.links-list-materials.link.@.external-url",
     "sidebar.links-list-materials.link.@.link-label",
     "sidebar.links-list-materials.link.@.link-description",
-    "link-research-aid.@.link-label"
+    "link-list-resources.link-resource.@.link-label",
+    "link-list-resources.link-resource.@.external-url"
   ],
   "html": [
     "content-block.@.wysiwyg"

@@ -45,7 +45,8 @@
     "links-list-services-group.@.link"
   ],
   "checkbox": [
-    "links-list-featured-help.link.@.link-customizations"
+    "links-list-featured-help.link.@.link-customizations",
+    "links-list-services-group.@.link.@.link-customizations"
   ],
   "radio": [
     "links-list-featured-help.link.@.link-type",
@@ -61,8 +62,8 @@
     "input-placeholder",
     "links-list-featured-help.link.@.external-url",
     "links-list-featured-help.link.@.link-label",
-    "links-list-services-group.link.@.external-url",
-    "links-list-services-group.@.heading",
+    "links-list-services-group.@.link.@.external-url",
+    "links-list-services-group.@.link.@.heading",
     "links-list-services-group.@.link.@.cascade-page.title",
     "links-list-services-group.@.link.@.cascade-page.description",
     "links-list-services-group.@.link.@.link-label",

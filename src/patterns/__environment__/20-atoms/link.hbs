@@ -1,3 +1,9 @@
+{{#if href}}
+  {{#if (and (startsWithSubstring href '/') (not (startsWithSubstring href '//')))}}
+    {{assign 'href' (combine (baseUrl) href)}}
+  {{/if}}
+{{/if}}
+
 <a href="{{href}}" class="link{{#if classes}} {{classes}}{{/if}}" target="{{default target '_self'}}">
   {{#if icon}}{{> tokens-icon id=icon }}{{/if}}
   {{label}}

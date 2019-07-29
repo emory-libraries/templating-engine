@@ -1,7 +1,11 @@
-      <header class="intro-hero">
-          <div class="intro-hero-image" style="background-image: url({{background-image}});"></div>
-          <div class="intro-hero-gradient"></div>
-            {{#if badge}}{{> atoms-badge label=badge.label white=true square=true classes="intro-hero-badge"}}{{/if}}
-            {{> tokens-heading level="1" alternate=true classes="intro-hero-title" heading=title icon=false}}
-            {{#if subtitle}}<p class="intro-hero-subtitle">{{subtitle}}</p>{{/if}}
-      </header>
+{{#if background-image}}
+  {{#if (and (startsWithSubstring background-image '/') (not (startsWithSubstring background-image '//')))}}
+    {{assign 'background-image' (absolutePath background-image)}}
+  {{/if}}
+{{/if}}
+
+<header class="intro-hero" style="--image: url({{background-image}});">
+  {{#if badge}}{{> atoms-badge label=badge.label white=true square=true classes="intro-hero-badge"}}{{/if}}
+  {{> tokens-heading level=1 alternate=true classes="intro-hero-title" heading=title icon=false hero=true}}
+  {{#if subtitle}}<p class="intro-hero-subtitle">{{subtitle}}</p>{{/if}}
+</header>

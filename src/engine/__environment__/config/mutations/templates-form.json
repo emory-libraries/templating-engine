@@ -1,0 +1,21 @@
+{
+  "alias": {
+    "system.title": "title"
+  },
+  "rename": {
+    "subtitle": "introduction",
+    "libwizard-id": "form-id"
+  },
+  "replace": {},
+  "remove": [],
+  "add": {},
+  "evaluate": [],
+  "repeatable": [],
+  "checkbox": [],
+  "radio": [],
+  "timestamp": [],
+  "text": [
+    "form-id"
+  ],
+  "html": []
+}

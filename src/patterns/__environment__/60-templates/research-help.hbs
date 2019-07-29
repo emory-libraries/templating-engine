@@ -1,5 +1,111 @@
+{{! Reformat blocks for improved compatability. }}
+{{#each blocks}}
+
+  {{! Find invalid image paths, and remove them. }}
+  {{#if (eq image.src '/')}}
+    {{assign 'image.src' null}}
+  {{/if}}
+
+  {{! Save the updated block. }}
+  {{storagePush 'blocks' this}}
+
+{{/each}}
+
+{{! Update the blocks data. }}
+{{assign 'blocks' (storageGet 'blocks')}}
+
+{{! Make adjustments to contacts as needed if applicable. }}
+{{#if contacts}}
+
+  {{! Reformat contact cards for improved compatability. }}
+  {{#each contacts.cards}}
+
+    {{! Validate image paths. }}
+    {{#if (eq image.src '/')}}
+      {{assign 'image.src' '/avatars/placeholder.male.jpg'}}
+    {{/if}}
+
+    {{! Ignore invalid cards, and save valid ones. }}
+    {{#if (and (not (eq link.href '/')) name title)}}
+      {{storagePush 'contacts.cards' this}}
+    {{/if}}
+
+  {{/each}}
+
+  {{! Update the contact cards data. }}
+  {{assign 'contacts.cards' (storageGet 'contacts.cards')}}
+
+{{/if}}
+
+{{! Make adjustments to resources as needed if applicable. }}
+{{#if resources}}
+
+  {{! Reformat resource cards for improved compatability. }}
+  {{#each resources.cards}}
+
+    {{! Validate link paths. }}
+    {{#if (eq link-type 'Cascade Page')}}
+      {{assign 'link.href' cascade-page.path}}
+      {{assign 'title' cascade-page.title}}
+      {{#if link-customizations}}
+        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+          {{assign 'title' link-label}}
+        {{/if}}
+      {{/if}}
+    {{else if (eq link-type 'Cascade File')}}
+
+    {{#if link-customizations}}
+      {{assign 'link.href' cascade-file.path}}
+      {{assign 'title' (stem cascade-file.display-name)}}
+      {{#if link-customizations}}
+        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+          {{assign 'title' link-label}}
+        {{/if}}
+      {{/if}}
+    {{/if}}
+    {{else if (eq link-type 'External URL')}}
+      {{assign 'link.href' external-url}}
+      {{assign 'title' link-label}}
+    {{/if}}
+
+    {{! Ignore invalid cards, and save valid ones. }}
+    {{#if (and (not (eq link.href '/')) title)}}
+      {{storagePush 'resources.cards' this}}
+    {{/if}}
+
+  {{/each}}
+
+  {{! Update the contact cards data. }}
+  {{assign 'resources.cards' (storageGet 'resources.cards')}}
+
+{{/if}}
+
 <div class="research-help-page">
   <header class="research-help-page-header"></header>
-  {{> organisms-main type="research-help-page" classes="research-help-page-main"}}
+  <div class="research-help-page-main">
+
+    {{#extend 'organisms-main' type='research-help-page' classes=''}}
+      {{#content 'section-main-body'}}
+        {{> compounds-blocks}}
+      {{/content}}
+    {{/extend}}
+
+    {{#if (and resources (gt (length resources.cards) 0))}}
+    {{#extend 'organisms-minor' theme='dark' heading=resources.heading}}
+      {{#content 'section-minor-body'}}
+        {{> compounds-cards card-type='library-guide' cards=resources.cards}}
+      {{/content}}
+    {{/extend}}
+    {{/if}}
+
+    {{#if (and contacts (gt (length contacts.cards) 0))}}
+    {{#extend 'organisms-minor' theme='light' heading=contacts.heading}}
+    {{#content 'section-minor-body'}}
+      {{> compounds-cards card-type='contact' cards=contacts.cards}}
+    {{/content}}
+    {{/extend}}
+    {{/if}}
+
+  </div>
   <footer class="research-help-page-footer"></footer>
 </div>

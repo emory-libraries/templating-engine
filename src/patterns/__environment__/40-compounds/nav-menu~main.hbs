@@ -1,0 +1,134 @@
+<eul-nav-menu inline-template>
+  <nav class="nav-menu-main">
+
+    {{! Toggles }}
+    {{#each navigation}}{{> atoms-input-toggle id=(combine 'nav-menu-main--' (dashcase (lowercase label)))}}{{/each}}
+    {{#each utilities}}{{> atoms-input-toggle id=(combine 'nav-menu-main--' (dashcase (lowercase label)))}}{{/each}}
+
+    {{! Desktop }}
+    <nav class="nav-menu-main-nav -desktop">
+
+      {{#each navigation}}
+        <div class="nav-menu-main-nav-group" @mouseover='open' @mouseleave='close'>
+          {{> atoms-nav-button-main classes='' mouseover=false mouseleave=false}}
+          {{> compounds-subnav-menu-main heading=label navigation=subnavigation mouseover=false mouseleave=false}}
+        </div>
+      {{/each}}
+
+    </nav>
+
+    {{! Tablet }}
+    <nav class="nav-menu-main-nav -tablet">
+
+      {{#each navigation}}
+        {{> atoms-nav-button-main classes='' mouseover='open' mouseleave='close'}}
+        {{> compounds-subnav-menu-main heading=label navigation=subnavigation mouseover='open' mouseleave='close'}}
+      {{/each}}
+
+    </nav>
+
+    {{! Mobile }}
+    <nav class="nav-menu-main-nav -mobile">
+
+      {{> atoms-input-toggle id='nav-menu-main--mobile-toggle' classes=''}}
+
+      <div class="nav-menu-main-nav-toggles">
+        {{> atoms-nav-button-toggle icon='material-menu' for-suffix='mobile-toggle' label='Menu' classes='-open'}}
+        {{> atoms-nav-button-toggle icon='material-close' for-suffix='mobile-toggle' label='Close' classes='-close'}}
+      </div>
+
+      <div class="nav-menu-main-nav-menu">
+
+        {{> compounds-nav-menu-utility mobile-only=true}}
+
+        <div class="nav-menu-main-nav-menu-area">
+          {{#each navigation}}
+            {{> atoms-nav-button-main classes='' mouseover=false mouseleave=false}}
+            {{> compounds-subnav-menu-main heading=label navigation=subnavigation mouseover=false mouseleave=false}}
+          {{/each}}
+          {{#each utilities}}
+            {{#unless subnavigation}}
+              {{> atoms-nav-button-main classes='' link=true}}
+            {{else}}
+              {{> atoms-nav-button-main classes='' mouseover=false mouseleave=false}}
+              {{> compounds-subnav-menu-main heading=label navigation=subnavigation mouseover=false mouseleave=false}}
+            {{/unless}}
+          {{/each}}
+        </div>
+
+        {{#with button}}{{> atoms-nav-button-librarian classes=''}}{{/with}}
+
+      </div>
+
+    </nav>
+
+  </nav>
+</eul-nav-menu>
+
+<noscript>
+
+  <nav class="nav-menu-main">
+
+    {{! Toggles }}
+    {{#each navigation}}{{> atoms-input-toggle id=(combine 'nav-menu-main--' (dashcase (lowercase label)))}}{{/each}}
+    {{#each utilities}}{{> atoms-input-toggle id=(combine 'nav-menu-main--' (dashcase (lowercase label)))}}{{/each}}
+
+    {{! Desktop }}
+    <nav class="nav-menu-main-nav -desktop">
+
+      {{#each navigation}}
+        <div class="nav-menu-main-nav-group">
+          {{> atoms-nav-button-main}}
+          {{> compounds-subnav-menu-main heading=label navigation=subnavigation noscript=true}}
+        </div>
+      {{/each}}
+
+    </nav>
+
+    {{! Tablet }}
+    <nav class="nav-menu-main-nav -tablet">
+
+      {{#each navigation}}
+        {{> atoms-nav-button-main classes=''}}
+        {{> compounds-subnav-menu-main heading=label navigation=subnavigation noscript=true}}
+      {{/each}}
+
+    </nav>
+
+    {{! Mobile }}
+    <nav class="nav-menu-main-nav -mobile">
+
+      {{> atoms-input-toggle id='nav-menu-main--mobile-toggle' classes=''}}
+
+      <div class="nav-menu-main-nav-toggles">
+        {{> atoms-nav-button-toggle icon='material-menu' for-suffix='mobile-toggle' label='Menu' classes='-open'}}
+        {{> atoms-nav-button-toggle icon='material-close' for-suffix='mobile-toggle' label='Close' classes='-close'}}
+      </div>
+
+      <div class="nav-menu-main-nav-menu">
+
+        {{> compounds-nav-menu-utility mobile-only=true}}
+
+        <div class="nav-menu-main-nav-menu-area">
+          {{#each navigation}}
+            {{> atoms-nav-button-main classes='' mouseover=false mouseleave=false}}
+            {{> compounds-subnav-menu-main heading=label navigation=subnavigation mouseover=false mouseleave=false noscript=true}}
+          {{/each}}
+          {{#each utilities}}
+            {{#unless subnavigation}}
+              {{> atoms-nav-button-main classes='' link=true}}
+            {{else}}
+              {{> atoms-nav-button-main classes='' mouseover=false mouseleave=false}}
+              {{> compounds-subnav-menu-main heading=label navigation=subnavigation mouseover=false mouseleave=false noscript=true}}
+            {{/unless}}
+          {{/each}}
+        </div>
+
+        {{#with button}}{{> atoms-nav-button-librarian classes=''}}{{/with}}
+
+      </div>
+
+    </nav>
+
+  </nav>
+</noscript>

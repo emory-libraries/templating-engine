@@ -8,25 +8,34 @@
     {{#if (and link-type (eq link-type 'Cascade Page'))}}
       {{assign 'title' cascade-page.title}}
       {{assign 'content' cascade-page.description}}
-      {{assign 'button' (objectify href=cascade-page.path label=(default button-label 'Learn More'))}}
+      {{assign 'buttons.0.href' cascade-page.path}}
+      {{assign 'buttons.0.label' (default button-label 'Learn More')}}
+      {{#if link-customizations}}
+        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+          {{assign 'title' link-label}}
+        {{/if}}
+        {{#if (not (eq (indexOf link-customizations 'Description') false))}}
+          {{assign 'content' link-description}}
+        {{/if}}
+      {{/if}}
     {{else if (and link-type (eq link-type 'Cascade File'))}}
-      {{assign 'title' link-label}}
-      {{assign 'content' link-description}}
-      {{assign 'button' (objectify href=cascade-file.path label=(default button-label 'Learn More'))}}
+      {{assign 'title' (stem cascade-file.display-name)}}
+      {{assign 'content' null}}
+      {{assign 'buttons.0.href' cascade-file.path}}
+      {{assign 'buttons.0.label' (default button-label 'Learn More')}}
+      {{#if link-customizations}}
+        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+          {{assign 'title' link-label}}
+        {{/if}}
+        {{#if (not (eq (indexOf link-customizations 'Description') false))}}
+          {{assign 'content' link-description}}
+        {{/if}}
+      {{/if}}
     {{else if (and link-type (eq link-type 'External URL'))}}
       {{assign 'title' link-label}}
       {{assign 'content' link-description}}
-      {{assign 'button' (objectify href=external-url label=(default button-label 'Learn More'))}}
-    {{/if}}
-
-    {{! Override the panel title and/or content if applicable. }}
-    {{#if (and (and link-type (eq link-type 'Cascade Page')) link-customizations)}}
-      {{#contains link-customizations 'Label'}}
-        {{#if link-label}}{{assign 'title' link-label}}{{/if}}
-      {{/contains}}
-      {{#contains link-customizations 'Description'}}
-        {{#if link-description}}{{assign 'content' link-description}}{{/if}}
-      {{/contains}}
+      {{assign 'buttons.0.href' external-url}}
+      {{assign 'buttons.0.label' (default button-label 'Learn More')}}
     {{/if}}
 
     {{! Set the panel's ID, and save it to the index. }}
@@ -71,19 +80,22 @@
   {{#if (and link-type (eq link-type 'Cascade Page'))}}
     {{assign 'label' cascade-page.title}}
     {{assign 'href' cascade-page.path}}
+    {{#if link-customizations}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+        {{assign 'label' link-label}}
+      {{/if}}
+    {{/if}}
   {{else if (and link-type (eq link-type 'Cascade File'))}}
-    {{assign 'label' link-label}}
+    {{assign 'label' (stem cascade-file.display-name)}}
     {{assign 'href' cascade-file.path}}
+    {{#if link-customizations}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+        {{assign 'label' link-label}}
+      {{/if}}
+    {{/if}}
   {{else if (and link-type (eq link-type 'External URL'))}}
     {{assign 'label' link-label}}
     {{assign 'href' external-url}}
-  {{/if}}
-
-  {{! Override the button label if applicable. }}
-  {{#if (and (and link-type (eq link-type 'Cascade Page')) link-customizations)}}
-    {{#contains link-customizations 'Label'}}
-      {{#if link-label}}{{assign 'label' link-label}}{{/if}}
-    {{/contains}}
   {{/if}}
 
   {{! Save the updated button to storage. }}

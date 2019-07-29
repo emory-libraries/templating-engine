@@ -1,12 +1,26 @@
 {{#unless librarian}}
-  <label id="{{default id (append 'nav-button--' (hyphenate (lowercase label)))}}"
-         for="{{default for (append 'nav-menu--' (hyphenate (lowercase label)))}}"
-         class="nav-button{{#if utility}} -utility{{/if}}{{#if flyout}} -flyout{{/if}}{{#if search}} -search{{/if}}{{#if toggle}} -toggle{{/if}}{{#if (or hover focus)}} is-hover{{/if}}{{#if active}} is-active{{/if}}{{#if disabled}} is-disabled{{/if}}"{{#if disabled}} disabled{{/if}} tabindex="0">
-    {{#if (or (and (or flyout toggle) icon) search) }}{{> tokens-icon id=icon}}{{/if}}
-    <span class="nav-button-label">{{label}}</span>
-  </label>
+  {{#if (and link (not toggle))}}
+    <a href="{{href}}" class="nav-button{{#if utility}} -utility{{/if}}{{#if flyout}} -flyout{{/if}}{{#if search}} -search{{/if}}{{#if (or hover focus)}} is-hover{{/if}}{{#if active}} is-active{{/if}}{{#if disabled}} is-disabled{{/if}}{{#if classes}} {{classes}}{{/if}}"
+      tabindex="0"
+      {{#if disabled}} disabled{{/if}}
+      {{#if mouseover}}@mouseover.stop="{{mouseover}}"{{/if}}
+      {{#if mouseleave}}@mouseleave.stop="{{mouseleave}}"{{/if}}>
+      {{#if (or (and (or flyout toggle) icon) search) }}{{> tokens-icon id=icon}}{{/if}}
+      <span class="nav-button-label">{{label}}</span>
+    </a>
+  {{else}}
+    <label for="{{#if (or utility flyout)}}{{default for (combine 'nav-menu-utility--' (dashcase (lowercase (default for-suffix label))))}}{{else}}{{default for (combine 'nav-menu-main--' (dashcase (lowercase (default for-suffix label))))}}{{/if}}"
+           class="nav-button{{#if utility}} -utility{{/if}}{{#if flyout}} -flyout{{/if}}{{#if search}} -search{{/if}}{{#if toggle}} -toggle{{/if}}{{#if (or hover focus)}} is-hover{{/if}}{{#if active}} is-active{{/if}}{{#if disabled}} is-disabled{{/if}}{{#if classes}} {{classes}}{{/if}}"
+           tabindex="0"
+           {{#if disabled}} disabled{{/if}}
+           {{#if mouseover}}@mouseover.stop="{{mouseover}}"{{/if}}
+           {{#if mouseleave}}@mouseleave.stop="{{mouseleave}}"{{/if}}>
+      {{#if (or (and (or flyout toggle) icon) search) }}{{> tokens-icon id=icon}}{{/if}}
+      <span class="nav-button-label">{{label}}</span>
+    </label>
+  {{/if}}
 {{else}}
-  <a href="{{href}}" target="{{default target '_self'}}" class="nav-button -librarian{{#if (or hover focus)}} is-hover{{/if}}{{#if active}} is-active{{/if}}{{#if disabled}} is-disabled{{/if}}"{{#if disabled}} disabled{{/if}}>
+  <a href="{{href}}" target="{{default target '_self'}}" class="nav-button -librarian{{#if (or hover focus)}} is-hover{{/if}}{{#if active}} is-active{{/if}}{{#if disabled}} is-disabled{{/if}}{{#if classes}} {{classes}}{{/if}}"{{#if disabled}} disabled{{/if}}>
     {{#if icon }}{{> tokens-icon id=icon}}{{/if}}
     <span class="nav-button-label">{{label}}</span>
   </a>

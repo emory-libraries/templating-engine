@@ -87,7 +87,7 @@ class Date {
   
   // Parses a string to a date.
   public static function parse( $string ) {
-    
+
     // Get today's date for use as a reference.
     $today = new DateTime();
     
@@ -98,7 +98,7 @@ class Date {
       
       return $matches;
       
-    }, self::$patterns), function($matches) {
+    }, Date::$patterns), function($matches) {
       
       return count($matches) > 0;
       

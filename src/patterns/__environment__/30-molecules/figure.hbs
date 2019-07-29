@@ -1,4 +1,11 @@
 <figure class="figure">
   {{#with image}}{{> atoms-image alt=(default alt ../caption) decorative=false classes="figure-image"}}{{/with}}
-  <figcaption class="figure-caption">{{> tokens-text type='caption' text=caption}}</figcaption>
+  {{#if (or caption credit)}}
+    <figcaption class="figure-caption">
+      {{#if credit}}
+        {{assign 'credit' (combine 'Photo by ' credit '.')}}
+      {{/if}}
+      {{> tokens-text type='caption' text=(combine caption credit)}}
+    </figcaption>
+  {{/if}}
 </figure>

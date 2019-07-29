@@ -1,3 +1,9 @@
+{{#if href}}
+  {{#if (and (startsWithSubstring href '/') (not (startsWithSubstring href '//')))}}
+    {{assign 'href' (combine (baseUrl) href)}}
+  {{/if}}
+{{/if}}
+
 <a href="{{href}}"
    role="button"
    class="button{{#if hollow}} -hollow{{/if}}{{#if pill}} -pill{{/if}}{{#if uncapitalize}} -uncapitalize{{/if}}{{#if (or hover focus)}} is-hover{{/if}}{{#if active}} is-active{{/if}}{{#if disabled}} is-disabled{{/if}}{{#if classes}} {{classes}}{{/if}}"{{#if disabled}} disabled{{/if}}

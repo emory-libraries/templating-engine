@@ -1,74 +1,43 @@
 <?php
 
-// Return the prerender callback.
-return function() {
+// Locate the indexed routes file, and read it.
+$routes = (isset(PATHS['routes']) and file_exists(PATHS['routes'])) ? json_decode(file_get_contents(PATHS['routes']), true) : false;
 
-  // Locate the indexed routes file, and read it.
-  $routes = (include CONFIG['engine']['cache']['index'].'/routes.php');
+// Exit if no routes were found.
+if( !$routes or empty($routes) ) exit();
 
-  // Initialize curl.
-  $curl = curl_multi_init();
+// Initialize curl.
+$curl = curl_init();
 
-  // Initialize a set of curl requests and responses.
-  $requests = [];
-  $responses = [];
+// Initialize a set of curl responses.
+$responses = [];
 
-  // Build curl requests.
-  foreach( $routes['data'] as $i => $route ) {
+// Build and execute curl requests.
+foreach( $routes['data'] as $i => $route ) {
 
-    // Get the route's endpoint and URL.
-    $endpoint = is_array($route->endpoint) ? $route->endpoint[1] : $route->endpoint;
-    $url = is_array($route->url) ? $route->url[1] : $route->url;
+  // Get the route's endpoint and URL.
+  $endpoint = is_array($route['endpoint']) ? $route['endpoint'][1] : $route['endpoint'];
+  $url = is_array($route['url']) ? $route['url'][1] : $route['url'];
 
-    // Save the URL.
-    $responses[$i] = ['url' => $url];
+  // Configure the curl request.
+  curl_setopt($curl, CURLOPT_URL, $url);
+  curl_setopt($curl, CURLOPT_NOBODY, true);
+  curl_setopt($curl, CURLOPT_HEADER, true);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-    // Initialize the request.
-    $requests[$i] = curl_init();
+  // Execute the curl request, and get the response.
+  $response = curl_exec($curl);
 
-    // Configure the request.
-    curl_setopt($requests[$i], CURLOPT_URL, $url);
-    curl_setopt($requests[$i], CURLOPT_NOBODY, true);
-    curl_setopt($requests[$i], CURLOPT_HEADER, true);
-    curl_setopt($requests[$i], CURLOPT_RETURNTRANSFER, true);
+  // Save the curl response.
+  $responses[$i] = [
+    'url' => $url,
+    'endpoint' => $route['endpoint'],
+    'response' => trim($response)
+  ];
 
-    // Queue the curl request.
-    curl_multi_add_handle($curl, $requests[$i]);
-
-  }
-
-  // Initialize an index.
-  $index = null;
-
-  // Process all curl requests.
-  do { 
-
-    // Execute all curl requests.
-    curl_multi_exec($curl, $index);
-
-  }  while( $index > 0 );
-
-  // Capture the responses.
-  foreach($requests as $i => $response) {
-
-    // Initialize the responsei if not already initialized.
-    if( !isset($responses[$i]) or !is_array($responses[$i]) ) $responses[$i] = [];
-
-    // Save the response.
-    $responses[$i]['endpoint'] = $routes['data'][$i]->endpoint;
-    $responses[$i]['response'] = trim(curl_multi_getcontent($response));
-
-    // Remove the request from the queue after its completed.
-    curl_multi_remove_handle($curl, $response);
-
-  }
-
-  // Close curl.
-  curl_multi_close($curl);
-
-  // Return the responses.
-  return $responses;
-  
 }
+
+// Return the responses.
+return $responses;
 
 ?>

@@ -1,0 +1,289 @@
+{{! Set parking link. }}
+{{#if (eq parking.link.link-type 'Cascade Page')}}
+  {{assign 'parking.link.href' (combine (baseUrl) parking.link.cascade-page.path)}}
+  {{assign 'parking.link.label' parking.link.cascade-page.name}}
+  {{#if parking.link.link-customizations}}
+    {{#if (not (eq (indexOf parking.link.link-customizations 'Description') false))}}
+      {{assign 'parking.link.label' parking.link.link-description}}
+    {{/if}}
+    {{#if (not (eq (indexOf parking.link.link-customizations 'Label') false))}}
+      {{assign 'parking.link.label' parking.link.link-label}}
+    {{/if}}
+  {{/if}}
+{{else if (eq parking.link.link-type 'Cascade File')}}
+  {{assign 'parking.link.href' (combine (baseUrl) parking.link.cascade-file.path)}}
+  {{assign 'parking.link.label' (stem parking.link.display-name)}}
+  {{#if parking.link.link-customizations}}
+    {{#if (not (eq (indexOf parking.link.link-customizations 'Description') false))}}
+      {{assign 'parking.link.label' parking.link.link-description}}
+    {{/if}}
+    {{#if (gte (indexOf parking.link.link-customization 'Label') 0)}}
+      {{assign 'parking.link.label' parking.link.link-label}}
+    {{/if}}
+  {{/if}}
+{{else if (eq parking.link.link-type 'External URL')}}
+  {{assign 'parking.link.href' parking.link.external-url}}
+  {{#unless (and parking.link.link-label (not (eq parking.link.link-label '')))}}
+    {{assign 'parking.link.label' parking.link.link-description}}
+  {{else}}
+    {{assign 'parking.link.label' parking.link.link-label}}
+  {{/unless}}
+{{/if}}
+
+{{! Set visitation link. }}
+{{#if (eq visitation.link.link-type 'Cascade Page')}}
+  {{assign 'visitation.link.href' (combine (baseUrl) visitation.link.cascade-page.path)}}
+  {{assign 'visitation.link.label' visitation.link.cascade-page.name}}
+  {{#if visitation.link.link-customizations}}
+    {{#if (not (eq (indexOf visitation.link.link-customizations 'Description') false))}}
+      {{assign 'visitation.link.label' visitation.link.link-description}}
+    {{/if}}
+    {{#if (not (eq (indexOf visitation.link.link-customizations 'Label') false))}}
+      {{assign 'visitation.link.label' visitation.link.link-label}}
+    {{/if}}
+  {{/if}}
+{{else if (eq visitation.link.link-type 'Cascade File')}}
+  {{assign 'visitation.link.href' (combine (baseUrl) visitation.link.cascade-file.path)}}
+  {{assign 'visitation.link.label' (stem visitation.link.display-name)}}
+  {{#if visitation.link.link-customizations}}
+    {{#if (not (eq (indexOf visitation.link.link-customizations 'Description') false))}}
+      {{assign 'visitation.link.label' visitation.link.link-description}}
+    {{/if}}
+    {{#if (not (eq (indexOf visitation.link.link-customizations 'Label') false))}}
+      {{assign 'visitation.link.label' visitation.link.link-label}}
+    {{/if}}
+  {{/if}}
+{{else if (eq visitation.link.link-type 'External URL')}}
+  {{assign 'visitation.link.href' visitation.link.external-url}}
+  {{#unless (and visitation.link.link-label (not (eq visitation.link.link-label '')))}}
+    {{assign 'visitation.link.label' visitation.link.link-description}}
+  {{else}}
+    {{assign 'visitation.link.label' visitation.link.link-label}}
+  {{/unless}}
+{{/if}}
+
+{{! Format the start date for display. }}
+{{#if date.start.date}}
+  {{#if date.start.month}}
+    {{assign 'date.start.display' (moment date.start.date 'MMMM YYYY')}}
+  {{else}}
+    {{assign 'date.start.display' (moment date.start.date 'MMMM D, YYYY')}}
+  {{/if}}
+{{else}}
+  {{assign 'date.start.display' null}}
+{{/if}}
+
+{{! Format the end date for display. }}
+{{#if date.end.date}}
+  {{#if date.end.month}}
+    {{assign 'date.end.display' (moment date.end.date 'MMMM YYYY')}}
+  {{else}}
+    {{assign 'date.end.display' (moment date.end.date 'MMMM D, YYYY')}}
+  {{/if}}
+{{else}}
+  {{assign 'date.end.display' null}}
+{{/if}}
+
+{{! Format the date range for display. }}
+{{#if (and date.start.date date.end.date)}}
+  {{#if (momentIsSame date.start.date date.end.date)}}
+    {{assign 'date.display' date.start.display}}
+    {{#if (and date.start.time date.end.time)}}
+      {{assign 'date.display' (combine date.display ' ' (moment date.start.time 'h:mm A') ' - ' (moment date.end.time 'h:mm A'))}}
+    {{else}}
+      {{#if if date.start.time}}
+        {{assign 'date.display' (combine date.display ' ' (moment date.start.time 'h:mm A'))}}
+      {{else}}
+        {{#if date.end.time}}
+          {{assign 'date.display' (combine date.display ' Until' (moment date.end.time 'h:mm A'))}}
+        {{/if}}
+      {{/if}}
+    {{/if}}
+  {{else}}
+    {{assign 'date.display' (combine date.start.display ' - ' date.end.display)}}
+  {{/if}}
+{{else if date.start.date}}
+  {{#if (momentIsAfterToday date.start.date)}}
+    {{assign 'date.display' (combine 'Opens ' date.start.display)}}
+  {{else}}
+    {{assign 'date.display' (combine 'Since ' date.start.display)}}
+  {{/if}}
+  {{#if date.start.time}}
+    {{assign 'date.display' (combine date.display ' ' (moment date.start.time 'h:mm A'))}}
+  {{/if}}
+{{else if date.end.date}}
+  {{assign 'date.display' (combine 'Through ' date.end.display)}}
+  {{#if date.end.time}}
+    {{assign 'date.display' (combine date.display ' ' (moment date.end.time 'h:mm A'))}}
+  {{/if}}
+{{else}}
+  {{assign 'date.display' 'TBD'}}
+{{/if}}
+
+{{! Format events. }}
+{{#if events}}
+
+  {{! Format each event. }}
+  {{#each events}}
+
+    {{! Format the start date for display. }}
+    {{#if date.start.date}}
+      {{#if date.start.month}}
+        {{assign 'date.start.display' (moment date.start.date 'MMMM YYYY')}}
+      {{else}}
+        {{assign 'date.start.display' (moment date.start.date 'MMMM D, YYYY')}}
+      {{/if}}
+    {{else}}
+      {{assign 'date.start.display' null}}
+    {{/if}}
+
+    {{! Format the end date for display. }}
+    {{#if date.end.date}}
+      {{#if date.end.month}}
+        {{assign 'date.end.display' (moment date.end.date 'MMMM YYYY')}}
+      {{else}}
+        {{assign 'date.end.display' (moment date.end.date 'MMMM D, YYYY')}}
+      {{/if}}
+    {{else}}
+      {{assign 'date.end.display' null}}
+    {{/if}}
+
+    {{! Format the date range for display. }}
+    {{#if (and date.start.date date.end.date)}}
+      {{#if (momentIsSame date.start.date date.end.date)}}
+        {{assign 'date.display' date.start.display}}
+        {{#if (and date.start.time date.end.time)}}
+          {{assign 'date.display' (combine date.display ' ' (moment date.start.time 'h:mm A') ' - ' (moment date.end.time 'h:mm A'))}}
+        {{else}}
+          {{#if if date.start.time}}
+            {{assign 'date.display' (combine date.display ' ' (moment date.start.time 'h:mm A'))}}
+          {{else}}
+            {{#if date.end.time}}
+              {{assign 'date.display' (combine date.display ' Until' (moment date.end.time 'h:mm A'))}}
+            {{/if}}
+          {{/if}}
+        {{/if}}
+      {{else}}
+        {{assign 'date.display' (combine date.start.display ' - ' date.end.display)}}
+      {{/if}}
+
+    {{else if date.start.date}}
+      {{#if (momentIsAfterToday date.start.date)}}
+        {{assign 'date.display' (combine 'Opens ' date.start.display)}}
+      {{else}}
+        {{assign 'date.display' (combine 'Since ' date.start.display)}}
+      {{/if}}
+      {{#if date.start.time}}
+        {{assign 'date.display' (combine date.display ' ' (moment date.start.time 'h:mm A'))}}
+      {{/if}}
+
+    {{else if date.end.date}}
+      {{assign 'date.display' (combine 'Through ' date.end.display)}}
+      {{#if date.end.time}}
+        {{assign 'date.display' (combine date.display ' ' (moment date.end.time 'h:mm A'))}}
+      {{/if}}
+    {{else}}
+      {{assign 'date.display' 'TBD'}}
+    {{/if}}
+
+    {{! Save the event. }}
+    {{storagePush 'events' this}}
+
+  {{/each}}
+
+  {{! Update events. }}
+  {{assign 'events' (storageGet 'events')}}
+
+{{/if}}
+
+{{! Format extras. }}
+{{#each extras.content}}
+
+  {{! Remove any empty extra data. }}
+  {{#unless (or (eq heading '') (not (isString text)) (eq text ''))}}
+    {{storagePush 'extras' this}}
+  {{/unless}}
+
+{{/each}}
+
+{{! Save extras. }}
+{{assign 'extras.content' (storageGet 'extras')}}
+
+<div class="exhibition-page">
+  <header class="exhibition-page-header"></header>
+  <div class="exhibition-page-main">
+
+    {{> organisms-intro-hero background-image=hero}}
+
+    {{#extend 'organisms-main' type='exhibition-page'}}
+
+      {{#content 'section-main-subtitle'}}
+        <span class="exhibition-page-main-context">
+          {{date.display}} | {{location.building}}{{#if location.room}}, {{location.room}}{{/if}}{{#if location.level}}, {{location.level}}{{/if}}
+        </span>
+        {{#if quote}}<p class="exhibition-page-main-quote">&ldquo;{{trimSubstring quote '"'}}&rdquo;</p>{{/if}}
+      {{/content}}
+
+      {{#content 'section-main-body'}}
+        {{#if this.markdown}}{{{markdown details}}}{{else}}{{{details}}}{{/if}}
+      {{/content}}
+
+      {{#content 'section-main-divider'}}
+        <div class="exhibition-page-main-divider"></div>
+      {{/content}}
+
+      {{#content 'section-main-sidebar'}}
+
+        {{! Display the image if available. }}
+        {{#if image}}{{> molecules-figure}}{{/if}}
+
+        {{! Display the date. }}
+        <span class="exhibition-page-main-date">{{date.display}}</span>
+
+        {{! Display visitor information. }}
+        <div class="exhibition-page-main-sidenote">
+          <h6 class="exhibition-page-main-sidenote-heading">Visitor Information</h6>
+          <p class="exhibition-page-main-sidenote-content">
+            The exhibition is located in the {{#if location.map}}<a href="{{location.map}}" class="link">{{location.building}}</a>{{else}}{{location.building}}{{/if}}{{#if location.room}} {{location.room}}{{/if}}{{#if location.level}} on {{location.level}}{{/if}}.
+          </p>
+          {{> atoms-link classes="exhibition-page-main-sidenote-link" href=visitation.link.href label=visitation.link.label}}
+        </div>
+
+        {{! Display parking information. }}
+        <div class="exhibition-page-main-sidenote">
+          <p class="exhibition-page-main-sidenote-content">
+            Parking is available in the {{parking.location}}.
+          </p>
+          {{> atoms-link classes="exhibition-page-main-sidenote-link" href=parking.link.href label=parking.link.label}}
+        </div>
+
+        {{! Display contact information. }}
+        {{#if contact}}
+          <div class="exhibition-page-main-sidenote">
+            <p class="exhibition-page-main-sidenote-content">
+              For more information about the exhibit...
+            </p>
+            {{> atoms-link classes="exhibition-page-main-sidenote-link" href=(combine 'mailto:' contact) label=contact}}
+          </div>
+        {{/if}}
+
+      {{/content}}
+
+      {{#content 'section-main-other'}}
+        {{#if events}}
+        {{> compounds-cards columns=(objectify s=1 m=1 l=1 xl=1)
+                            classes="section-main-content"
+                            cards=events
+                            card-type='listing'}}
+        {{/if}}
+      {{/content}}
+
+    {{/extend}}
+
+    {{#if (or (and sponsor (not (eq sponsor ''))) (gt (length extras.content) 0))}}
+    {{> organisms-deep-dive heading=(default extras.heading 'Dive Deeper') columns=extras.content footer=(objectify text=sponsor)}}
+    {{/if}}
+
+  </div>
+  <footer class="exhibition-page-footer"></footer>
+</div>

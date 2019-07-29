@@ -1,0 +1,15 @@
+<div class="grouping-files">
+  {{> tokens-heading level=3 alternate=true icon=false classes="grouping-files-heading"}}
+  {{#block 'grouping-files-content'}}
+    <ul class="list -files">
+      {{#each items}}
+      <li class="list-item">
+        <a href="{{link.href}}" class="link" target="_self">
+          {{#if ../icon}}{{> tokens-icon id=../icon}}{{/if}}
+          {{title}}
+        </a>
+      </li>
+      {{/each}}
+    </ul>
+  {{/block}}
+</div>
