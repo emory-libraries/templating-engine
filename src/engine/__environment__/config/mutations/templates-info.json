@@ -6,6 +6,8 @@
     "subtitle": "introduction",
     "blocks": "content-block",
     "blocks.@.type": "blocks.@.block-type",
+    "blocks.@.level": "blocks.@.heading-level",
+    "blocks.@.heading": "blocks.@.heading-label",
     "blocks.@.image.src": "blocks.@.image.image-file.path",
     "contacts": "link-list-contacts",
     "contacts.cards": "contacts.link-contact",
@@ -24,28 +26,28 @@
   "add": {},
   "evaluate": [
     {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 2'",
+      "target": "blocks.@.level",
+      "condition": "blocks.@.level == 'Heading Level 2'",
       "value": 2
     },
     {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 3'",
+      "target": "blocks.@.level",
+      "condition": "blocks.@.level == 'Heading Level 3'",
       "value": 3
     },
     {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 4'",
+      "target": "blocks.@.level",
+      "condition": "blocks.@.level == 'Heading Level 4'",
       "value": 4
     },
     {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 5'",
+      "target": "blocks.@.level",
+      "condition": "blocks.@.level == 'Heading Level 5'",
       "value": 5
     },
     {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 6'",
+      "target": "blocks.@.level",
+      "condition": "blocks.@.level == 'Heading Level 6'",
       "value": 6
     }
   ],

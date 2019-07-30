@@ -1,0 +1,8 @@
+<div class="flow-feed-preview{{#if feature}} has-feature{{/if}}">
+  {{#if feature}}
+    {{#with feature}}{{> molecules-card-listing badge=(default badge 'Featured') classes='flow-feed-preview-feature'}}{{/with}}
+  {{/if}}
+  <div class="flow-feed-preview-feeds">
+    {{#each feeds}}{{> compounds-feed}}{{/each}}
+  </div>
+</div>

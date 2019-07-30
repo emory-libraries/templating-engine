@@ -1,0 +1,9 @@
+<div class="feed">
+  {{> tokens-heading level=3 classes='feed-heading'}}
+  <div class="feed-content">
+    {{#each content}}{{> molecules-feed-item}}{{/each}}
+  </div>
+  {{#if button}}
+    {{#with button}}{{> atoms-button-link classes='feed-button' icon=false}}{{/with}}
+  {{/if}}
+</div>

@@ -4,8 +4,8 @@
 {{! Generate unique IDs for the tab menu items. }}
 {{#each tabs}}
 
-  {{! Generate a unique ID for the tab menu item. }}
-  {{assign 'uid' (combine 'tab--' (dashcase (lowercase label)))}}
+  {{! Generate a unique ID for the tab if not already given. }}
+  {{#if (not this.uid)}}{{assign 'uid' (combine 'tab--' (dashcase (lowercase label)))}}{{/if}}
 
   {{! Save the updated tab menu items. }}
   {{storagePush 'tabs' this}}
@@ -17,20 +17,22 @@
 
 {{! Determine the active tab. }}
 {{#if (gt (length (filterWhere tabs 'selected' true '===')) 0)}}
-  {{assign 'selected' (itemAt (filterWhere tabs 'selected' true) 0)}}
+  {{assign 'selected' (itemAt (filterWhere tabs 'selected' true '===') 0)}}
 {{else}}
   {{assign 'selected' (itemAt tabs 0)}}
 {{/if}}
 
 {{#unless (eq noscript true)}}
-  <eul-tab-menu inline-template :defaults="{
-                                  selected: {
-                                    value: {{JSONstringify selected.value}},
-                                    uid: {{JSONstringify selected.uid}}
-                                  }
-                                }"
-                                :relay="{{#if relay}}{{JSONstringify relay}}{{else}}null{{/if}}"
-                                :uid="{{JSONstringify this.uid}}">
+  <eul-tab-menu inline-template
+                :defaults="{
+                  selected: {
+                    value: {{JSONstringify selected.value}},
+                    uid: {{JSONstringify selected.uid}}
+                  }
+                }"
+                :relay="{{#if relay}}{{JSONstringify relay}}{{else}}null{{/if}}"
+                :uid="{{JSONstringify this.uid}}"
+                v-cloak>
 
     <div>
 
@@ -39,13 +41,9 @@
         {{#each tabs}}
 
           {{! Determine if the tab should be active. }}
-          {{#if (eq ../selected.uid this.uid)}}
-            {{assign 'active' true}}
-          {{else}}
-            {{assign 'active' false}}
-          {{/if}}
+          {{#if (eq ../selected.uid this.uid)}}{{assign 'active' true}}{{else}}{{assign 'active' false}}{{/if}}
 
-          {{> atoms-tab menu=../uid}}
+          {{> atoms-tab menu=../uid search=(default ../search false)}}
 
         {{/each}}
       </div>
@@ -69,17 +67,13 @@
 {{/unless}}
 
 {{#unless (eq noscript true)}}<noscript>{{/unless}}
-  <div class="tab-menu">
+  <div class="tab-menu -noscript{{#if theme}} -{{theme}}{{/if}}">
     {{#each tabs}}
 
-      {{! Determine if the tab should be active. }}
-      {{#if (eq ../selected.uid this.uid)}}
-        {{assign 'active' true}}
-      {{else}}
-        {{assign 'active' false}}
-      {{/if}}
+    {{! Determine if the tab should be active. }}
+    {{#if (eq ../selected.uid this.uid)}}{{assign 'active' true}}{{else}}{{assign 'active' false}}{{/if}}
 
-      {{> atoms-tab noscript=true uid=this.uid group=../uid}}
+      {{> atoms-tab noscript=true uid=this.uid group=../uid search=(default ../search false)}}
 
     {{/each}}
   </div>

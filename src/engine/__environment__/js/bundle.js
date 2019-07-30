@@ -1701,6 +1701,24 @@ Components.register('tab', {
       });
     }
   }
+}); // Register a Branding Footer component.
+
+Components.register('branding-footer', {
+  data: function data() {
+    return {
+      selection: ''
+    };
+  },
+  methods: {
+    redirect: function redirect() {
+      // Ignore empty selections.
+      if (_.isNil(this.selection) || this.selection === '') return; // Get the location of the targeted site.
+
+      var href = "//".concat(this.selection); // Redirect the site to the target location.
+
+      window.location.href = href;
+    }
+  }
 }); // Register a Branding Header component.
 
 Components.register('branding-header', {
