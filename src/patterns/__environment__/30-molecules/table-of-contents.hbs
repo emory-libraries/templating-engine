@@ -1,57 +1,113 @@
-{{> tokens-heading level=2 heading="Table of Contents" toc=false}}
 {{! Build an array of heading blocks }}
 {{#each blocks}}
- {{#if  (eq (dashcase (lowercase type)) 'heading')}}
- {{storagePush 'headings' this}}
- {{/if}}
+
+  {{! Only look for heading blocks. }}
+  {{#if  (eq (dashcase (lowercase type)) 'heading')}}
+
+    {{! Normalize heading properties. }}
+    {{assign 'level' (default level heading-level)}}
+    {{assign 'heading' (default heading heading-label)}}
+    {{assign 'slug' (dashcase (lowercase heading))}}
+
+    {{! Save the heading block. }}
+    {{storagePush 'headingBlocks' this}}
+
+  {{/if}}
+
 {{/each}}
 
-{{assign 'headingBlocks' (storageGet 'headings')}}
+{{! Capture heading blocks. }}
+{{assign 'headingBlocks' (storageGet 'headingBlocks')}}
 
-{{! Open an ordered list }}
-<ol class="table-of-contents {{classes}}">
-  {{! Loop through headings }}
-  {{#each headingBlocks}}
-    {{! Capture next and prev index values}}
-    {{#if (isFalsey level)}}
-    {{assign 'level' heading-level}}
-    {{/if}}
-    {{#if (isFalsey heading)}}
-    {{assign 'heading' heading-label}}
-    {{/if}}
-    {{assign 'nextIndex' (add @index 1)}}
-    {{assign 'prevIndex' (subtract @index 1)}}
+{{! Only render the table of contents if heading blocks were found. }}
+{{#if (gt (length headingBlocks) 0)}}
+<div class="table-of-contents">
 
-    {{! Capture the data for the next heading }}
-    {{assign 'nextHeading' (itemAt ../headingBlocks nextIndex)}}
+  {{! Display a table of contents heading. }}
+  {{#if (not (eq toc true))}}
+    {{> tokens-heading level=2 heading=toc toc=false classes='table-of-contents-heading'}}
+  {{else}}
+    {{> tokens-heading level=2 heading="Table of Contents" toc=false classes='table-of-contents-heading'}}
+  {{/if}}
 
-    {{#if (isFalsey nextHeading.level)}}
-    {{assign 'nextHeading.level' nextHeading.heading-level}}
-    {{/if}}
-    {{! Write the list item for link to this heading along with it's anchor slug for the href }}
-    <li>
-    <a href="#{{dashcase (lowercase heading)}}">{{heading}}</a>
+  {{! Display the table of contents. }}
+  <ol class="table-of-contents-list{{#if classes}} {{classes}}{{/if}}">
 
-    {{#if (or (lte nextHeading.level level) (isFalsey nextHeading.level)) }}
-      {{! If the next heading is higher level or same level as this one, or if it's the last heading, close the li }}
-      </li>
-    {{/if}}
-    {{#if (gt nextHeading.level level)}}
-      {{! If the next heading is lower level than this one, open a new ol }}
-      <ol>
-    {{/if}}
-    {{! Close sublists based on difference of heading levels }}
-    {{#if (or (lt nextHeading.level level) (isFalsey nextHeading.level) )}}
-      {{#if (or (eq nextHeading.level (subtract level 1)) (and (eq nextHeading.level null) (eq level 3))) }}
-        </ol></li>
-      {{else if (or (eq nextHeading.level (subtract level 2)) (and (isFalsey nextHeading.level) (eq level 4)))}}
-        </ol></li></ol></li>
-      {{else if (or (eq nextHeading.level (subtract level 3)) (and (isFalsey nextHeading.level) (eq level 5)))}}
-        </ol></li></ol></li></ol></li>
-      {{else if (or (eq nextHeading.level (subtract level 4)) (and (isFalsey nextHeading.level) (eq level 6)))}}
-        </ol></li></ol></li></ol></li></ol></li>
+    {{! Initialize the default nesting level. }}
+    {{storageSet 'nesting' 0}}
+
+    {{! Loop through the heading blocks. }}
+    {{#each headingBlocks}}
+
+      {{! Capture the next and previous headings. }}
+      {{#if @first}}
+        {{assign 'previous' false}}
+      {{else}}
+        {{assign 'previous' (itemAt ../headingBlocks (subtract @index 1))}}
       {{/if}}
-    {{/if}}
-  {{/each}}
-</ol>
-{{>atoms-rule}}
+      {{#if @last}}
+        {{assign 'next' false}}
+      {{else}}
+        {{assign 'next' (itemAt ../headingBlocks (add @index 1))}}
+      {{/if}}
+
+      {{! Capture the current nesting level. }}
+      {{assign 'nesting' (storageGet 'nesting')}}
+
+      {{! Add a table of contents entry for the current heading. }}
+      <li>
+
+        {{! Create an internal link to the heading's anchor point. }}
+        {{> atoms-link href=(combine '#' slug) label=heading classes='' icon=false}}
+
+        {{! If a next heading exists, then look for nested headings. }}
+        {{#if (not (eq next false))}}
+
+          {{! If the next heading level > current heading level, then nest another table of contents. }}
+          {{#if (gt next.level level)}}
+
+            {{! Open a nested table of contents. }}
+            <ol class="table-of-contents-list">
+
+            {{! Increment the nesting level. }}
+            {{assign 'nesting' (add nesting 1)}}
+
+          {{/if}}
+
+          {{! If the next heading level <= current heading level, then close the current entry. }}
+          {{#if (lte next.level level)}}</li>{{/if}}
+
+          {{! Otherwise, if the next heading level < current heading level, then close any nested tables of contents. }}
+          {{#if (lt next.level level)}}
+
+            {{! Close the previously nested table of contents. }}
+            </ol>
+
+            {{! Decrement the nesting level. }}
+            {{assign 'nesting' (subtract nesting 1)}}
+
+          {{/if}}
+
+        {{! Otherwise, close the current entry and any previously unclosed nested tables of contents. }}
+        {{else}}
+
+          {{! Close all nested tables of contents. }}
+          {{#repeat nesting}}</ol></li>{{/repeat}}
+
+          {{! Close the current entry. }}
+          </li>
+
+        {{/if}}
+
+      {{! Allow the nesting level to carryover. }}
+      {{storageSet 'nesting' nesting}}
+
+    {{/each}}
+
+  </ol>
+
+  {{! Add a horizontal rule between the table of contents and actual page content. }}
+  {{> atoms-rule}}
+
+</div>
+{{/if}}

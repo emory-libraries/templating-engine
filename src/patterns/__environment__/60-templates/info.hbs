@@ -84,6 +84,7 @@
 
     {{#extend 'organisms-main' type='info-page' classes='info-page-main'}}
       {{#content 'section-main-body'}}
+        {{#if toc}}{{> molecules-table-of-contents}}{{/if}}
         {{> compounds-blocks }}
       {{/content}}
       {{#content 'section-main-sidebar'}}

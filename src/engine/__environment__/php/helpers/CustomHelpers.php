@@ -14,6 +14,7 @@ class CustomHelpers {
   use CustomHelpers\DateHelpers;
   use CustomHelpers\PassthroughHelpers;
   use CustomHelpers\StorageHelpers;
+  use CustomHelpers\LoopHelpers;
 
 }
 

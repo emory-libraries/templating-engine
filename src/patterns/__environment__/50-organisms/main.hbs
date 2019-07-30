@@ -39,11 +39,8 @@
   {{/inArray}}
 
   <main class="section-main-body">
-    {{#if toc}}
-    {{>molecules-table-of-contents}}
-    {{/if}}
     {{#block 'section-main-body'}}
-    {{>compounds-blocks}}
+      {{> compounds-blocks}}
     {{/block}}
   </main>
 
