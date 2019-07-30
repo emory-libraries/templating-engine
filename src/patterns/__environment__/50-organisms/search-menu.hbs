@@ -1,24 +1,68 @@
-{{!assign 'noscript' true}}
-
 {{! Generate a unique ID for the search box. }}
 {{assign 'searchUID' (uid 'search--')}}
+
+{{! Generate a unique group ID for tabs. }}
+{{assign 'tabUID' (uid 'tab--')}}
+
+{{! Generate unique IDs for tabs. }}
+{{#each tabs}}
+
+  {{! Assign the tab a unique ID based on its value, which should map to a search field. }}
+  {{assign 'uid' (combine 'search-menu-toggle--' (dashcase (lowercase value)))}}
+
+  {{! Add the tabs' unique group ID as the group name. }}
+  {{assign 'group' ../tabUID}}
+
+  {{! Save the updated tab's unique ID. }}
+  {{storagePush 'tabs' this}}
+
+{{/each}}
+
+{{! Update tabs with their unique IDs. }}
+{{assign 'tabs' (storageGet 'tabs')}}
+
+{{! Determine which tab should be selected by default. }}
+{{! NOTE: This is typically handled at the tab menu level, which is fine when JS is enabled, but we need it here for noscript scenarios. }}
+{{#if (gt (length (filterWhere tabs 'selected' true '===')) 0)}}
+  {{assign 'selected' (get 'uid' (itemAt (filterWhere tabs 'selected' true '===') 0))}}
+{{else if (gt (length (filterWhere services 'default' true '===')) 0)}}
+  {{assign 'selected' (combine 'search-menu-toggle--' (get 'id' (itemAt (filterWhere services 'default' true '===') 0)))}}
+{{else}}
+  {{assign 'selected' (get 'uid' (itemAt tabs 0))}}
+{{/if}}
 
 {{! Determine if a search form should be used instead of the default. }}
 {{#if (eq noscript true)}}{{assign 'form' true}}{{/if}}
 
 <div class="search-menu -{{default theme 'dark'}}{{#if home}} -home{{/if}}" data-uid="{{this.uid}}">
+
+  {{! Always add toggles for tabs and search boxes. }}
+  {{! NOTE: This is required to enable noscript functionality. }}
+  {{#each tabs}}
+
+    {{! Determine if the tab should be active. }}
+    {{#if (eq ../selected this.uid)}}{{assign 'active' true}}{{else}}{{assign 'active' false}}{{/if}}
+
+    <input type="radio" class="search-menu-toggle" id="{{this.uid}}" name="{{group}}"{{#if active}} checked{{/if}}>
+
+  {{/each}}
+
   <span class="search-menu-context">{{default context 'Searching:'}}</span>
+
   <div class="search-menu-tabs">
-    {{> compounds-tab-menu theme=(default theme 'dark') relay=searchUID}}
+    {{> compounds-tab-menu theme=(default theme 'dark') relay=searchUID search=true}}
   </div>
+
   <div class="search-menu-search">
     {{#unless home}}
-      {{> atoms-search mode='small' layout=false cancelable=true uid=searchUID}}
+      {{> atoms-search mode='small' layout=false cancel=(objectify label=(default cancel 'Cancel')) uid=searchUID}}
     {{else}}
-      {{> atoms-search mode='big' layout='contained' uid=searchUID}}
+      {{> atoms-search mode='big' layout='contained' cancel=(objectify label=(default cancel 'Cancel')) uid=searchUID}}
     {{/unless}}
   </div>
+
   <div class="search-menu-back">
     {{#with back}}{{> atoms-button-toggle classes='search-menu-back' for=this.uid}}{{/with}}
   </div>
+
 </div>

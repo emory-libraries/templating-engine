@@ -18,7 +18,8 @@
                 isHover: {{default hover false}},
                 isFocus: {{default focus false}}
               }
-            }">
+            }"
+            v-cloak>
 
   <div class="search{{#if mode}} -{{mode}}{{/if}}{{#if (and layout (eq layout 'contained'))}} -contained{{/if}}">
 
@@ -66,7 +67,7 @@
       {{/unless}}
     </a>
 
-    {{#if cancelable}}
+    {{#if cancel}}
     <button class="link search-cancel"
             @click="reset"
             @mousedown.native="cancel.isActive = true"
@@ -85,8 +86,9 @@
                'is-focus': cancel.isFocus,
              }"
              :disabled="cancel.isDisabled"
+             {{#if (eq cancel.reveal true)}}v-show="valid"{{/if}}
              tabindex="0">
-      Clear
+      {{default cancel.label 'Cancel'}}
     </button>
     {{/if}}
 
@@ -99,8 +101,6 @@
 
   <div class="search -form{{#if (and layout (eq layout 'contained'))}} -contained{{/if}}">
   {{#each services as |service|}}
-
-    <input type="radio" name="{{default ../uid ../id}}" id="{{default ../uid ../id}}-{{id}}" class="search-toggle"{{#if service.default}} checked{{/if}}>
 
     <form action="{{../processor}}"
           method="GET"
@@ -126,9 +126,9 @@
              class="button search-button{{#if ../button.disabled}} is-disabled{{/if}}{{#if ../button.active}} is-active{{/if}}{{#if ../button.hover}} is-hover{{/if}}{{#if ../button.focus}} is-focus{{/if}}"
              {{#if ../button.disabled}}disabled{{/if}}>
 
-      {{#if cancelable}}
+      {{#if ../cancel}}
       <input type="reset"
-             value="Cancel"
+             value="{{default ../cancel.label 'Cancel'}}"
              class="link search-cancel{{#if ../cancel.disabled}} is-disabled{{/if}}{{#if ../cancel.active}} is-active{{/if}}{{#if ../cancel.hover}} is-hover{{/if}}{{#if ../cancel.focus}} is-focus{{/if}}"
              {{#if ../cancel.disabled}}disabled{{/if}}>
       {{/if}}

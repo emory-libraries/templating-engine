@@ -1,0 +1,7 @@
+<div class="social-media">
+  {{#each channels}}
+    <a href="{{this}}" class="social-media-link">
+      {{> tokens-icon id=(combine 'socicon-' (stem (get 'hostname' (urlParse this))))}}
+    </a>
+  {{/each}}
+</div>

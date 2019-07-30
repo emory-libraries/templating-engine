@@ -1,0 +1,31 @@
+<eul-branding-footer inline-template v-cloak>
+
+  <div class="branding-footer">
+    <a class="branding-footer-logo" href="/">
+      {{> tokens-logo id='Emory-Libraries' hyperlink=false}}
+    </a>
+    <div class="branding-footer-dropdown">
+      <select class="branding-footer-dropdown-menu"
+              v-model="selection"
+              @change="redirect">
+        <option value="">Select a Library</option>
+        {{#each sites}}
+          {{#unless active}}
+          <option value="{{href}}">{{site}}</option>
+          {{/unless}}
+        {{/each}}
+      </select>
+    </div>
+  </div>
+
+</eul-branding-footer>
+
+<noscript>
+
+  <div class="branding-footer">
+    <a class="branding-footer-logo" href="/">
+      {{> tokens-logo id='Emory-Libraries' hyperlink=false}}
+    </a>
+  </div>
+
+</noscript>
