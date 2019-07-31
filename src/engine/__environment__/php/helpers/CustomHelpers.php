@@ -15,6 +15,7 @@ class CustomHelpers {
   use CustomHelpers\PassthroughHelpers;
   use CustomHelpers\StorageHelpers;
   use CustomHelpers\FeedHelpers;
+  use CustomHelpers\LoopHelpers;
 
 }
 
