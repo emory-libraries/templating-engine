@@ -1,5 +1,5 @@
 <div class="feed"{{#if url}}data-feed="{{url}}"{{/if}}>
-  {{> tokens-heading level=3 classes='feed-heading'}}
+  {{> tokens-heading level=3 classes='feed-heading' icon=(default icon 'material-rss_feed')}}
   <div class="feed-content">
     {{#each (limit content 5)}}{{> molecules-feed-item}}{{/each}}
   </div>
