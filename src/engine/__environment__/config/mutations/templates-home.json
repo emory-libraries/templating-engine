@@ -3,25 +3,33 @@
     "system.title": "title"
   },
   "rename": {
-    "intro.badge": "hero.badge-label",
-    "intro.background-image": "hero.hero-image-heavy-card.image.path",
-    "popular-links.title": "links-list.heading",
-    "popular-links.items": "links-list.link",
+    "intro": "hero",
+    "intro.badge": "intro.badge-label",
+    "intro.background-image": "intro.hero-image-heavy-card.image.path",
+    "popular-links": "links-list",
+    "popular-links.title": "popular-links.heading",
+    "popular-links.items": "popular-links.link",
     "access-links.hours": "link-hours",
     "access-links.hours.label": "access-links.hours.link-label",
     "access-links.directions": "link-directions",
     "access-links.directions.label": "access-links.directions.link-label",
     "slider.slides": "slider.image-heavy-card",
-    "slider.slides.@.image.src": "slider.image-heavy-card.image.path",
-    "related.heading": "links-research-aids.heading",
-    "related.cards": "links-research-aids.link",
+    "slider.slides.@.image.src": "slider.slides.@.image.path",
+    "related": "links-research-aids",
+    "related.cards": "related.link",
     "content-well-heading": "content-well.heading",
-    "content-boxes.feature.badge": "content-well.image-heavy-card.badge-label",
-    "content-boxes.feature.context": "content-well.image-heavy-card.minor-heading",
-    "content-boxes.explorer.links": "content-well.links-list.link",
-    "content-boxes.wayfinder.image.src": "content-well.wayfinder.image.image-file.path",
-    "content-boxes.wayfinder.text": "content-well.wayfinder.description",
-    "content-boxes.wayfinder.buttons": "content-well.wayfinder.link"
+    "content-boxes.feature": "content-well.image-heavy-card",
+    "content-boxes.feature.badge": "content-boxes.feature.badge-label",
+    "content-boxes.feature.context": "content-boxes.feature.minor-heading",
+    "content-boxes.explorer": "content-well.links-list",
+    "content-boxes.explorer.links": "content-boxes.explorer.link",
+    "wayfinder": "content-well.wayfinder",
+    "wayfinder.image.src": "wayfinder.image.image-file.path",
+    "wayfinder.text": "wayfinder.description",
+    "wayfinder.buttons": "wayfinder.link",
+    "feed-preview": "calendar-events",
+    "feed-preview.feeds": "feed-preview.trumba-calendar",
+    "feed-preview.feeds.@.heading": "feed-preview.feeds.@.heading"
   },
   "replace": {},
   "remove": [],
@@ -47,7 +55,7 @@
     "content-well.links-list.link.@.customize-link-label",
     "content-well.wayfinder.link.@.link-customizations",
     "calendar-events.link.link-customizations",
-    "calendar-events.trumba.customizations"
+    "calendar-events.trumba-calendar.@.customizations"
   ],
   "radio": [
     "hero.hero-image-heavy-card.link.link-type",
@@ -95,6 +103,7 @@
     "content-well.image-heavy-card.button.button-label",
     "content-well.links-list.link.@.external-url",
     "content-well.links-list.link.@.link-label",
+    "content-well.wayfinder.badge-label",
     "content-well.wayfinder.heading",
     "content-well.wayfinder.description",
     "content-well.wayfinder.link.@.external-url",
@@ -106,10 +115,10 @@
     "calendar-events.link.external-url",
     "calendar-events.link.link-label",
     "calendar-events.link.link-description",
-    "calendar-events.trumba-calendar.trumba-url",
-    "calendar-events.trumba-calendar.calendar-title",
-    "calendar-events.trumba-calendar.button-label",
-    "calendar-events.trumba-calendar.icon"
+    "calendar-events.trumba-calendar.@.trumba-url",
+    "calendar-events.trumba-calendar.@.calendar-title",
+    "calendar-events.trumba-calendar.@.button-label",
+    "calendar-events.trumba-calendar.@.icon"
   ],
   "html": []
 }

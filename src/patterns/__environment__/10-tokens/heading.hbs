@@ -1,1 +1,10 @@
-<h{{level}} class="heading -h{{level}}{{#if (and alternate (or (eq level 1) (eq level 5)))}}-alt{{/if}}{{#if (and hero (eq level 1))}}-hero{{/if}}{{#if classes}} {{classes}}{{/if}}">{{#if icon}}{{> tokens-icon id=icon classes=''}}{{/if}}{{heading}}</h{{level}}>
+<h{{level}} class="heading -h{{level}}{{#if (and alternate (or (eq level 1) (eq level 5)))}}-alt{{/if}}{{#if (and hero (eq level 1))}}-hero{{/if}}{{#if classes}} {{classes}}{{/if}}{{#if (and (gt level 1) toc) }} is-anchored{{/if}}"
+            {{#if (and (gt level 1) toc)}}id="{{dashcase (lowercase heading)}}"{{/if}}>
+  {{#if icon}}{{> tokens-icon id=icon}} {{/if}}
+  {{heading}}
+  {{#if (and (gt level 1) toc)}}
+    <a class="link anchor" href="#{{dashcase (lowercase heading)}}">
+      {{> tokens-icon id='material-anchor'}}
+    </a>
+  {{/if}}
+</h{{level}}>
