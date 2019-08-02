@@ -118,8 +118,11 @@
 {{! Update explorer links. }}
 {{assign 'explorer.links' (storageGet 'explorer.links')}}
 
-{{! Reformat wayfinder buttons. }}
-{{#each wayfinder.buttons}}
+{{! Update listing buttons. }}
+{{assign 'listing.buttons' (storageGet 'listing.buttons')}}
+
+{{! Reformat listing buttons. }}
+{{#each listing.buttons}}
 
   {{#if (eq link-type 'Cascade Page')}}
     {{assign 'href' cascade-page.path}}
@@ -147,28 +150,8 @@
 
 {{/each}}
 
-{{! Update wayfinder buttons. }}
-{{assign 'wayfinder.buttons' (storageGet 'wayfinder.buttons')}}
-
-{{! Reformat cards for section major. }}
-{{#each section.cards}}
-
-  {{! Capture the card title and link if applicable. }}
-  {{#if cascade-page}}
-    {{assign 'title' cascade-page.title}}
-    {{assign 'link.href' cascade-page.path}}
-    {{#if customize-label}}
-      {{assign 'title' link-label}}
-    {{/if}}
-  {{/if}}
-
-  {{! Remove invalid cards, and save valid cards. }}
-  {{#unless (or (eq title '') (eq link.href '/'))}}{{storagePush 'section.cards' this}}{{/unless}}
-
-{{/each}}
-
-{{! Update cards for section major. }}
-{{assign 'section.cards' (storageGet 'section.cards')}}
+{{! Update listing buttons. }}
+{{assign 'listing.buttons' (storageGet 'listing.buttons')}}
 
 {{! Validate hero images. }}
 {{#if (or (eq hero '/') (not hero))}}
@@ -177,34 +160,47 @@
   {{assign 'main-classes' 'without-intro'}}
 {{/if}}
 
-<div class="landing-page">
+{{! Load feed data from all feed sources. }}
+{{#each feeds.sources}}
 
-  <header class="landing-page-header"></header>
+  {{! Fetch the feed's content, and map it to the desired data model. }}
+  {{assign 'content' (mapFeed model (fetchFeed url))}}
 
-  <div class="landing-page-main">
+  {{! Save the feed with its updated content. }}
+  {{storagePush 'feeds.sources' this}}
+
+{{/each}}
+
+{{! Update feeds. }}
+{{assign 'feeds.sources' (storageGet 'feeds.sources')}}
+
+<div class="cover-page{{#if hero}} has-hero{{/if}}">
+
+  <header class="cover-page-header"></header>
+
+  <div class="cover-page-main">
 
     {{! Load a hero if applicable. }}
-    {{#if hero}}{{> organisms-intro-hero classes='landing-page-intro' background-image=hero}}{{/if}}
+    {{#if hero}}{{> organisms-intro-hero classes='cover-page-intro' background-image=hero}}{{/if}}
 
     {{! Load the main section. }}
-    {{#extend 'organisms-main' type='landing-page' theme='dark' classes=main-classes}}
+    {{#extend 'organisms-main' type='cover-page' classes=main-classes}}
       {{#content 'section-main-body'}}
         {{> organisms-flow-content-boxes}}
-        {{#with wayfinder}}{{> molecules-wayfinder}}{{/with}}
+        {{> compounds-tiles tile-type='listing'}}
+        {{#with listing}}{{> molecules-card-listing theme='light' }}{{/with}}
       {{/content}}
     {{/extend}}
 
-    {{! Load the major section if applicable. }}
-    {{#if (gt (length section.cards) 0)}}
-    {{#extend 'organisms-major' theme='light' heading=(default section.heading 'Get Help Using the Library')}}
+    {{! Load the major section. }}
+    {{#extend 'organisms-major' theme='light' heading=(default feeds.heading 'Upcoming')}}
       {{#content 'section-major-body'}}
-        {{> compounds-cards cards=section.cards card-type='library-aid' filterable=false classes=''}}
+        {{> organisms-flow-feed-preview feature=false feeds=feeds.sources}}
       {{/content}}
     {{/extend}}
-    {{/if}}
 
   </div>
 
-  <footer class="landing-page-footer"></footer>
+  <footer class="cover-page-footer"></footer>
 
 </div>

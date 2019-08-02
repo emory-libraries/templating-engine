@@ -6,5 +6,5 @@
 
 <a href="{{href}}" class="link{{#if classes}} {{classes}}{{/if}}" target="{{default target '_self'}}">
   {{#if icon}}{{> tokens-icon id=icon }}{{/if}}
-  {{label}}
+  {{#unless (eq this.raw true)}}{{label}}{{else}}{{{label}}}{{/unless}}
 </a>

@@ -6446,50 +6446,50 @@ body {
   grid-column: main/sidebar;
   grid-row: section;
 }
-.section-main:not(.-landing-page) {
-  max-width: 1236px;
+.section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page):not(.-cover-page), .-info-page.section-main, .-material-page.section-main, .-tool-page.section-main, .-form-page.section-main, .-periodicals-page.section-main, .-research-help-page.section-main, .-bio-page.section-main, .-gallery-page.section-main, .-research-help-directory-page.section-main, .-service-directory-page.section-main, .-subject-librarian-directory-page.section-main, .-staff-directory-page.section-main, .-exhibition-page.section-main, .-index-page.section-main, .-cover-page.section-main {
+  padding-top: 0 !important;
 }
-.-info-page.section-main .section-main-title, .-material-page.section-main .section-main-title, .-tool-page.section-main .section-main-title, .-bio-page.section-main .section-main-title, .-research-help-page.section-main .section-main-title, .-service-directory-page.section-main .section-main-title, .-form-page.section-main .section-main-title, .-subject-librarian-directory-page.section-main .section-main-title, .-staff-directory-page.section-main .section-main-title, .-research-help-directory-page.section-main .section-main-title {
+.section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page):not(.-cover-page) .section-main-title, .-info-page.section-main .section-main-title, .-material-page.section-main .section-main-title, .-tool-page.section-main .section-main-title, .-bio-page.section-main .section-main-title, .-research-help-page.section-main .section-main-title, .-service-directory-page.section-main .section-main-title, .-form-page.section-main .section-main-title, .-subject-librarian-directory-page.section-main .section-main-title, .-staff-directory-page.section-main .section-main-title, .-research-help-directory-page.section-main .section-main-title, .-periodical-page.section-main .section-main-title {
   margin-bottom: 0;
 }
 @media (max-width: 600px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page):not(.-cover-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]) [sidebar-start] -webkit-min-content [sidebar-end];
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]) [sidebar-start] min-content [sidebar-end];
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page):not(.-cover-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]) [sidebar-start] -webkit-min-content [sidebar-end];
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]) [sidebar-start] min-content [sidebar-end];
   }
 }
 @media (min-width: 901px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page):not(.-cover-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) repeat(10, [section-start] -webkit-min-content [section-end]) [sidebar-start] -webkit-min-content [sidebar-end];
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) repeat(10, [section-start] min-content [section-end]) [sidebar-start] min-content [sidebar-end];
   }
 }
 @media (min-width: 901px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page), .-info-page.section-main {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page):not(.-cover-page), .-info-page.section-main {
     grid-template-columns: [main-start] 1fr [main-end sidebar-start] 340px [sidebar-end];
     grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end main-start title-start] -webkit-min-content [title-end subtitle-start] -webkit-min-content [subtitle-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]) [main-end] repeat(10, [section-start] -webkit-min-content [section-end]);
     grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end main-start title-start] min-content [title-end subtitle-start] min-content [subtitle-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]) [main-end] repeat(10, [section-start] min-content [section-end]);
   }
 }
 @media (min-width: 901px) {
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page) .section-main-breadcrumb, .-info-page.section-main .section-main-breadcrumb {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page):not(.-cover-page) .section-main-breadcrumb, .-info-page.section-main .section-main-breadcrumb {
     grid-column: main/sidebar;
   }
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page) .section-main-title,
-.section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page) .section-main-subtitle, .-info-page.section-main .section-main-title,
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page):not(.-cover-page) .section-main-title,
+.section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page):not(.-cover-page) .section-main-subtitle, .-info-page.section-main .section-main-title,
 .-info-page.section-main .section-main-subtitle {
     grid-column: main/sidebar;
   }
-  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page) .section-main-sidebar, .-info-page.section-main .section-main-sidebar {
+  .section-main:not(.-info-page):not(.-material-page):not(.-tool-page):not(.-bio-page):not(.-research-help-page):not(.-service-directory-page):not(.-form-page):not(.-subject-librarian-directory-page):not(.-staff-directory-page):not(.-landing-page):not(.-gallery-page):not(.-exhibition-page):not(.-research-help-directory-page):not(.-index-page):not(.-periodicals-page):not(.-cover-page) .section-main-sidebar, .-info-page.section-main .section-main-sidebar {
     grid-row: body/main;
   }
 }
@@ -6938,6 +6938,58 @@ body {
 .-form-page.section-main .section-main-sidebar {
   display: none;
 }
+@media (max-width: 600px) {
+  .-cover-page.section-main {
+    grid-template-columns: [main-start] 1fr [main-end];
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .-cover-page.section-main {
+    grid-template-columns: [main-start] 1fr [main-end];
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+  }
+}
+@media (min-width: 901px) {
+  .-cover-page.section-main {
+    grid-template-columns: [main-start] 1fr [main-end];
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end title-start] -webkit-min-content [title-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end title-start] min-content [title-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+  }
+}
+.-cover-page.section-main .section-main-subtitle,
+.-cover-page.section-main .section-main-spacer,
+.-cover-page.section-main .section-main-content,
+.-cover-page.section-main .section-main-section,
+.-cover-page.section-main .section-main-sidebar {
+  display: none;
+}
+@media (max-width: 600px) {
+  .-cover-page.without-intro.section-main {
+    grid-template-columns: [main-start] 1fr [main-end];
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .-cover-page.without-intro.section-main {
+    grid-template-columns: [main-start] 1fr [main-end];
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+  }
+}
+@media (min-width: 901px) {
+  .-cover-page.without-intro.section-main {
+    grid-template-columns: [main-start] 1fr [main-end];
+    grid-template-rows: [breadcrumb-start] -webkit-min-content [breadcrumb-end body-start] -webkit-min-content [body-end] repeat(100, [auto-start] -webkit-min-content [auto-end]);
+    grid-template-rows: [breadcrumb-start] min-content [breadcrumb-end body-start] min-content [body-end] repeat(100, [auto-start] min-content [auto-end]);
+  }
+}
+.-cover-page.without-intro.section-main .section-main-title {
+  display: none;
+}
 
 .section-major {
   display: grid;
@@ -7031,7 +7083,7 @@ body {
 }
 @media (min-width: 1200px) {
   .section-deep-dive-body {
-    grid-template-columns: repeat(auto-fit, minmax(10%, 330px));
+    grid-template-columns: repeat(3, minmax(10%, calc((1250px - (100px * 3)) / 3)));
     grid-column-gap: 100px;
     -webkit-box-pack: center;
         -ms-flex-pack: center;
@@ -7736,6 +7788,15 @@ body {
 .landing-page-main {
   grid-area: main;
 }
+.landing-page-main .section-main {
+  padding-top: 2em !important;
+  padding-bottom: 4em !important;
+}
+.landing-page-main .section-main .section-main-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 2em;
+}
 .landing-page-main .section-main:not(.without-intro) {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -7747,11 +7808,6 @@ body {
 }
 .landing-page-main .section-main:not(.without-intro) .section-main-body {
   padding-top: 2em;
-}
-.landing-page-main .section-main .section-main-body {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 2em;
 }
 .landing-page-footer {
   grid-area: footer;
@@ -7994,6 +8050,63 @@ body {
           justify-content: center;
 }
 .periodicals-page-footer::after {
+  content: "Footer";
+}
+
+.cover-page {
+  margin: 0 auto;
+  display: grid;
+  grid-template-areas: "header" "main" "footer";
+  grid-template-rows: 150px 1fr 420px;
+  grid-template-columns: 1fr;
+}
+.cover-page .intro-hero {
+  display: none;
+}
+.has-hero.cover-page .intro-hero {
+  display: grid;
+}
+.cover-page-header {
+  grid-area: header;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.cover-page-header::after {
+  content: "Header";
+}
+.cover-page-main {
+  grid-area: main;
+}
+.cover-page-main .section-main {
+  padding-bottom: 0 !important;
+}
+.cover-page-main .section-main-body {
+  margin-top: 2em;
+  margin-bottom: 2em;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-row-gap: 1em;
+}
+.cover-page-footer {
+  grid-area: footer;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+.cover-page-footer::after {
   content: "Footer";
 }
 
@@ -13093,44 +13206,50 @@ button, input[type=button], input[type=submit], input[type=reset] {
 }
 @media (min-width: 601px) and (max-width: 900px) {
   .block {
-    padding-left: 70px;
-    padding-right: 70px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
 @media (min-width: 901px) {
   .block {
-    padding-left: 120px;
-    padding-right: 120px;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 }
 @media (min-width: 1200px) {
   .block {
-    padding-left: 170px;
-    padding-right: 170px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+@media (min-width: 1290px) {
+  .block {
+    padding-left: calc((100vw - 1250px) / 2);
+    padding-right: calc((100vw - 1250px) / 2);
   }
 }
 @media (max-width: 600px) {
+  .block {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .block {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+}
+@media (min-width: 901px) {
   .block {
     padding-top: 40px;
     padding-bottom: 40px;
   }
 }
-@media (min-width: 601px) and (max-width: 900px) {
-  .block {
-    padding-top: 50px;
-    padding-bottom: 50px;
-  }
-}
-@media (min-width: 901px) {
-  .block {
-    padding-top: 60px;
-    padding-bottom: 60px;
-  }
-}
 @media (min-width: 1200px) {
   .block {
-    padding-top: 70px;
-    padding-bottom: 70px;
+    padding-top: 40px;
+    padding-bottom: 40px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
@@ -13295,22 +13414,22 @@ button, input[type=button], input[type=submit], input[type=reset] {
 }
 @media (min-width: 601px) and (max-width: 900px) and (max-width: 600px) {
   .block.-overhang-top .block-image {
-    top: calc(-40px - 25px);
+    top: calc(-30px - 25px);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 601px) and (max-width: 900px) {
   .block.-overhang-top .block-image {
-    top: calc(-50px - 25px);
+    top: calc(-30px - 25px);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 901px) {
   .block.-overhang-top .block-image {
-    top: calc(-60px - 25px);
+    top: calc(-40px - 25px);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 1200px) {
   .block.-overhang-top .block-image {
-    top: calc(-70px - 25px);
+    top: calc(-40px - 25px);
   }
 }
 @media (min-width: 901px) {
@@ -13320,22 +13439,22 @@ button, input[type=button], input[type=submit], input[type=reset] {
 }
 @media (min-width: 901px) and (max-width: 600px) {
   .block.-overhang-top .block-image {
-    top: calc(-40px - 25px);
+    top: calc(-30px - 25px);
   }
 }
 @media (min-width: 901px) and (min-width: 601px) and (max-width: 900px) {
   .block.-overhang-top .block-image {
-    top: calc(-50px - 25px);
+    top: calc(-30px - 25px);
   }
 }
 @media (min-width: 901px) and (min-width: 901px) {
   .block.-overhang-top .block-image {
-    top: calc(-60px - 25px);
+    top: calc(-40px - 25px);
   }
 }
 @media (min-width: 901px) and (min-width: 1200px) {
   .block.-overhang-top .block-image {
-    top: calc(-70px - 25px);
+    top: calc(-40px - 25px);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
@@ -13345,22 +13464,22 @@ button, input[type=button], input[type=submit], input[type=reset] {
 }
 @media (min-width: 601px) and (max-width: 900px) and (max-width: 600px) {
   .block.-overhang-bottom .block-image {
-    bottom: calc(-40px - 25px);
+    bottom: calc(-30px - 25px);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 601px) and (max-width: 900px) {
   .block.-overhang-bottom .block-image {
-    bottom: calc(-50px - 25px);
+    bottom: calc(-30px - 25px);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 901px) {
   .block.-overhang-bottom .block-image {
-    bottom: calc(-60px - 25px);
+    bottom: calc(-40px - 25px);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 1200px) {
   .block.-overhang-bottom .block-image {
-    bottom: calc(-70px - 25px);
+    bottom: calc(-40px - 25px);
   }
 }
 @media (min-width: 901px) {
@@ -13370,198 +13489,198 @@ button, input[type=button], input[type=submit], input[type=reset] {
 }
 @media (min-width: 901px) and (max-width: 600px) {
   .block.-overhang-bottom .block-image {
-    bottom: calc(-40px - 25px);
+    bottom: calc(-30px - 25px);
   }
 }
 @media (min-width: 901px) and (min-width: 601px) and (max-width: 900px) {
   .block.-overhang-bottom .block-image {
-    bottom: calc(-50px - 25px);
+    bottom: calc(-30px - 25px);
   }
 }
 @media (min-width: 901px) and (min-width: 901px) {
   .block.-overhang-bottom .block-image {
-    bottom: calc(-60px - 25px);
+    bottom: calc(-40px - 25px);
   }
 }
 @media (min-width: 901px) and (min-width: 1200px) {
   .block.-overhang-bottom .block-image {
-    bottom: calc(-70px - 25px);
+    bottom: calc(-40px - 25px);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (max-width: 600px) {
+  .block.-overhang-both .block-image {
+    top: calc(-30px - 25px);
+    bottom: calc(-30px - 25px);
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) and (min-width: 601px) and (max-width: 900px) {
+  .block.-overhang-both .block-image {
+    top: calc(-30px - 25px);
+    bottom: calc(-30px - 25px);
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) and (min-width: 901px) {
   .block.-overhang-both .block-image {
     top: calc(-40px - 25px);
     bottom: calc(-40px - 25px);
   }
 }
-@media (min-width: 601px) and (max-width: 900px) and (min-width: 601px) and (max-width: 900px) {
-  .block.-overhang-both .block-image {
-    top: calc(-50px - 25px);
-    bottom: calc(-50px - 25px);
-  }
-}
-@media (min-width: 601px) and (max-width: 900px) and (min-width: 901px) {
-  .block.-overhang-both .block-image {
-    top: calc(-60px - 25px);
-    bottom: calc(-60px - 25px);
-  }
-}
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 1200px) {
-  .block.-overhang-both .block-image {
-    top: calc(-70px - 25px);
-    bottom: calc(-70px - 25px);
-  }
-}
-@media (min-width: 901px) and (max-width: 600px) {
   .block.-overhang-both .block-image {
     top: calc(-40px - 25px);
     bottom: calc(-40px - 25px);
   }
 }
+@media (min-width: 901px) and (max-width: 600px) {
+  .block.-overhang-both .block-image {
+    top: calc(-30px - 25px);
+    bottom: calc(-30px - 25px);
+  }
+}
 @media (min-width: 901px) and (min-width: 601px) and (max-width: 900px) {
   .block.-overhang-both .block-image {
-    top: calc(-50px - 25px);
-    bottom: calc(-50px - 25px);
+    top: calc(-30px - 25px);
+    bottom: calc(-30px - 25px);
   }
 }
 @media (min-width: 901px) and (min-width: 901px) {
   .block.-overhang-both .block-image {
-    top: calc(-60px - 25px);
-    bottom: calc(-60px - 25px);
+    top: calc(-40px - 25px);
+    bottom: calc(-40px - 25px);
   }
 }
 @media (min-width: 901px) and (min-width: 1200px) {
   .block.-overhang-both .block-image {
-    top: calc(-70px - 25px);
-    bottom: calc(-70px - 25px);
+    top: calc(-40px - 25px);
+    bottom: calc(-40px - 25px);
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (max-width: 600px) {
   .block.-stretch-top .block-image {
-    top: -40px;
+    top: -30px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 601px) and (max-width: 900px) {
   .block.-stretch-top .block-image {
-    top: -50px;
+    top: -30px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 901px) {
   .block.-stretch-top .block-image {
-    top: -60px;
+    top: -40px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 1200px) {
   .block.-stretch-top .block-image {
-    top: -70px;
+    top: -40px;
   }
 }
 @media (min-width: 901px) and (max-width: 600px) {
   .block.-stretch-top .block-image {
-    top: -40px;
+    top: -30px;
   }
 }
 @media (min-width: 901px) and (min-width: 601px) and (max-width: 900px) {
   .block.-stretch-top .block-image {
-    top: -50px;
+    top: -30px;
   }
 }
 @media (min-width: 901px) and (min-width: 901px) {
   .block.-stretch-top .block-image {
-    top: -60px;
+    top: -40px;
   }
 }
 @media (min-width: 901px) and (min-width: 1200px) {
   .block.-stretch-top .block-image {
-    top: -70px;
+    top: -40px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (max-width: 600px) {
   .block.-stretch-bottom .block-image {
-    bottom: -40px;
+    bottom: -30px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 601px) and (max-width: 900px) {
   .block.-stretch-bottom .block-image {
-    bottom: -50px;
+    bottom: -30px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 901px) {
   .block.-stretch-bottom .block-image {
-    bottom: -60px;
+    bottom: -40px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 1200px) {
   .block.-stretch-bottom .block-image {
-    bottom: -70px;
+    bottom: -40px;
   }
 }
 @media (min-width: 901px) and (max-width: 600px) {
   .block.-stretch-bottom .block-image {
-    bottom: -40px;
+    bottom: -30px;
   }
 }
 @media (min-width: 901px) and (min-width: 601px) and (max-width: 900px) {
   .block.-stretch-bottom .block-image {
-    bottom: -50px;
+    bottom: -30px;
   }
 }
 @media (min-width: 901px) and (min-width: 901px) {
   .block.-stretch-bottom .block-image {
-    bottom: -60px;
+    bottom: -40px;
   }
 }
 @media (min-width: 901px) and (min-width: 1200px) {
   .block.-stretch-bottom .block-image {
-    bottom: -70px;
+    bottom: -40px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (max-width: 600px) {
   .block.-stretch-both .block-image {
-    top: -40px;
-    bottom: -40px;
+    top: -30px;
+    bottom: -30px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 601px) and (max-width: 900px) {
   .block.-stretch-both .block-image {
-    top: -50px;
-    bottom: -50px;
+    top: -30px;
+    bottom: -30px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) and (min-width: 901px) {
-  .block.-stretch-both .block-image {
-    top: -60px;
-    bottom: -60px;
-  }
-}
-@media (min-width: 601px) and (max-width: 900px) and (min-width: 1200px) {
-  .block.-stretch-both .block-image {
-    top: -70px;
-    bottom: -70px;
-  }
-}
-@media (min-width: 901px) and (max-width: 600px) {
   .block.-stretch-both .block-image {
     top: -40px;
     bottom: -40px;
   }
 }
+@media (min-width: 601px) and (max-width: 900px) and (min-width: 1200px) {
+  .block.-stretch-both .block-image {
+    top: -40px;
+    bottom: -40px;
+  }
+}
+@media (min-width: 901px) and (max-width: 600px) {
+  .block.-stretch-both .block-image {
+    top: -30px;
+    bottom: -30px;
+  }
+}
 @media (min-width: 901px) and (min-width: 601px) and (max-width: 900px) {
   .block.-stretch-both .block-image {
-    top: -50px;
-    bottom: -50px;
+    top: -30px;
+    bottom: -30px;
   }
 }
 @media (min-width: 901px) and (min-width: 901px) {
   .block.-stretch-both .block-image {
-    top: -60px;
-    bottom: -60px;
+    top: -40px;
+    bottom: -40px;
   }
 }
 @media (min-width: 901px) and (min-width: 1200px) {
   .block.-stretch-both .block-image {
-    top: -70px;
-    bottom: -70px;
+    top: -40px;
+    bottom: -40px;
   }
 }
 .block.-dark {
@@ -22325,32 +22444,38 @@ button, input[type=button], input[type=submit], input[type=reset] {
 }
 @media (min-width: 601px) and (max-width: 900px) {
   .section-deep-dive {
-    padding-left: 70px;
-    padding-right: 70px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
 @media (min-width: 901px) {
   .section-deep-dive {
-    padding-left: 120px;
-    padding-right: 120px;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 }
 @media (min-width: 1200px) {
   .section-deep-dive {
-    padding-left: 170px;
-    padding-right: 170px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+@media (min-width: 1290px) {
+  .section-deep-dive {
+    padding-left: calc((100vw - 1250px) / 2);
+    padding-right: calc((100vw - 1250px) / 2);
   }
 }
 @media (max-width: 600px) {
   .section-deep-dive {
-    padding-top: 40px;
-    padding-bottom: 40px;
+    padding-top: 30px;
+    padding-bottom: 30px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
   .section-deep-dive {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding-top: 30px;
+    padding-bottom: 30px;
   }
 }
 @media (min-width: 901px) {
@@ -22361,8 +22486,8 @@ button, input[type=button], input[type=submit], input[type=reset] {
 }
 @media (min-width: 1200px) {
   .section-deep-dive {
-    padding-top: 70px;
-    padding-bottom: 70px;
+    padding-top: 60px;
+    padding-bottom: 60px;
   }
 }
 .section-deep-dive-title {
@@ -22567,6 +22692,64 @@ button, input[type=button], input[type=submit], input[type=reset] {
   background-color: #FFFFFF;
   color: #605858;
   grid-column-gap: 40px;
+}
+.section-main {
+  -webkit-transition: padding 0.25s ease;
+  transition: padding 0.25s ease;
+}
+@media (max-width: 600px) {
+  .section-main {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .section-main {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+@media (min-width: 901px) {
+  .section-main {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+@media (min-width: 1200px) {
+  .section-main {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+@media (min-width: 1290px) {
+  .section-main {
+    padding-left: calc((100vw - 1250px) / 2);
+    padding-right: calc((100vw - 1250px) / 2);
+  }
+}
+@media (max-width: 600px) {
+  .section-main {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .section-main {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+}
+@media (min-width: 901px) {
+  .section-main {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+}
+@media (min-width: 1200px) {
+  .section-main {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
 }
 .section-main-breadcrumb {
   min-height: 40px;
@@ -22796,32 +22979,38 @@ button, input[type=button], input[type=submit], input[type=reset] {
 }
 @media (min-width: 601px) and (max-width: 900px) {
   .section-major {
-    padding-left: 70px;
-    padding-right: 70px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
 @media (min-width: 901px) {
   .section-major {
-    padding-left: 120px;
-    padding-right: 120px;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 }
 @media (min-width: 1200px) {
   .section-major {
-    padding-left: 170px;
-    padding-right: 170px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+@media (min-width: 1290px) {
+  .section-major {
+    padding-left: calc((100vw - 1250px) / 2);
+    padding-right: calc((100vw - 1250px) / 2);
   }
 }
 @media (max-width: 600px) {
   .section-major {
-    padding-top: 40px;
-    padding-bottom: 40px;
+    padding-top: 30px;
+    padding-bottom: 30px;
   }
 }
 @media (min-width: 601px) and (max-width: 900px) {
   .section-major {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding-top: 30px;
+    padding-bottom: 30px;
   }
 }
 @media (min-width: 901px) {
@@ -22832,8 +23021,8 @@ button, input[type=button], input[type=submit], input[type=reset] {
 }
 @media (min-width: 1200px) {
   .section-major {
-    padding-top: 70px;
-    padding-bottom: 70px;
+    padding-top: 60px;
+    padding-bottom: 60px;
   }
 }
 .section-major-title {
@@ -22935,44 +23124,50 @@ button, input[type=button], input[type=submit], input[type=reset] {
 }
 @media (min-width: 601px) and (max-width: 900px) {
   .section-minor {
-    padding-left: 70px;
-    padding-right: 70px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
 @media (min-width: 901px) {
   .section-minor {
-    padding-left: 120px;
-    padding-right: 120px;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 }
 @media (min-width: 1200px) {
   .section-minor {
-    padding-left: 170px;
-    padding-right: 170px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+@media (min-width: 1290px) {
+  .section-minor {
+    padding-left: calc((100vw - 1250px) / 2);
+    padding-right: calc((100vw - 1250px) / 2);
   }
 }
 @media (max-width: 600px) {
+  .section-minor {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .section-minor {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+}
+@media (min-width: 901px) {
   .section-minor {
     padding-top: 40px;
     padding-bottom: 40px;
   }
 }
-@media (min-width: 601px) and (max-width: 900px) {
-  .section-minor {
-    padding-top: 50px;
-    padding-bottom: 50px;
-  }
-}
-@media (min-width: 901px) {
-  .section-minor {
-    padding-top: 60px;
-    padding-bottom: 60px;
-  }
-}
 @media (min-width: 1200px) {
   .section-minor {
-    padding-top: 70px;
-    padding-bottom: 70px;
+    padding-top: 40px;
+    padding-bottom: 40px;
   }
 }
 .section-minor-title {
@@ -23222,56 +23417,66 @@ button, input[type=button], input[type=submit], input[type=reset] {
 @media (min-width: 601px) and (max-width: 900px) {
   .exhibition-page-main .section-main,
 .exhibition-page-main .section-deep-dive {
-    padding-left: 70px;
-    padding-right: 70px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
 @media (min-width: 901px) {
   .exhibition-page-main .section-main,
 .exhibition-page-main .section-deep-dive {
-    padding-left: 120px;
-    padding-right: 120px;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 }
 @media (min-width: 1200px) {
   .exhibition-page-main .section-main,
 .exhibition-page-main .section-deep-dive {
-    padding-left: 170px;
-    padding-right: 170px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+@media (min-width: 1290px) {
+  .exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+    padding-left: calc((100vw - 1250px) / 2);
+    padding-right: calc((100vw - 1250px) / 2);
   }
 }
 @media (max-width: 600px) {
+  .exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .exhibition-page-main .section-main,
+.exhibition-page-main .section-deep-dive {
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+}
+@media (min-width: 901px) {
   .exhibition-page-main .section-main,
 .exhibition-page-main .section-deep-dive {
     padding-top: 40px;
     padding-bottom: 40px;
   }
 }
-@media (min-width: 601px) and (max-width: 900px) {
-  .exhibition-page-main .section-main,
-.exhibition-page-main .section-deep-dive {
-    padding-top: 50px;
-    padding-bottom: 50px;
-  }
-}
-@media (min-width: 901px) {
-  .exhibition-page-main .section-main,
-.exhibition-page-main .section-deep-dive {
-    padding-top: 60px;
-    padding-bottom: 60px;
-  }
-}
 @media (min-width: 1200px) {
   .exhibition-page-main .section-main,
 .exhibition-page-main .section-deep-dive {
-    padding-top: 70px;
-    padding-bottom: 70px;
+    padding-top: 40px;
+    padding-bottom: 40px;
   }
 }
 .gallery-page {
   grid-gap: 20px;
 }
 .gallery-page-header, .gallery-page-footer {
+  border: 1px solid #B6BDCC;
+}
+.cover-page-header, .cover-page-footer {
   border: 1px solid #B6BDCC;
 }
 .form-page {
@@ -23294,62 +23499,6 @@ button, input[type=button], input[type=submit], input[type=reset] {
 }
 .landing-page-header, .landing-page-footer {
   border: 1px solid #B6BDCC;
-}
-.landing-page-main .section-main {
-  padding-top: 2em !important;
-  padding-bottom: 4em !important;
-}
-.landing-page-main .section-main {
-  -webkit-transition: padding 0.25s ease;
-  transition: padding 0.25s ease;
-}
-@media (max-width: 600px) {
-  .landing-page-main .section-main {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
-@media (min-width: 601px) and (max-width: 900px) {
-  .landing-page-main .section-main {
-    padding-left: 70px;
-    padding-right: 70px;
-  }
-}
-@media (min-width: 901px) {
-  .landing-page-main .section-main {
-    padding-left: 120px;
-    padding-right: 120px;
-  }
-}
-@media (min-width: 1200px) {
-  .landing-page-main .section-main {
-    padding-left: 170px;
-    padding-right: 170px;
-  }
-}
-@media (max-width: 600px) {
-  .landing-page-main .section-main {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-}
-@media (min-width: 601px) and (max-width: 900px) {
-  .landing-page-main .section-main {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-}
-@media (min-width: 901px) {
-  .landing-page-main .section-main {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-}
-@media (min-width: 1200px) {
-  .landing-page-main .section-main {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
 }
 .material-page {
   grid-gap: 20px;
