@@ -40,7 +40,7 @@ trait FeedHelpers {
       if( is_array($value) ) {
 
         // Only bind things within the array or object if recursion is enabled.
-        if( $recursive ) $value = array_map(function($value) use ($item, $recursive) {
+        if( $recursive ) $value = array_map(function($value) use ($item, $recursive, $bind) {
 
           // Continue to recursively bind things within the array or object.
           return $bind($value, $item, $recursive);
@@ -64,8 +64,14 @@ trait FeedHelpers {
             // Capture the placeholder's key.
             $key = preg_replace('/^\{\:|\:\}$/', '', $placeholder);
 
+            // Get the value that should be bound.
+            $bound = array_get($item, $key, '');
+
+            // For boolean values, replace them with boolean keywords.
+            $bound = $bound === true ? 'true' : $bound === false ? 'false' : $bound;
+
             // Bind the data from the given context into the value.
-            $value = str_replace($placeholder, array_get($context, $key, ''));
+            $value = str_replace($placeholder, array_get($context, $key, ''), $value);
 
           }
 
@@ -80,8 +86,14 @@ trait FeedHelpers {
             // Capture the placeholder's key.
             $key = preg_replace('/^\{|\}$/', '', $placeholder);
 
+            // Get the value that should be bound.
+            $bound = array_get($item, $key, '');
+
+            // For boolean values, replace them with boolean keywords.
+            $bound = $bound === true ? 'true' : $bound === false ? 'false' : $bound;
+
             // Bind the data from the given item into the value.
-            $value = str_replace($placeholder, array_get($item, $key, ''));
+            $value = str_replace($placeholder, $bound, $value);
 
           }
 
@@ -94,7 +106,10 @@ trait FeedHelpers {
 
     };
 
-    // Mape each item within the feed.
+    // Remove any meta data from the feed.
+    unset($feed['__meta__']);
+
+    // Map each item within the feed.
     $feed = array_map(function($data) use ($model, $bind) {
 
       // Loop through the data model, and map things as needed.
@@ -110,7 +125,7 @@ trait FeedHelpers {
           $condition = $bind($value['criteria'], $data);
 
           // Get the criteria that must be met in order to display the conditional data.
-          $criteria = Conditional::expresion($condition);
+          $criteria = eval("return ($condition);");
 
           // Evaluate the criteria, and only include the value if the criteria was met.
           if( $criteria ) $data[$key] = $bind($value['value'], $data);
@@ -118,7 +133,7 @@ trait FeedHelpers {
         }
 
         // Otherwise, bind the data as is.
-        else $data[$key] = $binde($value, $data);
+        else $data[$key] = $bind($value, $data);
 
       }
 
@@ -126,6 +141,9 @@ trait FeedHelpers {
       return $data;
 
     }, $feed);
+
+    // Return the feed with its content mapped to the given data model.
+    return $feed;
 
   }
 
