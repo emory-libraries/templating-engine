@@ -15374,7 +15374,7 @@ return jQuery;
 				if (attr.indexOf('{attribution.') === -1) {
 					return attr;
 				}
-				return attr.replace(/\{attribution.(\w*)\}/g,
+				return attr.replace(/\{attribution.(\w*)\}/,
 					function (match, attributionName) {
 						return attributionReplacer(providers[attributionName].options.attribution);
 					}
@@ -15510,9 +15510,7 @@ return jQuery;
 				},
 				Landscape: 'landscape',
 				Outdoors: 'outdoors',
-				Pioneer: 'pioneer',
-				MobileAtlas: 'mobile-atlas',
-				Neighbourhood: 'neighbourhood'
+				Pioneer: 'pioneer'
 			}
 		},
 		OpenMapSurfer: {
@@ -15520,47 +15518,14 @@ return jQuery;
 			options: {
 				maxZoom: 19,
 				variant: 'roads',
-				attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> | Map data '
+				attribution: 'Imagery from <a href="http://giscience.uni-hd.de/">GIScience Research Group @ University of Heidelberg</a> &mdash; Map data {attribution.OpenStreetMap}'
 			},
 			variants: {
-				Roads: {
-					options: {
-						variant: 'roads',
-						attribution: '{attribution.OpenMapSurfer}{attribution.OpenStreetMap}'
-					}
-				},
-				Hybrid: {
-					options: {
-						variant: 'hybrid',
-						attribution: '{attribution.OpenMapSurfer}{attribution.OpenStreetMap}'
-					}
-				},
+				Roads: 'roads',
 				AdminBounds: {
 					options: {
 						variant: 'adminb',
-						maxZoom: 18,
-						attribution: '{attribution.OpenMapSurfer}{attribution.OpenStreetMap}'
-					}
-				},
-				ContourLines: {
-					options: {
-						variant: 'asterc',
-						maxZoom: 18,
-						minZoom: 13,
-						attribution: '{attribution.OpenMapSurfer} <a href="https://lpdaac.usgs.gov/products/aster_policies">ASTER GDEM</a>'
-					}
-				},
-				Hillshade: {
-					options: {
-						variant: 'asterh',
-						maxZoom: 18,
-						attribution: '{attribution.OpenMapSurfer} <a href="https://lpdaac.usgs.gov/products/aster_policies">ASTER GDEM</a>, <a href="http://srtm.csi.cgiar.org/">SRTM</a>'
-					}
-				},
-				ElementsAtRisk: {
-					options: {
-						variant: 'elements_at_risk',
-						attribution: '{attribution.OpenMapSurfer}{attribution.OpenStreetMap}'
+						maxZoom: 18
 					}
 				}
 			}
