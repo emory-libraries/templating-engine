@@ -139,8 +139,15 @@
     {{! Get the data model based on the feed URL as needed. }}
     {{#unless model}}{{assign 'model' (get (dashcase (get 'host' (urlParse url))) ../models)}}{{/unless}}
 
-    {{! Fetch the feed's content, and map it to the desired data model. }}
-    {{assign 'content' (mapFeed model (fetchFeed url))}}
+    {{! Fetch the feed's content }}
+    {{assign 'content' (fetchFeed url)}}
+
+    {{! Map the feed's content to the desired data model. }}
+    {{#if (eq content.__meta__.type 'json')}}
+      {{assign 'content' (mapFeed model content)}}
+    {{else}}
+      {{assign 'content' (mapFeed model content.channel.item)}}
+    {{/if}}
 
     {{! Validate the feed's view all button link. }}
     {{#if (eq link.link-type 'Cascade Page')}}
