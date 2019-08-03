@@ -1,0 +1,152 @@
+{
+  "alias": {
+    "system.title": "title"
+  },
+  "rename": {
+    "subtitle": "introduction",
+    "hero": "background-image.path",
+    "feature": "image-heavy-card",
+    "feature.context": "feature.minor-heading",
+    "feature.image.src": "feature.image.image-file.path",
+    "feature.buttons.0.label": "feature.button-label",
+    "explorer": "links-list",
+    "explorer.links": "explorer.link",
+    "tiles": "featured-content.image-heavy-card",
+    "tiles.@.image.src": "tiles.@.image.image-file.path",
+    "tiles.@.link.label": "tiles.@.button.button-label",
+    "tiles.@.date": "tiles.@.link.minor-heading",
+    "tiles.@.badge": "tiles.@.link.badge-label",
+    "listing": "image-heavy-card-listing",
+    "listing.title": "listing.heading",
+    "listing.date": "listing.minor-heading",
+    "listing.badge": "listing.badge-label",
+    "listing.buttons": "listing.link",
+    "listing.buttons.@.label": "listing.buttons.@.button-label",
+    "listing.image.src": "listing.image.image-file.path",
+    "feeds.sources": "feeds.feed-import",
+    "feeds.sources.@.heading": "feeds.sources.@.feed-title",
+    "feeds.sources.@.button.label": "feeds.sources.@.button-label"
+  },
+  "replace": {},
+  "remove": [],
+  "add": {
+    "feature.buttons.@.hollow": true,
+    "listing.buttons.@.hollow": true,
+    "models": {
+      "www-trumba-com": {
+        "id": "{eventID}",
+        "date": "{dateTimeFormatted}",
+        "link": {
+          "href": "/event?feed={:url:}&id={eventID}"
+        },
+        "button?": {
+          "criteria": "{openSignUp} === true && {pastDeadline} === false",
+          "value": {
+            "label": "Sign Up",
+            "href": "{signUpUrl}"
+          }
+        }
+      },
+      "scholarblogs-emory-edu": {
+        "id": "{post-id}",
+        "date": "{pubDate}",
+        "link": {
+          "href": "{link}"
+        }
+      },
+      "web-library-emory-edu": {
+        "id": "{guid}",
+        "date": "{pubDate}",
+        "link": {
+          "href": "{link}"
+        }
+      }
+    }
+  },
+  "evaluate": [
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 2'",
+      "value": 2
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 3'",
+      "value": 3
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 4'",
+      "value": 4
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 5'",
+      "value": 5
+    },
+    {
+      "target": "blocks.@.heading-level",
+      "condition": "blocks.@.heading-level == 'Heading Level 6'",
+      "value": 6
+    }
+  ],
+  "repeatable": [
+    "link-list.link",
+    "featured-content.image-heavy-card",
+    "image-heavy-card-listing.link",
+    "feeds.feed-import"
+  ],
+  "checkbox": [
+    "image-heavy-card.link.link-customizations",
+    "links-list.link.@.link-customizations",
+    "featured-content.image-heavy-card.@.link.link-customizations",
+    "feeds.feed-import.@.customizations"
+  ],
+  "radio": [
+    "image-heavy-card.link.link-type",
+    "links-list.link.@.link-type",
+    "featured-content.image-heavy-card.@.link.link-type",
+    "image-heavy-card-listing.link.@.link-type"
+  ],
+  "timestamp": [
+    "system.created.datetime",
+    "system.modified.datetime",
+    "system.published.datetime"
+  ],
+  "text": [
+    "introduction",
+    "image-heavy-card.minor-heading",
+    "image-heavy-card.link.external-url",
+    "image-heavy-card.link.link-label",
+    "image-heavy-card.link.link-description",
+    "image-heavy-card.image.caption",
+    "image-heavy-card.image.photo-credit",
+    "image-heavy-card.button-label",
+    "links-list.heading",
+    "links-list.link.@.external-url",
+    "links-list.link.@.link-label",
+    "links-list.link.@.link-description",
+    "featured-content.image-heavy-card.@.link.external-url",
+    "featured-content.image-heavy-card.@.link.link-label",
+    "featured-content.image-heavy-card.@.link.link-description",
+    "featured-content.image-heavy-card.@.image.caption",
+    "featured-content.image-heavy-card.@.image.photo-credit",
+    "featured-content.image-heavy-card.@.button.button-label",
+    "featured-content.image-heavy-card.@.link.minor-heading",
+    "featured-content.image-heavy-card.@.link.badge-label",
+    "image-heavy-card-listing.badge-label",
+    "image-heavy-card-listing.minor-heading",
+    "image-heavy-card-listing.heading",
+    "image-heavy-card-listing.link.@.external-url",
+    "image-heavy-card-listing.link.@.button-label",
+    "image-heavy-card-listing.image.caption",
+    "image-heavy-card-listing.image.photo-credit",
+    "feeds.heading",
+    "feeds.feed-import.@.feed-title",
+    "feeds.feed-import.@.url",
+    "feeds.feed-import.@.button-label",
+    "feeds.feed-import.@.icon",
+    "feeds.feed-import.@.link.external-url"
+  ],
+  "html": []
+}
