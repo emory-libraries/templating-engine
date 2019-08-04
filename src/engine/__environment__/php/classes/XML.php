@@ -45,7 +45,7 @@ class XML {
     // Initialize the result.
     $result = $xml;
 
-    // Build the regex use to locate query strings.
+    // Build the regex used to locate query strings.
     $regex = '/(\?[[:word:][:punct:]]+?\=[[:word:][:punct:]]+?)(\&(?!amp;)[[:word:][:punct:]]+?\=[[:word:][:punct:]]+?(?=\<|\&|$))+/';
 
     // Look for query strings within the XML.
@@ -66,6 +66,33 @@ class XML {
 
   }
 
+  // Escape ampersands within a string of XML data.
+  protected static function escapeAmpersands( string $xml ) {
+
+    // Initialize the result.
+    $result = $xml;
+
+    // Build the regex used to locate lone ampersands.
+    $regex = '/ \& /';
+
+    // Look for query strings within the XML.
+    if( preg_match_all($regex, $result, $matches, PREG_SET_ORDER) ) {
+
+      // Escape the ampersands one by one.
+      foreach( $matches as $match ) {
+
+        // Escape the ampersand.
+        $result = str_replace($match[0], ' &amp; ', $result);
+
+      }
+
+    }
+
+    // Return the result.
+    return $result;
+
+  }
+
   // Escape things within the XML string prior to parsing it.
   public static function escapeXML( string $xml, array $escape ) {
 
@@ -74,6 +101,9 @@ class XML {
 
     // Escape query strings.
     $xml = self::escapeQueryStrings($xml);
+
+    // Escape ampersands.
+    $xml = self::escapeAmpersands($xml);
 
     // Return the escaped XML.
     return $xml;
