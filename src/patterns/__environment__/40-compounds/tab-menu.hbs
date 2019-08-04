@@ -41,7 +41,11 @@
         {{#each tabs}}
 
           {{! Determine if the tab should be active. }}
-          {{#if (eq ../selected.uid this.uid)}}{{assign 'active' true}}{{else}}{{assign 'active' false}}{{/if}}
+          {{#if (eq ../selected.uid this.uid)}}
+            {{assign 'active' true}}
+          {{else}}
+            {{assign 'active' false}}
+          {{/if}}
 
           {{> atoms-tab menu=../uid search=(default ../search false)}}
 

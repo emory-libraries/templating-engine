@@ -1,4 +1,4 @@
-{{! Validation feature image. }}
+{{! Validate feature image. }}
 {{#if (eq feature.image.src '/')}}
   {{assign 'feature.image.src' null}}
 {{/if}}
@@ -171,7 +171,7 @@
 {{assign 'section.cards' (storageGet 'section.cards')}}
 
 {{! Validate hero images. }}
-{{#if (eq hero '/')}}
+{{#if (or (eq hero '/') (not hero))}}
   {{assign 'hero' false}}
 {{else}}
   {{assign 'main-classes' 'without-intro'}}

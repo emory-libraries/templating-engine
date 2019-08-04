@@ -1,4 +1,4 @@
-<div class="nav-bar-main">
-  {{> molecules-branding-header}}
-  {{> compounds-nav-menu-main}}
+<div class="nav-bar-main{{#if classes}} {{classes}}{{/if}}">
+  {{#with navigation}}{{> molecules-branding-header classes=''}}{{/with}}
+  {{> compounds-nav-menu-main classes=''}}
 </div>

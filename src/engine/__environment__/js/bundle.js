@@ -1737,6 +1737,22 @@ Components.register('branding-header', {
       window.location.href = href;
     }
   }
+});
+Components.register('libwizard-form', {
+  props: {
+    fid: String
+  },
+  data: function data() {
+    return {
+      url: "//emory.libwizard.com/form_loader.php?id=:fid&noheader=0"
+    };
+  },
+  mounted: function mounted() {
+    // Load the libwizard form using the given form ID (fid).
+    $('<script>', {
+      src: this.url.replace(':fid', this.fid)
+    }).appendTo(this.$el);
+  }
 }); // Register an Alert component.
 
 Components.register('alert', {
@@ -1993,58 +2009,18 @@ Components.register('tab-menu', {
     // Listen for changes to tab states within the tab menu.
     Events.$on("".concat(this.uid, ":activated"), function (data) {
       // If a relay was given, then relay the data to the targeted relay element.
-      if (_this14.relay) Events.$emit("".concat(_this14.relay, ":relay"), {
-        uid: _this14.uid,
-        value: data.value
-      }); // If the tab menu was not the initiator of the event, then also update the selected tab menu item.
+      if (_this14.relay) {
+        // Relay the data to the targeted relay element.
+        Events.$emit("".concat(_this14.relay, ":relay"), {
+          uid: _this14.uid,
+          value: data.value
+        }); // Also, find the tab's respective toggle input, and make sure it's checked.
+
+        if ($("#".concat(data.uid)).length > 0) $("#".concat(data.uid)).prop('checked', true);
+      } // If the tab menu was not the initiator of the event, then also update the selected tab menu item.
+
 
       if (data.initiator !== _this14.uid) _this14.selected = {
-        uid: data.uid,
-        value: data.value
-      };
-    });
-  }
-}); // Register a Tab component.
-
-Components.register('tab-menu', {
-  props: {
-    uid: {
-      type: String,
-      required: true
-    },
-    relay: {
-      type: String,
-      "default": null
-    }
-  },
-  data: function data() {
-    return {
-      selected: false
-    };
-  },
-  methods: {
-    change: function change($event) {
-      // When the dropdown is changed, indicate that a new tab menu item should be activated.
-      Events.$emit("".concat(this.uid, ":activated"), {
-        uid: this.selected.uid,
-        value: this.selected.value,
-        initiator: this.uid
-      });
-    }
-  },
-  filters: {},
-  created: function created() {
-    var _this15 = this;
-
-    // Listen for changes to tab states within the tab menu.
-    Events.$on("".concat(this.uid, ":activated"), function (data) {
-      // If a relay was given, then relay the data to the targeted relay element.
-      if (_this15.relay) Events.$emit("".concat(_this15.relay, ":relay"), {
-        uid: _this15.uid,
-        value: data.value
-      }); // If the tab menu was not the initiator of the event, then also update the selected tab menu item.
-
-      if (data.initiator !== _this15.uid) _this15.selected = {
         uid: data.uid,
         value: data.value
       };
