@@ -1,47 +1,43 @@
-{{{_inspect this}}}
-
 <div class="home-page">
   <header class="home-page-header"></header>
   <div class="home-page-main">
-    {{#extend 'organisms-main' type="home-page" classes=""}}
-      {{#content 'section-main-body'}}
-        {{>organisms-intro-home background-image=intro.background-image badge=intro.badge link=intro.link id=intro-id back=intro.back tabs=intro.tabs services=intro.services button=intro.button processor=intro.processor}}
-        <div class="popular-row">
-          {{>compounds-popular-links-menu title=popular-links.title items=popular-links.items}}
-          <div class="access-links-menu">
-            <h4 class="heading popular-links-menu-title">{{access-links.title}}</h4>
-            {{>tokens-heading level=5 classes="access-hours" heading=access-links.hours}}
-            <ul class="access-links-list">
-              {{#each access-links.items}}
-              <li>{{>atoms-link }}</a></li>
-              {{/each}}
-            </ul>
+
+    {{#with intro}}{{> organisms-intro-home}}{{/with}}
+
+    {{> organisms-popular }}
+
+    {{#with slider}}{{> compounds-slider arrows=true}}{{/with}}
+
+    {{#with related}}
+    {{#extend 'organisms-major' theme='light' classes='home-page-main-cards'}}
+      {{#content 'section-major-body'}}
+        {{> compounds-cards card-type='library-aid'}}
+        {{#if buttons}}
+          <div class="button-group">
+            {{#each buttons}}{{> atoms-button-link}}{{/each}}
           </div>
-        </div>
-        {{>compounds-slider arrows=slider.arrows slides=slider.slides}}
+        {{/if}}
       {{/content}}
     {{/extend}}
-    
-    {{#extend 'organisms-major' type="home-page" heading=related.heading theme="light" classes=""}}
-      {{#content 'section-major-body'}}
-        {{>compounds-cards card-type=related.card-type cards=related.cards}}
-        {{>atoms-button-link classes="view-more" label=related.button.label href=related.button.href target=related.button.target}}
-      {{/content}}
-    {{/extend}}
+    {{/with}}
 
-    {{#extend 'organisms-major' type="home-page" theme="dark" classes="" heading=content-well-heading}}
+    {{#with boxes}}
+    {{#extend 'organisms-major' theme='dark' classes='home-page-main-boxes'}}
       {{#content 'section-major-body'}}
-        {{>organisms-flow-content-boxes feature=content-boxes.feature explorer=content-boxes.explorer}}
-        {{>molecules-wayfinder image=wayfinder.image heading=wayfinder.heading text=wayfinder.text buttons=wayfinder.buttons}}
+        {{> organisms-flow-content-boxes}}
+        {{#with wayfinder}}{{> molecules-wayfinder}}{{/with}}
       {{/content}}
     {{/extend}}
+    {{/with}}
 
-    {{#extend 'organisms-major' type="home-page" heading=feed-preview.heading theme="light" classes=""}}
+    {{#with feeds}}
+    {{#extend 'organisms-major' theme='light' classes='home-page-main-feeds'}}
       {{#content 'section-major-body'}}
-        {{>organisms-flow-feed-preview feature=feed-preview.feature feeds=feed-preview.feeds}}
+        {{> organisms-flow-feed-preview}}
       {{/content}}
     {{/extend}}
+    {{/with}}
+
   </div>
-
   <footer class="home-page-footer"></footer>
 </div>

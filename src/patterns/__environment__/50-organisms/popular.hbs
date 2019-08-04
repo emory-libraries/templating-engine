@@ -1,0 +1,8 @@
+<section class="section-popular">
+  <div class="section-popular-left">
+    {{#with (itemAt popular 0)}}{{> compounds-popular-links-menu}}{{/with}}
+  </div>
+  <div class="section-popular-right">
+    {{#with (itemAt popular 1)}}{{> compounds-popular-links-menu hours=true}}{{/with}}
+  </div>
+</section>
