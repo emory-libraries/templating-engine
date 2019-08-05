@@ -1,9 +1,5 @@
 <?php
 
-// Increase the indexing process' alotted memory limit.
-// FIXME: This is not ideal! Further optimizations to the indexing process are needed to reduce memory usage!
-ini_set('memory_limit', '575M');
-
 // Autoload dependencies.
 require __DIR__."/index.autoload.php";
 

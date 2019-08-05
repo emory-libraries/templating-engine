@@ -40,18 +40,20 @@ class Index {
 
   // The paths used to save the index data.
   public static $paths = [
-    'environment' => CONFIG['engine']['cache']['index'].'/environment.php',
-    'site' => CONFIG['engine']['cache']['index'].'/site.php',
-    'assets' => CONFIG['engine']['cache']['index'].'/assets.php',
-    'endpoints' => CONFIG['engine']['cache']['index'].'/endpoints.php',
-    'routes' => CONFIG['engine']['cache']['index'].'/routes.php',
-    'patterns' => CONFIG['engine']['cache']['index'].'/patterns.php',
+    'environment' => CONFIG['engine']['cache']['index'].'/environment/{group}/{src}.php',
+    'site' => CONFIG['engine']['cache']['index'].'site/{group}/{src}.php',
+    'patterns' => CONFIG['engine']['cache']['index'].'/patterns/{group}/{plid}.php',
+    'assets' => CONFIG['engine']['cache']['index'].'/assets/{endpoint}.php',
+    'endpoints' => CONFIG['engine']['cache']['index'].'/endpoints/{endpoint}.php',
+    'routes' => CONFIG['engine']['cache']['index'].'/routes/{endpoint}.php',
+
     'partials' => CONFIG['engine']['cache']['index'].'/partials.php',
     'helpers' => CONFIG['engine']['cache']['index'].'/helpers.php',
+
     'processes' => CONFIG['engine']['cache']['index'].'/processes.php',
     'queue' => CONFIG['engine']['cache']['index'].'/queue.php',
     'callbacks' => CONFIG['engine']['cache']['index'].'/callbacks.php',
-    'lock' => CONFIG['engine']['cache']['index'].'/indexing.lock'
+    'lock' => CONFIG['engine']['cache']['index'].'/indexing.lock',
   ];
 
   // Capture output.
@@ -145,7 +147,7 @@ class Index {
 
     // Build partials based on the pattern index.
     $this->partials = [
-      'metadata' => null,
+      'metadata' => [],
       'data' => ($partials = self::getPartialData($this->patterns['data']))
     ];
 
@@ -157,19 +159,19 @@ class Index {
 
     // Get routes from the site and asset indices, and cache it.
     $this->routes = [
-      'metadata' => null,
+      'metadata' => [],
       'data' => ($routes = self::getRouteData($site, $assets))
     ];
 
     // Build endpoints based on the environment, site, pattern, and route indices.
     $this->endpoints = [
-      'metadata' => null,
+      'metadata' => [],
       'data' => ($endpoints = self::getEndpointData($this->environment['data'], $this->site['data'], $this->patterns['data'], $routes))
     ];
 
     // Get an index of handlebars helpers, and cache it.
     $this->helpers = [
-      'metadata' => null,
+      'metadata' => [],
       'data' => ($helpers = self::getHelperData())
     ];
 
@@ -512,45 +514,168 @@ class Index {
   // Cache some index data.
   protected static function cache( string $name, array &$index ) {
 
-    // Add created and modified times into the cache data.
-    $index['modified'] = $index['created'] = new DateTime();
+    // Set created and modified times to add into the cache data.
+    $modified = $created = new DateTime();
 
-    // Get the file names.
-    $phpFilename = basename(self::$paths[$name]);
-    $jsonFilename = strtr($phpFilename, ['.php' => '.json']);
+    // Get the index's metadata and data.
+    $metadata = &$index['metadata'];
+    $data = &$index['data'];
 
-    // Get the index file paths.
-    $phpDest = self::$paths[$name];
-    $jsonDest = strtr($phpDest, ['.php' => '.json']);
+    // Get the base file names.
+    $phpFilenameBase = basename(self::$paths[$name]);
+    $jsonFilenameBase = strtr($phpFilenameBase, ['.php' => '.json']);
 
-    // Convert the index to a PHP string and JSON string.
-    $php = '<?php return '.var_export($index, true).'; ?>';
-    $json = json_encode($index, JSON_PRETTY_PRINT);
+    // Get the base file paths.
+    $phpDestBase = self::$paths[$name];
+    $jsonDestBase = strtr($phpDestBase, ['.php' => '.json']);
 
-    // Try to save the index as a temporary file, and make sure no errors were thrown.
-    try {
+    // Detect the fields that should be bound within the filename.
+    preg_match_all('/\{([\S]+?)\}/', $phpFilenameBase, $bindings, PREG_SET_ORDER);
 
-      // Create the temporary file.
-      $phpTmp = Cache::tmp($php, $phpFilename, 0777);
-      $jsonTmp = Cache::tmp($json, $jsonFilename, 0777);
+    // Initialize a helper method for caching something.
+    $cache = function( &$itemData, &$itemMetadata, array $bind = [] ) use (
+      $name,
+      $bindings,
+      $phpFilenameBase,
+      $jsonFilenameBase,
+      $phpDestBase,
+      $jsonDestBase,
+      $created,
+      $modified
+    ) {
 
-      // Move the temporary file to the index, and overwrite any existing index file that's there.
-      $phpTmp['move']($phpDest);
-      $jsonTmp['move']($jsonDest);
+      // Build the item's cacheable data.
+      $itemCacheable = [
+        'data' => $itemData,
+        'metadata' => $itemMetadata,
+        'created' => $created,
+        'modified' => $modified
+      ];
 
-      // Wipe the index after its been cached in order to free up some memory.
-      $index = null;
+      // Filter binding data to remove any bind data that was passed in.
+      if( !empty($bind) ) $bindings = array_filter($bindings, function($binding) use ($bind) {
 
-      // Then, unset the index.
-      unset($index);
+        // Only keep binding data that has not already been bound.
+        return !in_array($binding[0], array_keys($bind));
 
-    }
+      });
 
-    // Otherwise, log that an error occurred when attempting to cache the index.
-    catch( Exception $e ) {
+      // Get the values that should be bound within the item's filename.
+      foreach( $bindings as $binding ) {
 
-      // Log the error.
-      error_log("Something went wrong while trying to create the index '$name'.");
+        // Get the key that should be bound.
+        $key = $binding[1];
+
+        // Bind the item's value that should be bound.
+        $value = is_array($itemData) ? $itemData[$key] : $itemData->{$key};
+
+        // Make sure the item's bound data is not an array.
+        if( is_array($value) ) $value = array_last($value);
+
+        // Save the value to be bound.
+        $bind[$binding[0]] = $value;
+
+      }
+
+      // Get the item's file names.
+      $phpFilename = strtr($phpFilenameBase, $bind);
+      $jsonFilename = strtr($jsonFilenameBase, $bind);
+
+      // Get the item's file paths.
+      $phpDest = strtr($phpDestBase, $bind);
+      $jsonDest = strtr($jsonDestBase, $bind);
+
+      // Convert the item's cacheable data to a PHP string and JSON string.
+      $php = '<?php return '.var_export($itemCacheable, true).'; ?>';
+      $json = json_encode($itemCacheable, JSON_PRETTY_PRINT);
+
+      // Try to save the index as a temporary file, and make sure no errors were thrown.
+      try {
+
+        // Create the temporary file.
+        $phpTmp = Cache::tmp($php, "$name/$phpFilename", 0777);
+        $jsonTmp = Cache::tmp($json, "$name/$jsonFilename", 0777);
+
+        // Move the temporary file to the index, and overwrite any existing index file that's there.
+        $phpTmp['move']($phpDest);
+        $jsonTmp['move']($jsonDest);
+
+      }
+
+      // Otherwise, log that an error occurred when attempting to cache the index.
+      catch( Exception $e ) {
+
+        // Get the problematic item's file ID.
+        $id = strtr($phpFilename, ['.php' => '']);
+
+        // Log the error.
+        error_log("Something went wrong while trying to create the index '$name' for '$id'.");
+
+      }
+
+      // Wipe the item's index data after its been cached in order to free up some memory.
+      $itemData = null;
+      $itemMetadata = null;
+      $itemCacheable = null;
+
+      // Then, unset the item's index data.
+      unset($itemData);
+      unset($itemMetadata);
+      unset($itemCacheable);
+
+    };
+
+    // Cache the index data by type.
+    switch($name) {
+
+      // Cache environment, site, and/or patterns index data.
+      case 'environment':
+      case 'site':
+      case 'patterns':
+
+        // Loop through the index groups.
+        foreach( $data as $groupKey => &$groupData ) {
+
+          // Cache each item within the group individually.
+          foreach( $groupData as $itemKey => &$itemData ) {
+
+            // Capture the item's metadata, if any.
+            $itemMetadata = &$metadata[$groupKey][$itemKey] ?? [];
+
+            // Cache the item.
+            $cache($itemData, $itemMetadata, ['{group}' => $groupKey]);
+
+          }
+
+        }
+
+        // Done.
+        return;
+
+      // Otherwise, cache helpers and partials index data.
+      case 'helpers':
+      case 'partials':
+
+        // Cache the data as is.
+        $cache($data, $metadata);
+
+        // Done.
+        return;
+
+      // Otherwise, cache all other index data.
+      default:
+
+
+        // Cache each item within the data set.
+        foreach( $data as $itemKey => &$itemData ) {
+
+          // Capture the item's metadata, if any.
+          $itemMetadata = &$metadata[$itemKey] ?? [];
+
+          // Cache the item.
+          $cache($itemData, $itemMetadata);
+
+        }
 
     }
 
