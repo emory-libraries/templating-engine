@@ -1,9 +1,9 @@
-<div class="feed">
-  {{> tokens-heading level=3 classes='feed-heading'}}
+<div class="feed"{{#if url}}data-feed="{{url}}"{{/if}}>
+  {{> tokens-heading level=3 classes='feed-heading' icon=(default icon 'material-rss_feed')}}
   <div class="feed-content">
-    {{#each content}}{{> molecules-feed-item}}{{/each}}
+    {{#each (limit content 5)}}{{> molecules-feed-item}}{{/each}}
   </div>
   {{#if button}}
-    {{#with button}}{{> atoms-button-link classes='feed-button' icon=false}}{{/with}}
+    {{#with button}}{{> atoms-button-link classes='feed-button' label=(default label (combine 'View All ' ../heading)) icon=false}}{{/with}}
   {{/if}}
 </div>

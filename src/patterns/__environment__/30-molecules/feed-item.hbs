@@ -1,5 +1,7 @@
-<div class="feed-item {{#if button}} has-action{{/if}}">
-  <span class="feed-item-date">{{this.date}}</span>
-  {{#with link}}{{> atoms-link label=../title classes="feed-item-title"}}{{/with}}
-  {{#if button}}{{#with button}}{{> atoms-button-link hollow=true classes="feed-item-action"}}{{/with}}{{/if}}
+<div class="feed-item {{#if button}} has-action{{/if}}"{{#if id}} data-id="{{id}}"{{/if}}>
+  <span class="feed-item-date">{{{sanitize this.date}}}</span>
+  {{#with link}}{{> atoms-link label=(sanitize ../title) classes="feed-item-title" raw=true}}{{/with}}
+  {{#if button}}
+    {{#with button}}{{> atoms-button-link hollow=true classes="feed-item-action"}}{{/with}}
+  {{/if}}
 </div>
