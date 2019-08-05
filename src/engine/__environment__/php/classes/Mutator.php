@@ -26,6 +26,19 @@ class Mutator {
     // Return the unmutated data if no mutations exist.
     if( !isset($mutations) ) return $data;
 
+    // Merge global-level mutations into the template-specific mutations.
+    if( isset(CONFIG['config']['mutations']['globals']) ) {
+
+      // Merge each set of global mutations.
+      foreach( CONFIG['config']['mutations']['globals'] as $id => $global ) {
+
+        // Merge the mutations.
+        $mutations = array_merge($mutations, $global);
+
+      }
+
+    }
+
     // Otherwise, mutate the data, starting by making repeatable areas.
     $data = self::repeatable($data, array_get($mutations, 'repeatable', []));
 
