@@ -489,7 +489,7 @@ class Index {
   }
 
   // Compile the meta data set for a request.
-  protected static function compile( array $environment, array $site, array $endpoint = [] ) {
+  protected static function compile( array &$environment, array &$site, array &$endpoint = [] ) {
 
     // Get global, meta, and shared data.
     $global = self::merge($environment['global'], $site['global'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
@@ -510,7 +510,7 @@ class Index {
   }
 
   // Cache some index data.
-  protected static function cache( string $name, array $index ) {
+  protected static function cache( string $name, array &$index ) {
 
     // Add created and modified times into the cache data.
     $index['modified'] = $index['created'] = new DateTime();
@@ -537,6 +537,12 @@ class Index {
       // Move the temporary file to the index, and overwrite any existing index file that's there.
       $phpTmp['move']($phpDest);
       $jsonTmp['move']($jsonDest);
+
+      // Wipe the index after its been cached in order to free up some memory.
+      $index = null;
+
+      // Then, unset the index.
+      unset($index);
 
     }
 
@@ -571,7 +577,18 @@ class Index {
       if( $state === true and isset($pid) and !in_array($pid, $processes) ) $processes[] = $pid;
 
       // Otherwise, remove the PID from the process list.
-      else if( $state === false and isset($pid) and in_array($pid, $processes) ) unset($processes[array_search($pid, $processes)]);
+      else if( $state === false and isset($pid) and in_array($pid, $processes) ) {
+
+        // Get the index of the PID.
+        $index = array_search($pid, $processes);
+
+        // Set the PID to null to free up some memory.
+        $processes[$index] = null;
+
+        // Then, unset the PID.
+        unset($processes[$index]);
+
+      }
 
       // Convert the processes to a PHP string and JSON string.
       $php = '<?php return '.var_export($processes, true).'; ?>';
@@ -626,7 +643,15 @@ class Index {
       if( $state === true ) $callbacks[$id] = $pid;
 
       // Otherwise, remove the PID from the callback list.
-      else unset($callbacks[$id]);
+      else {
+
+        // Set the PID to null to free up some memory.
+        $callbacks[$id] = null;
+
+        // Then, unset the PID.
+        unset($callbacks[$id]);
+
+      }
 
       // Convert the callbacks to a PHP string and JSON string.
       $php = '<?php return '.var_export($callbacks, true).'; ?>';
