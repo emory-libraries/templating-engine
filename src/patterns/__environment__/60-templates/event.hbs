@@ -1,0 +1,116 @@
+
+
+{{{_inspect __params__}}}
+
+
+{{! Validate the given feed source. }}
+{{#if feed.url}}
+
+  {{! Fetch the feed's content }}
+  {{assign 'content' (fetchFeed feed.url)}}
+
+  {{! Loop through content items to find the one with the matchin eventID}}
+  {{#each content}}
+    {{#if (eq this.eventID ../feed.eventID)}}
+      {{! Capture the event object that matches}}
+      {{storageSet 'event' this}}
+    {{/if}}
+  {{/each}}
+
+  {{! Assign the matching entry as the page's event object}}
+  {{assign 'event' (storageGet 'event')}}
+
+  {{! Get event topics }}
+  {{#each event.customFields}}
+    {{#if (eq label 'University Event Topic')}}
+      {{storageSet 'topics' value}}
+    {{/if}}
+  {{/each}}
+
+  {{! Assign topics }}
+  {{assign 'topics' (storageGet 'topics')}}
+
+  {{! Add location to sections object for sidebar list}}
+  {{assign 'location' (JSONparse (combine '{"content": "' (sanitize event.location) '","icon": "material-map","title":"Location"}'))}}
+  {{storagePush 'sections' location}}
+
+  {{! set the button values}}
+  {{assign 'buttons' (JSONparse (combine '[{"href": "' event.signUpUrl '","label": "Register Now"}]'))}}
+
+  {{! Loop through Get sidebar list items}}
+  {{#each event.customFields}}
+
+    {{assign 'title' label}}
+    {{#if (indexOf value ',')}}
+     {{assign 'content' (split value ",")}}
+    {{else}}
+      {{assign 'content' value}}
+    {{/if}}
+
+    {{#if (eq label 'Cost')}}
+      {{assign 'icon' 'material-attach_money'}}
+      {{storagePush 'sections' this}}
+    {{/if}}
+
+    {{#if (eq label 'Speaker')}}
+      {{assign 'icon' 'material-person'}}
+      {{storagePush 'sections' this}}
+    {{/if}}
+
+    {{#if (eq label 'Department / Organization')}}
+      {{assign 'title' 'Department'}}
+      {{assign 'icon' 'material-office'}}
+      {{storagePush 'sections' this}}
+    {{/if}}
+
+    {{#if (eq label 'Contact Name')}}
+      {{storageSet 'contact-name' value}}
+    {{/if}}
+
+    {{#if (eq label 'Contact Email')}}
+      {{assign 'title' 'Contact'}}
+      
+      {{assign 'content' (combine (storageGet 'contact-name') '<br><a href=\"mailto:' (sanitize value) '\">' (sanitize value) '</a>' ) }}
+
+      {{assign 'icon' 'material-mail'}}
+      {{storagePush 'sections' this}}
+    {{/if}}
+
+  {{/each}}
+
+  {{! Set the looped sections to the sections array }}
+  {{assign 'sections' (storageGet 'sections')}}
+
+  {{! Set (decoded) related topics value }}
+  {{assign 'topics' (decodeHTML topics)}}
+
+  {{! Set the subtitle to be the date of the event }}
+  {{assign 'title' event.title}}
+  
+  {{! Set the subtitle to be the date of the event }}
+  {{assign 'subtitle' event.dateTimeFormatted}}
+
+  {{! set the hero image (This could be bad)}}
+  {{assign 'hero' event.eventImage.url}}
+
+{{/if}}
+
+<div class="event-page">
+  <header class="event-page-header"></header>
+  <div class="event-page-main">
+
+    {{#extend 'organisms-main' type="event-page" classes="event-page-main"}}
+      {{#content 'section-main-body'}}
+        {{> tokens-text rich=true text=event.description}}
+        {{>atoms-rule}}
+        {{>tokens-heading level=6 heading="Related University Event Topics"}}
+        {{>tokens-text text=topics}}
+      {{/content}}
+      {{#content 'section-main-sidebar'}}
+        {{>compounds-sidebar-list}}
+      {{/content}}
+    {{/extend}}
+    
+  </div>
+  <footer class="event-page-footer"></footer>
+</div>

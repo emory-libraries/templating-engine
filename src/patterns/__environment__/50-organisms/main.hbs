@@ -5,7 +5,7 @@
   </div>
 
   {{! Identify pages with special case intro variants. }}
-  {{assign 'variants' (makeArray 'exhibition-page' 'bio-page' 'gallery-page' 'landing-page' 'cover-page')}}
+  {{assign 'variants' (makeArray 'exhibition-page' 'bio-page' 'event-page' 'gallery-page' 'landing-page' 'cover-page')}}
 
   {{! Handle special cases. }}
   {{#inArray variants type}}
@@ -22,6 +22,12 @@
       {{> organisms-intro-bio}}
       {{#if quote}}<p class="text -lead section-main-subtitle">&ldquo;{{quote}}&rdquo;</p>{{/if}}
     {{/if}}
+
+    {{! Event page intro }}
+    {{#if (eq type 'event-page')}}
+      {{> organisms-intro-interior-cover date=true}}
+    {{/if}}
+
 
     {{! Gallery page intro }}
     {{#if (eq type 'gallery-page')}}
