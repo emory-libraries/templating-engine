@@ -15,6 +15,7 @@
     "popular.1.items.1": "popular.1.link-directions",
     "slider.slides": "slider.image-heavy-card",
     "slider.slides.@.image.src": "slider.slides.@.image.image-file.path",
+    "slider.slides.@.buttons.0.label": "slider.slides.@.button.button-label",
     "cards": "links-research-aids",
     "cards.cards": "cards.link",
     "cards.buttons.0": "cards.link-directory",
