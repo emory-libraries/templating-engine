@@ -86,6 +86,36 @@
 {{assign 'popular.0.items' (storageGet 'popular.0.items')}}
 {{assign 'popular.1.items' (storageGet 'popular.1.items')}}
 
+{{! Reformat slider slides. }}
+{{#each slider.slides}}
+
+  {{! Validate links. }}
+  {{#if (eq link.link-type 'Cascade Page')}}
+    {{assign 'buttons.0.href' link.cascade-page.path}}
+    {{assign 'title' 'Browse All Research Help'}}
+    {{assign 'description' null}}
+    {{#if link.link-customizations}}
+      {{#if (not (eq (indexOf link.link-customizations 'Label') false))}}
+        {{assign 'title' link.link-label}}
+      {{/if}}
+      {{#if (not (eq (indexOf link.link-customizations 'Description') false))}}
+        {{assign 'description' link.link-description}}
+      {{/if}}
+    {{/if}}
+  {{else if (eq link.link-type 'External URL')}}
+    {{assign 'buttons.0.href' link.external-url}}
+    {{assign 'title' link.link-label}}
+    {{assign 'description' link.link-description}}
+  {{/if}}
+
+  {{! Save the slide. }}
+  {{storagePush 'slider.slides' this}}
+
+{{/each}}
+
+{{! Update slider sides. }}
+{{assign 'slider.slides' (storageGet 'slider.slides')}}
+
 {{! Reformat the cards cards. }}
 {{#each cards.cards}}
 
@@ -221,36 +251,37 @@
   {{! Validate feature image. }}
   {{#if (eq image.src '/')}}{{assign 'image.src' null}}{{/if}}
 
-  {{! Validate links. }}
-  {{#if (eq link.link-type 'Cascade Page')}}
-    {{assign 'buttons.0.href' link.cascade-page.path}}
-    {{assign 'heading' link.cascade-page.title}}
-    {{assign 'description' link.cascade-page.description}}
-    {{#if link.link-customizations}}
-      {{#if (not (eq (indexOf link.link-customizations 'Label') false))}}
-        {{assign 'heading' link.link-label}}
+  {{! Validate buttons. }}
+  {{#each buttons}}
+
+    {{#if (eq link-type 'Cascade Page')}}
+      {{assign 'href' cascade-page.path}}
+      {{assign 'label' cascade-page.title}}
+      {{#if link-customizations}}
+        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+          {{assign 'label' link-label}}
+        {{/if}}
       {{/if}}
-      {{#if (not (eq (indexOf link.link-customizations 'Description') false))}}
-        {{assign 'description' link.link-description}}
+    {{else if (eq link-type 'Cascade File')}}
+      {{assign 'href' cascade-file.path}}
+      {{assign 'label' (stem cascade-file.display-name)}}
+      {{#if link-customizations}}
+        {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+          {{assign 'label' link-label}}
+        {{/if}}
       {{/if}}
+    {{else if (eq link-type 'External URL')}}
+      {{assign 'href' external-url}}
+      {{assign 'label' link-label}}
     {{/if}}
-  {{else if (eq link.link-type 'Cascade File')}}
-    {{assign 'buttons.0.href' link.cascade-file.path}}
-    {{assign 'heading' (stem link.cascade-file.display-name)}}
-    {{assign 'description' null}}
-    {{#if link.link-customizations}}
-      {{#if (not (eq (indexOf link.link-customizations 'Label') false))}}
-        {{assign 'heading' link.link-label}}
-      {{/if}}
-      {{#if (not (eq (indexOf link.link-customizations 'Description') false))}}
-        {{assign 'description' link.link-description}}
-      {{/if}}
-    {{/if}}
-  {{else if (eq link.link-type 'External URL')}}
-    {{assign 'buttons.0.href' link.external-url}}
-    {{assign 'heading' link.link-label}}
-    {{assign 'description' link.link-description}}
-  {{/if}}
+
+    {{! Update wayfinder buttons. }}
+    {{storagePush 'buttons' this}}
+
+  {{/each}}
+
+  {{! Update wayfinder buttons. }}
+  {{assign 'buttons' (storageGet 'buttons')}}
 
   {{! Save the wayfinder. }}
   {{storageSet 'boxes.wayfinder' this}}
@@ -267,34 +298,34 @@
   {{#if (eq image.src '/')}}{{assign 'image.src' null}}{{/if}}
 
   {{! Validate links. }}
-  {{#if (eq link.link-type 'Cascade Page')}}
-    {{assign 'buttons.0.href' link.cascade-page.path}}
-    {{assign 'heading' link.cascade-page.title}}
-    {{assign 'description' link.cascade-page.description}}
-    {{#if link.link-customizations}}
-      {{#if (not (eq (indexOf link.link-customizations 'Label') false))}}
-        {{assign 'heading' link.link-label}}
+  {{#if (eq link-type 'Cascade Page')}}
+    {{assign 'buttons.0.href' cascade-page.path}}
+    {{assign 'heading' cascade-page.title}}
+    {{assign 'description' cascade-page.description}}
+    {{#if link-customizations}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+        {{assign 'heading' link-label}}
       {{/if}}
-      {{#if (not (eq (indexOf link.link-customizations 'Description') false))}}
-        {{assign 'description' link.link-description}}
+      {{#if (not (eq (indexOf link-customizations 'Description') false))}}
+        {{assign 'description' link-description}}
       {{/if}}
     {{/if}}
-  {{else if (eq link.link-type 'Cascade File')}}
-    {{assign 'buttons.0.href' link.cascade-file.path}}
-    {{assign 'heading' (stem link.cascade-file.display-name)}}
+  {{else if (eq link-type 'Cascade File')}}
+    {{assign 'buttons.0.href' cascade-file.path}}
+    {{assign 'heading' (stem cascade-file.display-name)}}
     {{assign 'description' null}}
-    {{#if link.link-customizations}}
-      {{#if (not (eq (indexOf link.link-customizations 'Label') false))}}
-        {{assign 'heading' link.link-label}}
+    {{#if link-customizations}}
+      {{#if (not (eq (indexOf link-customizations 'Label') false))}}
+        {{assign 'heading' link-label}}
       {{/if}}
-      {{#if (not (eq (indexOf link.link-customizations 'Description') false))}}
+      {{#if (not (eq (indexOf link-customizations 'Description') false))}}
         {{assign 'description' link.link-description}}
       {{/if}}
     {{/if}}
-  {{else if (eq link.link-type 'External URL')}}
-    {{assign 'buttons.0.href' link.external-url}}
-    {{assign 'heading' link.link-label}}
-    {{assign 'description' link.link-description}}
+  {{else if (eq link-type 'External URL')}}
+    {{assign 'buttons.0.href' external-url}}
+    {{assign 'heading' link-label}}
+    {{assign 'description' link-description}}
   {{/if}}
 
   {{! Save the feature. }}
