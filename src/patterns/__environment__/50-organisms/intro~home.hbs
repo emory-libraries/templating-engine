@@ -6,7 +6,7 @@
 
 <header class="intro-home" style="--image: url({{background-image}});">
   <div class="intro-home-search">
-    {{> organisms-search-menu home=true}}
+    {{#with search}}{{> organisms-search-menu home=true}}{{/with}}
   </div>
   {{#if badge}}
     {{> atoms-badge label=badge white=true square=true classes="intro-home-badge"}}

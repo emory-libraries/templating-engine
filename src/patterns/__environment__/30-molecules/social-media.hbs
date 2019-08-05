@@ -1,4 +1,4 @@
-<div class="social-media">
+<div class="social-media{{#if classes}} {{classes}}{{/if}}">
   {{#each channels}}
     <a href="{{this}}" class="social-media-link">
       {{> tokens-icon id=(combine 'socicon-' (stem (get 'hostname' (urlParse this))))}}

@@ -1,3 +1,6 @@
+{{! Generate a unique ID for the search menu if none was given. }}
+{{#if (not this.uid)}}{{assign 'uid' (uid 'search-menu--')}}{{/if}}
+
 {{! Generate a unique ID for the search box. }}
 {{assign 'searchUID' (uid 'search--')}}
 
@@ -8,10 +11,10 @@
 {{#each tabs}}
 
   {{! Assign the tab a unique ID based on its value, which should map to a search field. }}
-  {{assign 'uid' (combine 'search-menu-toggle--' (dashcase (lowercase value)))}}
+  {{assign 'uid' (combine (default ../tab-prefix '') 'search-menu-toggle--' (dashcase (lowercase value)))}}
 
   {{! Add the tabs' unique group ID as the group name. }}
-  {{assign 'group' ../tabUID}}
+  {{assign 'group' (combine (default ../tab-prefix '') ../tabUID)}}
 
   {{! Save the updated tab's unique ID. }}
   {{storagePush 'tabs' this}}
@@ -23,7 +26,9 @@
 
 {{! Determine which tab should be selected by default. }}
 {{! NOTE: This is typically handled at the tab menu level, which is fine when JS is enabled, but we need it here for noscript scenarios. }}
-{{#if (gt (length (filterWhere tabs 'selected' true '===')) 0)}}
+{{#if (gt (length (filterWhere tabs 'active' true '===')) 0)}}
+  {{assign 'selected' (get 'uid' (itemAt (filterWhere tabs 'active' true '===') 0))}}
+{{else if (gt (length (filterWhere tabs 'selected' true '===')) 0)}}
   {{assign 'selected' (get 'uid' (itemAt (filterWhere tabs 'selected' true '===') 0))}}
 {{else if (gt (length (filterWhere services 'default' true '===')) 0)}}
   {{assign 'selected' (combine 'search-menu-toggle--' (get 'id' (itemAt (filterWhere services 'default' true '===') 0)))}}
@@ -34,14 +39,18 @@
 {{! Determine if a search form should be used instead of the default. }}
 {{#if (eq noscript true)}}{{assign 'form' true}}{{/if}}
 
-<div class="search-menu -{{default theme 'dark'}}{{#if home}} -home{{/if}}" data-uid="{{this.uid}}">
+<div class="search-menu -{{default theme 'dark'}}{{#if home}} -home{{/if}}{{#if classes}} {{classes}}{{/if}}" data-uid="{{this.uid}}">
 
   {{! Always add toggles for tabs and search boxes. }}
   {{! NOTE: This is required to enable noscript functionality. }}
   {{#each tabs}}
 
     {{! Determine if the tab should be active. }}
-    {{#if (eq ../selected this.uid)}}{{assign 'active' true}}{{else}}{{assign 'active' false}}{{/if}}
+    {{#if (eq ../selected this.uid)}}
+      {{assign 'active' true}}
+    {{else}}
+      {{assign 'active' false}}
+    {{/if}}
 
     <input type="radio" class="search-menu-toggle" id="{{this.uid}}" name="{{group}}"{{#if active}} checked{{/if}}>
 
@@ -62,7 +71,7 @@
   </div>
 
   <div class="search-menu-back">
-    {{#with back}}{{> atoms-button-toggle classes='search-menu-back' for=this.uid}}{{/with}}
+    {{#with back}}{{> atoms-button-toggle classes='search-menu-back' for=../uid}}{{/with}}
   </div>
 
 </div>
