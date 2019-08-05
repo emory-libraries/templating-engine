@@ -1,8 +1,8 @@
-<div class="copyright">
+<div class="copyright{{#if classes}} {{classes}}{{/if}}">
   <span class="copyright-notice">
     <span class="copyright-signature">
       Copyright &copy; <span class="copyright-year">{{year}}</span>
-      <span class="copyright-owner">{{default owner "Emory University"}}</span> 
+      <span class="copyright-owner">{{default owner "Emory University"}}</span>
     </span>
     <span class="copyright-rights">{{default rights "All Rights Reserved."}}</span>
     {{#if policies}}
@@ -14,7 +14,7 @@
     {{/if}}
   </span>
   <span class="copyright-address">
-    {{#make 'defaultAddress' this}}
+    {{#make 'defaultAddress'}}
       {
         street: "201 Dowman Drive",
         city: "Atlanta",

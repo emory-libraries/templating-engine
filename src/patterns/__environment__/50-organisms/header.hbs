@@ -1,0 +1,15 @@
+<header class="header">
+
+  <div class="header-notifications"></div>
+
+  <div class="header-main">
+
+    {{#with navigation}}{{> compounds-nav-menu-utility desktop-only=true classes='header-main-utility'}}{{/with}}
+    {{> organisms-nav-bar-main classes='header-main-main'}}
+    {{> atoms-input-toggle classes='header-main-toggle' id='nav-menu-main--search'}}
+    {{#with navigation.search}}{{> atoms-nav-button-search classes='header-main-search' for-suffix='search'}}{{/with}}
+    {{#with search}}{{> organisms-search-menu classes='header-main-overlay' uid='nav-menu-main--search' tab-prefix='nav-menu-main--search--'}}{{/with}}
+
+  </div>
+
+</header>

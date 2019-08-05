@@ -1,5 +1,5 @@
 {{#if (or desktop-only (not mobile-only))}}
-<nav class="nav-menu-utility -desktop">
+<nav class="nav-menu-utility -desktop{{#if classes}} {{classes}}{{/if}}">
   <div class="nav-menu-utility-left">
     {{#each utilities}}{{> atoms-nav-button-utility}}{{/each}}
   </div>

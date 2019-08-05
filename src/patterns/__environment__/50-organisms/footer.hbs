@@ -1,0 +1,19 @@
+<footer class="footer">
+
+  {{#with navigation}}{{> molecules-branding-footer classes='footer-branding'}}{{/with}}
+
+  {{#each (limit navigation.lists 4) as |list|}}
+    <ul class="footer-list">
+      {{#each list}}
+        <li>{{> atoms-link classes='' icon=false}}</li>
+      {{/each}}
+    </ul>
+  {{/each}}
+
+  {{> atoms-rule style='light' classes='footer-divider'}}
+
+  {{#with navigation}}{{> molecules-social-media classes='footer-socials'}}{{/with}}
+
+  {{#with copyright}}{{> atoms-copyright classes='footer-copyright'}}{{/with}}
+
+</footer>
