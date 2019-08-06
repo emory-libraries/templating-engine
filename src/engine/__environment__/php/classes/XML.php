@@ -114,7 +114,7 @@ class XML {
   public static function toObject( string $xml, $escape = [] ) {
 
     // Return a SimpleXMLElement object.
-    return new SimpleXMLElement(self::escapeHTML($xml, $escape));
+    return new SimpleXMLElement(self::escapeXML($xml, $escape));
 
   }
 

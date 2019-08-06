@@ -191,19 +191,19 @@ class Renderer {
   }
 
   // Renders an asset file.
-  public static function asset( Endpoint $endpoint ) {
+  public static function asset( Asset $asset ) {
 
     // Output a content type header.
-    header('Content-Type: '.$endpoint->route->mime);
+    header('Content-Type: '.$asset->mime);
 
     // Send cache control headers.
     header('Cache-Control: max-age='.CONFIG['assetHeaders']['keepAlive'].', public');
 
     // For PHP files, include them.
-    if( Path::extname($endpoint->endpoint) == 'php' ) include $endpoint->route->path;
+    if( $asset->type == 'php' ) include $asset->path;
 
     // Otherwise, output the asset.
-    else readfile($endpoint->route->path);
+    else readfile($asset->path);
 
   }
 
