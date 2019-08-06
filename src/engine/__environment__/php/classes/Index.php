@@ -41,7 +41,8 @@ class Index {
   // The paths used to save the index data.
   public static $paths = [
     'environment' => CONFIG['engine']['cache']['index'].'/environment/{group}/{src}.php',
-    'site' => CONFIG['engine']['cache']['index'].'site/{group}/{src}.php',
+    'site' => CONFIG['engine']['cache']['index'].'/site/{group}/{src}.php',
+
     'patterns' => CONFIG['engine']['cache']['index'].'/patterns/{group}/{plid}.php',
     'assets' => CONFIG['engine']['cache']['index'].'/assets/{endpoint}.php',
     'endpoints' => CONFIG['engine']['cache']['index'].'/endpoints/{endpoint}.php',
@@ -137,7 +138,7 @@ class Index {
     ];
 
     // Mutate the site data.
-    $this->site['data']['site'] = self::mutate($this->site['data']['site']);
+    $this->site['data']['site'] = static::mutate($this->site['data']['site']);
 
     // Get an index of all patterns, and cache it.
     $this->patterns = [
@@ -210,23 +211,53 @@ class Index {
 
     // Make some protected methods public.
     switch($method) {
+
+      // Get partial index data.
       case 'getPartialData':
+
+        // Get partial data.
         return static::getPartialData();
+
+      // Get helper index data.
       case 'getHelperData':
+
+        // Get helper data.
         return static::getHelperData();
+
+      // Get asset index data.
       case 'getAssetData':
+
+        // Get asset data.
         return static::getAssetData(static::INDEX_CLASS, 'Pattern');
+
+      // Get endpoint index data.
       case 'getEndpointData':
+
+        // Get endpoint data.
         return static::getEndpointData(static::INDEX_CLASS, 'Data');
+
+      // Get index data for an asset endpoint.
       case 'getAssetEndpointData':
-        return array_values(array_filter(static::getEndpointData(static::INDEX_CLASS, 'Data'), function($endpoint) {
+
+        // Get endpoint data.
+        $endpoints = static::getEndpointData(static::INDEX_CLASS, 'Data');
+
+        // Get asset endpoint data.
+        return array_values(array_filter($endpoints, function($endpoint) {
 
           // Locate all asset endpoints.
           return $endpoint->asset;
 
         }));
+
+      // Get index data for an asset endpoint.
       case 'getAssetEndpoint':
-        return array_get(array_values(array_filter(static::getEndpointData(static::INDEX_CLASS, 'Data'), function($endpoint) use ($arguments) {
+
+        // Get endpoint data.
+        $endpoints = static::getEndpointData(static::INDEX_CLASS, 'Data');
+
+        // Return the asset endpoint.
+        return array_get(array_values(array_filter($endpoints, function($endpoint) use ($arguments) {
 
           // Find asset endpoints.
           if( !$endpoint->asset ) return false;
@@ -235,14 +266,24 @@ class Index {
           return (is_array($endpoint->endpoint) ? in_array($arguments[0], $endpoint->endpoint) : $endpoint->endpoint == $arguments[0]);
 
         })), 0);
+
+      // Get the indexer's lock status.
       case 'getLockStatus':
+
+        // Get status.
         return static::lock();
+
+      // Get the site's metadata.
       case 'getMetaData':
-        return static::compile(
-          static::getEnvironmentData(static::INDEX_CLASS, 'Data'),
-          Index::getSiteData(Index::INDEX_CLASS, 'Data'),
-          (isset($arguments[0]) and is_array($arguments[0])) ? $arguments[0] : []
-        );
+
+        // Get environment, site, and endpoint data.
+        $environment = static::getEnvironmentData(static::INDEX_CLASS, 'Data');
+        $sites = Index::getSiteData(Index::INDEX_CLASS, 'Data');
+        $endpoint =   (isset($arguments[0]) and is_array($arguments[0])) ? $arguments[0] : [];
+
+        // Return the site's metadata.
+        return static::compile($environment, $sites, $endpoint);
+
     }
 
   }
@@ -631,6 +672,43 @@ class Index {
       // Cache environment, site, and/or patterns index data.
       case 'environment':
       case 'site':
+
+        // Loop through the index groups.
+        foreach( $data as $groupKey => &$groupData ) {
+
+          // Cache each item within the group individually.
+          foreach( $groupData as $itemFile => &$itemData ) {
+
+            // Capture the item's metadata, if any.
+            $itemMetadata = &$metadata[$groupKey][$itemFile] ?? [];
+
+            // Get the source of the item.
+            $src = strtr(File::source($itemFile), [
+              '/_meta' => '',
+              '/_global' => '',
+              '/_shared' => ''
+            ]);
+
+            // Cache the item.
+            $cache($itemData, $itemMetadata, [
+              '{group}' => $groupKey,
+              '{src}' => $src
+            ]);
+
+          }
+
+          // Set the group's index data to null to free up some memory.
+          $groupData = null;
+
+          // Then, unset the group's index data.
+          unset($groupData);
+
+        }
+
+        // Done.
+        break;
+
+      // Otherwise, cache patterns index data.
       case 'patterns':
 
         // Loop through the index groups.
@@ -647,10 +725,16 @@ class Index {
 
           }
 
+          // Set the group's index data to null to free up some memory.
+          $groupData = null;
+
+          // Then, unset the group's index data.
+          unset($groupData);
+
         }
 
         // Done.
-        return;
+        break;
 
       // Otherwise, cache helpers and partials index data.
       case 'helpers':
@@ -660,7 +744,7 @@ class Index {
         $cache($data, $metadata);
 
         // Done.
-        return;
+        break;
 
       // Otherwise, cache all other index data.
       default:

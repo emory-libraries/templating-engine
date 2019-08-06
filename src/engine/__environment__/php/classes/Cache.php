@@ -10,16 +10,13 @@ class Cache {
   // The cache path used by the cache instance.
   protected $path;
 
-  // An in memory copy of the cache.
-  protected $cache = [];
-
   // Defines expiry time constants.
   const CACHE_EXPIRES_MINUTE = 60;
   const CACHE_EXPIRES_HOUR = 3600;
   const CACHE_EXPIRES_DAY = 86400;
 
   // Constructs the cache.
-  function __construct( string $path ) {
+  function __construct( string $path = CONFIG['engine']['cache']['cache'] ) {
 
     // Save the cache path to be used by the cache instance.
     $this->path = self::path($path);
@@ -27,84 +24,61 @@ class Cache {
     // Caching is disabled, then reset the cache.
     if( !CACHING ) $this->reset();
 
-    // Load the cache into memory if it already exists.
-    if( File::isFile($path) ) {
-
-      // Attempt to include the file.
-      try {
-
-        // Include the cache file.
-        $this->cache = (include $path);
-
-      }
-
-      // If the include failed, then reset the cache.
-      catch( Throwable $exception ) {
-
-        // Reset the cache.
-        $this->reset();
-
-      }
-
-    }
-
-    // Otherwise, initialize the cache.
-    else $this->save($this->cache);
-
   }
 
   // Get all data from the cache.
   public function all() {
 
-    // Unset any items that may have expired.
-    foreach( array_keys($this->data) as $key ) {
+    // Scan the contents of the cache.
+    $keys = static::scan($this->path);
 
-      // Check to see if the item is expired, and unset it if so.
-      if( $this->expired($key) ) $this->unset($key);
+    // Get all items within the cache.
+    $cached = array_map($this->get, $keys);
 
-    }
+    // Initialize the result.
+    $result = [];
 
-    // Then, return all data.
-    return array_map(function($item) {
+    // Get all cached data.
+    foreach( $keys as $i => $key ) { $result[strtr($key, '/', '.')] = $cached[$i]; }
 
-      // Extract the item data only.
-      return $item['data'];
+    // Return all cached data.
+    return $result;
 
-    }, $this->cache);
+  }
+
+  // Initialize some new cache data.
+  public function new( $value, $expires = Cache::CACHE_EXPIRES_HOUR ) {
+
+    // Get the expiry time, or disable expiration altogether in development mode.
+    $expires = DEVELOPMENT ? INF : (time() + $expires);
+
+    // Initialize some new cache data, but don't cache it.
+    $new = [
+      'data' => $value,
+      'expires' => $expires
+    ];
+
+    // Return the new cache data.
+    return $new;
 
   }
 
   // Get some data from the cache.
   public function get( $key, $default = null ) {
 
-    // Get the keys.
-    $keys = explode('.', $key);
-
-    // Get the first key as the target item, and use the remaining keys to query within the item.
-    $item = array_first($keys);
-    $query = array_tail($keys);
-
-    // Get the full key to the item.
-    $key = $item.'.data'.(!empty($query) ? '.'.implode('.', $query) : '');
-
-    // Verify that the item key exists within the cache, and immediately return the default if not.
+    // Verify that the item exists within the cache, and immediately return the default if not.
     if( !$this->has($key) ) return $default;
 
-    // Verify the the item is not expired, and get the item from the cache.
-    if( !$this->expired($item) and !$this->expired($key) ) return array_get($this->cache, $key, $default);
+    // Get the item from the cache.
+    $item = (include $this->resolve($key));
 
-    // Otherwise, unset the item in the cache.
-    else {
+    // Verify the the item is not expired.
+    if( !$this->expired($item) ) return $item['data'];
 
-      // Unset the item.
-      if( $this->expired($item) ) $this->unset($item);
+    // Otherwise, remove the item in the cache.
+    else $this->unset($key);
 
-      // Or unset the key.
-      if( $this->expired($key) ) $this->unset($key);
-
-    }
-
-    // Return the default.
+    // Return the default by default.
     return $default;
 
   }
@@ -112,44 +86,23 @@ class Cache {
   // Set some data within the cache.
   public function set( $key, $value, $expires = Cache::CACHE_EXPIRES_HOUR ) {
 
-    // Get the keys.
-    $keys = explode('.', $key);
-
-    // Get the first key as the target item, and use the remaining keys to query within the item.
-    $item = array_first($keys);
-    $query = array_tail($keys);
-
-    // Get the expiry time, or disable experation altogether in development mode.
+    // Get the expiry time, or disable expiration altogether in development mode.
     $expires = DEVELOPMENT ? INF : (time() + $expires);
 
-    // Get a copy of the cache data.
-    $data = $this->cache;
+    // Get a copy of the cache data, if available.
+    $data = $this->get($key, []);
 
-    // Set the value based on the query.
-    if( !empty($query) ) $value = array_set([], implode('.', $query), [
+    // Set the value.
+    $value = [
       'data' => $value,
       'expires' => $expires
-    ]);
+    ];
 
     // Set the given value within the cache data.
-    $data = array_set($data, $item, [
-      'data' => $value,
-      'expires' => $expires
-    ]);
+    $data = array_merge($data, $value);
 
     // Update the cache.
-    if( $this->save($data) ) {
-
-      // Save the updated cache data.
-      $this->cache = $data;
-
-      // Indicate that the cache was updated successfully.
-      return true;
-
-    }
-
-    // Otherwise, indicate that the cache could not be updated.
-    return false;
+    return $this->save($key, $data);
 
   }
 
@@ -157,35 +110,26 @@ class Cache {
   public function unset( $key ) {
 
     // Unset the given key.
-    $data = array_unset($this->cache, $key);
-
-    // Update the cache.
-    if( $this->save($data) ) {
-
-      // Save the updated cache data.
-      $this->cache = $data;
-
-      // Indicate that the cache was updated successfully.
-      return true;
-
-    }
-
-    // Otherwise, indicate that the cache could not be updated.
-    return false;
+    return unlink($this->resolve($key));
 
   }
 
   // Determine if the cache has the given item.
-  protected function has( string $key ) { return array_has($this->cache, $key); }
+  protected function has( string $key ) {
+
+    // Look for the item within the cache.
+    return file_exists($this->resolve($key));
+
+  }
 
   // Determine if an item  within the cache is expired.
-  protected function expired( string $key ) {
+  protected function expired( $item ) {
 
-    // If the item doesn't have an expiration date, then assum it's not expired.
-    if( !isset($this->cache[$key]['expires']) ) return false;
+    // If the item doesn't have an expiration date, then assume it's not expired.
+    if( !isset($item['expires']) ) return false;
 
     // Otherwise, determine if the item is expired based on its expiry time.
-    return $this->cache[$key]['expires'] < time();
+    return $item['expires'] < time();
 
   }
 
@@ -193,7 +137,7 @@ class Cache {
   protected function refresh( $key, $expires = Cache::CACHE_EXPIRES_HOUR ) {
 
     // Verify that the key exists within the cache, then refresh its expiry time.
-    if( $this->exists($key) ) return $this->set($key, $this->cache[$key], $expires);
+    if( $this->has($key) ) return $this->set($key, $this->get($key)['data'], $expires);
 
     // Otherwise, indicate that the expiry time could not be refreshed.
     return false;
@@ -201,19 +145,25 @@ class Cache {
   }
 
   // Save data to the cache.
-  protected function save( array $data ) {
+  public function save( string $key, array $data ) {
 
     // Convert the data to a PHP string.
     $php = '<?php return '.var_export($data, true).'; ?>';
+
+    // Get the cache file path.
+    $path = DOMAIN.'/cache/'.ltrim(strtr($key, '.', '/'), '/').'.php';
 
     // Try to save the data to the cache.
     try {
 
       // Initialize a temporary cache file.
-      $tmp = Cache::tmp($php, basename($this->path), 0777);
+      $tmp = Cache::tmp($php, $path, 0777);
 
-      // Overwrite the existing the cache file, or initialize it.
-      $tmp['move']($this->path);
+      // Overwrite the existing cache file, or initialize it.
+      $tmp['move']($this->path.'/'.ltrim(strtr($key, '.', '/'), '/').'.php');
+
+      // Return.
+      return true;
 
     }
 
@@ -221,23 +171,31 @@ class Cache {
     catch( Throwable $exception ) {
 
       // Log the error.
-      error_log('Cache could not be updated.');
+      error_log("Cache could not be updated: '$key'.");
+
+      // Return.
+      return false;
 
     }
-
-    // Save the data to the cache path.
-    return File::write($this->path, $php);
 
   }
 
   // Reset the cache.
   protected function reset() {
 
-    // Reset the in memory cache.
-    $this->cache = [];
+    // Scan the contents of the cache.
+    $keys = static::scan($this->path);
 
-    // Reset the stored cache.
-    return $this->save([]);
+    // Wipe all items within the cache.
+    foreach( $keys as $key ) { $this->unset($key); }
+
+  }
+
+  // Resolve the path within the cache.
+  public function resolve( string $key = '' ) {
+
+    // Resolve the path within the cache.
+    return $this->path.'/'.ltrim($key, '/');
 
   }
 

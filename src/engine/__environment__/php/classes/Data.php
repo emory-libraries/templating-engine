@@ -10,10 +10,6 @@ class Data {
   // The path of the data file.
   public $path;
 
-  // The source path of the data file within the data folder.
-  public $src;
-
-
   // The contents of the data file.
   public $data = [];
 
@@ -25,9 +21,6 @@ class Data {
 
       // Save the data file path.
       $this->path = $path;
-
-      // Get the source path of the file within the data folder.
-      $this->src = File::endpoint($this->path);
 
       // Read the data file at the given path.
       $data = File::read($path);
@@ -52,7 +45,6 @@ class Data {
         // Get data from the array.
         $this->data = $path['data'];
         $this->path = array_get($path, 'path');
-        $this->src = isset($this->path) ? File::endpoint($this->path) : array_get($path, 'src');
 
       }
 

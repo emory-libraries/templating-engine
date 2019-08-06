@@ -33,7 +33,7 @@ class Mutator {
       foreach( CONFIG['config']['mutations']['globals'] as $id => $global ) {
 
         // Merge the mutations.
-        $mutations = array_merge($mutations, $global);
+        $mutations = array_merge_recursive($mutations, $global);
 
       }
 
