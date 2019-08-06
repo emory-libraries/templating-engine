@@ -42,15 +42,12 @@ class Index {
   public static $paths = [
     'environment' => CONFIG['engine']['cache']['index'].'/environment/{group}/{src}.php',
     'site' => CONFIG['engine']['cache']['index'].'/site/{group}/{src}.php',
-
     'patterns' => CONFIG['engine']['cache']['index'].'/patterns/{group}/{plid}.php',
     'assets' => CONFIG['engine']['cache']['index'].'/assets/{endpoint}.php',
     'endpoints' => CONFIG['engine']['cache']['index'].'/endpoints/{endpoint}.php',
     'routes' => CONFIG['engine']['cache']['index'].'/routes/{endpoint}.php',
-
     'partials' => CONFIG['engine']['cache']['index'].'/partials.php',
     'helpers' => CONFIG['engine']['cache']['index'].'/helpers.php',
-
     'processes' => CONFIG['engine']['cache']['index'].'/processes.php',
     'queue' => CONFIG['engine']['cache']['index'].'/queue.php',
     'callbacks' => CONFIG['engine']['cache']['index'].'/callbacks.php',
@@ -175,7 +172,7 @@ class Index {
 
     // Mutate the endpoint data.
     $this->endpoints['data'] = static::mutate($this->endpoints['data']);
-    
+
     // Cache everything.
     self::cache('environment', $this->environment);
     self::cache('site', $this->site);
