@@ -137,9 +137,6 @@ class Index {
       'data' => self::classify($site, 'Data')
     ];
 
-    // Mutate the site data.
-    $this->site['data']['site'] = static::mutate($this->site['data']['site']);
-
     // Get an index of all patterns, and cache it.
     $this->patterns = [
       'metadata' => ($patterns = self::getPatternData(self::INDEX_METADATA)),
@@ -176,6 +173,9 @@ class Index {
       'data' => ($helpers = self::getHelperData())
     ];
 
+    // Mutate the endpoint data.
+    $this->endpoints['data'] = static::mutate($this->endpoints['data']);
+    
     // Cache everything.
     self::cache('environment', $this->environment);
     self::cache('site', $this->site);
@@ -419,17 +419,25 @@ class Index {
     // Get a list of page types with their respective template IDs.
     $types = array_flip(CONFIG['config']['template']);
 
-    // Initialize a helper method for mutating a file's data.
-    $mutate = function( Data $data ) use ($types) {
+    // Initialize a helper method for mutating some endpoint data.
+    $mutate = function( Endpoint $endpoint ) use ($types) {
 
-      // Get the pattern's ID.
-      $id = array_get($types, array_get($data->data, '@attributes.definition-path'));
+      // Get the endpoint's data.
+      $data = &$endpoint->data;
 
-      // Mutate the contents based on its ID.
-      if( isset($id) ) $data->data = Mutator::mutate($data->data, $id);
+      // Only mutate endpoint data that exists.
+      if( isset($data) ) {
 
-      // Return the mutated or unmutated data.
-      return $data;
+        // Get the pattern's ID.
+        $id = array_get($types, array_get($data->data, '@attributes.definition-path'));
+
+        // Mutate the contents based on its ID.
+        if( isset($id) ) $data->data = Mutator::mutate($data->data, $id);
+
+      }
+
+      // Return the endpoint with its mutated or unmutated data.
+      return $endpoint;
 
     };
 
