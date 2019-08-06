@@ -49,8 +49,17 @@ class Feed {
   // Parse a feed given its ULR and feed type.
   public static function parse( string $url, string $type ) {
 
+    // Initialize curl.
+    $curl = curl_init($url);
+
+    // Set the curl request options.
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
     // Get the feed's contents.
-    $contents = file_get_contents($url);
+    $contents = curl_exec($curl);
+
+    // Close the curl request.
+    curl_close($curl);
 
     // If the type is JSON, then parse the JSON feed, and return it as an array.
     if( $type === 'json' ) return json_decode($contents, true);
@@ -382,8 +391,17 @@ class Feed {
       'version' => null
     ];
 
-    // Fetch the contents of the URL.
-    $contents = file_get_contents($url);
+    // Initialize curl.
+    $curl = curl_init($url);
+
+    // Set the curl request options.
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+    // Get the feed's contents.
+    $contents = curl_exec($curl);
+
+    // Close the curl request.
+    curl_close($curl);
 
     // Check to see if the contents is JSON by attempting to decode it.
     json_decode($contents);
