@@ -10,6 +10,6 @@
   },
   {
     "endpoint": "/events",
-    "template": "template-event"
+    "template": "templates-event"
   }
 ]
