@@ -17,14 +17,8 @@ class Mutator {
   // Mutate some data based on a set of template-specific data mutations.
   public static function mutate( array $data, $template ) {
 
-    // Only permit mutations on user-defined templates.
-    if( !is_string($template) ) return $data;
-
     // Look for any template-specific mutations.
-    $mutations = array_get(CONFIG['config']['mutations'], $template);
-
-    // Return the unmutated data if no mutations exist.
-    if( !isset($mutations) ) return $data;
+    $mutations = array_get(CONFIG['config']['mutations'], $template, []);
 
     // Merge global-level mutations into the template-specific mutations.
     if( isset(CONFIG['config']['mutations']['globals']) ) {
@@ -38,6 +32,9 @@ class Mutator {
       }
 
     }
+
+    // Return the unmutated data if no mutations exist.
+    if( empty($mutations) ) return $data;
 
     // Otherwise, mutate the data, starting by making repeatable areas.
     $data = self::repeatable($data, array_get($mutations, 'repeatable', []));
