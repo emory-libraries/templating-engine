@@ -49,17 +49,8 @@ class Feed {
   // Parse a feed given its ULR and feed type.
   public static function parse( string $url, string $type ) {
 
-    // Initialize curl.
-    $curl = curl_init($url);
-
-    // Set the curl request options.
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
     // Get the feed's contents.
-    $contents = curl_exec($curl);
-
-    // Close the curl request.
-    curl_close($curl);
+    $contents = static::fetch($url);
 
     // If the type is JSON, then parse the JSON feed, and return it as an array.
     if( $type === 'json' ) return json_decode($contents, true);
@@ -391,17 +382,8 @@ class Feed {
       'version' => null
     ];
 
-    // Initialize curl.
-    $curl = curl_init($url);
-
-    // Set the curl request options.
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
     // Get the feed's contents.
-    $contents = curl_exec($curl);
-
-    // Close the curl request.
-    curl_close($curl);
+    $contents = static::fetch($url);
 
     // Check to see if the contents is JSON by attempting to decode it.
     json_decode($contents);
@@ -455,6 +437,35 @@ class Feed {
 
     // Return the result.
     return $result;
+
+  }
+
+  // Fetch the contents of a URL using curl.
+  protected static function fetch( string $url ) {
+
+    // Initialize the curl request.
+    $request = curl_init($url);
+
+    // Set the curl request options.
+    curl_setopt($request, CURLOPT_RETURNTRANSFER, true);
+
+    // For server environments, use the required proxy.
+    if( !LOCALHOST and !NGROK ) {
+
+      // Use the required proxy.
+      curl_setopt($request, CURLOPT_PROXY, 'webproxy.emory.net');
+      curl_setopt($request, CURLOPT_PROXYPORT, 3128);
+
+    }
+
+    // Get the request's response.
+    $response = curl_exec($request);
+
+    // Close the curl request.
+    curl_close($request);
+
+    // Return the response.
+    return $response;
 
   }
 
