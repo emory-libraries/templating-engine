@@ -1,6 +1,8 @@
 {
   "alias": {},
-  "rename": {},
+  "rename": {
+    "__global__.navigation.main": "__global__.main-navigation"
+  },
   "replace": {},
   "remove": [],
   "add": {},
