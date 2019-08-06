@@ -81,7 +81,8 @@ define('CONFIG', array_merge((include __DIR__.'/config.global.php'), (include __
       'pages' => CACHE_ROOT.'/pages/'.DOMAIN,
       'index' => CACHE_ROOT.'/index/'.DOMAIN,
       'logs' => CACHE_ROOT.'/logs/'.DOMAIN,
-      'tmp' => CACHE_ROOT.'/tmp/'.DOMAIN
+      'tmp' => CACHE_ROOT.'/tmp/'.DOMAIN,
+      'cache' => CACHE_ROOT.'/'.DOMAIN
     ]
   ],
 

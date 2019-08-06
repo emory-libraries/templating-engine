@@ -13,22 +13,22 @@ $options = new Options();
 
 // Determine if development mode should be enabled.
 define('DEVELOPMENT', $options->development);
-  
+
 // Defines flags that can be switched on/off to force certain indexing behaviors.
 define('FLAG', [
 
-  
+
   // Debugging includes error reporting and displaying as well as all other messaging.
   // By default, debugging is only enabled in development mode. Changing this flag
   // with either force enable (true) or disable (false) debugging.
   'debuggingEnabled' => /*DEVELOPMENT*/true,
-  
+
   // Benchmarking is the process of analyzing the execution time of templating engine
   // processes in an attempt to optimize its performance. By default, the built-in
   // benchmarking tool is only enabled development mode. Changing this flag will
   // either force enable (true) or disable (false) the benchmarking tool.
   'benchmarkingEnabled' => /*DEVELOPMENT*/true
-  
+
 ]);
 
 // Alias flags as globals for easier access.
@@ -37,13 +37,13 @@ define('BENCHMARKING', FLAG['benchmarkingEnabled']);
 
 // Always report errors if debugging is enabled.
 if( DEBUGGING ) {
-  
+
   // Report all errors.
   error_reporting(E_ALL);
-  
+
   // Display all errors.
   ini_set('display_errors', 1);
-  
+
 }
 
 // Configure environment directories.
@@ -60,7 +60,7 @@ if( !defined('ENVDIR') ) define('ENVDIR', ENVDIRS[ENVIRONMENT] ?? null);
 
 // Set path contants.
 if( !defined('DOCUMENT_ROOT') ) define('DOCUMENT_ROOT', $_SERVER['DOCUMENT_ROOT']);
-if( !defined('SERVER_ROOT') ) define('SERVER_ROOT', dirname(dirname(dirname(__DIR__)))); 
+if( !defined('SERVER_ROOT') ) define('SERVER_ROOT', dirname(dirname(dirname(__DIR__))));
 if( !defined('SERVER_PATH') ) define('SERVER_PATH', str_replace(DOCUMENT_ROOT.'/', '', SERVER_ROOT));
 if( !defined('DATA_ROOT') ) define('DATA_ROOT', SERVER_ROOT.'/data/'.ENVDIR);
 if( !defined('PATTERNS_ROOT') ) define('PATTERNS_ROOT', SERVER_ROOT.'/patterns/'.ENVDIR);
