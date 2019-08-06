@@ -1566,7 +1566,7 @@ class Index {
         // For redirecting endpoints, the endpoint won't have a template pattern.
         if( is_null($data) ) $pattern = null;
 
-        // Otherwise, for non-redirecting endpoints, attempt to get the its template pattern.
+        // Otherwise, for non-redirecting endpoints, attempt to get its template pattern.
         else {
 
           // Get the endpoint's page type, if given.
@@ -1590,6 +1590,14 @@ class Index {
             'template' => true,
             'pattern' => CONFIG['defaults']['errorTemplate']
           ]);
+
+          // Otherwise, for dynamic endpoints, look for some template information.
+          else if( $route->dynamic and isset($route->metadata['template']) ) $pattern = array_get(array_values(array_filter($patterns['templates'], function($pattern) use ($route) {
+
+            // Find the template with the matching page type, PLID, or ID.
+            return ($pattern->pageType == $route->metadata['template'] or $pattern->plid == $route->metadata['template'] or $pattern->id == $route->metadata['template']);
+
+          })), 0);
 
           // Otherwise, for non-error endpoints, assume that no template is available.
           else $pattern = null;
