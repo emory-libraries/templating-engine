@@ -24,6 +24,8 @@
     "quote": "quote.quote-text", 
     "bio": "description.wysiwyg", 
     "subjects": "subject-areas.expertise",
+    "guides": "research-guides-link",
+    "guides.href": "guides.external-url",
     "cv.href": "cv.file.path"
   },
   "replace": {},
@@ -96,6 +98,7 @@
     "contact-info.mailing-address.city",
     "contact-info.mailing-address.state",
     "contact-info.mailing-address.zip",
+    "research-guides-link.external-url",
     "cv.file.path"
   ],
   "html": []
