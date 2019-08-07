@@ -163,6 +163,7 @@
       }
     }
   },
+  "merge": {},
   "evaluate": [],
   "repeatable": [
     "links-list.link",

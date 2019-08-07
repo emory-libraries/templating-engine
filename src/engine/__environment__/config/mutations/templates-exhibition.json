@@ -27,6 +27,7 @@
   "replace": {},
   "remove": [],
   "add": {},
+  "merge": {},
   "evaluate": [],
   "repeatable": [
     "supplemental-content.column"

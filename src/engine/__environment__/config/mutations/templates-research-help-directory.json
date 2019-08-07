@@ -11,6 +11,7 @@
   "add": {
     "cards.@.context": "Research Help"
   },
+  "merge": {},
   "evaluate": [],
   "repeatable": [
     "links-list.link"

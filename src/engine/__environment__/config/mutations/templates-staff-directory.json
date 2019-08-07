@@ -34,6 +34,7 @@
   "replace": {},
   "remove": [],
   "add": {},
+  "merge": {},
   "evaluate": [],
   "repeatable": [
     "cascade-page",

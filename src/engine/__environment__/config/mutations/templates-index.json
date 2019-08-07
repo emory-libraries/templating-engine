@@ -10,6 +10,7 @@
   "replace": {},
   "remove": [],
   "add": {},
+  "merge": {},
   "evaluate": [],
   "repeatable": [
     "links-list.link"

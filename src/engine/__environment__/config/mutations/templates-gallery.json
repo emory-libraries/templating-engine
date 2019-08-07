@@ -16,6 +16,7 @@
   "replace": {},
   "remove": [],
   "add": {},
+  "merge": {},
   "evaluate": [],
   "repeatable": [
     "link"

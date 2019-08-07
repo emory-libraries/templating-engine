@@ -63,6 +63,7 @@
       }
     }
   },
+  "merge": {},
   "evaluate": [],
   "repeatable": [
     "link-list.link",

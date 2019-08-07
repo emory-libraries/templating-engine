@@ -2,9 +2,10 @@
   "alias": {},
   "rename": {
     "__global__.navigation.main": "__global__.main-navigation.menu",
-    "__global__.navigation.main.@.subnavigation": "__global__.navigation.main.@.link",
-    "__global__.navigation.main.@.subnavigation.@.label": "__global__.navigation.main.@.subnavigation.@.link-label",
     "__global__.navigation.main.@.viewall": "__global__.navigation.main.@.view-more-link",
+    "__global__.navigation.main.@.mixed.subgroup.@.category": "__global__.navigation.main.@.mixed.subgroup.@.group",
+    "__global__.navigation.main.@.mixed.subgroup.@.subnavigation": "__global__.navigation.main.@.mixed.subgroup.@.link",
+
     "__global__.navigation.utilities": "__global__.utility-nav-links.links-list-left.link",
     "__global__.navigation.flyouts": "__global__.utility-nav-links.links-list-right.link",
     "__global__.navigation.button": "__global__.utility-nav-links.link-librarian"
@@ -12,26 +13,108 @@
   "replace": {},
   "remove": [],
   "add": {},
+  "merge": {
+    "__global__.navigation.main.@.mixed.link": "__global__.navigation.main.@.mixed.subgroup"
+  },
   "evaluate": [
-    {
-      "target": "__global__.navigation.main.@.subnavigation",
-      "condition": "'{__global__.navigation.main.@.menu-type}' == 'Subgroups of Links'",
-      "value": "{__global__.navigation.main.@.subgroup}"
-    },
-    {
-      "target": "__global__.navigation.main.@.subnavigation.@.label",
-      "condition": "'{__global__.navigation.main.@.menu-type}' == 'Subgroups of Links'",
-      "value": "{__global__.navigation.main.@.subnavigation.@.link-label}"
-    },
+
     {
       "target": "__global__.navigation.main.@.viewall",
-      "condition": "'{__global__.navigation.main.@.include-view-more-link}' !== true",
+      "condition": "&{include-view-more-link} !== true",
       "value": false
     },
     {
-      "target": "__global__.navigation.utilities.@.label",
-      "condition": "'{__global__.navigation.utilities.@.link-type}' == 'Cascade Page'",
-      "value": "{__global__.navigation.utilities.@.cascade-page.title}"
+      "target": "__global__.navigation.main.@.link-options",
+      "condition": "&{menu-type} != 'links'",
+      "value": false
+    },
+    {
+      "target": "__global__.navigation.main.@.link.@.alias",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'links' and index_of('include alias', {__global__.navigation.main.@.link-options}) === false",
+        "{__global__.navigation.main.@.menu-type} != 'links'"
+      ],
+      "value": null
+    },
+    {
+      "target": "__global__.navigation.main.@.link.@.resource",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'links' and index_of('include access links', {__global__.navigation.main.@.link-options}) === false",
+        "{__global__.navigation.main.@.menu-type != 'links'}"
+      ],
+      "value": null
+    },
+    {
+      "target": "__global__.navigation.main.@.link.@.resource",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'links' and index_of('include access links', {__global__.navigation.main.@.link-options}) !== false and &{access-link.link-type} == 'Cascade Page'",
+        "{__global__.navigation.main.@.menu-type} == 'links' and index_of('include access links', {__global__.navigation.main.@.link-options}) !== false and &{access-link.link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{access-link.cascade-page.path}",
+        "&{access-link.external-url}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.mixed.link.@.href",
+      "condition": [
+        "&{category} === NULL and &{link-type} == 'Cascade Page'",
+        "&{category} === NULL and &{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.mixed.link.@.label",
+      "condition": [
+        "&{category} === NULL and &{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "&{category} === NULL and &{link-type} == 'Cascade Page' and &{link-customizations}",
+        "&{category} === NULL and &{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.mixed.link.@.subnavigation.@.href",
+      "condition": [
+        "{__global__.navigation.main.@.mixed.link.@.category} !== NULL and &{link-type} == 'Cascade Page'",
+        "{__global__.navigation.main.@.mixed.link.@.category} !== NULL and &{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.mixed.link.@.subnavigation.@.label",
+      "condition": [
+        "{__global__.navigation.main.@.mixed.link.@.category} !== NULL and &{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "{__global__.navigation.main.@.mixed.link.@.category} !== NULL and &{link-type} == 'Cascade Page' and &{link-customizations}",
+        "{__global__.navigation.main.@.mixed.link.@.category} !== NULL and &{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.subnavigation",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'links'",
+        "{__global__.navigation.main.@.menu-type} == 'subgroups'",
+        "{__global__.navigation.main.@.menu-type} == 'mixed'"
+      ],
+      "value": [
+        "{__global__.navigation.main.@.link}",
+        "{__global__.navigation.main.@.subgroup}",
+        "{__global__.navigation.main.@.mixed.link}"
+      ]
     }
   ],
   "repeatable": [
@@ -39,6 +122,10 @@
     "__global__.main-navigation.menu.@.link",
     "__global__.main-navigation.menu.@.subgroup",
     "__global__.main-navigation.menu.@.subgroup.@.link",
+    "__global__.main-navigation.menu.@.mixed.link",
+    "__global__.main-navigation.menu.@.mixed.subgroup",
+    "__global__.main-navigation.menu.@.mixed.subgroup.@.link",
+
     "__global__.utility-nav-links.links-list-left.link",
     "__global__.utility-nav-links.links-list-right.link"
   ],
@@ -48,6 +135,9 @@
     "__global__.main-navigation.menu.@.link.@.link-customizations",
     "__global__.main-navigation.menu.@.view-more-link.link-customizations",
     "__global__.main-navigation.menu.@.subgroup.@.link.@.link-customizations",
+    "__global__.main-navigation.menu.@.mixed.link.@.link-customizations",
+    "__global__.main-navigation.menu.@.mixed.subgroup.@.link.@.link-customizations",
+
     "__global__.utility-nav-links.links-list-left.link.@.link-customizations",
     "__global__.utility-nav-links.links-list-right.link.@.link-customizations",
     "__global__.utility-nav-links.link-librarian.link-customizations"
@@ -58,6 +148,9 @@
     "__global__.main-navigation.menu.@.link.@.access-link.link-type",
     "__global__.main-navigation.menu.@.view-more-link.link-type",
     "__global__.main-navigation.menu.@.subgroup.@.link.@.link-type",
+    "__global__.main-navigation.menu.@.mixed.link.@.link-type",
+    "__global__.main-navigation.menu.@.mixed.subgroup.@.link.@.link-type",
+
     "__global__.utility-nav-links.links-list-left.link.@.link-type",
     "__global__.utility-nav-links.links-list-right.link.@.link-type",
     "__global__.utility-nav-links.link-librarian.link-type"
@@ -74,6 +167,11 @@
     "__global__.main-navigation.menu.@.subgroup.@.group",
     "__global__.main-navigation.menu.@.subgroup.@.link.@.link-label",
     "__global__.main-navigation.menu.@.subgroup.@.link.@.external-url",
+    "__global__.main-navigation.menu.@.mixed.link.@.link-label",
+    "__global__.main-navigation.menu.@.mixed.link.@.external-url",
+    "__global__.main-navigation.menu.@.mixed.subgroup.@.link.@.link-label",
+    "__global__.main-navigation.menu.@.mixed.subgroup.@.link.@.external-url",
+
     "__global__.utility-nav-links.links-list-left.link.@.link-label",
     "__global__.utility-nav-links.links-list-left.link.@.external-url",
     "__global__.utility-nav-links.links-list-right.link.@.link-label",
