@@ -1,8 +1,10 @@
-{{! Fetch the feed's content }}
-{{assign 'data' (fetchFeed (combine __params__.feed '?eventID=' __params__.id))}}
+{{#if __params__.id}}
+  {{! Fetch the feed's content }}
+  {{assign 'data' (fetchFeed (combine __params__.feed '?eventID=' __params__.id))}}
 
-{{! Assign called event data to event object }}
-{{assign 'event' data.0}}
+  {{! Assign called event data to event object }}
+  {{assign 'event' data.0}}
+{{/if}}
 
 {{#if event}}
 
@@ -84,9 +86,14 @@
 <div class="event-page">
   <header class="event-page-header"></header>
   <div class="event-page-main">
-    {{#unless event}}
-      {{>organisms-intro-alt-text title="Event Not Found"}}
+    {{#unless __params__.id}}
+      {{>organisms-intro-alt-text title="Event ID Is Missing"}}
     {{/unless}}
+    {{#if __params__.id}}
+      {{#unless event}}
+        {{>organisms-intro-alt-text title="Event ID Does Not Exist"}}
+      {{/unless}}
+    {{/if}}
     {{#extend 'organisms-main' type="event-page" classes="event-page-main"}}
       {{#content 'section-main-body'}}
         {{! If eventID isn't found...}}
