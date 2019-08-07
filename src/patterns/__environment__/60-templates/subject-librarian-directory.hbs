@@ -133,6 +133,8 @@
 
   {{/if}}
 
+  {{{assign 'subjects' (arrayify subjects)}}}
+
   {{! Set the librarian's ID if not already set. }}
   {{#unless id}}{{assign 'id' (dashcase (lowercase name))}}{{/unless}}
 
