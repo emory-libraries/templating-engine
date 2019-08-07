@@ -142,7 +142,6 @@
 
 {{! Initialize some sidebar list section data. }}
 {{assign 'sections' (arrayify null)}}
-
 {{! Build the first sidebar list section if applicable. }}
 {{#if (or (or (and (and config config.contact) (or phone fax)) (and (and config config.cv) cv)) (and (not config) (or phone fax cv)))}}
 
@@ -150,7 +149,7 @@
   {{assign 'sections.0' (objectify icon=false title=null content=(arrayify null))}}
   {{#if phone}}{{assign 'sections.0.content.0' (combine 'P: ' (formatPhone phone '000-000-0000'))}}{{/if}}
   {{#if fax}}{{assign 'sections.0.content.1' (combine 'F: ' (formatPhone fax '000-000-0000'))}}{{/if}}
-  {{#if (and cv cv.href)}}{{assign 'sections.0.button' (objectify href=cv.href label='Download Full CV')}}{{/if}}
+  {{#if libcal}}{{assign 'sections.0.button' (objectify href=libcal label='Schedule an Appointment')}}{{/if}}
 
 {{/if}}
 
@@ -170,6 +169,8 @@
 
   {{! Build the sidebar list section's content. }}
   {{assign 'sections.2' (objectify icon=false title='Areas of Expertise' links=(arrayify null))}}
+  {{! Arrayify subjects in case of single subject listing }}
+  {{{assign 'subjects' (arrayify subjects)}}}
   {{#each subjects}}
     {{storagePush 'sections.2.links' (objectify href=(combine (baseUrl) '/services/subject-librarians?subject=' (plusify this)) label=this)}}
   {{/each}}
@@ -182,7 +183,6 @@
 
   {{assign 'sections.3' (objectify icon=false title='Research Help' links=(arrayify null))}}
   {{#if (and guides guides.href)}}{{assign 'sections.3.links.0' (objectify href=guides.href label='View Research Guides')}}{{/if}}
-  {{#if libcal}}{{assign 'sections.3.links.1' (objectify href=libcal label='Schedule a Research Consultation')}}{{/if}}
 
 {{/if}}
 
@@ -212,7 +212,7 @@
         {{#if markdown}}{{{markdown bio}}}{{else}}{{{bio}}}{{/if}}
 
       {{/if}}
-
+      {{#if (and cv cv.href)}}{{> atoms-button-link href=cv.href label='Download Full CV' icon=false}}{{/if}}
     {{/content}}
     {{#content 'section-main-sidebar'}}
 
