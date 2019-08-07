@@ -9,58 +9,32 @@
     "staff.@.link.href": "staff.@.path",
     "staff.@.config": "staff.@.content.system-data-structure.profile-options",
     "staff.@.name": "staff.@.content.system-data-structure.display-name",
-    "staff.@.first-name": "staff.@.content.system-data-structure.given-name", 
-    "staff.@.middle-name": "staff.@.content.system-data-structure.middle-name", 
-    "staff.@.last-name": "staff.@.content.system-data-structure.family-name", 
-    "staff.@.pronoun": "staff.@.content.system-data-structure.preferred-pronouns", 
-    "staff.@.title": "staff.@.content.system-data-structure.job-title", 
-    "staff.@.library": "staff.@.content.system-data-structure.location", 
+    "staff.@.first-name": "staff.@.content.system-data-structure.given-name",
+    "staff.@.middle-name": "staff.@.content.system-data-structure.middle-name",
+    "staff.@.last-name": "staff.@.content.system-data-structure.family-name",
+    "staff.@.pronoun": "staff.@.content.system-data-structure.preferred-pronouns",
+    "staff.@.title": "staff.@.content.system-data-structure.job-title",
+    "staff.@.library": "staff.@.content.system-data-structure.location",
     "staff.@.address": "staff.@.content.system-data-structure.contact-info.mailing-address",
-    "staff.@.address.name": "staff.@.address.place-name", 
-    "staff.@.address.street": "staff.@.address.street-address", 
-    "staff.@.phone": "staff.@.content.system-data-structure.contact-info.phone", 
-    "staff.@.email": "staff.@.content.system-data-structure.contact-info.email", 
-    "staff.@.fax": "staff.@.content.system-data-structure.contact-info.fax", 
-    "staff.@.libcal": "staff.@.content.system-data-structure.contact-info.libcal", 
-    "staff.@.education": "staff.@.content.system-data-structure.education", 
+    "staff.@.address.name": "staff.@.address.place-name",
+    "staff.@.address.street": "staff.@.address.street-address",
+    "staff.@.phone": "staff.@.content.system-data-structure.contact-info.phone",
+    "staff.@.email": "staff.@.content.system-data-structure.contact-info.email",
+    "staff.@.fax": "staff.@.content.system-data-structure.contact-info.fax",
+    "staff.@.libcal": "staff.@.content.system-data-structure.contact-info.libcal",
+    "staff.@.education": "staff.@.content.system-data-structure.education",
     "staff.@.education.address" : "staff.@.education.city-state-country",
-    "staff.@.image": "staff.@.content.system-data-structure.image", 
+    "staff.@.image": "staff.@.content.system-data-structure.image",
     "staff.@.image.src" : "staff.@.image.image-file.path",
-    "staff.@.quote": "staff.@.content.system-data-structure.quote.quote-text", 
-    "staff.@.bio": "staff.@.content.system-data-structure.description.wysiwyg", 
+    "staff.@.quote": "staff.@.content.system-data-structure.quote.quote-text",
+    "staff.@.bio": "staff.@.content.system-data-structure.description.wysiwyg",
     "staff.@.subjects": "staff.@.content.system-data-structure.subject-areas.expertise",
     "staff.@.cv.href": "staff.@.content.system-data-structure.cv.file.path"
   },
   "replace": {},
   "remove": [],
   "add": {},
-  "evaluate": [
-    {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 2'",
-      "value": 2
-    },
-    {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 3'",
-      "value": 3
-    },
-    {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 4'",
-      "value": 4
-    },
-    {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 5'",
-      "value": 5
-    },
-    {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 6'",
-      "value": 6
-    }
-  ],
+  "evaluate": [],
   "repeatable": [
     "cascade-page",
     "cascade-page.@.content.system-data-structure.education",

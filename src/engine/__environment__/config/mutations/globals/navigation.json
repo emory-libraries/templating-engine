@@ -1,16 +1,87 @@
 {
   "alias": {},
   "rename": {
-    "__global__.navigation.main": "__global__.main-navigation"
+    "__global__.navigation.main": "__global__.main-navigation.menu",
+    "__global__.navigation.main.@.subnavigation": "__global__.navigation.main.@.link",
+    "__global__.navigation.main.@.subnavigation.@.label": "__global__.navigation.main.@.subnavigation.@.link-label",
+    "__global__.navigation.main.@.viewall": "__global__.navigation.main.@.view-more-link",
+    "__global__.navigation.utilities": "__global__.utility-nav-links.links-list-left.link",
+    "__global__.navigation.flyouts": "__global__.utility-nav-links.links-list-right.link",
+    "__global__.navigation.button": "__global__.utility-nav-links.link-librarian"
   },
   "replace": {},
   "remove": [],
   "add": {},
-  "evaluate": [],
-  "repeatable": [],
-  "checkbox": [],
-  "radio": [],
+  "evaluate": [
+    {
+      "target": "__global__.navigation.main.@.subnavigation",
+      "condition": "'{__global__.navigation.main.@.menu-type}' == 'Subgroups of Links'",
+      "value": "{__global__.navigation.main.@.subgroup}"
+    },
+    {
+      "target": "__global__.navigation.main.@.subnavigation.@.label",
+      "condition": "'{__global__.navigation.main.@.menu-type}' == 'Subgroups of Links'",
+      "value": "{__global__.navigation.main.@.subnavigation.@.link-label}"
+    },
+    {
+      "target": "__global__.navigation.main.@.viewall",
+      "condition": "'{__global__.navigation.main.@.include-view-more-link}' !== true",
+      "value": false
+    },
+    {
+      "target": "__global__.navigation.utilities.@.label",
+      "condition": "'{__global__.navigation.utilities.@.link-type}' == 'Cascade Page'",
+      "value": "{__global__.navigation.utilities.@.cascade-page.title}"
+    }
+  ],
+  "repeatable": [
+    "__global__.main-navigation.menu",
+    "__global__.main-navigation.menu.@.link",
+    "__global__.main-navigation.menu.@.subgroup",
+    "__global__.main-navigation.menu.@.subgroup.@.link",
+    "__global__.utility-nav-links.links-list-left.link",
+    "__global__.utility-nav-links.links-list-right.link"
+  ],
+  "checkbox": [
+    "__global__.main-navigation.menu.@.include-view-more-link",
+    "__global__.main-navigation.menu.@.link-options",
+    "__global__.main-navigation.menu.@.link.@.link-customizations",
+    "__global__.main-navigation.menu.@.view-more-link.link-customizations",
+    "__global__.main-navigation.menu.@.subgroup.@.link.@.link-customizations",
+    "__global__.utility-nav-links.links-list-left.link.@.link-customizations",
+    "__global__.utility-nav-links.links-list-right.link.@.link-customizations",
+    "__global__.utility-nav-links.link-librarian.link-customizations"
+  ],
+  "radio": [
+    "__global__.main-navigation.menu.@.menu-type",
+    "__global__.main-navigation.menu.@.link.@.link-type",
+    "__global__.main-navigation.menu.@.link.@.access-link.link-type",
+    "__global__.main-navigation.menu.@.view-more-link.link-type",
+    "__global__.main-navigation.menu.@.subgroup.@.link.@.link-type",
+    "__global__.utility-nav-links.links-list-left.link.@.link-type",
+    "__global__.utility-nav-links.links-list-right.link.@.link-type",
+    "__global__.utility-nav-links.link-librarian.link-type"
+  ],
   "timestamp": [],
-  "text": [],
+  "text": [
+    "__global__.main-navigation.menu.@.label",
+    "__global__.main-navigation.menu.@.link.@.link-label",
+    "__global__.main-navigation.menu.@.link.@.external-url",
+    "__global__.main-navigation.menu.@.link.@.alias",
+    "__global__.main-navigation.menu.@.link.@.access-link.external-url",
+    "__global__.main-navigation.menu.@.view-more-link.link-label",
+    "__global__.main-navigation.menu.@.view-more-link.external-url",
+    "__global__.main-navigation.menu.@.subgroup.@.group",
+    "__global__.main-navigation.menu.@.subgroup.@.link.@.link-label",
+    "__global__.main-navigation.menu.@.subgroup.@.link.@.external-url",
+    "__global__.utility-nav-links.links-list-left.link.@.link-label",
+    "__global__.utility-nav-links.links-list-left.link.@.external-url",
+    "__global__.utility-nav-links.links-list-right.link.@.link-label",
+    "__global__.utility-nav-links.links-list-right.link.@.external-url",
+    "__global__.utility-nav-links.links-list-right.link.@.icon",
+    "__global__.utility-nav-links.link-librarian.link-label",
+    "__global__.utility-nav-links.link-librarian.external-url",
+    "__global__.utility-nav-links.link-librarian.icon"
+  ],
   "html": []
 }

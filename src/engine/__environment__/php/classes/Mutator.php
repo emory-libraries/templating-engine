@@ -724,7 +724,7 @@ class Mutator {
   }
 
   // Mutate the data by evaluating some condition.
-  public static function evaluate( array $data, array $evaluates ) {
+  public static function evaluate( array $data, array $evaluates, $original = null ) {
 
     // Evaluate values with the given conditions.
     foreach( $evaluates as $eval ) {
@@ -739,6 +739,9 @@ class Mutator {
 
       // Evaluate values within an array.
       if( strpos($target, '@') !== false ) {
+
+        // Set the number of levels that will move.
+        $levels = 1;
 
         // Get the keys.
         $keys = array_map(function($key) {
@@ -759,10 +762,10 @@ class Mutator {
 
             // Evaluate the array item's key with the new value.
             $array = array_set($array, $index, self::evaluate($array[$index], [[
-              'condition' => str_replace($keys[0].'.@.', '', $condition),
+              'condition' => str_replace('@', $index, $condition, $levels),
               'target' => implode('.@.', array_slice($keys, 1)),
-              'value' => $value
-            ]]));
+              'value' => is_string($value) ? str_replace('@', $index, $value, $levels) : $value
+            ]], isset($original) ? $original : $data));
 
           }
 
@@ -774,19 +777,142 @@ class Mutator {
       }
 
       // Otherwise, only try to evaluate keys that actually exists.
-      else if( ($source = array_get($data, $target, self::$undefined)) !== self::$undefined ) {
+      else {
 
-        // Parse the expression.
-        $exp = Conditional::parse($condition);
+        // Get the target's source.
+        $source = array_get($data, $target);
 
-        // Inject values within the expression.
-        if( $exp['a'] == $target ) $exp['a'] = $source;
-        else if( strpos('&', $exp['a']) === 0 ) $exp['a'] = array_get($data, ltrim($exp['a'], '&'));
-        if( $exp['b'] == $target ) $exp['b'] = $source;
-        else if( strpos('&', $exp['b']) === 0 ) $exp['b'] = array_get($data, ltrim($exp['b'], '&'));
+        // Initialize regexes for replacing values.
+        $regexes = [
+          [
+            "pattern" => "/{{$target}}/",
+            "replacement" => function($value, $match, $condition = false) use ($source) {
 
-        // Evaluate the expression.
-        $result = Conditional::expression("{$exp['a']} {$exp['operator']} {$exp['b']}");
+              // Get the replacement.
+              $replacement = $source;
+
+              // For conditions, always replace as a string.
+              if( $condition ) {
+
+                // Make sure the replacement is a string.
+                if( !is_string($replacement) ) $replacement = var_export($replacement, true);
+
+                // Merge the string replacement.
+                return str_replace($match[0], $replacement, $value);
+
+              }
+
+              // Otherwise, merge strings, or return the replacement as is for everythin gelse.
+              return (is_string($replacement) ? str_replace($match[0], $replacement, $value) : $replacement);
+
+            }
+          ],
+          [
+            "pattern" => '/{__this__}/',
+            "replacement" => function($value, $match, $condition = false) use ($source) {
+
+              // Get the replacement.
+              $replacement = $source;
+
+              // For conditions, always replace as a string.
+              if( $condition ) {
+
+                // Make sure the replacement is a string.
+                if( !is_string($replacement) ) $replacement = var_export($replacement, true);
+
+                // Merge the string replacement.
+                return str_replace($match[0], $replacement, $value);
+
+              }
+
+              // Otherwise, merge strings, or return the replacement as is for everythin gelse.
+              return (is_string($replacement) ? str_replace($match[0], $replacement, $value) : $replacement);
+
+            }
+          ],
+          [
+            "pattern" => '/&{(\S+)}/',
+            "replacement" => function($value, $match, $condition = false) use ($data) {
+
+              // Get the replacement.
+              $replacement = array_get($data, $match[1]);
+
+              // For conditions, always replace as a string.
+              if( $condition ) {
+
+                // Make sure the replacement is a string.
+                if( !is_string($replacement) ) $replacement = var_export($replacement, true);
+
+                // Merge the string replacement.
+                return str_replace($match[0], $replacement, $value);
+
+              }
+
+              // Otherwise, merge strings, or return the replacement as is for everythin gelse.
+              return (is_string($replacement) ? str_replace($match[0], $replacement, $value) : $replacement);
+
+            }
+          ],
+          [
+            "pattern" => '/{(\S+)}/',
+            "replacement" => function($value, $match, $condition = false) use ($data, $original) {
+
+              // Get the replacement.
+              $replacement = array_get($original ?? $data, $match[1]);
+
+              // For conditions, always replace as a string.
+              if( $condition ) {
+
+                // Make sure the replacement is a string.
+                if( !is_string($replacement) ) $replacement = var_export($replacement, true);
+
+                // Merge the string replacement.
+                return str_replace($match[0], $replacement, $value);
+
+              }
+
+              // Otherwise, merge strings, or return the replacement as is for everythin gelse.
+              return (is_string($replacement) ? str_replace($match[0], $replacement, $value) : $replacement);
+            }
+          ]
+        ];
+
+        // Loop through the regex replacements, and inject values into the condition and/or value.
+        foreach( $regexes as $regex ) {
+
+          // Inject replacement values into the condition.
+          if( preg_match_all($regex['pattern'], $condition, $matches, PREG_SET_ORDER) ) {
+
+            // Loop through matches and replace each.
+            foreach( $matches as $match ) { $condition = $regex['replacement']($condition, $match, true); }
+
+          }
+
+          // Also, replace within the value if the value is a string.
+          if( is_string($value) ) {
+
+            // Inject replacement values into the value.
+            if( preg_match_all($regex['pattern'], $value, $matches, PREG_SET_ORDER) ) {
+
+              // Loop through matches and replace each.
+              foreach( $matches as $match ) {
+
+                // Replace the value.
+                $value = $regex['replacement']($value, $match);
+
+                // Only continue the loop if the value is still a string.
+                if( !is_string($value) ) break;
+
+              }
+
+            }
+
+          }
+
+        }
+
+        // Evaluate the condition expression.
+        $result = eval("return ($condition);");
 
         // If the expression evaluated successfully, then replace the value.
         if( $result ) $data = array_set($data, $target, $value, true);
