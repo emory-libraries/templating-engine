@@ -51,6 +51,13 @@
         {{> atoms-link href=(combine 'mailto:' email) label=email classes="" icon=false}}
       </li>
       {{/if}}
+      {{#if libcal}}
+      <li class="card-librarian-contact-info-item"
+          {{#if filterable}} data-search-key="libcal"{{/if}}>
+        {{> tokens-icon id='material-calendar_month_outline'}}
+        {{> atoms-link href=libcal label="Schedule an appointment" classes="" icon=false}}
+      </li>
+      {{/if}}
     </ul>
     <ul class="card-librarian-contact-links">
       {{#if (and cv cv.href)}}
