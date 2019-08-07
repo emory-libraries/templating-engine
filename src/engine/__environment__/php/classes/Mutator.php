@@ -15,19 +15,24 @@ class Mutator {
   public static $undefined = 'MUTATOR_UNDEFINED';
 
   // Mutate some data based on a set of template-specific data mutations.
-  public static function mutate( array $data, $template ) {
+  public static function mutate( array $data, $template, $globals = false ) {
 
     // Look for any template-specific mutations.
     $mutations = array_get(CONFIG['config']['mutations'], $template, []);
 
-    // Merge global-level mutations into the template-specific mutations.
-    if( isset(CONFIG['config']['mutations']['globals']) ) {
+    // Only use globals if indicated.
+    if( $globals === true ) {
 
-      // Merge each set of global mutations.
-      foreach( CONFIG['config']['mutations']['globals'] as $id => $global ) {
+      // Merge global-level mutations into the template-specific mutations.
+      if( isset(CONFIG['config']['mutations']['globals']) ) {
 
-        // Merge the mutations.
-        $mutations = array_merge_recursive($mutations, $global);
+        // Merge each set of global mutations.
+        foreach( CONFIG['config']['mutations']['globals'] as $id => $global ) {
+
+          // Merge the mutations.
+          $mutations = array_merge_recursive($mutations, $global);
+
+        }
 
       }
 
@@ -825,7 +830,7 @@ class Mutator {
     foreach( $evaluates as $eval ) {
 
       // Ignore invalid expressions.
-      if( !isset($eval['condition']) or !isset($eval['target']) or !isset($eval['value']) ) continue;
+      if( !array_key_exists('condition', $eval) or !array_key_exists('target', $eval) or !array_key_exists('value', $eval) ) continue;
 
       // Get the condition, target, and value.
       $target = $eval['target'];
@@ -886,9 +891,9 @@ class Mutator {
 
               // Evaluate the array item's key with the new value.
               $array = array_set($array, $index, self::evaluate($array[$index], [[
-                'condition' => str_replace('@', $index, $condition, $levels),
+                'condition' => str_replace($keys[0].'.@.', $keys[0].".$index.", $condition, $levels),
                 'target' => implode('.@.', array_slice($keys, 1)),
-                'value' => is_string($value) ? str_replace('@', $index, $value, $levels) : $value
+                'value' => is_string($value) ? str_replace($keys[0].'.@.', $keys[0].".$index.", $value, $levels) : $value
               ]], $original ?? $data));
 
             }
@@ -968,7 +973,10 @@ class Mutator {
             ],
             [
               "pattern" => '/&{(\S+)}/',
-              "replacement" => function($value, $match, $condition = false) use ($data) {
+              "replacement" => function($value, $match, $condition = false) use ($data, $original, $target) {
+
+                // If not inside an array, then try to use the  source data.
+                if( !isset($original) ) $data = array_get($data, implode('.', array_head(explode('.', $target))));
 
                 // Get the replacement.
                 $replacement = array_get($data, $match[1]);
@@ -1058,7 +1066,7 @@ class Mutator {
             }
 
           }
-if( $target == 'mixed.link.href' ) d($condition);
+
           // Evaluate the condition expression.
           $result = eval("return ($condition);");
 
