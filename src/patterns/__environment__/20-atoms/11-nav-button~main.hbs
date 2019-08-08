@@ -1,5 +1,5 @@
 {{#unless librarian}}
-  {{#if (and link (not toggle))}}
+  {{#if (and href (not toggle))}}
     <a href="{{href}}" class="nav-button{{#if utility}} -utility{{/if}}{{#if flyout}} -flyout{{/if}}{{#if search}} -search{{/if}}{{#if (or hover focus)}} is-hover{{/if}}{{#if active}} is-active{{/if}}{{#if disabled}} is-disabled{{/if}}{{#if classes}} {{classes}}{{/if}}"
       tabindex="0"
       {{#if disabled}} disabled{{/if}}

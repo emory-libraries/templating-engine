@@ -1,3 +1,11 @@
+{{! Set an active site if none was set. }}
+{{#if (eq (length (filterWhere sites 'active')) 0)}}
+
+  {{! Set the first site to active by default. }}
+  {{assign 'sites.0.active' true}}
+
+{{/if}}
+
 <eul-branding-header inline-template v-cloak>
 
   <div class="branding-header">
