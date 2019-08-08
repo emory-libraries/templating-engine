@@ -854,6 +854,7 @@ class Mutator {
       $target = $eval['target'];
       $condition = $eval['condition'];
       $value = $eval['value'];
+      $evaluate = array_get($eval, 'eval', false);
 
       // If multiple conditions were given, then handle each one individually.
       if( is_array($condition) ) {
@@ -911,7 +912,8 @@ class Mutator {
               $array = array_set($array, $index, self::evaluate($array[$index], [[
                 'condition' => str_replace($keys[0].'.@.', $keys[0].".$index.", $condition, $levels),
                 'target' => implode('.@.', array_slice($keys, 1)),
-                'value' => is_string($value) ? str_replace($keys[0].'.@.', $keys[0].".$index.", $value, $levels) : $value
+                'value' => is_string($value) ? str_replace($keys[0].'.@.', $keys[0].".$index.", $value, $levels) : $value,
+                'eval' => $evaluate
               ]], $original ?? $data));
 
             }
@@ -933,13 +935,13 @@ class Mutator {
           $regexes = [
             [
               "pattern" => "/{{$target}}/",
-              "replacement" => function($value, $match, $condition = false) use ($source) {
+              "replacement" => function($value, $match, $condition = false) use ($source, $evaluate) {
 
                 // Get the replacement.
                 $replacement = $source;
 
                 // For conditions, always replace as a string.
-                if( $condition ) {
+                if( $condition or $evaluate ) {
 
                   // If the replacement is a string, then wrap it in quotes.
                   if( is_string($replacement) ) $replacement = "'$replacement'";
@@ -962,13 +964,13 @@ class Mutator {
             ],
             [
               "pattern" => '/{__this__}/',
-              "replacement" => function($value, $match, $condition = false) use ($source) {
+              "replacement" => function($value, $match, $condition = false) use ($source, $evaluate) {
 
                 // Get the replacement.
                 $replacement = $source;
 
                 // For conditions, always replace as a string.
-                if( $condition ) {
+                if( $condition or $evaluate ) {
 
                   // If the replacement is a string, then wrap it in quotes.
                   if( is_string($replacement) ) $replacement = "'$replacement'";
@@ -991,7 +993,7 @@ class Mutator {
             ],
             [
               "pattern" => '/&{(\S+)}/',
-              "replacement" => function($value, $match, $condition = false) use ($data, $original, $target) {
+              "replacement" => function($value, $match, $condition = false) use ($data, $original, $target, $evaluate) {
 
                 // If not inside an array, then try to use the  source data.
                 if( !isset($original) ) $data = array_get($data, implode('.', array_head(explode('.', $target))));
@@ -1000,7 +1002,7 @@ class Mutator {
                 $replacement = array_get($data, $match[1]);
 
                 // For conditions, always replace as a string.
-                if( $condition ) {
+                if( $condition or $evaluate ) {
 
                   // If the replacement is a string, then wrap it in quotes.
                   if( is_string($replacement) ) $replacement = "'$replacement'";
@@ -1023,13 +1025,13 @@ class Mutator {
             ],
             [
               "pattern" => '/{(\S+)}/',
-              "replacement" => function($value, $match, $condition = false) use ($data, $original) {
+              "replacement" => function($value, $match, $condition = false) use ($data, $original, $evaluate) {
 
                 // Get the replacement.
                 $replacement = array_get($original ?? $data, $match[1]);
 
                 // For conditions, always replace as a string.
-                if( $condition ) {
+                if( $condition or $evaluate ) {
 
                   // If the replacement is a string, then wrap it in quotes.
                   if( is_string($replacement) ) $replacement = "'$replacement'";
@@ -1089,7 +1091,15 @@ class Mutator {
           $result = eval("return ($condition);");
 
           // If the expression evaluated successfully, then replace the value.
-          if( $result ) $data = array_set($data, $target, $value, true);
+          if( $result ) {
+
+            // Evaluate the value if indicated.
+            if( $evaluate ) $value = eval("return ($value);");
+
+            // Update the data with the new value.
+            $data = array_set($data, $target, $value, true);
+
+          }
 
         }
 
