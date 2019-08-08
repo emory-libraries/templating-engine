@@ -1579,7 +1579,11 @@ class Index {
       '__global__' => $global,
       '__meta__' => $meta,
       '__shared__' => $shared,
-      '__params__' => []
+      '__params__' => [],
+      '__domain__' => DOMAIN,
+      '__site__' => SITE,
+      '__environment__' => ENVIRONMENT,
+      '__development__' => DEVELOPMENT
     ]);
 
     // Mutate the metadata.
