@@ -11,6 +11,23 @@ use Moment\Moment;
  */
 class Mutator {
 
+  // Set the order of mutations.
+  protected static $order = [
+    'repeatable',
+    'checkbox',
+    'radio',
+    'timestamp',
+    'text',
+    'html',
+    'alias',
+    'rename',
+    'replace',
+    'remove',
+    'add',
+    'merge',
+    'evaluate'
+  ];
+
   // Sets a constant to a known undefined value.
   public static $undefined = 'MUTATOR_UNDEFINED';
 
@@ -23,14 +40,17 @@ class Mutator {
     // Only use globals if indicated.
     if( $globals === true ) {
 
-      // Merge global-level mutations into the template-specific mutations.
+      // Convert the mutations array to a collection.
+      $mutations = [$mutations];
+
+      // Add global-level mutations to the template-specific mutations.
       if( isset(CONFIG['config']['mutations']['globals']) ) {
 
-        // Merge each set of global mutations.
+        // Add each set of global mutations in order so that they can be applied one after the other.
         foreach( CONFIG['config']['mutations']['globals'] as $id => $global ) {
 
-          // Merge the mutations.
-          $mutations = array_merge_recursive($mutations, $global);
+          // Add the mutations.
+          $mutations[] = $global;
 
         }
 
@@ -41,44 +61,42 @@ class Mutator {
     // Return the unmutated data if no mutations exist.
     if( empty($mutations) ) return $data;
 
-    // Otherwise, mutate the data, starting by making repeatable areas.
-    $data = self::repeatable($data, array_get($mutations, 'repeatable', []));
+    // Apply the mutations to the data.
+    $data = static::apply($data, $mutations);
 
-    // Then, mutate checkboxes.
-    $data = self::checkbox($data, array_get($mutations, 'checkbox', []));
+    // Return the mutated data.
+    return $data;
 
-    // Then, mutate radio buttons.
-    $data = self::radio($data, array_get($mutations, 'radio', []));
+  }
 
-    // Then, mutate timestamps.
-    $data = self::timestamp($data, array_get($mutations, 'timestamp', []));
+  // Apply all mutations to the given data.
+  protected static function apply( array $data, array $mutations ) {
 
-    // Then, mutate text.
-    $data = self::text($data, array_get($mutations, 'text', []));
+    // For ordered mutations, apply them recursively.
+    if( !is_associative_array($mutations) ) {
 
-    // Then, mutate html.
-    $data = self::html($data, array_get($mutations, 'html', []));
+      // Mutate the data recursively.
+      foreach( $mutations as $mutation ) {
 
-    // Then, alias things.
-    $data = self::alias($data, array_get($mutations, 'alias', []));
+        // Recursively apply the mutations to the data.
+        $data = static::apply($data, $mutation);
 
-    // Then, rename things.
-    $data = self::rename($data, array_get($mutations, 'rename', []));
+      }
 
-    // Then, replace things.
-    $data = self::replace($data, array_get($mutations, 'replace', []));
+    }
 
-    // Then, remove things.
-    $data = self::remove($data, array_get($mutations, 'remove', []));
+    // Otherwise, use the mutations to mutate the data.
+    else {
 
-    // Then, add things.
-    $data = self::add($data, array_get($mutations, 'add', []));
+      // Loop through the order of mutations, and apply each one.
+      foreach( static::$order as $method ) {
 
-    // Then, merge things.
-    $data = self::merge($data, array_get($mutations, 'merge', []));
+        // Send  the data through the mutation method.
+        $data = static::{$method}($data, array_get($mutations, $method, []));
 
-    // Then, evaluate things.
-    $data = self::evaluate($data, array_get($mutations, 'evaluate', []));
+      }
+
+    }
 
     // Return the mutated data.
     return $data;

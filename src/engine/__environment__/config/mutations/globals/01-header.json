@@ -1,6 +1,9 @@
 {
   "alias": {},
-  "rename": {},
+  "rename": {
+    "header.navigation": "__global__.navigation",
+    "header.search": "__global__.search"
+  },
   "replace": {},
   "remove": [],
   "add": {},
