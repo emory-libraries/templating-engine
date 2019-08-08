@@ -80,7 +80,8 @@ class Index {
   const MERGE_RECURSIVE = 8;
   const MERGE_KEYED = 16;
   const MERGE_GROUPED = 32;
-  const MERGE_OVERRIDE = 64;
+  const MERGE_ASSOCIATED = 64;
+  const MERGE_OVERRIDE = 128;
 
   // Constructs the index.
   function __construct( Options $options ) {
@@ -215,10 +216,10 @@ class Index {
   }
 
   // Call methods as static functions.
-  public static function __callStatic( $method, $arguments ) {
+  /*public static function __callStatic( $method, $arguments ) {
 
     // Make some protected methods public.
-    /*switch($method) {
+    switch($method) {
 
       // Get partial index data.
       case 'getPartialData':
@@ -292,9 +293,9 @@ class Index {
         // Return the site's metadata.
         return static::compile($environment, $sites, $endpoint);
 
-    }*/
+    }
 
-  }
+  }*/
 
   // Scan a directory for files.
   public static function scan( string $path, $recursive = true ) {
@@ -476,7 +477,26 @@ class Index {
     // Filter out any non-arrays from the data set.
     $arrays = array_values(array_filter($arrays, 'is_array'));
 
-    // Merge the data on keys, where keys are composed of to data file IDs.
+    // Get a list of shared folder directories.
+    $shared = array_values(array_filter(isset(CONFIG['data']['sharedDirs']) ? CONFIG['data']['sharedDirs'] : (include CONFIG['engine']['php'].'/config.index.php')['data']['sharedDirs'], function($dir) {
+
+      // Filter out the site-specific shared directories.
+      return $dir != CONFIG['data']['site']['shared'];
+
+    }));
+
+    // Get a list of directories where environment-level and site-level data is stored.
+    $dirs = array_merge([
+      CONFIG['engine']['meta'],
+      CONFIG['data']['environment']['global'],
+      CONFIG['data']['environment']['meta'],
+      CONFIG['data']['environment']['shared'],
+      CONFIG['data']['site']['global'],
+      CONFIG['data']['site']['meta'],
+      CONFIG['data']['site']['shared']
+    ], $shared);
+
+    // Merge the data on keys, where keys are composed of data file IDs.
     if( $flags & self::MERGE_KEYED ) {
 
       // Initialize the result.
@@ -488,14 +508,22 @@ class Index {
         // Merge data by key.
         foreach( $data as $file => $content ) {
 
-          // Derive the key from the file's ID.
-          $key = File::id($file);
+          // Define the key based on the file's endpoint.
+          $key = strtr(trim(File::endpoint($file, $dirs), '/'), '/', '.');
 
           // Get the existing data for that key.
           $existing = array_get($result, $key, []);
 
+          // Associate the data by key.
+          if( $flags & self::MERGE_ASSOCIATED ) {
+
+            // Add the data into the associative array.
+            $result = array_set($result, $key, array_merge($existing, $content->data));
+
+          }
+
           // Group the data by key.
-          if( $flags & self::MERGE_GROUPED ) {
+          else if( $flags & self::MERGE_GROUPED ) {
 
             // Add the data into the group.
             $result = array_set($result, $key, array_merge([], $existing, [$content->data]));
@@ -1525,13 +1553,16 @@ class Index {
     if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing metadata data...');
 
     // Initialize arguments if not given.
-    if( !isset($environment) ) $environment = Index::getEnvironmentData(Index::INDEX_CLASS, 'Data');
-    if( !isset($site) ) $site = Index::getSiteData(Index::INDEX_CLASS, 'Data');
+    if( !isset($environment) ) $environment = self::getEnvironmentData(Index::INDEX_CLASS, 'Data');
+    if( !isset($site) ) $site = self::getSiteData(Index::INDEX_CLASS, 'Data');
+
+    // For site shared data, only capture unique values (e.g., none).
+    $site['shared'] = array_diff_key($site['shared'], $environment['shared']);
 
     // Get global, meta, and shared data.
     $global = self::merge($environment['global'], $site['global'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
     $meta = self::merge($environment['meta'], $site['meta'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
-    $shared = self::merge($environment['shared'], $site['shared'], self::MERGE_KEYED | self::MERGE_GROUPED);
+    $shared = self::merge($environment['shared'], $site['shared'], self::MERGE_KEYED | self::MERGE_ASSOCIATED);
 
     // Add benchmark point.
     if( BENCHMARKING and !Index::$indexed ) Performance::finish();
