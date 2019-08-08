@@ -11,8 +11,17 @@
     "__shared__.sites": "__shared__.location-links-list.link"
   },
   "replace": {},
-  "remove": [],
-  "add": {},
+  "remove": [
+    "__global__.main-navigation",
+    "__global__.utility-nav-links",
+    "__shared__.location-links-list"
+  ],
+  "add": {
+    "__global__.navigation.search": {
+      "label": "search",
+      "icon": "material-search"
+    }
+  },
   "merge": {
     "__global__.navigation.main.@.mixed.link": "__global__.navigation.main.@.mixed.subgroup"
   },
