@@ -166,16 +166,18 @@ class Index {
     // Get endpoint metadata.
     $this->metadata = [
       'metadata' => [],
-      'data' => ($metadata = new Data(self::getEndpointMetadata($this->environment['data'], $this->site['data'])))
+      'data' => ($metadata = self::getEndpointMetadata($this->environment['data'], $this->site['data']))
     ];
-
-    // Mutate the metadata.
-    $this->metadata['data'] = static::mutate($metadata, true);
 
     // Build endpoints based on the environment, site, pattern, and route indices.
     $this->endpoints = [
       'metadata' => [],
-      'data' => ($endpoints = self::getEndpointData($this->patterns['data'], $routes, $this->metadata['data']->data))
+      'data' => ($endpoints = self::getEndpointData(
+        $routes,
+        $this->site['data'],
+        $this->patterns['data'],
+        $this->metadata['data']->data
+      ))
     ];
 
     // Get an index of handlebars helpers, and cache it.
@@ -1567,35 +1569,36 @@ class Index {
     // Add benchmark point.
     if( BENCHMARKING and !Index::$indexed ) Performance::finish();
 
-    // Build the endpoint metadata, and return it.
-    return [
+    // Build the endpoint metadata as an object.
+    $metadata = new Data([
       '__global__' => $global,
       '__meta__' => $meta,
       '__shared__' => $shared,
       '__params__' => []
-    ];
+    ]);
+
+    // Mutate the metadata.
+    $metadata = static::mutate($metadata, true);
+
+    // Return the metadata object.
+    return $metadata;
 
   }
 
   // Transforms all index data into actual endpoint data.
-  protected static function getEndpointData( array $patterns = null, array $routes = null, array $metadata = null ) {
+  protected static function getEndpointData( array $routes, array $site, array $patterns, array $metadata = [] ) {
 
     // Add benchmark point.
     if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing endpoint data...');
-
-    // Initialize arguments if not given.
-    if( !isset($patterns) ) $patterns = Index::getPatternData(Index::INDEX_CLASS, 'Pattern');
-    if( !isset($routes) ) $routes = Index::getRouteData($site, Index::getAssetData(Index::INDEX_METADATA));
-    if( !isset($metadata) ) $metadata = Index::getEndpointMetadata();
 
     // Initialize endpoints.
     $endpoints = [];
 
     // Initialize a helper method for building endpoints.
-    $endpoint = function( Route $route ) use ($metadata, $patterns) {
+    $endpoint = function( Route $route ) use ($metadata, $patterns, $site) {
 
-      // For asset routes, the endpoint won't have any data or a template.
-      if( $route->asset ) {
+      // For asset and redirect routes, the endpoint won't have any data or a template.
+      if( $route->asset or $route->redirect ) {
 
         // Initialize empty data and pattern.
         $data = null;
@@ -1606,71 +1609,55 @@ class Index {
       // Otherwise, for non-asset routes, get the endpoint's data and template.
       else {
 
-        // For redirecting endpoints, the endpoint won't have any data.
-        if( isset($route->redirect) ) $data = null;
+        // Find the endpoint's data.
+        $data = isset($site['site'][$route->path]) ? $site['site'][$route->path] : null;
 
-        // Otherwise, for non-redirecting endpoints, attempt to get the its data.
-        else {
+        // For error endpoints without data, use the error data within configurations.
+        if( $route->error and !isset($data) ) $data = new Data([
+          'data' => array_merge(CONFIG['errors'][(int) $route->id], ['code' => (int) $route->id])
+        ]);
 
-          // Find the endpoint's data.
-          $data = isset($site['site'][$route->path]) ? $site['site'][$route->path] : null;
+        // Otherwise, for non-error endpoints without data, simulate some data.
+        else if( !isset($data) ) $data = new Data([]);
 
-          // For error endpoints without data, use the error data within configurations.
-          if( $route->error and !isset($data) ) $data = new Data([
-            'data' => array_merge(CONFIG['errors'][(int) $route->id], ['code' => (int) $route->id])
-          ]);
+        // If the endpoint redirects, then clear the data.
+        if( isset($data->data['redirect']) ) $data = null;
 
-          // Otherwise, for non-error endpoints without data, simulate some data.
-          else if( !isset($data) ) $data = new Data([]);
+        // Otherwise, compile the data for the endpoint.
+        else $data->data = self::compile($data->data, $metadata);
 
-          // If the endpoint redirects, then clear the data.
-          if( isset($data->data['redirect']) ) $data = null;
+        // Get the endpoint's page type, if given.
+        $pageType = array_get($data->data, 'template', false);
 
-          // Otherwise, compile the data for the endpoint.
-          else $data->data = self::compile($data->data, $metadata);
+        // Lookup the endpoint's template pattern by page type when given.
+        if( $pageType ) {
 
-        }
-
-        // For redirecting endpoints, the endpoint won't have a template pattern.
-        if( is_null($data) ) $pattern = null;
-
-        // Otherwise, for non-redirecting endpoints, attempt to get its template pattern.
-        else {
-
-          // Get the endpoint's page type, if given.
-          $pageType = array_get($data->data, 'template', false);
-
-          // Lookup the endpoint's template pattern by page type when given.
-          if( $pageType ) {
-
-            // Get the endpoint's template pattern.
-            $pattern = array_get(array_values(array_filter($patterns['templates'], function($pattern) use ($pageType) {
-
-              // Find the template with the matching page type, PLID, or ID.
-              return ($pattern->pageType == $pageType or $pattern->plid == $pageType or $pattern->id == $pageType);
-
-            })), 0);
-
-          }
-
-          // Otherwise, for error endpoints, use the default error template.
-          else if( $route->error ) $pattern = new Pattern([
-            'template' => true,
-            'pattern' => CONFIG['defaults']['errorTemplate']
-          ]);
-
-          // Otherwise, for dynamic endpoints, look for some template information.
-          else if( $route->dynamic and isset($route->metadata['template']) ) $pattern = array_get(array_values(array_filter($patterns['templates'], function($pattern) use ($route) {
+          // Get the endpoint's template pattern.
+          $pattern = array_get(array_values(array_filter($patterns['templates'], function($pattern) use ($pageType) {
 
             // Find the template with the matching page type, PLID, or ID.
-            return ($pattern->pageType == $route->metadata['template'] or $pattern->plid == $route->metadata['template'] or $pattern->id == $route->metadata['template']);
+            return ($pattern->pageType == $pageType or $pattern->plid == $pageType or $pattern->id == $pageType);
 
           })), 0);
 
-          // Otherwise, for non-error endpoints, assume that no template is available.
-          else $pattern = null;
-
         }
+
+        // Otherwise, for error endpoints, use the default error template.
+        else if( $route->error ) $pattern = new Pattern([
+          'template' => true,
+          'pattern' => CONFIG['defaults']['errorTemplate']
+        ]);
+
+        // Otherwise, for dynamic endpoints, look for some template information.
+        else if( $route->dynamic and isset($route->metadata['template']) ) $pattern = array_get(array_values(array_filter($patterns['templates'], function($pattern) use ($route) {
+
+          // Find the template with the matching page type, PLID, or ID.
+          return ($pattern->pageType == $route->metadata['template'] or $pattern->plid == $route->metadata['template'] or $pattern->id == $route->metadata['template']);
+
+        })), 0);
+
+        // Otherwise, for non-error endpoints, assume that no template is available.
+        else $pattern = null;
 
       }
 
