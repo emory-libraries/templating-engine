@@ -1,15 +1,18 @@
 {
   "alias": {
     "header.navigation": "__global__.navigation",
-    "header.navigation.sites": "__shared__.sites",
     "header.search": "__meta__.search"
   },
   "rename": {},
   "replace": {},
   "remove": [],
-  "add": {},
+  "add": {
+    "header.navigation.sites": []
+  },
+  "merge": {
+    "header.navigation.sites": "__shared__.sites"
+  },
   "evaluate": [],
-  "merge": {},
   "repeatable": [],
   "checkbox": [],
   "radio": [],

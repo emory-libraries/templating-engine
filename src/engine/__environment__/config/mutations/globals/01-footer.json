@@ -1,7 +1,5 @@
 {
-  "alias": {
-    "footer.navigation.sites": "__shared__.sites"
-  },
+  "alias": {},
   "rename": {
     "footer.logo": "__global__.site-footer.unit-logo",
     "footer.copyright.policies": "__shared__.standard-footer.links-list-policies.link",
@@ -10,9 +8,12 @@
   "replace": {},
   "remove": [],
   "add": {
-    "footer.navigation.lists": []
+    "footer.navigation.lists": [],
+    "footer.navigation.sites": []
   },
-  "merge": {},
+  "merge": {
+    "footer.navigation.sites": "__shared__.sites"
+  },
   "evaluate": [
     {
       "target": "__global__.site-footer.link-maps.href",

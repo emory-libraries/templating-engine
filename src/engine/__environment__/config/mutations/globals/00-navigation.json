@@ -293,6 +293,17 @@
         "&{cascade-page.path}",
         "&{external-url}"
       ]
+    },
+    {
+      "target": "__shared__.sites.@.active",
+      "condition": [
+        "index_of({__site__}, Sabre\\Uri\\parse(&{href})['host']) !== false",
+        "index_of({__site__}, Sabre\\Uri\\parse(&{href})['host']) === false"
+      ],
+      "value": [
+        true,
+        false
+      ]
     }
   ],
   "repeatable": [
