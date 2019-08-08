@@ -2,7 +2,6 @@
   "alias": {},
   "rename": {
     "__global__.navigation.main": "__global__.main-navigation.menu",
-    "__global__.navigation.main.@.viewall": "__global__.navigation.main.@.view-more-link",
     "__global__.navigation.main.@.mixed.subgroup.@.category": "__global__.navigation.main.@.mixed.subgroup.@.group",
     "__global__.navigation.main.@.mixed.subgroup.@.subnavigation": "__global__.navigation.main.@.mixed.subgroup.@.link",
     "__global__.navigation.utilities": "__global__.utility-nav-links.links-list-left.link",
@@ -27,20 +26,27 @@
   },
   "evaluate": [
     {
-      "target": "__global__.navigation.main.@.viewall",
-      "condition": "&{include-view-more-link} !== true",
-      "value": false
-    },
-    {
-      "target": "__global__.navigation.main.@.viewall.href",
+      "target": "__global__.navigation.main.@.view-more-link.href",
       "condition": [
-        "&{viewall} !== false and &{viewall.link-type} == 'Cascade Page'",
-        "&{viewall} !== false and &{viewall.link-type} == 'External URL'"
+        "&{view-more-link.link-type} == 'Cascade Page'",
+        "&{view-more-link.link-type} == 'External URL'"
       ],
       "value": [
-        "&{viewall.cascade-page.path}",
-        "&{viewall.external-url}"
+        "&{view-more-link.cascade-page.path}",
+        "&{view-more-link.external-url}"
       ]
+    },
+    {
+      "target": "__global__.navigation.main.@.viewall",
+      "condition": [
+        "&{view-more-link.include-view-more-link}",
+        "!&{view-more-link.include-view-more-link}"
+      ],
+      "value": [
+        "&{view-more-link}",
+        false
+      ],
+      "eval": true
     },
     {
       "target": "__global__.navigation.main.@.link-options",
@@ -305,7 +311,7 @@
     "__global__.main-navigation.menu.@.include-view-more-link",
     "__global__.main-navigation.menu.@.link-options",
     "__global__.main-navigation.menu.@.link.@.link-customizations",
-    "__global__.main-navigation.menu.@.view-more-link.link-customizations",
+    "__global__.main-navigation.menu.@.view-more-link.include-view-more-link",
     "__global__.main-navigation.menu.@.subgroup.@.link.@.link-customizations",
     "__global__.main-navigation.menu.@.mixed.link.@.link-customizations",
     "__global__.main-navigation.menu.@.mixed.subgroup.@.link.@.link-customizations",

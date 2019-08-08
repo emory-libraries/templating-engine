@@ -1,15 +1,324 @@
 {
-  "alias": {},
-  "rename": {},
+  "alias": {
+    "footer.navigation.sites": "__shared__.sites"
+  },
+  "rename": {
+    "footer.logo": "__global__.site-footer.unit-logo",
+    "footer.copyright.policies": "__shared__.standard-footer.links-list-policies.link",
+    "footer.navigation.channels": "__global__.social-media-channels.social-media-url"
+  },
   "replace": {},
   "remove": [],
-  "add": {},
+  "add": {
+    "footer.navigation.lists": []
+  },
   "merge": {},
-  "evaluate": [],
-  "repeatable": [],
-  "checkbox": [],
-  "radio": [],
+  "evaluate": [
+    {
+      "target": "__global__.site-footer.link-maps.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.site-footer.link-maps.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "&{link-type} == 'Cascade Page' and &{link-customizations}",
+        "&{link-type} == 'Cascade File' and !&{link-customizations}",
+        "&{link-type} == 'Cascade File' and &{link-customizations}",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__global__.site-footer.link-hours.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.site-footer.link-hours.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "&{link-type} == 'Cascade Page' and &{link-customizations}",
+        "&{link-type} == 'Cascade File' and !&{link-customizations}",
+        "&{link-type} == 'Cascade File' and &{link-customizations}",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__global__.site-footer.link-news.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.site-footer.link-news.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "&{link-type} == 'Cascade Page' and &{link-customizations}",
+        "&{link-type} == 'Cascade File' and !&{link-customizations}",
+        "&{link-type} == 'Cascade File' and &{link-customizations}",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__global__.site-footer.link-contact.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.site-footer.link-contact.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "&{link-type} == 'Cascade Page' and &{link-customizations}",
+        "&{link-type} == 'Cascade File' and !&{link-customizations}",
+        "&{link-type} == 'Cascade File' and &{link-customizations}",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__shared__.standard-footer.links-list-column-1.link.@.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__shared__.standard-footer.links-list-column-1.link.@.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "&{link-type} == 'Cascade Page' and &{link-customizations}",
+        "&{link-type} == 'Cascade File' and !&{link-customizations}",
+        "&{link-type} == 'Cascade File' and &{link-customizations}",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__shared__.standard-footer.links-list-column-4.link.@.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__shared__.standard-footer.links-list-column-4.link.@.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "&{link-type} == 'Cascade Page' and &{link-customizations}",
+        "&{link-type} == 'Cascade File' and !&{link-customizations}",
+        "&{link-type} == 'Cascade File' and &{link-customizations}",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "footer.navigation.lists.0",
+      "condition": "true",
+      "value": "{__shared__.standard-footer.links-list-column-1.link}"
+    },
+    {
+      "target": "footer.navigation.lists.1.0",
+      "condition": true,
+      "value": "{__global__.site-footer.link-maps}",
+      "eval": true
+    },
+    {
+      "target": "footer.navigation.lists.1.1",
+      "condition": true,
+      "value": "{__global__.site-footer.link-hours}",
+      "eval": true
+    },
+    {
+      "target": "footer.navigation.lists.1.2",
+      "condition": true,
+      "value": "{__global__.site-footer.link-news}",
+      "eval": true
+    },
+    {
+      "target": "footer.navigation.lists.1.3",
+      "condition": true,
+      "value": "{__global__.site-footer.link-contact}",
+      "eval": true
+    },
+    {
+      "target": "footer.navigation.lists.2",
+      "condition": true,
+      "value": "{__global__.navigation.main}",
+      "eval": true
+    },
+    {
+      "target": "footer.navigation.lists.2.@.href",
+      "condition": "{__this__} === NULL",
+      "value": "&{view-more-link.href}"
+    },
+    {
+      "target": "footer.navigation.lists.3",
+      "condition": true,
+      "value": "{__shared__.standard-footer.links-list-column-4.link}",
+      "eval": true
+    },
+    {
+      "target": "footer.copyright.policies.@.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "footer.copyright.policies.@.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "&{link-type} == 'Cascade Page' and &{link-customizations}",
+        "&{link-type} == 'Cascade File' and !&{link-customizations}",
+        "&{link-type} == 'Cascade File' and &{link-customizations}",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-Label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "footer.navigation.channels",
+      "condition": "!is_array({__this__})",
+      "value": "[{__this__}]",
+      "eval": true
+    }
+  ],
+  "repeatable": [
+    "__shared__.standard-footer.links-list-column-1.link",
+    "__shared__.standard-footer.links-list-column-4.link",
+    "__shared__.standard-rooter.links-list-policies.link",
+    "__global__.social-media-channels.social-media-url"
+  ],
+  "checkbox": [
+    "__shared__.standard-footer.links-list-column-1.link.@.link-customizations",
+    "__shared__.standard-footer.links-list-column-4.link.@.link-customizations",
+    "__shared__.standard-footer.links-list-policies.link.@.link-customizations",
+    "__global__.site-footer.link-maps.link-customizations",
+    "__global__.site-footer.link-hours.link-customizations",
+    "__global__.site-footer.link-news.link-customizations",
+    "__global__.site-footer.link-contact.link-customizations"
+  ],
+  "radio": [
+    "__shared__.standard-footer.links-list-column-1.link.@.link-type",
+    "__shared__.standard-footer.links-list-column-4.link.@.link-type",
+    "__shared__.standard-footer.links-list-policies.link.@.link-type",
+    "__global__.site-footer.link-maps.link-type",
+    "__global__.site-footer.link-hours.link-type",
+    "__global__.site-footer.link-news.link-type",
+    "__global__.site-footer.link-contact.link-type"
+  ],
   "timestamp": [],
-  "text": [],
+  "text": [
+    "__shared__.standard-footer.link-list-column-1.link.@.link-label",
+    "__shared__.standard-footer.link-list-column-1.link.@.external-url",
+    "__shared__.standard-footer.link-list-column-4.link.@.link-label",
+    "__shared__.standard-footer.link-list-column-4.link.@.external-url",
+    "__shared__.standard-footer.link-list-policies.link.@.link-label",
+    "__shared__.standard-footer.link-list-policies.link.@.external-url",
+    "__global__.site-footer.unit-logo",
+    "__global__.site-footer.link-maps.link-label",
+    "__global__.site-footer.link-maps.external-url",
+    "__global__.site-footer.link-hours.link-label",
+    "__global__.site-footer.link-hours.external-url",
+    "__global__.site-footer.link-news.link-label",
+    "__global__.site-footer.link-news.external-url",
+    "__global__.site-footer.link-contact.link-label",
+    "__global__.site-footer.link-contact.external-url",
+    "__global__.social-media-channels.social-media-url"
+  ],
   "html": []
 }
