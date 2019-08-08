@@ -166,7 +166,7 @@ class Index {
     // Get endpoint metadata.
     $this->metadata = [
       'metadata' => [],
-      'data' => ($metadata = self::getEndpointMetadata($this->environment['data'], $this->site['data']))
+      'data' => ($metadata = self::getEndpointMetadata($this->site['data'], $this->environment['data']))
     ];
 
     // Build endpoints based on the environment, site, pattern, and route indices.
@@ -218,7 +218,7 @@ class Index {
   }
 
   // Call methods as static functions.
-  /*public static function __callStatic( $method, $arguments ) {
+  public static function __callStatic( $method, $arguments ) {
 
     // Make some protected methods public.
     switch($method) {
@@ -245,13 +245,19 @@ class Index {
       case 'getEndpointData':
 
         // Get endpoint data.
-        return static::getEndpointData(static::INDEX_CLASS, 'Data');
+        return static::getEndpointData();
+
+      // Get endpoint metadata data.
+      case 'getEndpointMetadata':
+
+        // Get endpoint metadata data.
+        return static::getEndpointMetadata();
 
       // Get index data for an asset endpoint.
       case 'getAssetEndpointData':
 
         // Get endpoint data.
-        $endpoints = static::getEndpointData(static::INDEX_CLASS, 'Data');
+        $endpoints = static::getEndpointData();
 
         // Get asset endpoint data.
         return array_values(array_filter($endpoints, function($endpoint) {
@@ -265,7 +271,7 @@ class Index {
       case 'getAssetEndpoint':
 
         // Get endpoint data.
-        $endpoints = static::getEndpointData(static::INDEX_CLASS, 'Data');
+        $endpoints = static::getEndpointData();
 
         // Return the asset endpoint.
         return array_get(array_values(array_filter($endpoints, function($endpoint) use ($arguments) {
@@ -287,17 +293,16 @@ class Index {
       // Get the site's metadata.
       case 'getMetaData':
 
-        // Get environment, site, and endpoint data.
-        $environment = static::getEnvironmentData(static::INDEX_CLASS, 'Data');
-        $sites = Index::getSiteData(Index::INDEX_CLASS, 'Data');
-        $endpoint =   (isset($arguments[0]) and is_array($arguments[0])) ? $arguments[0] : [];
+        // Get endpoint and endpoint metadata.
+        $metadata = static::getEndpointMetadata()->data;
+        $endpoint = (isset($arguments[0]) and is_array($arguments[0])) ? $arguments[0] : [];
 
         // Return the site's metadata.
-        return static::compile($environment, $sites, $endpoint);
+        return static::compile($endpoint, $metadata);
 
     }
 
-  }*/
+  }
 
   // Scan a directory for files.
   public static function scan( string $path, $recursive = true ) {
@@ -1386,7 +1391,7 @@ class Index {
   }
 
   // Locate all assets used by the site.
-  protected static function getAssetData( $flag = Index::INDEX_ONLY ) {
+  protected static function getAssetData( $flag = Index::INDEX_ONLY, string $class = null ) {
 
     // Add benchmark point.
     if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing asset data...');
@@ -1549,7 +1554,7 @@ class Index {
   }
 
   // Transforms environment and site data into metadata for all endpoints.
-  protected static function getEndpointMetadata( array $environment = null, array $site = null ) {
+  protected static function getEndpointMetadata( array $site = null, array $environment = null ) {
 
     // Add benchmark point.
     if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing metadata data...');
@@ -1558,7 +1563,7 @@ class Index {
     if( !isset($environment) ) $environment = self::getEnvironmentData(Index::INDEX_CLASS, 'Data');
     if( !isset($site) ) $site = self::getSiteData(Index::INDEX_CLASS, 'Data');
 
-    // For site shared data, only capture unique values (e.g., none).
+    // For site shared data, only capture unique values (should be none).
     $site['shared'] = array_diff_key($site['shared'], $environment['shared']);
 
     // Get global, meta, and shared data.
@@ -1586,10 +1591,16 @@ class Index {
   }
 
   // Transforms all index data into actual endpoint data.
-  protected static function getEndpointData( array $routes, array $site, array $patterns, array $metadata = [] ) {
+  protected static function getEndpointData( array $routes = null, array $site = null, array $patterns = null, array $metadata = null ) {
 
     // Add benchmark point.
     if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing endpoint data...');
+
+    // Initialize arguments if not given.
+    if( !isset($site) ) $site = self::getSiteData(Index::INDEX_CLASS, 'Data');
+    if( !isset($routes) ) $routes = self::getRouteData($site, self::getAssetData());
+    if( !isset($patterns) ) $patterns = self::getPatternData();
+    if( !isset($metadata) ) $metadata = self::getEndpointMetadata($site);
 
     // Initialize endpoints.
     $endpoints = [];

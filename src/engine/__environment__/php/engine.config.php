@@ -53,6 +53,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), [
     'config' => ENGINE_ROOT.'/config',
     'env' => ENGINE_ROOT.'/.env',
     'classes' => ENGINE_ROOT.'/php/classes',
+    'meta' => ENGINE_ROOT.'/meta',
     'php' => ENGINE_ROOT.'/php',
     // TODO: Add helpers to index.
     'helpers' => ENGINE_ROOT.'/php/helpers',
