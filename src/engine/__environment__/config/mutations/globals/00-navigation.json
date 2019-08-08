@@ -2,6 +2,7 @@
   "alias": {},
   "rename": {
     "__global__.navigation.main": "__global__.main-navigation.menu",
+    "__global__.navigation.main.@.subgroup.@.subnavigation": "__global__.navigation.main.@.subgroup.@.link",
     "__global__.navigation.main.@.mixed.subgroup.@.category": "__global__.navigation.main.@.mixed.subgroup.@.group",
     "__global__.navigation.main.@.mixed.subgroup.@.subnavigation": "__global__.navigation.main.@.mixed.subgroup.@.link",
     "__global__.navigation.utilities": "__global__.utility-nav-links.links-list-left.link",
@@ -96,7 +97,7 @@
       ]
     },
     {
-      "target": "__global__.navigation.main.@.subgroup.@.link.@.href",
+      "target": "__global__.navigation.main.@.subgroup.@.subnavigation.@.href",
       "condition": [
         "&{link-type} == 'Cascade Page'",
         "&{link-type} == 'External URL'"
@@ -107,7 +108,7 @@
       ]
     },
     {
-      "target": "__global__.navigation.main.@.subgroup.@.link.@.label",
+      "target": "__global__.navigation.main.@.subgroup.@.subnavigation.@.label",
       "condition": [
         "{__global__.navigation.main.@.menu-type} != 'subgroup' and &{link-type} == 'Cascade Page' and !&{link-customizations}",
         "{__global__.navigation.main.@.menu-type} != 'subgroup' and &{link-type} == 'Cascade Page' and &{link-customizations}",
@@ -256,11 +257,11 @@
     {
       "target": "__global__.navigation.button.label",
       "condition": [
-        "{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) === false",
-        "{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) !== false",
-        "{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) === false",
-        "{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) !== false",
-        "{link-type} == 'External URL'"
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'External URL'"
       ],
       "value": [
         "&{cascade-page.title}",
