@@ -7577,6 +7577,36 @@ body {
     display: grid !important;
   }
 }
+@media (min-width: 901px) {
+  .header-main-utility::after, .header-main-main::after, .header-main-search::after {
+    content: "";
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
+@media (max-width: 600px) {
+  .header-main::after {
+    content: "";
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .header-main::after {
+    content: "";
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
 
 .section-popular {
   display: -webkit-box;
@@ -20299,6 +20329,24 @@ button, input[type=button], input[type=submit], input[type=reset] {
 .header-main {
   background-color: #FFFFFF;
 }
+@media (min-width: 901px) {
+  .header-main-utility::after, .header-main-main::after, .header-main-search::after {
+    height: 1px;
+    background-color: rgba(9, 28, 68, 0.1);
+  }
+}
+@media (max-width: 600px) {
+  .header-main::after {
+    height: 1px;
+    background-color: rgba(9, 28, 68, 0.1);
+  }
+}
+@media (min-width: 601px) and (max-width: 900px) {
+  .header-main::after {
+    height: 1px;
+    background-color: rgba(9, 28, 68, 0.1);
+  }
+}
 .header-main-search {
   width: 60px !important;
   height: 100% !important;
@@ -24469,46 +24517,4 @@ button, input[type=button], input[type=submit], input[type=reset] {
 .exhibition-page-main-divider::after {
   width: 1px;
   background-color: #E7EAF1;
-}
-.gallery-page {
-  grid-gap: 20px;
-}
-.form-page {
-  grid-gap: 20px;
-}
-.home-page {
-  grid-gap: 2em;
-}
-.index-page {
-  grid-gap: 20px;
-}
-.info-page {
-  grid-gap: 20px;
-}
-.material-page {
-  grid-gap: 20px;
-}
-.periodicals-page {
-  grid-gap: 20px;
-}
-.research-help-directory-page {
-  grid-gap: 20px;
-}
-.research-help-page {
-  grid-gap: 20px;
-}
-.service-directory-page {
-  grid-gap: 20px;
-}
-.bio-page {
-  grid-gap: 20px;
-}
-.staff-directory-page {
-  grid-gap: 20px;
-}
-.subject-librarian-directory-page {
-  grid-gap: 20px;
-}
-.tool-page {
-  grid-gap: 20px;
 }
