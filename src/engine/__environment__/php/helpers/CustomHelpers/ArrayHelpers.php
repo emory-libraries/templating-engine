@@ -129,7 +129,7 @@ trait ArrayHelpers {
 
     // Initialize an internally recognized value of undefined to help with filtering.
     $undefined = 'FILTERWHERE_UNDEFINED';
-    
+
     // Extract all items within the array collection.
     $items = array_values(array_filter($collection, function($item) {
 
@@ -158,7 +158,7 @@ trait ArrayHelpers {
   public static function indexOf( $haystack, $needle, array $options ) {
 
     // Get the index of the item within the array or string.
-    return (is_array($haystack) ? array_search($needle, $haystack) : strpos($haystack, $needle));
+    return index_of($needle, $haystack);
 
   }
 

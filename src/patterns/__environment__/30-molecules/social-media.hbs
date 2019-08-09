@@ -2,7 +2,11 @@
 {{#each channels}}
 
   {{! Save the channel information.}}
-  {{storagePush 'channels' (objectify href=this icon=(combine 'socicon-' (trimSubstringStart (stem (get 'host' (urlParse this))) 'www.')))}}
+  {{#if (eq (indexOf (get 'host' (urlParse this)) 'scholarblogs') false)}}
+    {{storagePush 'channels' (objectify href=this icon=(combine 'socicon-' (trimSubstringStart (stem (get 'host' (urlParse this))) 'www.')))}}
+  {{else}}
+    {{storagePush 'channels' (objectify href=this icon='material-message')}}
+  {{/if}}
 
 {{/each}}
 
