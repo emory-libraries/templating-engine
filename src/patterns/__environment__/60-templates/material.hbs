@@ -79,7 +79,9 @@
 {{/if}}
 
 <div class="material-page">
-  <header class="material-page-header"></header>
+
+  {{> organisms-header classes='material-page-header'}}
+
   <div class="material-page-main">
 
     {{#extend 'organisms-main' type='material-page' classes='material-page-main'}}
@@ -108,5 +110,7 @@
     {{/if}}
 
   </div>
-  <footer class="material-page-footer"></footer>
+
+  {{> organisms-footer classes='material-page-footer'}}
+
 </div>

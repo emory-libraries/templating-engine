@@ -1,6 +1,6 @@
 {{#with footer}}
 
-<footer class="footer">
+<footer class="footer{{#if ../classes}} {{../classes}}{{/if}}">
 
   {{#with navigation}}{{> molecules-branding-footer classes='footer-branding' logo=../logo}}{{/with}}
 

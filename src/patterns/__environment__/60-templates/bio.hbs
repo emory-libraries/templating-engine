@@ -187,7 +187,9 @@
 {{/if}}
 
 <div class="bio-page">
-  <header class="bio-page-header"></header>
+
+  {{> organisms-header classes='bio-page-header'}}
+
   {{#extend 'organisms-main' type="bio-page" classes="bio-page-main"}}
     {{#content 'section-main-body'}}
 
@@ -220,5 +222,7 @@
 
     {{/content}}
   {{/extend}}
-  <footer class="bio-page-footer"></footer>
+
+  {{> organisms-footer classes='bio-page-footer'}}
+
 </div>
