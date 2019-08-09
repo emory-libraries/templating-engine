@@ -7546,6 +7546,16 @@ body {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+@media (min-width: 901px) {
+  .header-main-utility::after {
+    content: "";
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
 .header-main-main {
   grid-row: main;
   grid-column: body;
@@ -7577,35 +7587,19 @@ body {
     display: grid !important;
   }
 }
-@media (min-width: 901px) {
-  .header-main-utility::after, .header-main-main::after, .header-main-search::after {
-    content: "";
-    right: 0;
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    width: 100%;
-  }
-}
-@media (max-width: 600px) {
-  .header-main::after {
-    content: "";
-    right: 0;
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    width: 100%;
-  }
-}
-@media (min-width: 601px) and (max-width: 900px) {
-  .header-main::after {
-    content: "";
-    right: 0;
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    width: 100%;
-  }
+.header-main::after {
+  content: "";
+  display: block;
+  width: 100%;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  position: absolute;
+  display: block;
+  left: 50%;
+  -webkit-transform: translatex(-50%);
+          transform: translatex(-50%);
 }
 
 .section-popular {
@@ -20285,6 +20279,9 @@ button, input[type=button], input[type=submit], input[type=reset] {
     padding-left: 10px;
     padding-right: 10px;
   }
+  .header-main::after {
+    width: calc(100% - 20px);
+  }
   .header-main-overlay {
     margin-left: -10px;
     margin-right: -10px;
@@ -20295,6 +20292,9 @@ button, input[type=button], input[type=submit], input[type=reset] {
     padding-left: 10px;
     padding-right: 10px;
   }
+  .header-main::after {
+    width: calc(100% - 20px);
+  }
   .header-main-overlay {
     margin-left: -10px;
     margin-right: -10px;
@@ -20304,6 +20304,9 @@ button, input[type=button], input[type=submit], input[type=reset] {
   .header-main {
     padding-left: 20px;
     padding-right: 20px;
+  }
+  .header-main::after {
+    width: calc(100% - 40px);
   }
   .header-main-overlay {
     margin-left: -20px;
@@ -20318,6 +20321,9 @@ button, input[type=button], input[type=submit], input[type=reset] {
     padding-left: 30px;
     padding-right: 30px;
   }
+  .header-main::after {
+    width: calc(100% - 60px);
+  }
   .header-main-overlay {
     margin-left: -30px;
     margin-right: -30px;
@@ -20329,20 +20335,13 @@ button, input[type=button], input[type=submit], input[type=reset] {
 .header-main {
   background-color: #FFFFFF;
 }
+.header-main::after {
+  height: 1px;
+  background-color: rgba(9, 28, 68, 0.1);
+  bottom: -1px;
+}
 @media (min-width: 901px) {
-  .header-main-utility::after, .header-main-main::after, .header-main-search::after {
-    height: 1px;
-    background-color: rgba(9, 28, 68, 0.1);
-  }
-}
-@media (max-width: 600px) {
-  .header-main::after {
-    height: 1px;
-    background-color: rgba(9, 28, 68, 0.1);
-  }
-}
-@media (min-width: 601px) and (max-width: 900px) {
-  .header-main::after {
+  .header-main-utility::after {
     height: 1px;
     background-color: rgba(9, 28, 68, 0.1);
   }
