@@ -7653,6 +7653,11 @@ body {
     grid-template-rows: 150px 1fr auto;
   }
 }
+@media (min-width: 1200px) {
+  .info-page {
+    grid-template-rows: 130px 1fr auto;
+  }
+}
 .info-page-header {
   grid-area: header;
 }
@@ -7687,6 +7692,11 @@ body {
     grid-template-rows: 150px 1fr auto;
   }
 }
+@media (min-width: 1200px) {
+  .material-page {
+    grid-template-rows: 130px 1fr auto;
+  }
+}
 .material-page-header {
   grid-area: header;
 }
@@ -7707,6 +7717,11 @@ body {
 @media (min-width: 901px) {
   .tool-page {
     grid-template-rows: 150px 1fr auto;
+  }
+}
+@media (min-width: 1200px) {
+  .tool-page {
+    grid-template-rows: 130px 1fr auto;
   }
 }
 .tool-page-header {
@@ -7731,6 +7746,11 @@ body {
     grid-template-rows: 150px 1fr auto;
   }
 }
+@media (min-width: 1200px) {
+  .service-directory-page {
+    grid-template-rows: 130px 1fr auto;
+  }
+}
 .service-directory-page-header, .gallery-page-header {
   grid-area: header;
 }
@@ -7751,6 +7771,11 @@ body {
 @media (min-width: 901px) {
   .research-help-page {
     grid-template-rows: 150px 1fr auto;
+  }
+}
+@media (min-width: 1200px) {
+  .research-help-page {
+    grid-template-rows: 130px 1fr auto;
   }
 }
 .research-help-page-header {
@@ -7775,6 +7800,11 @@ body {
     grid-template-rows: 150px 1fr auto;
   }
 }
+@media (min-width: 1200px) {
+  .form-page {
+    grid-template-rows: 130px 1fr auto;
+  }
+}
 .form-page-header {
   grid-area: header;
 }
@@ -7794,7 +7824,12 @@ body {
 }
 @media (min-width: 901px) {
   .subject-librarian-directory-page {
-    rid-template-rows: 150px 1fr auto;
+    grid-template-rows: 150px 1fr auto;
+  }
+}
+@media (min-width: 1200px) {
+  .subject-librarian-directory-page {
+    grid-template-rows: 130px 1fr auto;
   }
 }
 .subject-librarian-directory-page-header {
@@ -7817,6 +7852,11 @@ body {
 @media (min-width: 901px) {
   .staff-directory-page {
     grid-template-rows: 150px 1fr auto;
+  }
+}
+@media (min-width: 1200px) {
+  .staff-directory-page {
+    grid-template-rows: 130px 1fr auto;
   }
 }
 .staff-directory-page-header {
@@ -7859,6 +7899,11 @@ body {
     grid-template-rows: 150px 1fr auto;
   }
 }
+@media (min-width: 1200px) {
+  .bio-page {
+    grid-template-rows: 130px 1fr auto;
+  }
+}
 .bio-page-header {
   grid-area: header;
 }
@@ -7879,6 +7924,11 @@ body {
 @media (min-width: 901px) {
   .landing-page {
     grid-template-rows: 150px 1fr auto;
+  }
+}
+@media (min-width: 1200px) {
+  .landing-page {
+    grid-template-rows: 130px 1fr auto;
   }
 }
 .landing-page-header {
@@ -7924,6 +7974,11 @@ body {
     grid-template-rows: 150px 1fr auto;
   }
 }
+@media (min-width: 1200px) {
+  .gallery-page {
+    grid-template-rows: 130px 1fr auto;
+  }
+}
 .exhibition-page {
   margin: 0 auto;
   display: grid;
@@ -7934,6 +7989,11 @@ body {
 @media (min-width: 901px) {
   .exhibition-page {
     grid-template-rows: 150px 1fr auto;
+  }
+}
+@media (min-width: 1200px) {
+  .exhibition-page {
+    grid-template-rows: 130px 1fr auto;
   }
 }
 .exhibition-page-header {
@@ -8012,6 +8072,11 @@ body {
     grid-template-rows: 150px 1fr auto;
   }
 }
+@media (min-width: 1200px) {
+  .research-help-directory-page {
+    grid-template-rows: 130px 1fr auto;
+  }
+}
 .research-help-directory-page-header {
   grid-area: header;
 }
@@ -8034,6 +8099,11 @@ body {
     grid-template-rows: 150px 1fr auto;
   }
 }
+@media (min-width: 1200px) {
+  .index-page {
+    grid-template-rows: 130px 1fr auto;
+  }
+}
 .index-page-header {
   grid-area: header;
 }
@@ -8054,6 +8124,11 @@ body {
 @media (min-width: 901px) {
   .periodicals-page {
     grid-template-rows: 150px 1fr auto;
+  }
+}
+@media (min-width: 1200px) {
+  .periodicals-page {
+    grid-template-rows: 130px 1fr auto;
   }
 }
 .periodicals-page-header {
@@ -8079,6 +8154,11 @@ body {
 @media (min-width: 901px) {
   .cover-page {
     grid-template-rows: 150px 1fr auto;
+  }
+}
+@media (min-width: 1200px) {
+  .cover-page {
+    grid-template-rows: 130px 1fr auto;
   }
 }
 .cover-page .intro-hero {
@@ -8117,6 +8197,11 @@ body {
 @media (min-width: 901px) {
   .home-page {
     grid-template-rows: 150px 1fr auto;
+  }
+}
+@media (min-width: 1200px) {
+  .home-page {
+    grid-template-rows: 130px 1fr auto;
   }
 }
 .home-page-header {
