@@ -204,7 +204,7 @@ class Index {
     if( !empty(self::queue()) ) goto reindex;
 
     // Fire any callbacks if given, and save the output.
-    self::runCallback($options->callback);
+    self::runCallback($options->callback, $routes);
 
     // Unlock the indexing process.
     self::lock(false);
@@ -1701,7 +1701,7 @@ class Index {
   }
 
   // Run a callback.
-  protected static function runCallback( string $id = null ) {
+  protected static function runCallback( string $id = null, array $routes ) {
 
     // Attempt to fire the callback if an ID was given.
     if( isset($id) and $id !== false ) {
@@ -1715,13 +1715,23 @@ class Index {
         // Add benchmark point.
         if( BENCHMARKING ) Performance::point("Running $id callback...'");
 
+        // Initialize a helper method for convertering instance data into simple arrays.
+        $simplify = function($data) use (&$simplify) {
+
+          // Convert complex data into an array.
+          return (is_array($data) ? array_map(function($item) use ($simplify) {
+
+            // Make sure no objects exists within the array.
+            return $simplify($item);
+
+          }, $data) : is_object($data) ? object_to_array($data) : $data);
+
+        };
+
         // Load the callback.
-        $callback = new Callback($id, $path, ['PATHS' => array_map(function($path) {
-
-          // Always use JSON paths.
-          return strtr($path, ['.php' => '.json']);
-
-        }, self::$paths)]);
+        $callback = new Callback($id, $path, [
+          'ROUTES' => $simplify($routes)
+        ]);
 
         // Fire the callback, and get the PID if any.
         $pid = $callback->fire();
