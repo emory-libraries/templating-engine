@@ -2,7 +2,7 @@
 
 <footer class="footer">
 
-  {{#with navigation}}{{> molecules-branding-footer classes='footer-branding'}}{{/with}}
+  {{#with navigation}}{{> molecules-branding-footer classes='footer-branding' logo=../logo}}{{/with}}
 
   {{#each (limit navigation.lists 4) as |list|}}
     <ul class="footer-list">

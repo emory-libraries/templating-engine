@@ -16,6 +16,11 @@
   },
   "evaluate": [
     {
+      "target": "footer.logo",
+      "condition": "{__this__} === NULL or {__this__} === ''",
+      "value": "emory-libraries"
+    },
+    {
       "target": "__global__.site-footer.link-maps.href",
       "condition": [
         "&{link-type} == 'Cascade Page'",

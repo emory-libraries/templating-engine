@@ -1,7 +1,18 @@
+{{! Convert channels to a collection. }}
+{{#each channels}}
+
+  {{! Save the channel information.}}
+  {{storagePush 'channels' (objectify href=this icon=(combine 'socicon-' (trimSubstringStart (stem (get 'host' (urlParse this))) 'www.')))}}
+
+{{/each}}
+
+{{! Update channels.}}
+{{assign 'channels' (storageGet 'channels')}}
+
 <div class="social-media{{#if classes}} {{classes}}{{/if}}">
   {{#each channels}}
-    <a href="{{this}}" class="social-media-link">
-      {{> tokens-icon id=(combine 'socicon-' (stem (get 'hostname' (urlParse this))))}}
+    <a href="{{href}}" class="social-media-link">
+      {{> tokens-icon id=icon}}
     </a>
   {{/each}}
 </div>
