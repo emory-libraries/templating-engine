@@ -9,7 +9,7 @@
 <eul-branding-footer inline-template v-cloak>
 
   <div class="branding-footer{{#if classes}} {{classes}}{{/if}}">
-    <a class="branding-footer-logo" href="/">
+    <a class="branding-footer-logo" href="{{baseUrl}}/">
       {{> tokens-logo id=(default this.logo 'emory-libraries') hyperlink=false}}
     </a>
     <div class="branding-footer-dropdown">
@@ -31,7 +31,7 @@
 <noscript>
 
   <div class="branding-footer">
-    <a class="branding-footer-logo" href="/">
+    <a class="branding-footer-logo" href="{{baseUrl}}/">
       {{> tokens-logo id=(default this.logo 'emory-libraries') hyperlink=false}}
     </a>
   </div>

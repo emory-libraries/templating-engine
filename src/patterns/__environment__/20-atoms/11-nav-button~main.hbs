@@ -1,5 +1,12 @@
 {{#unless librarian}}
   {{#if (and href (not toggle))}}
+
+    {{#if href}}
+      {{#if (and (startsWithSubstring href '/') (not (startsWithSubstring href '//')))}}
+        {{assign 'href' (combine (baseUrl) href)}}
+      {{/if}}
+    {{/if}}
+
     <a href="{{href}}" class="nav-button{{#if utility}} -utility{{/if}}{{#if flyout}} -flyout{{/if}}{{#if search}} -search{{/if}}{{#if (or hover focus)}} is-hover{{/if}}{{#if active}} is-active{{/if}}{{#if disabled}} is-disabled{{/if}}{{#if classes}} {{classes}}{{/if}}"
       tabindex="0"
       {{#if disabled}} disabled{{/if}}
@@ -20,6 +27,13 @@
     </label>
   {{/if}}
 {{else}}
+
+  {{#if href}}
+    {{#if (and (startsWithSubstring href '/') (not (startsWithSubstring href '//')))}}
+      {{assign 'href' (combine (baseUrl) href)}}
+    {{/if}}
+  {{/if}}
+
   <a href="{{href}}" target="{{default target '_self'}}" class="nav-button -librarian{{#if (or hover focus)}} is-hover{{/if}}{{#if active}} is-active{{/if}}{{#if disabled}} is-disabled{{/if}}{{#if classes}} {{classes}}{{/if}}"{{#if disabled}} disabled{{/if}}>
     {{#if icon }}{{> tokens-icon id=icon}}{{/if}}
     <span class="nav-button-label">{{label}}</span>

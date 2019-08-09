@@ -10,14 +10,14 @@
 <eul-branding-header inline-template v-cloak>
 
   <div class="branding-header">
-    <a class="branding-header-badge" href="/">
+    <a class="branding-header-badge" href="{{baseUrl}}/">
       {{! This first logo is used to create a stroke. }}
       {{> tokens-logo id='Emory-Badge' hyperlink=false}}
       {{! This second logo is used to for display. }}
       {{> tokens-logo id='Emory-Badge' hyperlink=false}}
     </a>
     <a href="//emory.edu" class="branding-header-organization">Emory University</a>
-    <a href="/" class="branding-header-division">{{get 'site' (itemAt (filterWhere sites 'active' true) 0)}}</a>
+    <a href="{{baseUrl}}/" class="branding-header-division">{{get 'site' (itemAt (filterWhere sites 'active' true) 0)}}</a>
     <div class="branding-header-dropdown">
       <select class="branding-header-dropdown-menu"
               v-model="selection"
@@ -37,14 +37,14 @@
 <noscript>
 
   <div class="branding-header">
-    <a class="branding-header-badge" href="/">
+    <a class="branding-header-badge" href="{{baseUrl}}/">
       {{! This first logo is used to create a stroke. }}
       {{> tokens-logo id='Emory-Badge' hyperlink=false}}
       {{! This second logo is used to for display. }}
       {{> tokens-logo id='Emory-Badge' hyperlink=false}}
     </a>
     <a href="//emory.edu" class="branding-header-organization">Emory University</a>
-    <a href="/" class="branding-header-division">{{get 'site' (itemAt (filterWhere sites 'active' true) 0)}}</a>
+    <a href="{{baseUrl}}/" class="branding-header-division">{{get 'site' (itemAt (filterWhere sites 'active' true) 0)}}</a>
   </div>
 
 </noscript>
