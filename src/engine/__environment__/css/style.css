@@ -4338,6 +4338,12 @@ body {
 .-categorized.subnav-menu-main > *:last-child {
   margin-bottom: 0;
 }
+.subnav-menu-main:not(.-grouped).has-viewall.has-viewall {
+  padding-bottom: 0;
+}
+.subnav-menu-main:not(.-grouped).has-viewall.has-viewall > *:nth-last-child(2) {
+  margin-bottom: 0;
+}
 .subnav-menu-main-heading {
   display: block;
 }
