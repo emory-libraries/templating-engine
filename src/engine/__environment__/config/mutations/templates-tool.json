@@ -1,12 +1,21 @@
 {
   "alias": {
-    "system.title": "title"
+    "system.title": "title",
+    "access.title": "sidebar.link.heading",
+    "access.icon": "sidebar.link.icon"
   },
   "rename": {
     "subtitle": "introduction",
     "blocks": "content-block",
     "blocks.@.type": "blocks.@.block-type",
     "blocks.@.image.src": "blocks.@.image.image-file.path",
+    "access.links.0": "sidebar.link",
+    "learn": "sidebar.links-list-learn",
+    "learn.title": "learn.heading",
+    "learn.links": "learn.link",
+    "materials": "sidebar.links-list-materials",
+    "materials.links": "materials.link",
+    "materials.title": "materials.heading",
     "contacts": "link-list-contacts",
     "contacts.cards": "contacts.link-contact",
     "contacts.cards.@.name": "contacts.cards.@.cascade-page.content.system-data-structure.display-name",
@@ -20,39 +29,146 @@
     "resources.heading": "resources.heading-label"
   },
   "replace": {},
-  "remove": [],
+  "remove": [
+    "access.links.0.heading",
+    "access.links.0.icon"
+  ],
   "add": {},
   "merge": {},
   "evaluate": [
     {
-      "target": "blocks.@.heading-level",
+      "target": "blocks.@.level",
       "condition": "{__this__} == 'Heading Level 2'",
       "value": 2
     },
     {
-      "target": "blocks.@.heading-level",
+      "target": "blocks.@.level",
       "condition": "{__this__} == 'Heading Level 3'",
       "value": 3
     },
     {
-      "target": "blocks.@.heading-level",
+      "target": "blocks.@.level",
       "condition": "{__this__} == 'Heading Level 4'",
       "value": 4
     },
     {
-      "target": "blocks.@.heading-level",
+      "target": "blocks.@.level",
       "condition": "{__this__} == 'Heading Level 5'",
       "value": 5
     },
     {
-      "target": "blocks.@.heading-level",
+      "target": "blocks.@.level",
       "condition": "{__this__} == 'Heading Level 6'",
       "value": 6
+    },
+    {
+      "target": "access.links.0.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "access.links.0.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "access.title",
+      "condition": "{__this__} == ''",
+      "value": null
+    },
+    {
+      "target": "learn.links.@.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "learn.links.@.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "learn.title",
+      "condition": "{__this__} == ''",
+      "value": null
+    },
+    {
+      "target": "materials.links.@.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "materials.links.@.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "materials.title",
+      "condition": "{__this__} == ''",
+      "value": null
     }
   ],
   "repeatable": [
     "content-block",
-    "sidebar.link",
     "sidebar.links-list-learn.link",
     "sidebar.links-list-materials.link",
     "link-list-contacts.link-contact",
@@ -61,14 +177,14 @@
   "checkbox": [
     "add-contact",
     "add-resource-links",
-    "sidebar.link.@.link-customizations",
+    "sidebar.link.link-customizations",
     "sidebar.links-list-learn.link.@.link-customizations",
     "sidebar.links-list-materials.link.@.link-customizations",
     "link-list-resources.link-resource.@.link-customizations"
   ],
   "radio": [
     "content-block.@.block-type",
-    "sidebar.link.@.link-type",
+    "sidebar.link.link-type",
     "sidebar.links-list-learn.link.@.link-type",
     "sidebar.links-list-materials.link.@.link-type",
     "link-list-resources.link-resource.@.link-type"
@@ -84,14 +200,18 @@
     "content-block.@.image.caption",
     "content-block.@.image.photo-credit",
     "content-block.@.video-url",
-    "sidebar.link.@.external-url",
-    "sidebar.link.@.link-label",
-    "sidebar.link.@.link-description",
+    "sidebar.link.heading",
+    "sidebar.link.icon",
+    "sidebar.link.external-url",
+    "sidebar.link.link-label",
+    "sidebar.link.link-description",
     "sidebar.links-list-learn.heading",
+    "sidebar.links-list-learn.icon",
     "sidebar.links-list-learn.link.@.external-url",
     "sidebar.links-list-learn.link.@.link-label",
     "sidebar.links-list-learn.link.@.link-description",
     "sidebar.links-list-materials.heading",
+    "sidebar.links-list-materials.icon",
     "sidebar.links-list-materials.link.@.external-url",
     "sidebar.links-list-materials.link.@.link-label",
     "sidebar.links-list-materials.link.@.link-description",

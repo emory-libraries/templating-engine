@@ -27,27 +27,27 @@
   "merge": {},
   "evaluate": [
     {
-      "target": "blocks.@.heading-level",
+      "target": "blocks.@.level",
       "condition": "{__this__} == 'Heading Level 2'",
       "value": 2
     },
     {
-      "target": "blocks.@.heading-level",
+      "target": "blocks.@.level",
       "condition": "{__this__} == 'Heading Level 3'",
       "value": 3
     },
     {
-      "target": "blocks.@.heading-level",
+      "target": "blocks.@.level",
       "condition": "{__this__} == 'Heading Level 4'",
       "value": 4
     },
     {
-      "target": "blocks.@.heading-level",
+      "target": "blocks.@.level",
       "condition": "{__this__} == 'Heading Level 5'",
       "value": 5
     },
     {
-      "target": "blocks.@.heading-level",
+      "target": "blocks.@.level",
       "condition": "{__this__} == 'Heading Level 6'",
       "value": 6
     }
