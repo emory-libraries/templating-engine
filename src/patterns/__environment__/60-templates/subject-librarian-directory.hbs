@@ -49,6 +49,13 @@
         {{assign '_config.subjects' false}}
       {{/if}}
 
+      {{! Determine if the staff has some subject area data. }}
+      {{#if (not (eq (indexOf config 'Research Guides') false))}}
+        {{assign '_config.guides' true}}
+      {{else}}
+        {{assign '_config.guides' false}}
+      {{/if}}
+
       {{! Determine if the librarian has some CV data. }}
       {{#if (not (eq (indexOf config 'CV') false))}}
         {{assign '_config.cv' true}}
@@ -64,74 +71,94 @@
     {{else}}
 
       {{! Determine if the librarian has some config data. }}
-      {{#if (eq config 'Profile Photo')}}
-        {{assign 'config' (arrayify null)}}
-        {{assign 'config.image' true}}
-        {{assign 'config.quote' false}}
-        {{assign 'config.bio' false}}
-        {{assign 'config.education' false}}
-        {{assign 'config.contact' false}}
-        {{assign 'config.subjects' false}}
-        {{assign 'config.cv' false}}
-      {{else if (eq config 'Quote')}}
-        {{assign 'config' (arrayify null)}}
-        {{assign 'config.image' false}}
-        {{assign 'config.quote' true}}
-        {{assign 'config.bio' false}}
-        {{assign 'config.education' false}}
-        {{assign 'config.contact' false}}
-        {{assign 'config.subjects' false}}
-        {{assign 'config.cv' false}}
-      {{else if (eq config 'Description')}}
-        {{assign 'config' (arrayify null)}}
-        {{assign 'config.image' false}}
-        {{assign 'config.quote' false}}
-        {{assign 'config.bio' true}}
-        {{assign 'config.education' false}}
-        {{assign 'config.contact' false}}
-        {{assign 'config.subjects' false}}
-        {{assign 'config.cv' false}}
-      {{else if (eq config 'Education')}}
-        {{assign 'config' (arrayify null)}}
-        {{assign 'config.image' false}}
-        {{assign 'config.quote' false}}
-        {{assign 'config.bio' false}}
-        {{assign 'config.education' true}}
-        {{assign 'config.contact' false}}
-        {{assign 'config.subjects' false}}
-        {{assign 'config.cv' false}}
-      {{else if (eq config 'Contact Info')}}
-        {{assign 'config' (arrayify null)}}
-        {{assign 'config.image' false}}
-        {{assign 'config.quote' false}}
-        {{assign 'config.bio' false}}
-        {{assign 'config.education' false}}
-        {{assign 'config.contact' true}}
-        {{assign 'config.subjects' false}}
-        {{assign 'config.cv' false}}
-      {{else if (eq config 'Subject Areas')}}
-        {{assign 'config' (arrayify null)}}
-        {{assign 'config.image' false}}
-        {{assign 'config.quote' false}}
-        {{assign 'config.bio' false}}
-        {{assign 'config.education' false}}
-        {{assign 'config.contact' false}}
-        {{assign 'config.subjects' true}}
-        {{assign 'config.cv' false}}
-      {{else if (eq config 'CV')}}
-        {{assign 'config' (arrayify null)}}
-        {{assign 'config.image' false}}
-        {{assign 'config.quote' false}}
-        {{assign 'config.bio' false}}
-        {{assign 'config.education' false}}
-        {{assign 'config.contact' false}}
-        {{assign 'config.subjects' false}}
-        {{assign 'config.cv' true}}
-      {{/if}}
+    {{#if (eq config 'Profile Photo')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' true}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.guides' false}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'Quote')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' true}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.guides' false}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'Description')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' true}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.guides' false}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'Education')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' true}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.guides' false}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'Contact Info')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' true}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.guides' false}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'Subject Areas')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' true}}
+      {{assign 'config.guides' false}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'Research Guides')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.guides' true}}
+      {{assign 'config.cv' false}}
+    {{else if (eq config 'CV')}}
+      {{assign 'config' (arrayify null)}}
+      {{assign 'config.image' false}}
+      {{assign 'config.quote' false}}
+      {{assign 'config.bio' false}}
+      {{assign 'config.education' false}}
+      {{assign 'config.contact' false}}
+      {{assign 'config.subjects' false}}
+      {{assign 'config.guides' false}}
+      {{assign 'config.cv' true}}
+    {{/if}}
 
     {{/if}}
 
   {{/if}}
+
+  {{! Arrayify subjects in case of single subject listing }}
+  {{{assign 'subjects' (arrayify subjects)}}}
 
   {{! Set the librarian's ID if not already set. }}
   {{#unless id}}{{assign 'id' (dashcase (lowercase name))}}{{/unless}}

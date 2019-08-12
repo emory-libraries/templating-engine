@@ -29,6 +29,8 @@
     "librarians.@.quote": "librarians.@.content.system-data-structure.quote.quote-text",
     "librarians.@.bio": "librarians.@.content.system-data-structure.description.wysiwyg",
     "librarians.@.subjects": "librarians.@.content.system-data-structure.subject-areas.expertise",
+    "librarians.@.guides": "librarians.@.content.system-data-structure.research-guides-link",
+    "librarians.@.guides.href": "librarians.@.guides.external-url",
     "librarians.@.cv.href": "librarians.@.content.system-data-structure.cv.file.path"
   },
   "replace": {},
@@ -81,6 +83,7 @@
     "cascade-page.@.content.system-data-structure.contact-info.mailing-address.city",
     "cascade-page.@.content.system-data-structure.contact-info.mailing-address.state",
     "cascade-page.@.content.system-data-structure.contact-info.mailing-address.zip",
+    "cascade-page.@.content.system-data-structure.research-guides-link.external-url",
     "cascade-page.@.content.system-data-structure.cv.file.path"
   ],
   "html": []

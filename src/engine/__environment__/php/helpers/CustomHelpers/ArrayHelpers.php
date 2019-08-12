@@ -182,6 +182,13 @@ trait ArrayHelpers {
   public static function condense( array $array, array $options ) {
 
     // Returned the condense the array by one level.
+    foreach ($array as $key => $val ) {
+
+      if( !(is_array($val)) ) {
+        $array[$key] = array($val);
+      }
+
+    }
     return array_merge([], ...array_values($array));
 
   }
