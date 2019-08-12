@@ -1714,7 +1714,7 @@ Components.register('branding-footer', {
       // Ignore empty selections.
       if (_.isNil(this.selection) || this.selection === '') return; // Get the location of the targeted site.
 
-      var href = "//".concat(this.selection); // Redirect the site to the target location.
+      var href = _.startsWith(this.selection, 'http://') || _.startsWith(this.selection, 'https://') ? this.selection : "//".concat(this.selection); // Redirect the site to the target location.
 
       window.location.href = href;
     }
@@ -1732,7 +1732,7 @@ Components.register('branding-header', {
       // Ignore empty selections.
       if (_.isNil(this.selection) || this.selection === '') return; // Get the location of the targeted site.
 
-      var href = "//".concat(this.selection); // Redirect the site to the target location.
+      var href = _.startsWith(this.selection, 'http://') || _.startsWith(this.selection, 'https://') ? this.selection : "//".concat(this.selection); // Redirect the site to the target location.
 
       window.location.href = href;
     }

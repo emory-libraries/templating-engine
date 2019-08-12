@@ -22,30 +22,31 @@
   "replace": {},
   "remove": [],
   "add": {},
+  "merge": {},
   "evaluate": [
     {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 2'",
+      "target": "blocks.@.level",
+      "condition": "{__this__} == 'Heading Level 2'",
       "value": 2
     },
     {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 3'",
+      "target": "blocks.@.level",
+      "condition": "{__this__} == 'Heading Level 3'",
       "value": 3
     },
     {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 4'",
+      "target": "blocks.@.level",
+      "condition": "{__this__} == 'Heading Level 4'",
       "value": 4
     },
     {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 5'",
+      "target": "blocks.@.level",
+      "condition": "{__this__} == 'Heading Level 5'",
       "value": 5
     },
     {
-      "target": "blocks.@.heading-level",
-      "condition": "blocks.@.heading-level == 'Heading Level 6'",
+      "target": "blocks.@.level",
+      "condition": "{__this__} == 'Heading Level 6'",
       "value": 6
     }
   ],

@@ -1,8 +1,16 @@
+{{! Set an active site if none was set. }}
+{{#if (eq (length (filterWhere sites 'active')) 0)}}
+
+  {{! Set the first site to active by default. }}
+  {{assign 'sites.0.active' true}}
+
+{{/if}}
+
 <eul-branding-footer inline-template v-cloak>
 
   <div class="branding-footer{{#if classes}} {{classes}}{{/if}}">
-    <a class="branding-footer-logo" href="/">
-      {{> tokens-logo id='Emory-Libraries' hyperlink=false}}
+    <a class="branding-footer-logo" href="{{baseUrl}}/">
+      {{> tokens-logo id=(default this.logo 'emory-libraries') hyperlink=false}}
     </a>
     <div class="branding-footer-dropdown">
       <select class="branding-footer-dropdown-menu"
@@ -23,8 +31,8 @@
 <noscript>
 
   <div class="branding-footer">
-    <a class="branding-footer-logo" href="/">
-      {{> tokens-logo id='Emory-Libraries' hyperlink=false}}
+    <a class="branding-footer-logo" href="{{baseUrl}}/">
+      {{> tokens-logo id=(default this.logo 'emory-libraries') hyperlink=false}}
     </a>
   </div>
 

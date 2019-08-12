@@ -1,0 +1,354 @@
+{
+  "alias": {},
+  "rename": {
+    "__global__.navigation.main": "__global__.main-navigation.menu",
+    "__global__.navigation.main.@.subgroup.@.subnavigation": "__global__.navigation.main.@.subgroup.@.link",
+    "__global__.navigation.main.@.mixed.subgroup.@.category": "__global__.navigation.main.@.mixed.subgroup.@.group",
+    "__global__.navigation.main.@.mixed.subgroup.@.subnavigation": "__global__.navigation.main.@.mixed.subgroup.@.link",
+    "__global__.navigation.utilities": "__global__.utility-nav-links.links-list-left.link",
+    "__global__.navigation.flyouts": "__global__.utility-nav-links.links-list-right.link",
+    "__global__.navigation.button": "__global__.utility-nav-links.link-librarian",
+    "__shared__.sites": "__shared__.location-links-list.link",
+    "__shared__.sites.@.href": "__shared__.sites.@.external-url",
+    "__shared__.sites.@.site": "__shared__.sites.@.link-label"
+  },
+  "replace": {},
+  "remove": [
+    "__global__.main-navigation",
+    "__global__.utility-nav-links",
+    "__shared__.location-links-list"
+  ],
+  "add": {
+    "__global__.navigation.search": {
+      "label": "search",
+      "icon": "material-search"
+    }
+  },
+  "merge": {
+    "__global__.navigation.main.@.mixed.link": "__global__.navigation.main.@.mixed.subgroup"
+  },
+  "evaluate": [
+    {
+      "target": "__global__.navigation.main.@.view-more-link.href",
+      "condition": [
+        "&{view-more-link.link-type} == 'Cascade Page'",
+        "&{view-more-link.link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{view-more-link.cascade-page.path}",
+        "&{view-more-link.external-url}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.viewall",
+      "condition": [
+        "&{view-more-link.include-view-more-link}",
+        "!&{view-more-link.include-view-more-link}"
+      ],
+      "value": [
+        "&{view-more-link}",
+        false
+      ],
+      "eval": true
+    },
+    {
+      "target": "__global__.navigation.main.@.link-options",
+      "condition": "&{menu-type} != 'links'",
+      "value": false
+    },
+    {
+      "target": "__global__.navigation.main.@.link.@.alias",
+      "condition": "{__global__.navigation.main.@.menu-type} == 'links' and index_of('include alias', {__global__.navigation.main.@.link-options}) === false",
+      "value": false
+    },
+    {
+      "target": "__global__.navigation.main.@.link.@.resource",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'links' and index_of('include access links', {__global__.navigation.main.@.link-options}) !== false and &{access-link.link-type} == 'Cascade Page'",
+        "{__global__.navigation.main.@.menu-type} == 'links' and index_of('include access links', {__global__.navigation.main.@.link-options}) !== false and &{access-link.link-type} == 'External URL'",
+        "{__global__.navigation.main.@.menu-type} == 'links' and index_of('include access links', {__global__.navigation.main.@.link-options}) === false"
+      ],
+      "value": [
+        "&{access-link.cascade-page.path}",
+        "&{access-link.external-url}",
+        false
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.link.@.href",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'links' and &{link-type} == 'Cascade Page'",
+        "{__global__.navigation.main.@.menu-type} == 'links' and &{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.link.@.label",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'links' and &{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "{__global__.navigation.main.@.menu-type} == 'links' and &{link-type} == 'Cascade Page' and &{link-customizations}",
+        "{__global__.navigation.main.@.menu-type} == 'links' and &{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.subgroup.@.subnavigation.@.href",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'subgroup' and &{link-type} == 'Cascade Page'",
+        "{__global__.navigation.main.@.menu-type} == 'subgroup' and &{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.subgroup.@.subnavigation.@.label",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'subgroup' and &{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "{__global__.navigation.main.@.menu-type} == 'subgroup' and &{link-type} == 'Cascade Page' and &{link-customizations}",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.mixed.link.@.href",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'mixed' and &{category} === NULL and &{link-type} == 'Cascade Page'",
+        "{__global__.navigation.main.@.menu-type} == 'mixed' and &{category} === NULL and &{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.mixed.link.@.label",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'mixed' and &{category} === NULL and &{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "{__global__.navigation.main.@.menu-type} == 'mixed' and &{category} === NULL and &{link-type} == 'Cascade Page' and &{link-customizations}",
+        "{__global__.navigation.main.@.menu-type} == 'mixed' and &{category} === NULL and &{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.mixed.link.@.subnavigation.@.href",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'mixed' and {__global__.navigation.main.@.mixed.link.@.category} !== NULL and &{link-type} == 'Cascade Page'",
+        "{__global__.navigation.main.@.menu-type} == 'mixed' and {__global__.navigation.main.@.mixed.link.@.category} !== NULL and &{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.mixed.link.@.subnavigation.@.label",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'mixed' and {__global__.navigation.main.@.mixed.link.@.category} !== NULL and &{link-type} == 'Cascade Page' and !&{link-customizations}",
+        "{__global__.navigation.main.@.menu-type} == 'mixed' and {__global__.navigation.main.@.mixed.link.@.category} !== NULL and &{link-type} == 'Cascade Page' and &{link-customizations}",
+        "{__global__.navigation.main.@.menu-type} == 'mixed' and {__global__.navigation.main.@.mixed.link.@.category} !== NULL and &{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.main.@.subnavigation",
+      "condition": [
+        "{__global__.navigation.main.@.menu-type} == 'links'",
+        "{__global__.navigation.main.@.menu-type} == 'subgroup'",
+        "{__global__.navigation.main.@.menu-type} == 'mixed'"
+      ],
+      "value": [
+        "{__global__.navigation.main.@.link}",
+        "{__global__.navigation.main.@.subgroup}",
+        "{__global__.navigation.main.@.mixed.link}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.utilities.@.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.utilities.@.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.flyouts.@.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.flyouts.@.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.button.href",
+      "condition": [
+        "&{link-type} == 'Cascade Page'",
+        "&{link-type} == 'Cascade File'",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.path}",
+        "&{cascade-file.path}",
+        "&{external-url}"
+      ]
+    },
+    {
+      "target": "__global__.navigation.button.label",
+      "condition": [
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade Page' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) === false",
+        "&{link-type} == 'Cascade File' and index_of('Label', &{link-customizations}) !== false",
+        "&{link-type} == 'External URL'"
+      ],
+      "value": [
+        "&{cascade-page.title}",
+        "&{link-label}",
+        "&{cascade-file.display-name}",
+        "&{link-label}",
+        "&{link-label}"
+      ]
+    },
+    {
+      "target": "__shared__.sites.@.active",
+      "condition": [
+        "index_of({__site__}, Sabre\\Uri\\parse(&{href})['host']) !== false",
+        "index_of({__site__}, Sabre\\Uri\\parse(&{href})['host']) === false"
+      ],
+      "value": [
+        true,
+        false
+      ]
+    }
+  ],
+  "repeatable": [
+    "__global__.main-navigation.menu",
+    "__global__.main-navigation.menu.@.link",
+    "__global__.main-navigation.menu.@.subgroup",
+    "__global__.main-navigation.menu.@.subgroup.@.link",
+    "__global__.main-navigation.menu.@.mixed.link",
+    "__global__.main-navigation.menu.@.mixed.subgroup",
+    "__global__.main-navigation.menu.@.mixed.subgroup.@.link",
+    "__global__.utility-nav-links.links-list-left.link",
+    "__global__.utility-nav-links.links-list-right.link",
+    "__shared__.location-links-list.link"
+  ],
+  "checkbox": [
+    "__global__.main-navigation.menu.@.include-view-more-link",
+    "__global__.main-navigation.menu.@.link-options",
+    "__global__.main-navigation.menu.@.link.@.link-customizations",
+    "__global__.main-navigation.menu.@.view-more-link.include-view-more-link",
+    "__global__.main-navigation.menu.@.subgroup.@.link.@.link-customizations",
+    "__global__.main-navigation.menu.@.mixed.link.@.link-customizations",
+    "__global__.main-navigation.menu.@.mixed.subgroup.@.link.@.link-customizations",
+    "__global__.utility-nav-links.links-list-left.link.@.link-customizations",
+    "__global__.utility-nav-links.links-list-right.link.@.link-customizations",
+    "__global__.utility-nav-links.link-librarian.link-customizations",
+    "__shared__.location-links-list.link.@.link-customizations"
+  ],
+  "radio": [
+    "__global__.main-navigation.menu.@.menu-type",
+    "__global__.main-navigation.menu.@.link.@.link-type",
+    "__global__.main-navigation.menu.@.link.@.access-link.link-type",
+    "__global__.main-navigation.menu.@.view-more-link.link-type",
+    "__global__.main-navigation.menu.@.subgroup.@.link.@.link-type",
+    "__global__.main-navigation.menu.@.mixed.link.@.link-type",
+    "__global__.main-navigation.menu.@.mixed.subgroup.@.link.@.link-type",
+    "__global__.utility-nav-links.links-list-left.link.@.link-type",
+    "__global__.utility-nav-links.links-list-right.link.@.link-type",
+    "__global__.utility-nav-links.link-librarian.link-type",
+    "__shared__.location-links-list.link.@.link-type"
+  ],
+  "timestamp": [],
+  "text": [
+    "__global__.main-navigation.menu.@.label",
+    "__global__.main-navigation.menu.@.link.@.link-label",
+    "__global__.main-navigation.menu.@.link.@.external-url",
+    "__global__.main-navigation.menu.@.link.@.alias",
+    "__global__.main-navigation.menu.@.link.@.access-link.external-url",
+    "__global__.main-navigation.menu.@.view-more-link.link-label",
+    "__global__.main-navigation.menu.@.view-more-link.external-url",
+    "__global__.main-navigation.menu.@.subgroup.@.group",
+    "__global__.main-navigation.menu.@.subgroup.@.link.@.link-label",
+    "__global__.main-navigation.menu.@.subgroup.@.link.@.external-url",
+    "__global__.main-navigation.menu.@.mixed.link.@.link-label",
+    "__global__.main-navigation.menu.@.mixed.link.@.external-url",
+    "__global__.main-navigation.menu.@.mixed.subgroup.@.link.@.link-label",
+    "__global__.main-navigation.menu.@.mixed.subgroup.@.link.@.external-url",
+    "__global__.utility-nav-links.links-list-left.link.@.link-label",
+    "__global__.utility-nav-links.links-list-left.link.@.external-url",
+    "__global__.utility-nav-links.links-list-right.link.@.link-label",
+    "__global__.utility-nav-links.links-list-right.link.@.external-url",
+    "__global__.utility-nav-links.links-list-right.link.@.icon",
+    "__global__.utility-nav-links.link-librarian.link-label",
+    "__global__.utility-nav-links.link-librarian.external-url",
+    "__global__.utility-nav-links.link-librarian.icon",
+    "__global__.location-links-list.link.@.link-label",
+    "__global__.location-links-list.link.@.external-url"
+  ],
+  "html": []
+}

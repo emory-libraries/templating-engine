@@ -210,7 +210,9 @@
 {{assign 'extras.content' (storageGet 'extras')}}
 
 <div class="exhibition-page">
-  <header class="exhibition-page-header"></header>
+
+  {{> organisms-header classes='exhibition-page-header'}}
+
   <div class="exhibition-page-main">
 
     {{> organisms-intro-hero background-image=hero}}
@@ -285,5 +287,7 @@
     {{/if}}
 
   </div>
-  <footer class="exhibition-page-footer"></footer>
+
+  {{> organisms-footer classes='exhibition-page-footer'}}
+
 </div>

@@ -53,6 +53,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), [
     'config' => ENGINE_ROOT.'/config',
     'env' => ENGINE_ROOT.'/.env',
     'classes' => ENGINE_ROOT.'/php/classes',
+    'meta' => ENGINE_ROOT.'/meta',
     'php' => ENGINE_ROOT.'/php',
     // TODO: Add helpers to index.
     'helpers' => ENGINE_ROOT.'/php/helpers',
@@ -145,7 +146,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), [
     $svg = File::read($icon);
 
     // Get the icon's ID.
-    $id = Path::filename($icon);
+    $id = strtolower(Path::filename($icon));
 
     // Save the icon.
     $icons[$id] = $svg;
@@ -163,7 +164,7 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), [
     $svg = File::read($logo);
 
     // Get the logo's ID.
-    $id = Path::filename($logo);
+    $id = strtolower(Path::filename($logo));
 
     // Save the logo.
     $logos[$id] = $svg;
