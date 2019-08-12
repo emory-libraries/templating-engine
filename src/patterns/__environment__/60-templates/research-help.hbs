@@ -81,7 +81,9 @@
 {{/if}}
 
 <div class="research-help-page">
-  <header class="research-help-page-header"></header>
+
+  {{> organisms-header classes='research-help-page-header'}}
+
   <div class="research-help-page-main">
 
     {{#extend 'organisms-main' type='research-help-page' classes=''}}
@@ -107,5 +109,7 @@
     {{/if}}
 
   </div>
-  <footer class="research-help-page-footer"></footer>
+
+  {{> organisms-footer classes='research-help-page-footer'}}
+
 </div>

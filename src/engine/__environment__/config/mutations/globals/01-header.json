@@ -1,0 +1,22 @@
+{
+  "alias": {
+    "header.navigation": "__global__.navigation",
+    "header.search": "__meta__.search"
+  },
+  "rename": {},
+  "replace": {},
+  "remove": [],
+  "add": {
+    "header.navigation.sites": []
+  },
+  "merge": {
+    "header.navigation.sites": "__shared__.sites"
+  },
+  "evaluate": [],
+  "repeatable": [],
+  "checkbox": [],
+  "radio": [],
+  "timestamp": [],
+  "text": [],
+  "html": []
+}

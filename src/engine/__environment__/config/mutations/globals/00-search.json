@@ -1,0 +1,60 @@
+{
+  "alias": {},
+  "rename": {
+    "__meta__.search": "__meta__.search-configuration",
+    "__meta__.search.services": "__meta__.search.search-option",
+    "__meta__.search.services.@.placeholder": "__meta__.search.services.@.placeholder-text",
+    "__meta__.search.services.@.query": "__meta__.search.services.@.query-parameter",
+    "__meta__.search.services.@.src": "__meta__.search.services.@.search-url"
+  },
+  "replace": {},
+  "remove": [],
+  "add": {
+    "__meta__.search.tabs": [],
+    "__meta__.search.back": {
+      "label": "Back to Menu",
+      "icon": {
+        "id": "material-chevron_right",
+        "position": "left"
+      }
+    },
+    "__meta__.search.button": {
+      "position": "inside",
+      "label": "Search",
+      "icon": "material-search"
+    },
+    "__meta__.search.processor": "/scripts/search.php"
+  },
+  "merge": {
+    "__meta__.search.tabs": "__meta__.search.services"
+  },
+  "evaluate": [
+    {
+      "target": "__meta__.search.services.@.id",
+      "condition": "{__this__} === NULL",
+      "value": "kebabcase(&{label})",
+      "eval": true
+    },
+    {
+      "target": "__meta__.search.tabs.@.value",
+      "condition": "{__this__} === NULL",
+      "value": "kebabcase(&{label})",
+      "eval": true
+    }
+  ],
+  "repeatable": [
+    "__meta__.search-configuration.search-option"
+  ],
+  "checkbox": [
+    "__meta__.search-configuration.search-option.@.default"
+  ],
+  "radio": [],
+  "timestamp": [],
+  "text": [
+    "__meta__.search-configuration.search-option.@.label",
+    "__meta__.search-configuration.search-option.@.placeholder-text",
+    "__meta__.search-configuration.search-option.@.search-url",
+    "__meta__.search-configuration.search-option.@.query-parameter"
+  ],
+  "html": []
+}

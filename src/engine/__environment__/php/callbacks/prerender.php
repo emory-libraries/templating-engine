@@ -1,10 +1,33 @@
 <?php
 
-// Locate the indexed routes file, and read it.
-$routes = (isset(PATHS['routes']) and file_exists(PATHS['routes'])) ? json_decode(file_get_contents(PATHS['routes']), true) : false;
+// Locate the indexed routes, and read them.
+$routes = ROUTES;
 
 // Exit if no routes were found.
 if( !$routes or empty($routes) ) exit();
+
+// Prioritize routes by endpoint.
+$prioritized = [];
+
+// Prioritize the routes by forcing pages deeper within the site to be renderer last.
+foreach( $routes as $route ) {
+
+  // Get the route's endpoint broken down into its path parts.
+  $endpoint = explode('/', trim((is_array($route['endpoint']) ? $route['endpoint'][1] : $route['endpoint']), '/'));
+
+  // Determine the priority level.
+  $level = $endpoint[count($endpoint) - 1] == 'index' ? 0 : count($endpoint);
+
+  // Initialize the prioritized level if it doesn't already exist.
+  if( !isset($prioritized[$level]) ) $prioritized[$level] = [];
+
+  // Prioritize the route based on its priority level.
+  $prioritized[$level][] = $route;
+
+}
+
+// Make sure the prioritized items are in priority order.
+ksort($prioritized, SORT_NUMERIC);
 
 // Initialize curl.
 $curl = curl_init();
@@ -12,28 +35,33 @@ $curl = curl_init();
 // Initialize a set of curl responses.
 $responses = [];
 
-// Build and execute curl requests.
-foreach( $routes['data'] as $i => $route ) {
+// Prerender routes based on their priority order.
+foreach( $prioritized as $routes ) {
 
-  // Get the route's endpoint and URL.
-  $endpoint = is_array($route['endpoint']) ? $route['endpoint'][1] : $route['endpoint'];
-  $url = is_array($route['url']) ? $route['url'][1] : $route['url'];
+  // Build and execute curl requests for each route to force it to prerender.
+  foreach( $routes as $i => $route ) {
 
-  // Configure the curl request.
-  curl_setopt($curl, CURLOPT_URL, $url);
-  curl_setopt($curl, CURLOPT_NOBODY, true);
-  curl_setopt($curl, CURLOPT_HEADER, true);
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    // Get the route's endpoint and URL.
+    $endpoint = is_array($route['endpoint']) ? $route['endpoint'][1] : $route['endpoint'];
+    $url = is_array($route['url']) ? $route['url'][1] : $route['url'];
 
-  // Execute the curl request, and get the response.
-  $response = curl_exec($curl);
+    // Configure the curl request.
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_NOBODY, true);
+    curl_setopt($curl, CURLOPT_HEADER, true);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, false);
 
-  // Save the curl response.
-  $responses[$i] = [
-    'url' => $url,
-    'endpoint' => $route['endpoint'],
-    'response' => trim($response)
-  ];
+    // Execute the curl request, and get the response.
+    $response = curl_exec($curl);
+
+    // Save the curl response.
+    $responses[$i] = [
+      'url' => $url,
+      'endpoint' => $route['endpoint'],
+      'response' => trim($response)
+    ];
+
+  }
 
 }
 

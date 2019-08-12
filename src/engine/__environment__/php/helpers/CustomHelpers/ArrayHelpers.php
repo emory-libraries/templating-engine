@@ -5,7 +5,7 @@ namespace CustomHelpers;
 trait ArrayHelpers {
 
   // Filter an array of objects to extract only items containing a given key-value pair.
-  public static function filterWhere( array $collection, $key, $value, $comparator, array $options ) {
+  public static function filterWhere( array $collection, $key, $value, $comparator = '==' ) {
 
     // Initialize an internally recognized value of undefined to help with filtering.
     $undefined = 'FILTERWHERE_UNDEFINED';
@@ -44,7 +44,7 @@ trait ArrayHelpers {
   }
 
   // Filter an array of objects to extract only items not containing a given key-value pair.
-  public static function filterWhereNot( array $collection, $key, $value, $comparator, array $options ) {
+  public static function filterWhereNot( array $collection, $key, $value, $comparator = '==' ) {
 
     // Initialize an internally recognized value of undefined to help with filtering.
     $undefined = 'FILTERWHERE_UNDEFINED';
@@ -97,6 +97,9 @@ trait ArrayHelpers {
   // Filter an array of objects to extract only items containing a given key.
   public static function filterHas( array $collection, $key, array $options ) {
 
+    // Initialize an internally recognized value of undefined to help with filtering.
+    $undefined = 'FILTERWHERE_UNDEFINED';
+
     // Extract all items within the array collection.
     $items = array_values(array_filter($collection, function($item) {
 
@@ -123,6 +126,9 @@ trait ArrayHelpers {
 
   // Filter an array of objects to extract only items missing a given key.
   public static function filterHasNot( array $collection, $key, array $options ) {
+
+    // Initialize an internally recognized value of undefined to help with filtering.
+    $undefined = 'FILTERWHERE_UNDEFINED';
 
     // Extract all items within the array collection.
     $items = array_values(array_filter($collection, function($item) {
@@ -152,7 +158,7 @@ trait ArrayHelpers {
   public static function indexOf( $haystack, $needle, array $options ) {
 
     // Get the index of the item within the array or string.
-    return (is_array($haystack) ? array_search($needle, $haystack) : strpos($haystack, $needle));
+    return index_of($needle, $haystack);
 
   }
 
@@ -176,6 +182,13 @@ trait ArrayHelpers {
   public static function condense( array $array, array $options ) {
 
     // Returned the condense the array by one level.
+    foreach ($array as $key => $val ) {
+
+      if( !(is_array($val)) ) {
+        $array[$key] = array($val);
+      }
+
+    }
     return array_merge([], ...array_values($array));
 
   }

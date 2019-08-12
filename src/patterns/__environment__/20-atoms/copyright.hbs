@@ -14,26 +14,18 @@
     {{/if}}
   </span>
   <span class="copyright-address">
-    {{#make 'defaultAddress'}}
-      {
-        street: "201 Dowman Drive",
-        city: "Atlanta",
-        state: "Georgia",
-        zip: 30322
-      }
-    {{/make}}
+    {{assign 'defaultAddress' (objectify street='201 Dowman Drive' city='Atlanta' state='Georgia' zip=30322)}}
     {{#if format }}
-    {{formatAddress (default address defaultAddress) (default format.address '{street}, {city}, {state.long} {zip}')}}
+      {{formatAddress (default address defaultAddress) (default format.address '{street}, {city}, {state.long} {zip}')}}
     {{else}}
-    {{formatAddress (default address defaultAddress) '{street}, {city}, {state.long} {zip}'}}
+      {{formatAddress (default address defaultAddress) '{street}, {city}, {state.long} {zip}'}}
     {{/if}}
-    {{unset 'defaultAddress' this}}
   </span>
   <span class="copyright-phone">
     {{#if format}}
-    {{formatPhone (default phone 4047276123) (default format.phone 'xxx.xxx.xxxx')}}
+      {{formatPhone (default phone 4047276123) (default format.phone 'xxx.xxx.xxxx')}}
     {{else}}
-    {{formatPhone (default phone 4047276123) 'xxx.xxx.xxxx'}}
+      {{formatPhone (default phone 4047276123) 'xxx.xxx.xxxx'}}
     {{/if}}
   </span>
 </div>

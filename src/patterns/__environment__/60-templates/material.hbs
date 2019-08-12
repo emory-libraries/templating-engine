@@ -78,8 +78,43 @@
 
 {{/if}}
 
+{{! Initialize some sidebar list section data. }}
+{{assign 'sections' (arrayify null)}}
+
+{{! Build the first sidebar list section if applicable. }}
+{{#if (and access access.links)}}
+  {{#if (gt (length access.links) 0)}}
+
+    {{! Build the sidebar list section's content. }}
+    {{assign 'sections.0' (objectify icon=(default access.icon 'material-office') title=(default access.title 'Where to Borrow') links=access.links)}}
+
+  {{/if}}
+{{/if}}
+
+{{! Build the second sidebar list section if applicable. }}
+{{#if (and learn learn.links)}}
+  {{#if (gt (length learn.links) 0)}}
+
+  {{! Build the sidebar list section's content. }}
+  {{assign 'sections.1' (objectify icon=(default learn.icon 'material-search') title=(default learn.title 'Where to Search') links=learn.links)}}
+
+  {{/if}}
+{{/if}}
+
+{{! Build the last sidebar list section if applicable. }}
+{{#if (and materials materials.links)}}
+  {{#if (gt (length materials.links) 0)}}
+
+  {{! Build the sidebar list section's content. }}
+  {{assign 'sections.2' (objectify icon=(default materials.icon 'material-access_point') title=(default materials.title 'Where to Access') links=materials.links)}}
+
+  {{/if}}
+{{/if}}
+
 <div class="material-page">
-  <header class="material-page-header"></header>
+
+  {{> organisms-header classes='material-page-header'}}
+
   <div class="material-page-main">
 
     {{#extend 'organisms-main' type='material-page' classes='material-page-main'}}
@@ -87,7 +122,7 @@
         {{> compounds-blocks}}
       {{/content}}
       {{#content 'section-main-sidebar'}}
-        {{! TODO: Add in sidebar list (`compounds-sidebar-list`)}}
+        {{> compounds-sidebar-list divider=(objectify start=false end=false)}}
       {{/content}}
     {{/extend}}
 
@@ -108,5 +143,7 @@
     {{/if}}
 
   </div>
-  <footer class="material-page-footer"></footer>
+
+  {{> organisms-footer classes='material-page-footer'}}
+
 </div>
