@@ -9,6 +9,13 @@
     <input type="checkbox" class="subnav-button-options-toggle">
     <div class="subnav-button-options">
       {{#each options as |option|}}
+
+      {{#if option.href}}
+        {{#if (and (startsWithSubstring option.href '/') (not (startsWithSubstring option.href '//')))}}
+          {{assign 'option.href' (combine (baseUrl) option.href)}}
+        {{/if}}
+      {{/if}}
+
       <a href="{{option.href}}" class="subnav-button-option" target="{{default option.target '_self'}}">
         {{#if (or (and option.icon option.icon.id (eq option.icon.position 'left')) (and option.icon option.icon.id (not option.icon.position)))}}{{> tokens-icon id=option.icon.id classes='-left' }}{{/if}}
         {{option.label}}
@@ -28,6 +35,13 @@
     <input type="checkbox" class="subnav-button-options-toggle">
     <div class="subnav-button-options">
       {{#each options as |option|}}
+
+      {{#if option.href}}
+        {{#if (and (startsWithSubstring option.href '/') (not (startsWithSubstring option.href '//')))}}
+          {{assign 'option.href' (combine (baseUrl) option.href)}}
+        {{/if}}
+      {{/if}}
+
       <a href="{{option.href}}" class="subnav-button-option" target="{{default option.target '_self'}}">
         {{#if (or (and option.icon option.icon.id (eq option.icon.position 'left')) (and option.icon option.icon.id (not option.icon.position)))}}{{> tokens-icon id=option.icon.id classes='-left' }}{{/if}}
         {{option.label}}

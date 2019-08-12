@@ -197,7 +197,9 @@
 {{#if __params__}}{{assign 'selected' (default __params__.subject '')}}{{/if}}
 
 <div class="subject-librarian-directory-page">
-  <header class="subject-librarian-directory-page-header"></header>
+
+  {{> organisms-header classes='subject-librarian-page-header'}}
+
   {{#extend 'organisms-main' type="subject-librarian-directory-page" classes="subject-librarian-directory-page-main"}}
     {{#content 'section-main-body'}}
 
@@ -218,5 +220,7 @@
 
     {{/content}}
   {{/extend}}
-  <footer class="subject-librarian-directory-page-footer"></footer>
+
+  {{> organisms-footer classes='subject-librarian-directory-page-footer'}}
+
 </div>

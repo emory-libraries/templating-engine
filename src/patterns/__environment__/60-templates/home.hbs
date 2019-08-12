@@ -379,7 +379,9 @@
 {{assign 'feeds.sources' (storageGet 'feeds.sources')}}
 
 <div class="home-page">
-  <header class="home-page-header"></header>
+
+  {{> organisms-header classes='home-page-header'}}
+
   <div class="home-page-main">
 
     {{! FIXME: Add mutations for search menu instead of static search data. }}
@@ -422,5 +424,7 @@
     {{/if}}
 
   </div>
-  <footer class="home-page-footer"></footer>
+
+  {{> organisms-footer classes='home-page-footer'}}
+
 </div>

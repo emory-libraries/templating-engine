@@ -1,4 +1,6 @@
-<header class="header">
+{{#with header}}
+
+<header class="header{{#if ../classes}} {{../classes}}{{/if}}">
 
   <div class="header-notifications"></div>
 
@@ -13,3 +15,5 @@
   </div>
 
 </header>
+
+{{/with}}

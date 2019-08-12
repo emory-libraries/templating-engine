@@ -1,6 +1,8 @@
-<footer class="footer">
+{{#with footer}}
 
-  {{#with navigation}}{{> molecules-branding-footer classes='footer-branding'}}{{/with}}
+<footer class="footer{{#if ../classes}} {{../classes}}{{/if}}">
+
+  {{#with navigation}}{{> molecules-branding-footer classes='footer-branding' logo=../logo}}{{/with}}
 
   {{#each (limit navigation.lists 4) as |list|}}
     <ul class="footer-list">
@@ -17,3 +19,5 @@
   {{#with copyright}}{{> atoms-copyright classes='footer-copyright'}}{{/with}}
 
 </footer>
+
+{{/with}}

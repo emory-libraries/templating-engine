@@ -2,21 +2,6 @@
 {{assign 'back.for' (combine 'nav-menu-main--' (lowercase (dashcase heading)))}}
 {{assign 'back.label' 'Back to Main Menu'}}
 
-{{! Add links to resources. }}
-{{#each navigation}}
-
-  {{#if (hasOwn this 'resource')}}
-    {{assign 'options' (arrayify null)}}
-    {{assign 'options.0' (objectify label='About' href=href)}}
-    {{assign 'options.1' (objectify label='Access' href=resource target='_blank' icon=(objectify id='material-open_in_new' position='right'))}}
-  {{/if}}
-
-  {{storagePush 'navigation' this}}
-
-{{/each}}
-
-{{assign 'navigation' (storageGet 'navigation')}}
-
 {{! Determine subnavigation menu layout. }}
 {{#if (gt (length (filterHas navigation 'category')) 0)}}
   {{assign 'layout' 'categorized'}}
@@ -46,7 +31,7 @@
   {{assign 'search.button' (objectify label='Search')}}
 {{/if}}
 
-<nav class="subnav-menu-main{{#if layout}} -{{layout}}{{/if}}{{#if (and (eq layout 'grouped') search)}} has-search{{else if resources}} has-resources{{/if}}"
+<nav class="subnav-menu-main{{#if layout}} -{{layout}}{{/if}}{{#if (and (eq layout 'grouped') search)}} has-search{{else if resources}} has-resources{{/if}}{{#if viewall}} has-viewall{{/if}}"
      {{#if mouseover}}@mouseover.stop="{{mouseover}}"{{/if}}
      {{#if mouseleave}}@mouseleave.stop="{{mouseleave}}"{{/if}}>
 
@@ -76,14 +61,15 @@
       </div>
     {{/each}}
 
-    {{#if (hasOwn this 'viewall')}}
-      {{> atoms-subnav-button-viewall href=viewall label=(combine 'View All ' heading) classes="-span"}}
+    {{#if viewall}}
+      {{#with viewall}}{{> atoms-subnav-button-viewall label=(combine 'View All ' ../heading) classes="-span"}}{{/with}}
     {{/if}}
 
   {{else}}
 
     {{#each (filterHasNot navigation 'category')}}
-      {{#if (hasOwn this 'resource')}}
+      {{#if resource}}
+        {{assign 'options' (makeArray (objectify label='About' href=href) (objectify label='Access' href=resource target='_blank' icon=(objectify id='material-open_in_new' position='right')))}}
         {{> atoms-subnav-button-resource classes='' noscript=(default ../noscript false)}}
       {{else}}
         {{> atoms-subnav-button-main classes=''}}
@@ -96,6 +82,10 @@
         {{#each subnavigation}}{{> atoms-subnav-button-main classes=''}}{{/each}}
       </div>
     {{/each}}
+
+    {{#if viewall}}
+      {{#with viewall}}{{> atoms-subnav-button-viewall label=(combine 'View All ' ../heading) classes="-span"}}{{/with}}
+    {{/if}}
 
   {{/if}}
 

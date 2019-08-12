@@ -11,23 +11,48 @@ use Moment\Moment;
  */
 class Mutator {
 
+  // Set the order of mutations.
+  protected static $order = [
+    'repeatable',
+    'checkbox',
+    'radio',
+    'timestamp',
+    'text',
+    'html',
+    'alias',
+    'rename',
+    'replace',
+    'remove',
+    'add',
+    'merge',
+    'evaluate'
+  ];
+
   // Sets a constant to a known undefined value.
   public static $undefined = 'MUTATOR_UNDEFINED';
 
   // Mutate some data based on a set of template-specific data mutations.
-  public static function mutate( array $data, $template ) {
+  public static function mutate( array $data, $template, $globals = false ) {
 
     // Look for any template-specific mutations.
     $mutations = array_get(CONFIG['config']['mutations'], $template, []);
 
-    // Merge global-level mutations into the template-specific mutations.
-    if( isset(CONFIG['config']['mutations']['globals']) ) {
+    // Only use globals if indicated.
+    if( $globals === true ) {
 
-      // Merge each set of global mutations.
-      foreach( CONFIG['config']['mutations']['globals'] as $id => $global ) {
+      // Convert the mutations array to a collection.
+      $mutations = [$mutations];
 
-        // Merge the mutations.
-        $mutations = array_merge_recursive($mutations, $global);
+      // Add global-level mutations to the template-specific mutations.
+      if( isset(CONFIG['config']['mutations']['globals']) ) {
+
+        // Add each set of global mutations in order so that they can be applied one after the other.
+        foreach( CONFIG['config']['mutations']['globals'] as $id => $global ) {
+
+          // Add the mutations.
+          $mutations[] = $global;
+
+        }
 
       }
 
@@ -36,41 +61,42 @@ class Mutator {
     // Return the unmutated data if no mutations exist.
     if( empty($mutations) ) return $data;
 
-    // Otherwise, mutate the data, starting by making repeatable areas.
-    $data = self::repeatable($data, array_get($mutations, 'repeatable', []));
+    // Apply the mutations to the data.
+    $data = static::apply($data, $mutations);
 
-    // Then, mutate checkboxes.
-    $data = self::checkbox($data, array_get($mutations, 'checkbox', []));
+    // Return the mutated data.
+    return $data;
 
-    // Then, mutate radio buttons.
-    $data = self::radio($data, array_get($mutations, 'radio', []));
+  }
 
-    // Then, mutate timestamps.
-    $data = self::timestamp($data, array_get($mutations, 'timestamp', []));
+  // Apply all mutations to the given data.
+  protected static function apply( array $data, array $mutations ) {
 
-    // Then, mutate text.
-    $data = self::text($data, array_get($mutations, 'text', []));
+    // For ordered mutations, apply them recursively.
+    if( !is_associative_array($mutations) ) {
 
-    // Then, mutate html.
-    $data = self::html($data, array_get($mutations, 'html', []));
+      // Mutate the data recursively.
+      foreach( $mutations as $mutation ) {
 
-    // Then, alias things.
-    $data = self::alias($data, array_get($mutations, 'alias', []));
+        // Recursively apply the mutations to the data.
+        $data = static::apply($data, $mutation);
 
-    // Then, rename things.
-    $data = self::rename($data, array_get($mutations, 'rename', []));
+      }
 
-    // Then, replace things.
-    $data = self::replace($data, array_get($mutations, 'replace', []));
+    }
 
-    // Then, remove things.
-    $data = self::remove($data, array_get($mutations, 'remove', []));
+    // Otherwise, use the mutations to mutate the data.
+    else {
 
-    // Then, add things.
-    $data = self::add($data, array_get($mutations, 'add', []));
+      // Loop through the order of mutations, and apply each one.
+      foreach( static::$order as $method ) {
 
-    // Then, evaluate things.
-    $data = self::evaluate($data, array_get($mutations, 'evaluate', []));
+        // Send  the data through the mutation method.
+        $data = static::{$method}($data, array_get($mutations, $method, []));
+
+      }
+
+    }
 
     // Return the mutated data.
     return $data;
@@ -723,22 +749,17 @@ class Mutator {
 
   }
 
-  // Mutate the data by evaluating some condition.
-  public static function evaluate( array $data, array $evaluates ) {
+  // Mutate the data by merging two or more arrays together.
+  public static function merge( array $data, array $merges, $original = null ) {
 
-    // Evaluate values with the given conditions.
-    foreach( $evaluates as $eval ) {
+    // Merge the keys one by one.
+    foreach( $merges as $source => $targets ) {
 
-      // Ignore invalid expressions.
-      if( !isset($eval['condition']) or !isset($eval['target']) or !isset($eval['value']) ) continue;
+      // Make the targets an array.
+      $targets = is_array($targets) ? $targets : [$targets];
 
-      // Get the condition, target, and value.
-      $condition = $eval['condition'];
-      $target = $eval['target'];
-      $value = $eval['value'];
-
-      // Evaluate values within an array.
-      if( strpos($target, '@') !== false ) {
+      // Mutate items within an array.
+      if( strpos($source, '@') !== false ) {
 
         // Get the keys.
         $keys = array_map(function($key) {
@@ -746,7 +767,7 @@ class Mutator {
           // Strip trailing and leading dots from the keys.
           return trim($key, '. ');
 
-        }, explode('@', $target));
+        }, explode('@', $source));
 
         // Look for the array of objects.
         if( array_get($data, $keys[0], self::$undefined) !== self::$undefined ) {
@@ -754,15 +775,23 @@ class Mutator {
           // Get the array of objects.
           $array = array_get($data, $keys[0]);
 
+          // Also, adjust targets to only use the given array of objects.
+          $targets = array_map(function($target) use ($keys) {
+
+            // Require that only the same object be used when looking within an object array.
+            return str_replace($keys[0].'.@.', '', $target);
+
+
+          }, $targets);
+
           // Mutate each object within the array.
           foreach( $array as $index => $object ) {
 
-            // Evaluate the array item's key with the new value.
-            $array = array_set($array, $index, self::evaluate($array[$index], [[
-              'condition' => str_replace($keys[0].'.@.', '', $condition),
-              'target' => implode('.@.', array_slice($keys, 1)),
-              'value' => $value
-            ]]));
+            // Get the name of the key to be merged.
+            $key = implode('.@.', array_slice($keys, 1));
+
+            // Mutate the object's checkbox keys.
+            $array[$index] = self::merge($object, [$key => $targets], $original ?? $data);
 
           }
 
@@ -773,23 +802,306 @@ class Mutator {
 
       }
 
-      // Otherwise, only try to evaluate keys that actually exists.
-      else if( ($source = array_get($data, $target, self::$undefined)) !== self::$undefined ) {
+      // Otherwise, mutate the items within an object.
+      else {
 
-        // Parse the expression.
-        $exp = Conditional::parse($condition);
+        // Look for the key within the data set.
+        if( array_get($data, $source, self::$undefined) !== self::$undefined ) {
 
-        // Inject values within the expression.
-        if( $exp['a'] == $target ) $exp['a'] = $source;
-        else if( strpos('&', $exp['a']) === 0 ) $exp['a'] = array_get($data, ltrim($exp['a'], '&'));
-        if( $exp['b'] == $target ) $exp['b'] = $source;
-        else if( strpos('&', $exp['b']) === 0 ) $exp['b'] = array_get($data, ltrim($exp['b'], '&'));
+          // Get the existing value.
+          $value = array_get($data, $source);
 
-        // Evaluate the expression.
-        $result = Conditional::expression("{$exp['a']} {$exp['operator']} {$exp['b']}");
+          // Ignore non-mergeable source values.
+          if( !is_array($value) ) return $data;
 
-        // If the expression evaluated successfully, then replace the value.
-        if( $result ) $data = array_set($data, $target, $value, true);
+          // Get all target values to be merged, and filter out any non-arrays.
+          $values = array_values(array_filter(array_map(function($target) use ($data, $original) {
+
+            // Locate the target value.
+            return array_get($data, $target, array_get($original ?? [], $target));
+
+          }, $targets), function($value) {
+
+            // Filter out the value if it's not an array.
+            return is_array($value);
+
+          }));
+
+          // Merge the target values into the source.
+          $data = array_set($data, $source, array_merge([], $value, ...$values));
+
+        }
+
+      }
+
+    }
+
+    // Return the mutated data.
+    return $data;
+
+  }
+
+  // Mutate the data by evaluating some condition.
+  public static function evaluate( array $data, array $evaluates, $original = null ) {
+
+    // Evaluate values with the given conditions.
+    foreach( $evaluates as $eval ) {
+
+      // Ignore invalid expressions.
+      if( !array_key_exists('condition', $eval) or !array_key_exists('target', $eval) or !array_key_exists('value', $eval) ) continue;
+
+      // Get the condition, target, and value.
+      $target = $eval['target'];
+      $condition = $eval['condition'];
+      $value = $eval['value'];
+      $evaluate = array_get($eval, 'eval', false);
+
+      // If multiple conditions were given, then handle each one individually.
+      if( is_array($condition) ) {
+
+        // Expand the conditions into their own evaluate expressions.
+        $expressions = [];
+
+        // Apply each condition individually.
+        foreach( $condition as $index => $expressionCondition ) {
+
+          // Get the condition's respective value.
+          $expressionValue = is_array($value) ? $value[$index] : $value;
+
+          // Save the given expression.
+          $expressions[] = [
+            'target' => $target,
+            'condition' => $expressionCondition,
+            'value' => $expressionValue
+          ];
+
+        }
+
+        // Then, mutate the expanded set of evaluate expressions.
+        $data = static::evaluate($data, $expressions, $original);
+
+      }
+
+      // Otherwise, handle single conditions.
+      else {
+
+        // Evaluate values within an array.
+        if( strpos($target, '@') !== false ) {
+
+          // Set the number of levels that will move.
+          $levels = 1;
+
+          // Get the keys.
+          $keys = array_map(function($key) {
+
+            // Strip trailing and leading dots from the keys.
+            return trim($key, '. ');
+
+          }, explode('@', $target));
+
+          // Look for the array of objects.
+          if( array_get($data, $keys[0], self::$undefined) !== self::$undefined ) {
+
+            // Get the array of objects.
+            $array = array_get($data, $keys[0]);
+
+            // Mutate each object within the array.
+            foreach( $array as $index => $object ) {
+
+              // Evaluate the array item's key with the new value.
+              $array = array_set($array, $index, self::evaluate($array[$index], [[
+                'condition' => str_replace($keys[0].'.@.', $keys[0].".$index.", $condition, $levels),
+                'target' => implode('.@.', array_slice($keys, 1)),
+                'value' => is_string($value) ? str_replace($keys[0].'.@.', $keys[0].".$index.", $value, $levels) : $value,
+                'eval' => $evaluate
+              ]], $original ?? $data));
+
+            }
+
+            // Save the array.
+            $data = array_set($data, $keys[0], $array);
+
+          }
+
+        }
+
+        // Otherwise, evaluate the target key.
+        else {
+
+          // Get the target's source.
+          $source = array_get($data, $target);
+
+          // Initialize regexes for replacing values.
+          $regexes = [
+            [
+              "pattern" => "/{{$target}}/",
+              "replacement" => function($value, $match, $condition = false) use ($source, $evaluate) {
+
+                // Get the replacement.
+                $replacement = $source;
+
+                // For conditions, always replace as a string.
+                if( $condition or $evaluate ) {
+
+                  // If the replacement is a string, then wrap it in quotes.
+                  if( is_string($replacement) ) $replacement = "'$replacement'";
+
+                  // Otherwise, if the replacement is a boolean value, replace it with its boolean keyword.
+                  else if( is_bool($replacement) ) $replacement = $replacement ? 'true' : 'false';
+
+                  // Otherwise, convert the replacement to a string, but keep it as is.
+                  else $replacement = var_export($replacement, true);
+
+                  // Merge the string replacement.
+                  return str_replace($match[0], $replacement, $value);
+
+                }
+
+                // Otherwise, merge strings, or return the replacement as is for everythin gelse.
+                return (is_string($replacement) ? str_replace($match[0], $replacement, $value) : $replacement);
+
+              }
+            ],
+            [
+              "pattern" => '/{__this__}/',
+              "replacement" => function($value, $match, $condition = false) use ($source, $evaluate) {
+
+                // Get the replacement.
+                $replacement = $source;
+
+                // For conditions, always replace as a string.
+                if( $condition or $evaluate ) {
+
+                  // If the replacement is a string, then wrap it in quotes.
+                  if( is_string($replacement) ) $replacement = "'$replacement'";
+
+                  // Otherwise, if the replacement is a boolean value, replace it with its boolean keyword.
+                  else if( is_bool($replacement) ) $replacement = $replacement ? 'true' : 'false';
+
+                  // Otherwise, convert the replacement to a string, but keep it as is.
+                  else $replacement = var_export($replacement, true);
+
+                  // Merge the string replacement.
+                  return str_replace($match[0], $replacement, $value);
+
+                }
+
+                // Otherwise, merge strings, or return the replacement as is for everythin gelse.
+                return (is_string($replacement) ? str_replace($match[0], $replacement, $value) : $replacement);
+
+              }
+            ],
+            [
+              "pattern" => '/&{(\S+)}/',
+              "replacement" => function($value, $match, $condition = false) use ($data, $original, $target, $evaluate) {
+
+                // If not inside an array, then try to use the  source data.
+                if( !isset($original) ) $data = array_get($data, implode('.', array_head(explode('.', $target))));
+
+                // Get the replacement.
+                $replacement = array_get($data, $match[1]);
+
+                // For conditions, always replace as a string.
+                if( $condition or $evaluate ) {
+
+                  // If the replacement is a string, then wrap it in quotes.
+                  if( is_string($replacement) ) $replacement = "'$replacement'";
+
+                  // Otherwise, if the replacement is a boolean value, replace it with its boolean keyword.
+                  else if( is_bool($replacement) ) $replacement = $replacement ? 'true' : 'false';
+
+                  // Otherwise, convert the replacement to a string, but keep it as is.
+                  else $replacement = var_export($replacement, true);
+
+                  // Merge the string replacement.
+                  return str_replace($match[0], $replacement, $value);
+
+                }
+
+                // Otherwise, merge strings, or return the replacement as is for everythin gelse.
+                return (is_string($replacement) ? str_replace($match[0], $replacement, $value) : $replacement);
+
+              }
+            ],
+            [
+              "pattern" => '/{(\S+)}/',
+              "replacement" => function($value, $match, $condition = false) use ($data, $original, $evaluate) {
+
+                // Get the replacement.
+                $replacement = array_get($original ?? $data, $match[1]);
+
+                // For conditions, always replace as a string.
+                if( $condition or $evaluate ) {
+
+                  // If the replacement is a string, then wrap it in quotes.
+                  if( is_string($replacement) ) $replacement = "'$replacement'";
+
+                  // Otherwise, if the replacement is a boolean value, replace it with its boolean keyword.
+                  else if( is_bool($replacement) ) $replacement = $replacement ? 'true' : 'false';
+
+                  // Otherwise, convert the replacement to a string, but keep it as is.
+                  else $replacement = var_export($replacement, true);
+
+                  // Merge the string replacement.
+                  return str_replace($match[0], $replacement, $value);
+
+                }
+
+                // Otherwise, merge strings, or return the replacement as is for everythin gelse.
+                return (is_string($replacement) ? str_replace($match[0], $replacement, $value) : $replacement);
+              }
+            ]
+          ];
+
+          // Loop through the regex replacements, and inject values into the condition and/or value.
+          foreach( $regexes as $regex ) {
+
+            // Inject replacement values into the condition.
+            if( preg_match_all($regex['pattern'], $condition, $matches, PREG_SET_ORDER) ) {
+
+              // Loop through matches and replace each.
+              foreach( $matches as $match ) { $condition = $regex['replacement']($condition, $match, true); }
+
+            }
+
+            // Also, replace within the value if the value is a string.
+            if( is_string($value) ) {
+
+              // Inject replacement values into the value.
+              if( preg_match_all($regex['pattern'], $value, $matches, PREG_SET_ORDER) ) {
+
+                // Loop through matches and replace each.
+                foreach( $matches as $match ) {
+
+                  // Replace the value.
+                  $value = $regex['replacement']($value, $match);
+
+                  // Only continue the loop if the value is still a string.
+                  if( !is_string($value) ) break;
+
+                }
+
+              }
+
+            }
+
+          }
+
+          // Evaluate the condition expression.
+          $result = eval("return ($condition);");
+
+          // If the expression evaluated successfully, then replace the value.
+          if( $result ) {
+
+            // Evaluate the value if indicated.
+            if( $evaluate ) $value = eval("return ($value);");
+
+            // Update the data with the new value.
+            $data = array_set($data, $target, $value, true);
+
+          }
+
+        }
 
       }
 

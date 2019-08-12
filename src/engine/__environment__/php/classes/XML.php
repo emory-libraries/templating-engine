@@ -46,7 +46,7 @@ class XML {
     $result = $xml;
 
     // Build the regex used to locate query strings.
-    $regex = '/(\?[[:word:][:punct:]]+?\=[[:word:][:punct:]]+?)(\&(?!amp;)[[:word:][:punct:]]+?\=[[:word:][:punct:]]+?(?=\<|\&|$))+/';
+    $regex = '/\?[[:word:][:punct:]]+?\=[[:word:][:punct:]]+?((?:\&(?![x#]{0,2}?[a-z]+;)[[:word:][:punct:]]+?\=[[:word:][:punct:]]+?(?=\<|\&|$))+)/';
 
     // Look for query strings within the XML.
     if( preg_match_all($regex, $result, $matches, PREG_SET_ORDER) ) {
@@ -54,8 +54,12 @@ class XML {
       // Escape the query strings one by one.
       foreach( $matches as $match ) {
 
+        // Capture the query string and its replacements.
+        $query = $match[1];
+        $replacement = strtr($match[1], ['&' => '&amp;']);
+
         // Escape the query string.
-        $result = str_replace($match[0], strtr($match[1], ['&' => '&amp;']), $result);
+        $result = preg_replace('/'.preg_quote($query).'/', $replacement, $result, 1);
 
       }
 
