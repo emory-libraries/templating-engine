@@ -1,9 +1,12 @@
+{{! Capture dynamic event data. }}
 {{#if __params__.id}}
+
   {{! Fetch the feed's content }}
   {{assign 'data' (fetchFeed (combine __params__.feed '?eventID=' __params__.id))}}
 
   {{! Assign called event data to event object }}
-  {{assign 'event' data.0}}
+  {{assign 'event' (itemAt data 0)}}
+
 {{/if}}
 
 {{#if event}}
@@ -54,7 +57,7 @@
 
     {{#if (eq label 'Contact Email')}}
       {{assign 'title' 'Contact'}}
-      
+
       {{assign 'content' (combine (storageGet 'contact-name') '<br><a href=\"mailto:' (sanitize value) '\">' (sanitize value) '</a>' ) }}
 
       {{assign 'icon' 'material-mail'}}
@@ -71,15 +74,14 @@
   {{! Get event topics }}
   {{#each event.customFields}}
     {{#if (eq label 'University Event Topic')}}
-      {{storageSet 'topics' value}}
+      {{#each (split (decodeHTML value) ', ')}}
+        {{storagePush 'topics' (trim this)}}
+      {{/each}}
     {{/if}}
   {{/each}}
 
   {{! Assign topics }}
   {{assign 'topics' (storageGet 'topics')}}
-
-  {{! Set (decoded) related topics value }}
-  {{assign 'topics' (decodeHTML topics)}}
 
 {{/if}}
 
@@ -87,26 +89,31 @@
   <header class="event-page-header"></header>
   <div class="event-page-main">
     {{#unless __params__.id}}
-      {{>organisms-intro-alt-text title="Event ID Is Missing"}}
+      {{> organisms-intro-alt-text title="Event ID Is Missing"}}
     {{/unless}}
     {{#if __params__.id}}
       {{#unless event}}
-        {{>organisms-intro-alt-text title="Event ID Does Not Exist"}}
+        {{> organisms-intro-alt-text title="Event ID Does Not Exist"}}
       {{/unless}}
     {{/if}}
-    {{#extend 'organisms-main' type="event-page" classes="event-page-main"}}
+    {{#extend 'organisms-main' type="event-page" classes=''}}
       {{#content 'section-main-body'}}
-        {{! If eventID isn't found...}}
+        {{! FIXME: Need to add a handler here for when the eventID IS NOT found. }}
         {{#if event}}
           {{> tokens-text rich=true text=event.description}}
-          {{>atoms-rule}}
-          {{>tokens-heading level=6 heading="Related University Event Topics"}}
-          {{>tokens-text text=topics}}
         {{/if}}
       {{/content}}
       {{#if event}}
       {{#content 'section-main-sidebar'}}
-        {{>compounds-sidebar-list}}
+        {{> compounds-sidebar-list}}
+      {{/content}}
+      {{#content 'section-main-other'}}
+        <div class="section-main-spacer"></div>
+        <div class="section-main-other">
+          {{> atoms-rule classes=''}}
+          {{> tokens-heading level=6 heading='Related University Event Topics' classes='list-title'}}
+          {{> atoms-list-related-topics}}
+        </div>
       {{/content}}
       {{/if}}
     {{/extend}}
