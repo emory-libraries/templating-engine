@@ -1,0 +1,5 @@
+<div class="{{#unless (eq main false)}}section-main-title {{/unless}}intro-cover">
+  {{> tokens-heading level=1 alternate=false classes='intro-cover-title' heading=title icon=false hero=false}}
+  {{#if subtitle}}<p class="intro-cover-subtitle{{#if date}} -date{{/if}}">{{subtitle}}</p>{{/if}}
+  <div class="intro-cover-image">{{> atoms-image src=hero}}</div>
+</div>

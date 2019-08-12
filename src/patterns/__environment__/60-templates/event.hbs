@@ -86,7 +86,9 @@
 {{/if}}
 
 <div class="event-page">
-  <header class="event-page-header"></header>
+
+  {{> organisms-header classes='event-page-header'}}
+
   <div class="event-page-main">
     {{#unless __params__.id}}
       {{> organisms-intro-alt-text title="Event ID Is Missing"}}
@@ -118,5 +120,7 @@
       {{/if}}
     {{/extend}}
   </div>
-  <footer class="event-page-footer"></footer>
+
+  {{> organisms-footer classes='event-page-footer'}}
+
 </div>
