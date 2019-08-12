@@ -53,13 +53,6 @@
       {{assign '_config.cv' false}}
     {{/if}}
 
-    {{! Determine if the librarian has some CV data. }}
-    {{#if (not (eq (indexOf config 'Research Guides') false))}}
-      {{assign '_config.guides' true}}
-    {{else}}
-      {{assign '_config.guides' false}}
-    {{/if}}
-
     {{! Override config data. }}
     {{assign 'config' _config}}
     {{unassign '_config'}}
@@ -76,7 +69,6 @@
       {{assign 'config.education' false}}
       {{assign 'config.contact' false}}
       {{assign 'config.subjects' false}}
-      {{assign 'config.guides' false}}
       {{assign 'config.cv' false}}
     {{else if (eq config 'Quote')}}
       {{assign 'config' (arrayify null)}}
@@ -86,7 +78,6 @@
       {{assign 'config.education' false}}
       {{assign 'config.contact' false}}
       {{assign 'config.subjects' false}}
-      {{assign 'config.guides' false}}
       {{assign 'config.cv' false}}
     {{else if (eq config 'Description')}}
       {{assign 'config' (arrayify null)}}
@@ -96,7 +87,6 @@
       {{assign 'config.education' false}}
       {{assign 'config.contact' false}}
       {{assign 'config.subjects' false}}
-      {{assign 'config.guides' false}}
       {{assign 'config.cv' false}}
     {{else if (eq config 'Education')}}
       {{assign 'config' (arrayify null)}}
@@ -106,7 +96,6 @@
       {{assign 'config.education' true}}
       {{assign 'config.contact' false}}
       {{assign 'config.subjects' false}}
-      {{assign 'config.guides' false}}
       {{assign 'config.cv' false}}
     {{else if (eq config 'Contact Info')}}
       {{assign 'config' (arrayify null)}}
@@ -116,7 +105,6 @@
       {{assign 'config.education' false}}
       {{assign 'config.contact' true}}
       {{assign 'config.subjects' false}}
-      {{assign 'config.guides' false}}
       {{assign 'config.cv' false}}
     {{else if (eq config 'Subject Areas')}}
       {{assign 'config' (arrayify null)}}
@@ -126,17 +114,6 @@
       {{assign 'config.education' false}}
       {{assign 'config.contact' false}}
       {{assign 'config.subjects' true}}
-      {{assign 'config.guides' false}}
-      {{assign 'config.cv' false}}
-    {{else if (eq config 'Research Guides')}}
-      {{assign 'config' (arrayify null)}}
-      {{assign 'config.image' false}}
-      {{assign 'config.quote' false}}
-      {{assign 'config.bio' false}}
-      {{assign 'config.education' false}}
-      {{assign 'config.contact' false}}
-      {{assign 'config.subjects' false}}
-      {{assign 'config.guides' true}}
       {{assign 'config.cv' false}}
     {{else if (eq config 'CV')}}
       {{assign 'config' (arrayify null)}}
@@ -146,7 +123,6 @@
       {{assign 'config.education' false}}
       {{assign 'config.contact' false}}
       {{assign 'config.subjects' false}}
-      {{assign 'config.guides' false}}
       {{assign 'config.cv' true}}
     {{/if}}
 
@@ -193,8 +169,6 @@
 
   {{! Build the sidebar list section's content. }}
   {{assign 'sections.2' (objectify icon=false title='Areas of Expertise' links=(arrayify null))}}
-  {{! Arrayify subjects in case of single subject listing }}
-  {{{assign 'subjects' (arrayify subjects)}}}
   {{#each subjects}}
     {{storagePush 'sections.2.links' (objectify href=(combine (baseUrl) '/services/subject-librarians?subject=' (plusify this)) label=this)}}
   {{/each}}
@@ -238,13 +212,25 @@
         {{#if markdown}}{{{markdown bio}}}{{else}}{{{bio}}}{{/if}}
 
       {{/if}}
-      {{#if (and cv cv.href)}}{{> atoms-button-link href=cv.href label='Download Full CV' icon=false}}{{/if}}
+
     {{/content}}
     {{#content 'section-main-sidebar'}}
 
       {{> compounds-sidebar-list divider=(objectify start=true end=true)}}
 
     {{/content}}
+
+    {{! Insert link to CV if given. }}
+    {{#if (and cv cv.href)}}
+      {{#content 'section-main-other'}}
+
+        <div class="section-main-spacer"></div>
+
+        <div class="section-main-content">{{> atoms-button-link href=cv.href label='Download Full CV' icon=false}}</div>
+
+      {{/content}}
+    {{/if}}
+
   {{/extend}}
 
   {{> organisms-footer classes='bio-page-footer'}}
