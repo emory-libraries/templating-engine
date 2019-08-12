@@ -1,1 +1,126 @@
-{{{_inspect this}}}
+{{! Capture dynamic event data. }}
+{{#if __params__.id}}
+
+  {{! Fetch the feed's content }}
+  {{assign 'data' (fetchFeed (combine __params__.feed '?eventID=' __params__.id))}}
+
+  {{! Assign called event data to event object }}
+  {{assign 'event' (itemAt data 0)}}
+
+{{/if}}
+
+{{#if event}}
+
+  {{! Set the title to be the title of the event }}
+  {{assign 'title' event.title}}
+  {{assign 'system.title' title}}
+
+  {{! Set the subtitle to be the date of the event }}
+  {{assign 'subtitle' event.dateTimeFormatted}}
+
+  {{! Set the hero image (This could be bad)}}
+  {{assign 'hero' event.eventImage.url}}
+
+  {{! Add location to sections object for sidebar list}}
+  {{assign 'location' (objectify content=(sanitize event.location) icon="material-map" title="Location")}}
+
+  {{storagePush 'sections' location}}
+
+  {{! Loop through custom fields to get sidebar list items}}
+  {{#each event.customFields}}
+    {{assign 'title' label}}
+    {{#if (indexOf value ',')}}
+     {{assign 'content' (split value ",")}}
+    {{else}}
+      {{assign 'content' value}}
+    {{/if}}
+
+    {{#if (eq label 'Cost')}}
+      {{assign 'icon' 'material-attach_money'}}
+      {{storagePush 'sections' this}}
+    {{/if}}
+
+    {{#if (eq label 'Speaker')}}
+      {{assign 'icon' 'material-person'}}
+      {{storagePush 'sections' this}}
+    {{/if}}
+
+    {{#if (eq label 'Department / Organization')}}
+      {{assign 'title' 'Department'}}
+      {{assign 'icon' 'material-office'}}
+      {{storagePush 'sections' this}}
+    {{/if}}
+
+    {{#if (eq label 'Contact Name')}}
+      {{storageSet 'contact-name' value}}
+    {{/if}}
+
+    {{#if (eq label 'Contact Email')}}
+      {{assign 'title' 'Contact'}}
+
+      {{assign 'content' (combine (storageGet 'contact-name') '<br><a href=\"mailto:' (sanitize value) '\">' (sanitize value) '</a>' ) }}
+
+      {{assign 'icon' 'material-mail'}}
+      {{storagePush 'sections' this}}
+    {{/if}}
+  {{/each}}
+
+  {{! set the button values}}
+  {{assign 'button' (objectify href=event.signUpUrl label="Register Now")}}
+
+  {{! Set the looped sections to the sections array }}
+  {{assign 'sections' (storageGet 'sections')}}
+
+  {{! Get event topics }}
+  {{#each event.customFields}}
+    {{#if (eq label 'University Event Topic')}}
+      {{#each (split (decodeHTML value) ', ')}}
+        {{storagePush 'topics' (trim this)}}
+      {{/each}}
+    {{/if}}
+  {{/each}}
+
+  {{! Assign topics }}
+  {{assign 'topics' (storageGet 'topics')}}
+
+{{/if}}
+
+<div class="event-page">
+
+  {{> organisms-header classes='event-page-header'}}
+
+  <div class="event-page-main">
+    {{#unless __params__.id}}
+      {{> organisms-intro-alt-text title="Event ID Is Missing"}}
+    {{/unless}}
+    {{#if __params__.id}}
+      {{#unless event}}
+        {{> organisms-intro-alt-text title="Event ID Does Not Exist"}}
+      {{/unless}}
+    {{/if}}
+    {{#extend 'organisms-main' type="event-page" classes=''}}
+      {{#content 'section-main-body'}}
+        {{! FIXME: Need to add a handler here for when the eventID IS NOT found. }}
+        {{#if event}}
+          {{> tokens-text rich=true text=event.description}}
+        {{/if}}
+      {{/content}}
+      {{#if event}}
+      {{#content 'section-main-sidebar'}}
+        {{> compounds-sidebar-list}}
+      {{/content}}
+      {{#content 'section-main-other'}}
+        <div class="section-main-spacer"></div>
+        <div class="section-main-other">
+          {{> atoms-rule classes=''}}
+          {{> tokens-heading level=6 heading='Related University Event Topics' classes='list-title'}}
+          {{> atoms-list-related-topics}}
+        </div>
+      {{/content}}
+      {{/if}}
+    {{/extend}}
+  </div>
+
+  {{> organisms-footer classes='event-page-footer'}}
+
+</div>
