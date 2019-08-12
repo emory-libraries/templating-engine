@@ -17,7 +17,9 @@
 {{assign 'recent-issues.type' 'utility'}}
 
 <div class="periodicals-page">
-  <header class="periodicals-page-header"></header>
+
+  {{> organisms-header classes='periodicals-page-header'}}
+
   <div class="periodicals-page-main">
     {{#extend 'organisms-main' type="periodicals-page" classes=""}}
       {{#content 'section-main-body'}}
@@ -39,5 +41,7 @@
       {{/content}}
     {{/extend}}
   </div>
-  <footer class="periodicals-page-footer"></footer>
+
+  {{> organisms-footer classes='periodicals-page-footer'}}
+
 </div>

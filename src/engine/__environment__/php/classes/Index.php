@@ -48,6 +48,7 @@ class Index {
     'routes' => CONFIG['engine']['cache']['index'].'/routes/{endpoint}.php',
     'partials' => CONFIG['engine']['cache']['index'].'/partials.php',
     'helpers' => CONFIG['engine']['cache']['index'].'/helpers.php',
+    'metadata' => CONFIG['engine']['cache']['index'].'/metadata.php',
     'processes' => CONFIG['engine']['cache']['index'].'/processes.php',
     'queue' => CONFIG['engine']['cache']['index'].'/queue.php',
     'callbacks' => CONFIG['engine']['cache']['index'].'/callbacks.php',
@@ -79,7 +80,9 @@ class Index {
   const MERGE_RECURSIVE = 8;
   const MERGE_KEYED = 16;
   const MERGE_GROUPED = 32;
-  const MERGE_OVERRIDE = 64;
+  const MERGE_DIRECTORY = 64;
+  const MERGE_ASSOCIATED = 128;
+  const MERGE_OVERRIDE = 256;
 
   // Constructs the index.
   function __construct( Options $options ) {
@@ -134,6 +137,9 @@ class Index {
       'data' => self::classify($site, 'Data')
     ];
 
+    // Mutate the site data.
+    $this->site['data']['site'] = static::mutate($this->site['data']['site']);
+
     // Get an index of all patterns, and cache it.
     $this->patterns = [
       'metadata' => ($patterns = self::getPatternData(self::INDEX_METADATA)),
@@ -158,10 +164,21 @@ class Index {
       'data' => ($routes = self::getRouteData($site, $assets))
     ];
 
+    // Get endpoint metadata.
+    $this->metadata = [
+      'metadata' => [],
+      'data' => ($metadata = self::getEndpointMetadata($this->site['data'], $this->environment['data']))
+    ];
+
     // Build endpoints based on the environment, site, pattern, and route indices.
     $this->endpoints = [
       'metadata' => [],
-      'data' => ($endpoints = self::getEndpointData($this->environment['data'], $this->site['data'], $this->patterns['data'], $routes))
+      'data' => ($endpoints = self::getEndpointData(
+        $routes,
+        $this->site['data'],
+        $this->patterns['data'],
+        $this->metadata['data']->data
+      ))
     ];
 
     // Get an index of handlebars helpers, and cache it.
@@ -170,9 +187,6 @@ class Index {
       'data' => ($helpers = self::getHelperData())
     ];
 
-    // Mutate the endpoint data.
-    $this->endpoints['data'] = static::mutate($this->endpoints['data']);
-
     // Cache everything.
     self::cache('environment', $this->environment);
     self::cache('site', $this->site);
@@ -180,6 +194,7 @@ class Index {
     self::cache('partials', $this->partials);
     self::cache('assets', $this->assets);
     self::cache('routes', $this->routes);
+    self::cache('metadata', $this->metadata);
     self::cache('endpoints', $this->endpoints);
     self::cache('helpers', $this->helpers);
 
@@ -190,7 +205,7 @@ class Index {
     if( !empty(self::queue()) ) goto reindex;
 
     // Fire any callbacks if given, and save the output.
-    self::runCallback($options->callback);
+    self::runCallback($options->callback, $routes);
 
     // Unlock the indexing process.
     self::lock(false);
@@ -231,13 +246,19 @@ class Index {
       case 'getEndpointData':
 
         // Get endpoint data.
-        return static::getEndpointData(static::INDEX_CLASS, 'Data');
+        return static::getEndpointData();
+
+      // Get endpoint metadata data.
+      case 'getEndpointMetadata':
+
+        // Get endpoint metadata data.
+        return static::getEndpointMetadata();
 
       // Get index data for an asset endpoint.
       case 'getAssetEndpointData':
 
         // Get endpoint data.
-        $endpoints = static::getEndpointData(static::INDEX_CLASS, 'Data');
+        $endpoints = static::getEndpointData();
 
         // Get asset endpoint data.
         return array_values(array_filter($endpoints, function($endpoint) {
@@ -251,7 +272,7 @@ class Index {
       case 'getAssetEndpoint':
 
         // Get endpoint data.
-        $endpoints = static::getEndpointData(static::INDEX_CLASS, 'Data');
+        $endpoints = static::getEndpointData();
 
         // Return the asset endpoint.
         return array_get(array_values(array_filter($endpoints, function($endpoint) use ($arguments) {
@@ -273,13 +294,12 @@ class Index {
       // Get the site's metadata.
       case 'getMetaData':
 
-        // Get environment, site, and endpoint data.
-        $environment = static::getEnvironmentData(static::INDEX_CLASS, 'Data');
-        $sites = Index::getSiteData(Index::INDEX_CLASS, 'Data');
-        $endpoint =   (isset($arguments[0]) and is_array($arguments[0])) ? $arguments[0] : [];
+        // Get endpoint and endpoint metadata.
+        $metadata = static::getEndpointMetadata()->data;
+        $endpoint = (isset($arguments[0]) and is_array($arguments[0])) ? $arguments[0] : [];
 
         // Return the site's metadata.
-        return static::compile($environment, $sites, $endpoint);
+        return static::compile($endpoint, $metadata);
 
     }
 
@@ -411,49 +431,46 @@ class Index {
   }
 
   // Mutate one or more files.
-  protected static function mutate( $files ) {
+  protected static function mutate( $items, $globals = false ) {
 
     // Get a list of page types with their respective template IDs.
     $types = array_flip(CONFIG['config']['template']);
 
     // Initialize a helper method for mutating some endpoint data.
-    $mutate = function( Endpoint $endpoint ) use ($types) {
+    $mutate = function( Data $data ) use ($types, $globals) {
 
-      // Get the endpoint's data.
-      $data = &$endpoint->data;
-
-      // Only mutate endpoint data that exists.
-      if( isset($data) ) {
+      // Only mutate data that exists.
+      if( isset($data->data) ) {
 
         // Get the pattern's ID.
         $id = array_get($types, array_get($data->data, '@attributes.definition-path'));
 
         // Mutate the contents based on its ID.
-        if( isset($id) ) $data->data = Mutator::mutate($data->data, $id);
+        $data->data = Mutator::mutate($data->data, $id, $globals);
 
       }
 
-      // Return the endpoint with its mutated or unmutated data.
-      return $endpoint;
+      // Return the mutated or unmutated data.
+      return $data;
 
     };
 
-    // Mutate a single file.
-    if( is_string($files) ) return $mutate($files);
+    // Mutate a single item.
+    if( !is_array($items) ) return $mutate($items);
 
-    // Otherwise, mutate an array of files.
+    // Otherwise, mutate an array of items.
     else {
 
-      // Mutate the data for each file.
-      array_walk($files, function(&$contents, $file) use ($mutate) {
+      // Mutate the data for each item.
+      array_walk($items, function(&$contents, $item) use ($mutate) {
 
         // Mutate the file's contents.
         $contents = $mutate($contents);
 
       });
 
-      // Return the mutated data files.
-      return $files;
+      // Return the mutated data items.
+      return $items;
 
     }
 
@@ -468,7 +485,26 @@ class Index {
     // Filter out any non-arrays from the data set.
     $arrays = array_values(array_filter($arrays, 'is_array'));
 
-    // Merge the data on keys, where keys are composed of to data file IDs.
+    // Get a list of shared folder directories.
+    $shared = array_values(array_filter(isset(CONFIG['data']['sharedDirs']) ? CONFIG['data']['sharedDirs'] : (include CONFIG['engine']['php'].'/config.index.php')['data']['sharedDirs'], function($dir) {
+
+      // Filter out the site-specific shared directories.
+      return $dir != CONFIG['data']['site']['shared'];
+
+    }));
+
+    // Get a list of directories where environment-level and site-level data is stored.
+    $dirs = array_merge([
+      CONFIG['engine']['meta'],
+      CONFIG['data']['environment']['global'],
+      CONFIG['data']['environment']['meta'],
+      CONFIG['data']['environment']['shared'],
+      CONFIG['data']['site']['global'],
+      CONFIG['data']['site']['meta'],
+      CONFIG['data']['site']['shared']
+    ], $shared);
+
+    // Merge the data on keys, where keys are composed of data file IDs.
     if( $flags & self::MERGE_KEYED ) {
 
       // Initialize the result.
@@ -480,14 +516,37 @@ class Index {
         // Merge data by key.
         foreach( $data as $file => $content ) {
 
-          // Derive the key from the file's ID.
-          $key = File::id($file);
+          // Define the key based on the file's endpoint.
+          $key = strtr(trim(File::endpoint($file, $dirs), '/'), '/', '.');
 
           // Get the existing data for that key.
           $existing = array_get($result, $key, []);
 
+          // Associate the data by key.
+          if( $flags & self::MERGE_ASSOCIATED ) {
+
+            // Add the data into the associative array.
+            $result = array_set($result, $key, array_merge($existing, $content->data));
+
+          }
+
+          // Group the data together based on its directory structure.
+          else if( $flags & self::MERGE_DIRECTORY ) {
+
+            // Get the directory key and the ID for the item.
+            $dir = implode('.', array_head(explode('.', $key)));
+            $id = array_last(explode('.', $key));
+
+            // Get the existing data for that directory key.
+            $existing = array_get($result, $dir, []);
+
+            // Group the data based on the directory structure.
+            $result = array_set($result, $dir, array_merge([], $existing, [array_set($content->data, 'id', $id)]));
+
+          }
+
           // Group the data by key.
-          if( $flags & self::MERGE_GROUPED ) {
+          else if( $flags & self::MERGE_GROUPED ) {
 
             // Add the data into the group.
             $result = array_set($result, $key, array_merge([], $existing, [$content->data]));
@@ -517,6 +576,25 @@ class Index {
 
       }
 
+      // If merge based on directory structure was used, then clean up items without a directory.
+      if( $flags & self::MERGE_DIRECTORY ) {
+
+        // Allow items without a directory to exist at the root level of the shared data structure.
+        foreach( $result[''] as $i => $item ) {
+
+          // Move the item to the root of the shared data structure.
+          $result = array_set($result, $item['id'], $item);
+
+          // Then, remove the item from the result set.
+          unset($result[''][$i]);
+
+        }
+
+        // Remove the empty result set.
+        if( empty($result['']) ) unset($result['']);
+
+      }
+
       // Return the result.
       return $result;
 
@@ -537,20 +615,13 @@ class Index {
   }
 
   // Compile the meta data set for a request.
-  protected static function compile( array &$environment, array &$site, array &$endpoint = [] ) {
+  protected static function compile( array &$endpoint = [], array $metadata = [] ) {
 
-    // Get global, meta, and shared data.
-    $global = self::merge($environment['global'], $site['global'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
-    $meta = self::merge($environment['meta'], $site['meta'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
-    $shared = self::merge($environment['shared'], $site['shared'], self::MERGE_KEYED | self::MERGE_GROUPED);
+    // If no metadata was given, then get the metadata now.
+    if( empty($metadata) ) $metadata = static::getEndpointMetadata();
 
-    // Merge additional data into the route's endpoint data.
-    $data = array_merge([
-      '__global__' => $global,
-      '__meta__' => $meta,
-      '__shared__' => $shared,
-      '__params__' => []
-    ], $endpoint);
+    // Merge metadata with the endpoint's data.
+    $data = array_merge($metadata, $endpoint);
 
     // Return the compiled data.
     return $data;
@@ -744,6 +815,7 @@ class Index {
       // Otherwise, cache helpers and partials index data.
       case 'helpers':
       case 'partials':
+      case 'metadata':
 
         // Cache the data as is.
         $cache($data, $metadata);
@@ -1354,7 +1426,7 @@ class Index {
   }
 
   // Locate all assets used by the site.
-  protected static function getAssetData( $flag = Index::INDEX_ONLY ) {
+  protected static function getAssetData( $flag = Index::INDEX_ONLY, string $class = null ) {
 
     // Add benchmark point.
     if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing asset data...');
@@ -1516,23 +1588,67 @@ class Index {
 
   }
 
-  // Transforms all index data into actual endpoint data.
-  protected static function getEndpointData( array $environment = null, array $site = null, array $patterns = null, array $routes = null ) {
+  // Transforms environment and site data into metadata for all endpoints.
+  protected static function getEndpointMetadata( array $site = null, array $environment = null ) {
+
+    // Add benchmark point.
+    if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing metadata data...');
 
     // Initialize arguments if not given.
-    if( !isset($environment) ) $environment = Index::getEnvironmentData(Index::INDEX_CLASS, 'Data');
-    if( !isset($site) ) $site = Index::getSiteData(Index::INDEX_CLASS, 'Data');
-    if( !isset($patterns) ) $patterns = Index::getPatternData(Index::INDEX_CLASS, 'Pattern');
-    if( !isset($routes) ) $routes = Index::getRouteData($site, Index::getAssetData(Index::INDEX_METADATA));
+    if( !isset($environment) ) $environment = self::getEnvironmentData(Index::INDEX_CLASS, 'Data');
+    if( !isset($site) ) $site = self::getSiteData(Index::INDEX_CLASS, 'Data');
+
+    // For site shared data, only capture unique values (should be none).
+    $site['shared'] = array_diff_key($site['shared'], $environment['shared']);
+
+    // Get global, meta, and shared data.
+    $global = self::merge($environment['global'], $site['global'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
+    $meta = self::merge($environment['meta'], $site['meta'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
+    $shared = self::merge($environment['shared'], $site['shared'], self::MERGE_KEYED | self::MERGE_DIRECTORY);
+
+    // Add benchmark point.
+    if( BENCHMARKING and !Index::$indexed ) Performance::finish();
+
+    // Build the endpoint metadata as an object.
+    $metadata = new Data([
+      '__global__' => $global,
+      '__meta__' => $meta,
+      '__shared__' => $shared,
+      '__params__' => [],
+      '__domain__' => DOMAIN,
+      '__site__' => SITE,
+      '__environment__' => ENVIRONMENT,
+      '__development__' => DEVELOPMENT
+    ]);
+
+    // Mutate the metadata.
+    $metadata = static::mutate($metadata, true);
+
+    // Return the metadata object.
+    return $metadata;
+
+  }
+
+  // Transforms all index data into actual endpoint data.
+  protected static function getEndpointData( array $routes = null, array $site = null, array $patterns = null, array $metadata = null ) {
+
+    // Add benchmark point.
+    if( BENCHMARKING and !Index::$indexed ) Performance::point('Indexing endpoint data...');
+
+    // Initialize arguments if not given.
+    if( !isset($site) ) $site = self::getSiteData(Index::INDEX_CLASS, 'Data');
+    if( !isset($routes) ) $routes = self::getRouteData($site, self::getAssetData());
+    if( !isset($patterns) ) $patterns = self::getPatternData();
+    if( !isset($metadata) ) $metadata = self::getEndpointMetadata($site);
 
     // Initialize endpoints.
     $endpoints = [];
 
     // Initialize a helper method for building endpoints.
-    $endpoint = function( Route $route ) use ($environment, $site, $patterns) {
+    $endpoint = function( Route $route ) use ($metadata, $patterns, $site) {
 
-      // For asset routes, the endpoint won't have any data or a template.
-      if( $route->asset ) {
+      // For asset and redirect routes, the endpoint won't have any data or a template.
+      if( $route->asset or $route->redirect ) {
 
         // Initialize empty data and pattern.
         $data = null;
@@ -1543,71 +1659,55 @@ class Index {
       // Otherwise, for non-asset routes, get the endpoint's data and template.
       else {
 
-        // For redirecting endpoints, the endpoint won't have any data.
-        if( isset($route->redirect) ) $data = null;
+        // Find the endpoint's data.
+        $data = isset($site['site'][$route->path]) ? $site['site'][$route->path] : null;
 
-        // Otherwise, for non-redirecting endpoints, attempt to get the its data.
-        else {
+        // For error endpoints without data, use the error data within configurations.
+        if( $route->error and !isset($data) ) $data = new Data([
+          'data' => array_merge(CONFIG['errors'][(int) $route->id], ['code' => (int) $route->id])
+        ]);
 
-          // Find the endpoint's data.
-          $data = isset($site['site'][$route->path]) ? $site['site'][$route->path] : null;
+        // Otherwise, for non-error endpoints without data, simulate some data.
+        else if( !isset($data) ) $data = new Data([]);
 
-          // For error endpoints without data, use the error data within configurations.
-          if( $route->error and !isset($data) ) $data = new Data([
-            'data' => array_merge(CONFIG['errors'][(int) $route->id], ['code' => (int) $route->id])
-          ]);
+        // If the endpoint redirects, then clear the data.
+        if( isset($data->data['redirect']) ) $data = null;
 
-          // Otherwise, for non-error endpoints without data, simulate some data.
-          else if( !isset($data) ) $data = new Data([]);
+        // Otherwise, compile the data for the endpoint.
+        else $data->data = self::compile($data->data, $metadata);
 
-          // If the endpoint redirects, then clear the data.
-          if( isset($data->data['redirect']) ) $data = null;
+        // Get the endpoint's page type, if given.
+        $pageType = array_get($data->data, 'template', false);
 
-          // Otherwise, compile the data for the endpoint.
-          else $data->data = self::compile($environment, $site, $data->data);
+        // Lookup the endpoint's template pattern by page type when given.
+        if( $pageType ) {
 
-        }
-
-        // For redirecting endpoints, the endpoint won't have a template pattern.
-        if( is_null($data) ) $pattern = null;
-
-        // Otherwise, for non-redirecting endpoints, attempt to get its template pattern.
-        else {
-
-          // Get the endpoint's page type, if given.
-          $pageType = array_get($data->data, 'template', false);
-
-          // Lookup the endpoint's template pattern by page type when given.
-          if( $pageType ) {
-
-            // Get the endpoint's template pattern.
-            $pattern = array_get(array_values(array_filter($patterns['templates'], function($pattern) use ($pageType) {
-
-              // Find the template with the matching page type, PLID, or ID.
-              return ($pattern->pageType == $pageType or $pattern->plid == $pageType or $pattern->id == $pageType);
-
-            })), 0);
-
-          }
-
-          // Otherwise, for error endpoints, use the default error template.
-          else if( $route->error ) $pattern = new Pattern([
-            'template' => true,
-            'pattern' => CONFIG['defaults']['errorTemplate']
-          ]);
-
-          // Otherwise, for dynamic endpoints, look for some template information.
-          else if( $route->dynamic and isset($route->metadata['template']) ) $pattern = array_get(array_values(array_filter($patterns['templates'], function($pattern) use ($route) {
+          // Get the endpoint's template pattern.
+          $pattern = array_get(array_values(array_filter($patterns['templates'], function($pattern) use ($pageType) {
 
             // Find the template with the matching page type, PLID, or ID.
-            return ($pattern->pageType == $route->metadata['template'] or $pattern->plid == $route->metadata['template'] or $pattern->id == $route->metadata['template']);
+            return ($pattern->pageType == $pageType or $pattern->plid == $pageType or $pattern->id == $pageType);
 
           })), 0);
 
-          // Otherwise, for non-error endpoints, assume that no template is available.
-          else $pattern = null;
-
         }
+
+        // Otherwise, for error endpoints, use the default error template.
+        else if( $route->error ) $pattern = new Pattern([
+          'template' => true,
+          'pattern' => CONFIG['defaults']['errorTemplate']
+        ]);
+
+        // Otherwise, for dynamic endpoints, look for some template information.
+        else if( $route->dynamic and isset($route->metadata['template']) ) $pattern = array_get(array_values(array_filter($patterns['templates'], function($pattern) use ($route) {
+
+          // Find the template with the matching page type, PLID, or ID.
+          return ($pattern->pageType == $route->metadata['template'] or $pattern->plid == $route->metadata['template'] or $pattern->id == $route->metadata['template']);
+
+        })), 0);
+
+        // Otherwise, for non-error endpoints, assume that no template is available.
+        else $pattern = null;
 
       }
 
@@ -1618,6 +1718,9 @@ class Index {
 
     // Convert each route into an endpoint.
     foreach( $routes as $route ) { $endpoints[] = $endpoint($route); }
+
+    // Add benchmark point.
+    if( BENCHMARKING and !Index::$indexed ) Performance::finish();
 
     // Return the endpoints.
     return $endpoints;
@@ -1633,7 +1736,7 @@ class Index {
   }
 
   // Run a callback.
-  protected static function runCallback( string $id = null ) {
+  protected static function runCallback( string $id = null, array $routes ) {
 
     // Attempt to fire the callback if an ID was given.
     if( isset($id) and $id !== false ) {
@@ -1647,13 +1750,23 @@ class Index {
         // Add benchmark point.
         if( BENCHMARKING ) Performance::point("Running $id callback...'");
 
+        // Initialize a helper method for convertering instance data into simple arrays.
+        $simplify = function($data) use (&$simplify) {
+
+          // Convert complex data into an array.
+          return (is_array($data) ? array_map(function($item) use ($simplify) {
+
+            // Make sure no objects exists within the array.
+            return $simplify($item);
+
+          }, $data) : is_object($data) ? object_to_array($data) : $data);
+
+        };
+
         // Load the callback.
-        $callback = new Callback($id, $path, ['PATHS' => array_map(function($path) {
-
-          // Always use JSON paths.
-          return strtr($path, ['.php' => '.json']);
-
-        }, self::$paths)]);
+        $callback = new Callback($id, $path, [
+          'ROUTES' => $simplify($routes)
+        ]);
 
         // Fire the callback, and get the PID if any.
         $pid = $callback->fire();

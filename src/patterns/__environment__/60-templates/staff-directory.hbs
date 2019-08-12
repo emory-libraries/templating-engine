@@ -167,7 +167,9 @@
 {{#if __params__}}{{assign 'query' (default __params__.q __params__.query '')}}{{/if}}
 
 <div class="staff-directory-page">
-  <header class="staff-directory-page-header"></header>
+
+  {{> organisms-header classes='staff-directory-page-header'}}
+
   {{#extend 'organisms-main' type="staff-directory-page" classes="staff-directory-page-main"}}
     {{#content 'section-main-body'}}
 
@@ -190,5 +192,7 @@
 
     {{/content}}
   {{/extend}}
-  <footer class="staff-directory-page-footer"></footer>
+
+  {{> organisms-footer classes='staff-directory-page-footer'}}
+
 </div>

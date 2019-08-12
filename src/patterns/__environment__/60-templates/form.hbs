@@ -1,9 +1,13 @@
 <div class="form-page">
-  <header class="form-page-header"></header>
+
+  {{> organisms-header classes='form-page-header'}}
+
   {{#extend 'organisms-main' type='form-page' classes='form-page-main'}}
     {{#content 'section-main-body'}}
       {{> molecules-form-libwizard}}
     {{/content}}
   {{/extend}}
-  <footer class="form-page-footer"></footer>
+
+  {{> organisms-footer classes='form-page-footer'}}
+
 </div>

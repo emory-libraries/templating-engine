@@ -79,7 +79,9 @@
 {{/if}}
 
 <div class="info-page">
-  <header class="info-page-header"></header>
+
+  {{> organisms-header classes='info-page-header'}}
+
   <div class="info-page-main">
 
     {{#extend 'organisms-main' type='info-page' classes='info-page-main'}}
@@ -114,5 +116,7 @@
     {{/if}}
 
   </div>
-  <footer class="info-page-footer"></footer>
+
+  {{> organisms-footer classes='info-page-footer'}}
+
 </div>
