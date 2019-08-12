@@ -80,8 +80,9 @@ class Index {
   const MERGE_RECURSIVE = 8;
   const MERGE_KEYED = 16;
   const MERGE_GROUPED = 32;
-  const MERGE_ASSOCIATED = 64;
-  const MERGE_OVERRIDE = 128;
+  const MERGE_DIRECTORY = 64;
+  const MERGE_ASSOCIATED = 128;
+  const MERGE_OVERRIDE = 256;
 
   // Constructs the index.
   function __construct( Options $options ) {
@@ -529,6 +530,21 @@ class Index {
 
           }
 
+          // Group the data together based on its directory structure.
+          else if( $flags & self::MERGE_DIRECTORY ) {
+
+            // Get the directory key and the ID for the item.
+            $dir = implode('.', array_head(explode('.', $key)));
+            $id = array_last(explode('.', $key));
+
+            // Get the existing data for that directory key.
+            $existing = array_get($result, $dir, []);
+
+            // Group the data based on the directory structure.
+            $result = array_set($result, $dir, array_merge([], $existing, [array_set($content->data, 'id', $id)]));
+
+          }
+
           // Group the data by key.
           else if( $flags & self::MERGE_GROUPED ) {
 
@@ -557,6 +573,25 @@ class Index {
           else $result = array_set($result, $key, $content->data, ($flags & self::MERGE_OVERRIDE));
 
         }
+
+      }
+
+      // If merge based on directory structure was used, then clean up items without a directory.
+      if( $flags & self::MERGE_DIRECTORY ) {
+
+        // Allow items without a directory to exist at the root level of the shared data structure.
+        foreach( $result[''] as $i => $item ) {
+
+          // Move the item to the root of the shared data structure.
+          $result = array_set($result, $item['id'], $item);
+
+          // Then, remove the item from the result set.
+          unset($result[''][$i]);
+
+        }
+
+        // Remove the empty result set.
+        if( empty($result['']) ) unset($result['']);
 
       }
 
@@ -1569,7 +1604,7 @@ class Index {
     // Get global, meta, and shared data.
     $global = self::merge($environment['global'], $site['global'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
     $meta = self::merge($environment['meta'], $site['meta'], self::MERGE_KEYED | self::MERGE_RECURSIVE);
-    $shared = self::merge($environment['shared'], $site['shared'], self::MERGE_KEYED | self::MERGE_ASSOCIATED);
+    $shared = self::merge($environment['shared'], $site['shared'], self::MERGE_KEYED | self::MERGE_DIRECTORY);
 
     // Add benchmark point.
     if( BENCHMARKING and !Index::$indexed ) Performance::finish();
