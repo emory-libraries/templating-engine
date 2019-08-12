@@ -11,10 +11,10 @@
     <div class="sidebar-list-section-content">
       {{#if (isArray this.content)}}
         <ul class="list">
-          {{#each this.content}}<li class="list-item">{{this}}</li>{{/each}}
+          {{#each this.content}}<li class="list-item">{{{this}}}</li>{{/each}}
         </ul>
       {{else}}
-        {{#if this.markdown}}{{{markdown this.content}}}{{else}}{{this.content}}{{/if}}
+        {{#if this.markdown}}{{{markdown this.content}}}{{else}}{{{this.content}}}{{/if}}
       {{/if}}
       {{#if link}}
         {{#with link}}{{> atoms-link}}{{/with}}
