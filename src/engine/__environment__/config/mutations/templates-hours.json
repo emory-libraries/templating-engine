@@ -1,0 +1,17 @@
+{
+  "alias": {
+    "hours": "__shared__.hours"
+  },
+  "rename": {},
+  "replace": {},
+  "remove": [],
+  "add": {},
+  "merge": {},
+  "evaluate": [],
+  "repeatable": [],
+  "checkbox": [],
+  "radio": [],
+  "timestamp": [],
+  "text": [],
+  "html": []
+}

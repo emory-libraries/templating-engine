@@ -1,0 +1,15 @@
+<div class="hours-page">
+
+  {{> organisms-header classes='hours-page-header'}}
+
+  {{#extend 'organisms-main' type='hours-page' classes='hours-page-main'}}
+    {{#content 'section-main-body'}}
+
+      {{> organisms-hours}}
+      
+    {{/content}}
+  {{/extend}}
+
+  {{> organisms-footer classes='hours-page-footer'}}
+
+</div>
