@@ -8,6 +8,28 @@
   <title>{{default system.title title}}</title>
   
   <link rel="stylesheet" href="https://template.library.emory.edu/styleguide/patternlibrary/releases/{{__meta__.package.version}}/css/style.min.css">
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-61756900-31"></script>
+  </script>
+  <script>
+    window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+    
+    {{#if __meta__.api-ids.analytics-property-id}}
+    
+    {{assign 'ga-id' __meta__.api-ids.analytics-property-id}}
+    {{assign 'namespace' (lowercase __meta__.api-ids.namespace)}}
+    
+    ga('create', '{{ga-id}}', 'auto',{'name':'{{namespace}}'});
+    ga('{{namespace}}.send', 'pageview');
+    
+    {{/if}}
+
+    ga('create', 'UA-43397511-1', {'name':'emory'});
+    ga('emory.send', 'pageview');
+
+    </script>
+    <script async="async" src="https://www.google-analytics.com/analytics.js"></script>
   
 </head>
 <body>
