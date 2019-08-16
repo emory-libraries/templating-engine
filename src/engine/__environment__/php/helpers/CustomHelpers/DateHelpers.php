@@ -29,7 +29,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+      else $ref = \Moment\Moment::fromDateTime(new DateTime($ref));
 
     }
     if( is_string($comp) ) {
@@ -43,7 +43,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $comp = \Moment\Moment::fromDateTime(new DateTime(strtotime($comp)));
+      else $comp = \Moment\Moment::fromDateTime(new DateTime($comp));
 
     }
 
@@ -81,7 +81,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+      else $ref = \Moment\Moment::fromDateTime(new DateTime($ref));
 
     }
     if( is_string($comp) ) {
@@ -95,7 +95,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $comp = \Moment\Moment::fromDateTime(new DateTime(strtotime($comp)));
+      else $comp = \Moment\Moment::fromDateTime(new DateTime($comp));
 
     }
 
@@ -133,7 +133,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+      else $ref = \Moment\Moment::fromDateTime(new DateTime($ref));
 
     }
     if( is_string($comp) ) {
@@ -147,7 +147,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $comp = \Moment\Moment::fromDateTime(new DateTime(strtotime($comp)));
+      else $comp = \Moment\Moment::fromDateTime(new DateTime($comp));
 
     }
 
@@ -185,7 +185,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+      else $ref = \Moment\Moment::fromDateTime(new DateTime($ref));
 
     }
     if( is_string($comp) ) {
@@ -199,7 +199,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $comp = \Moment\Moment::fromDateTime(new DateTime(strtotime($comp)));
+      else $comp = \Moment\Moment::fromDateTime(new DateTime($comp));
 
     }
 
@@ -237,7 +237,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+      else $ref = \Moment\Moment::fromDateTime(new DateTime($ref));
 
     }
     if( is_string($comp) ) {
@@ -251,7 +251,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $comp = \Moment\Moment::fromDateTime(new DateTime(strtotime($comp)));
+      else $comp = \Moment\Moment::fromDateTime(new DateTime($comp));
 
     }
 
@@ -272,7 +272,7 @@ trait DateHelpers {
   }
 
   // Check if a moment is between two other moments.
-  public static function momentIsBetween( $ref, $compA, $compB, $unit, $inclusivity ) {
+  public static function momentIsBetween( $ref, $compA, $compB, $unit = 'seconds', $inclusivity = '()' ) {
 
     // Set locale.
     \Moment\Moment::setLocale("en_US");
@@ -289,7 +289,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+      else $ref = \Moment\Moment::fromDateTime(new DateTime($ref));
 
     }
     if( is_string($compA) ) {
@@ -303,7 +303,7 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $compA = \Moment\Moment::fromDateTime(new DateTime(strtotime($compA)));
+      else $compA = \Moment\Moment::fromDateTime(new DateTime($compA));
 
     }
     if( is_string($compB) ) {
@@ -317,22 +317,25 @@ trait DateHelpers {
       }
 
       // Otherwise, just parse it using datetime.
-      else $compB = \Moment\Moment::fromDateTime(new DateTime(strtotime($compB)));
+      else $compB = \Moment\Moment::fromDateTime(new DateTime($compB));
 
     }
 
      // Set the default unit.
     $unit = (!isset($unit) or is_array($unit)) ? 'seconds' : $unit;
 
+    // Set the default inclusivity.
+    $inclusivity = (!isset($inclusivity) or is_array($inclusivity)) ? '()' : $inclusivity;
+
     // Capture before and after.
-    $isBefore = $ref->isBefore($compA, $unit);
-    $isBeforeOrSame = ($isBefore or $ref->isSame($compA, $unit));
-    $isAfter = $ref->isAfter($compB, $unit);
-    $isAfterOrSame = ($isAfter or $ref->isSame($compB, $unit));
+    $isBefore = $compA->isBefore($ref, $unit);
+    $isBeforeOrSame = ($isBefore or $compA->isSame($ref, $unit));
+    $isAfter = $compB->isAfter($ref, $unit);
+    $isAfterOrSame = ($isAfter or $compB->isSame($ref, $unit));
 
     // Determine inclusivity.
-    $includesBefore = str_starts_with('[', $inclusivity);
-    $includesAfter = str_ends_with(']', $inclusivity);
+    $includesBefore = str_starts_with($inclusivity, '[');
+    $includesAfter = str_ends_with($inclusivity, ']');
 
     // Determine if the moment is between the two other moments.
     if( !$includesBefore and !$includesAfter ) return ($isBefore === true and $isAfter === true);
