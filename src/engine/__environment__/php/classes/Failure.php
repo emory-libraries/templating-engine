@@ -83,7 +83,7 @@ class Failure extends Error {
 
     // Simulate an error pattern.
     $pattern = isset($error['template']) ? new Pattern([
-      'pattern' => array_get($templates, $data['template'], $default),
+      'pattern' => array_get($templates, $data->data['template'], $default),
       'template' => $error['template'],
       'pageType' => null
     ]) : new Pattern([

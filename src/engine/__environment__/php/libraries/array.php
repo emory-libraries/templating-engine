@@ -2,30 +2,30 @@
 
 // Get a value from an array using dot notation or return the default value.
 function array_get( array $array, $keys, $default = null ) {
-  
+
   // Set delimiter.
   $delimiter = '.';
-  
+
   // Permit dot notation in key values.
   $keys = explode($delimiter, $keys);
-  
+
   // Initialize the result.
   $result = $array;
-  
+
   // Narrow down the values.
   foreach( $keys as $key ) {
-    
+
     // Narrow down multi-dimensional arrays.
     if( is_array($result) and array_key_exists($key, $result) ) $result = $result[$key];
-      
+
     // Otherwise, no value exists.
     else return $default;
-    
+
   }
-  
+
   // Return the result.
   return $result;
-  
+
 }
 
 // Set a value within an array using dot notation.
@@ -687,8 +687,30 @@ function array_subset( array $array, $keys, $flag = ARRAY_SUBSET_INCLUDE ) {
 
 }
 
-// Group an array of associative arrays by a given key.
+// Extract items within an array of associative arrays by a given key.
 function array_key_by( array $array, $keys ) {
+
+  // Initialize the result.
+  $result = [];
+
+  // Look through array items.
+  foreach( $array as $item ) {
+
+    // Get the item's value for the given key.
+    $value = array_get($item, $keys);
+
+    // Assign the item by the key's value.
+    $result[$value] = $item;
+
+  }
+
+  // Return the result.
+  return $result;
+
+}
+
+// Group an array of associative arrays by a given key.
+function array_group_by( array $array, $keys ) {
 
   // Initialize the result.
   $result = [];
