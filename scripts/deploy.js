@@ -201,7 +201,9 @@ module.exports = async function () {
           }
 
           // For everything else, overwrite without confirming.
-          else await client.putFileContents(dest, contents);
+          else await client.putFileContents(dest, contents, {
+            maxContentLength: 1024 ** 3
+          });
 
         }
 
