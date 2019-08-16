@@ -38,6 +38,9 @@ class Router {
     // Merge the endpoint into the endpoint's data.
     $this->endpoint->data->data['__endpoint__'] = object_to_array($this->endpoint);
 
+    // Add the current datetime into endpoint's data.
+    $this->endpoint->data->data['__datetime__'] = date(DATE_ISO8601, time());
+
     // Set a global to indicate when an asset has been requested.
     define('ASSET', is_a($this->endpoint, 'Asset'));
 
