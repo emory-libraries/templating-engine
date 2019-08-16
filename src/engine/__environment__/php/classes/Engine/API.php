@@ -141,6 +141,9 @@ class API {
     // If the path ends with a slash, then assume it's for an index page.
     if( str_ends_with($path, '/') ) $path .= 'index';
 
+    // Get the endpoint's relative source path without any preceding directory separators.
+    $src = ltrim($path, '/');
+
     // Immediately detect error endpoints, and reroute the request.
     if( Route::isError($path) ) return static::getError((int) basename($path));
 
@@ -148,13 +151,13 @@ class API {
     if( Route::isAsset($path) ) return static::getAsset($path);
 
     // Get the endpoint data from the cache if available.
-    $endpoint = static::$cache->get("endpoints/$path");
+    $endpoint = static::$cache->get("endpoints/$src");
 
     // Get the endpoint's index data path.
-    $index = static::$index."/endpoints/$path.php";
+    $index = static::$index."/endpoints/$src.php";
 
     // Get the last cached time of the index data.
-    $cached = isset($endpoint) ? File::modified(static::$cache->resolve("endpoints/$path")) : -1;
+    $cached = isset($endpoint) ? File::modified(static::$cache->resolve("endpoints/$src")) : -1;
     $indexed = Cache::exists($index) ? Cache::modified($index) : -1;
 
     // If no endpoint data was found, or if the endpoint is outdated, then cache it now.
@@ -167,7 +170,7 @@ class API {
         $endpoint = Cache::include($index);
 
         // Save the endpoint's index data to the cache.
-        static::$cache->set("endpoints/$path", $endpoint);
+        static::$cache->set("endpoints/$src", $endpoint);
 
       }
 
@@ -190,14 +193,17 @@ class API {
   // Derive some asset data from the cached index data.
   protected static function getAsset( string $path ) {
 
+    // Get the endpoint's relative source path without any preceding directory separators.
+    $src = ltrim($path, '/');
+
     // Get the asset data from the cache if available.
-    $asset = static::$cache->get("assets/$path");
+    $asset = static::$cache->get("assets/$src");
 
     // Get the asset's index data path.
-    $index = static::$index."/assets/$path.php";
+    $index = static::$index."/assets/$src.php";
 
     // Get the last cached time of the index data.
-    $cached = isset($asset) ? File::modified(static::$cache->resolve("assets/$path")) : -1;
+    $cached = isset($asset) ? File::modified(static::$cache->resolve("assets/$src")) : -1;
     $indexed = Cache::exists($index) ? Cache::modified($index) : -1;
 
     // If no asset data was found, or if the asset is outdated, then cache it now.
@@ -210,7 +216,7 @@ class API {
         $asset = Cache::include($index);
 
         // Save the asset's index data to the cache.
-        static::$cache->set("assets/$path", $asset);
+        static::$cache->set("assets/$src", $asset);
 
       }
 
@@ -261,7 +267,7 @@ class API {
       else if( $code !== 404 ) return static::getError(404);
 
       // Otherwise, throw a generic 404 failure.
-      else throw new Failure(404);
+      else return new Failure(404);
 
     }
 
