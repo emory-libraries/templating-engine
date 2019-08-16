@@ -1,5 +1,5 @@
 module.exports = async function () {
-  
+
   // Load dependencies.
   const inquirer = require('inquirer');
   const chalk = require('chalk');
@@ -9,21 +9,20 @@ module.exports = async function () {
   const cliProgress = require('cli-progress');
   const {createClient} = require('webdav');
   const _ = require('lodash');
-  
+
   // Make the task asynchronous.
   const done = this.async();
-  
+
   // Get the simulated environment settings
   const envsim = require(path.resolve('environment-sim.json'));
-  
+
   // Set environments and their remote folder names.
   const env = {
     'development':  'dev',
     'qa':           'qa',
-    'staging':      'staging',
     'production':   'prod'
   };
-  
+
   // Identify the local and remote paths to deploy.
   const paths = {
     'src/engine/__environment__/.env.{{environment}}': 'engine/{{environment}}/.env',
@@ -39,7 +38,7 @@ module.exports = async function () {
     'src/patterns/__environment__': 'patterns/{{environment}}',
     'vendor': 'engine/{{environment}}/php/dependencies',
   };
-  
+
   // Initialize prompts.
   const answers = await inquirer.prompt([
     {
@@ -54,13 +53,13 @@ module.exports = async function () {
       type: 'input',
       message: 'Enter your WebDAV username.',
       validate(username) {
-        
+
         // Verify that a username has been given.
         if( username !== null && username !== undefined && username !== '' ) return true;
-        
+
         // Otherwise, indicate the username is required.
         return 'Username is required.';
-        
+
       }
     },
     {
@@ -69,13 +68,13 @@ module.exports = async function () {
       message: 'Enter your WebDAV password.',
       mask: '*',
       validate(password) {
-        
+
         // Verify that a password has been given.
         if( password !== null && password !== undefined && password !== '' ) return true;
-        
+
         // Otherwise, indicate the password is required.
         return 'Password is required.';
-        
+
       }
     },
     {
@@ -85,7 +84,7 @@ module.exports = async function () {
       default: false
     }
   ]);
-    
+
   // Verify that the user wishes to continue.
   if( answers.continue ) {
 
@@ -95,13 +94,13 @@ module.exports = async function () {
       // Get the remote and local paths
       remote = remote.replace('{{environment}}', env[answers.environment]);
       local = path.resolve(local.replace('{{environment}}', env[answers.environment]));
-      
+
       // Find the local file.
       if( fs.statSync(local).isFile() ) files.push({
         src: local,
         dest: remote
       });
-      
+
       // Otherwise, find all files at the local path.
       else files = files.concat(glob(path.join(local, '**')).map((file) => {
 
@@ -123,16 +122,16 @@ module.exports = async function () {
       username: answers.username,
       password: answers.password
     });
-    
+
     // Initialize the progress bar.
     const progress = new cliProgress.Bar({}, cliProgress.Presets.shades_classic);
-    
+
     // Attempt to write all local files and folders to the remote server.
     try {
-      
+
       // Start the progress bar.
       progress.start(files.length, 0);
-      
+
       // Write the files and folders to the remote server.
       for( let file of files ) {
 
@@ -149,7 +148,7 @@ module.exports = async function () {
             // Attempt to get some information about the directory, and if it doesn't throw an error, assume the directory exists.
             await client.stat(dest);
 
-          } 
+          }
 
           // Otherwise, create the directory if it doesn't exist.
           catch(error) {
@@ -189,7 +188,7 @@ module.exports = async function () {
               // Only overwrite the file if the user confirmed.
               if( confirm.overwrite ) await client.putFileContents(dest, contents);
 
-            } 
+            }
 
             // Otherwise, create the file if it doesn't exist.
             catch(error) {
@@ -205,12 +204,12 @@ module.exports = async function () {
           else await client.putFileContents(dest, contents);
 
         }
-        
+
         // Increment the progress bar.
         progress.increment();
 
       }
-      
+
       // Stop the progress bar.
       progress.stop();
 
@@ -219,26 +218,26 @@ module.exports = async function () {
 
       // Done.
       done();
-      
+
     }
-    
+
     // Otherwise, alert the user when errors occur.
     catch(error) {
-      
+
       // Stop the progress bar.
       progress.stop();
-      
+
       // Report errors.
       console.error(chalk`\nAn error occurred while trying to deploy files to {red.bold ${answers.environment}}:\n\n${error}\n`);
-      
+
       // Done.
       done();
-      
+
     }
 
   }
 
   // Otherwise, done.
   else done();
-  
+
 };

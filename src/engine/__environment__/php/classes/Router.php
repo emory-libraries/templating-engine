@@ -69,7 +69,7 @@ class Router {
     if( is_a($this->endpoint, 'Asset') !== false ) return Renderer::asset($this->endpoint);
 
     // Otherwise, if the endpoint redirects, then redirect.
-    if( $this->endpoint->redirect !== false ) return self::redirect($this->endpoint->redirect);
+    if( $this->endpoint->redirect !== false ) return Router::redirect($this->endpoint->redirect);
 
     // Otherwise, if the endpoint forces an error, then get the error page.
     if( $this->endpoint->error !== false ) return Renderer::error($this->endpoint);
