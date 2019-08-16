@@ -5,7 +5,9 @@
   "rename": {
     "blocks": "content-block",
     "blocks.@.type": "blocks.@.block-type",
-    "blocks.@.src": "blocks.@.image.image-file.path",
+    "blocks.@.level": "blocks.@.heading-level",
+    "blocks.@.heading": "blocks.@.heading-label",
+    "blocks.@.image.src": "blocks.@.image.image-file.path",
     "recent-issues": "links-list-recent-issues",
     "recent-issues.tiles": "recent-issues.link",
     "recent-issues.tiles.@.image.src": "recent-issues.tiles.@.image-file.path",
@@ -20,7 +22,33 @@
   "remove": [],
   "add": {},
   "merge": {},
-  "evaluate": [],
+  "evaluate": [
+    {
+      "target": "blocks.@.level",
+      "condition": "{__this__} == 'Heading Level 2'",
+      "value": 2
+    },
+    {
+      "target": "blocks.@.level",
+      "condition": "{__this__} == 'Heading Level 3'",
+      "value": 3
+    },
+    {
+      "target": "blocks.@.level",
+      "condition": "{__this__} == 'Heading Level 4'",
+      "value": 4
+    },
+    {
+      "target": "blocks.@.level",
+      "condition": "{__this__} == 'Heading Level 5'",
+      "value": 5
+    },
+    {
+      "target": "blocks.@.level",
+      "condition": "{__this__} == 'Heading Level 6'",
+      "value": 6
+    }
+  ],
   "repeatable": [
     "content-block",
     "links-list-recent-issues.link",

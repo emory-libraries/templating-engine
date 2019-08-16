@@ -8,6 +8,8 @@
     "subtitle": "introduction",
     "blocks": "content-block",
     "blocks.@.type": "blocks.@.block-type",
+    "blocks.@.level": "blocks.@.heading-level",
+    "blocks.@.heading": "blocks.@.heading-label",
     "blocks.@.image.src": "blocks.@.image.image-file.path",
     "access.links.0": "sidebar.link",
     "learn": "sidebar.links-list-learn",
