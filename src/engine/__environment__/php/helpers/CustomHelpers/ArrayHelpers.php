@@ -171,7 +171,7 @@ trait ArrayHelpers {
   }
 
   // Group items by key.
-  public static function groupBy( array $coloection, $key, array $options ) {
+  public static function groupBy( array $collection, $key, array $options ) {
 
     // Return the grouped collection.
     return array_group_by($collection, $key);

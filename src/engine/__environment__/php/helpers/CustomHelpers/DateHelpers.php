@@ -18,8 +18,34 @@ trait DateHelpers {
     \Moment\Moment::setLocale("en_US");
 
     // Covert reference and comparison dates to moments.
-    if( is_string($ref) ) $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
-    if( is_string($comp) ) $comp = \Moment\Moment::fromDateTime(\Date::parse($comp)['datetime']);
+    if( is_string($ref) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($ref)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+
+    }
+    if( is_string($comp) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($comp)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $comp = \Moment\Moment::fromDateTime(\Date::parse($comp)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $comp = \Moment\Moment::fromDateTime(new DateTime(strtotime($comp)));
+
+    }
 
     // Set the default unit.
     $unit = (!isset($unit) or is_array($unit)) ? 'seconds' : $unit;
@@ -44,8 +70,34 @@ trait DateHelpers {
     \Moment\Moment::setLocale("en_US");
 
     // Covert reference and comparison dates to moments.
-    if( is_string($ref) ) $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
-    if( is_string($comp) ) $comp = \Moment\Moment::fromDateTime(\Date::parse($comp)['datetime']);
+    if( is_string($ref) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($ref)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+
+    }
+    if( is_string($comp) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($comp)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $comp = \Moment\Moment::fromDateTime(\Date::parse($comp)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $comp = \Moment\Moment::fromDateTime(new DateTime(strtotime($comp)));
+
+    }
 
     // Set the default unit.
     $unit = (!isset($unit) or is_array($unit)) ? 'seconds' : $unit;
@@ -70,8 +122,34 @@ trait DateHelpers {
     \Moment\Moment::setLocale("en_US");
 
     // Covert reference and comparison dates to moments.
-    if( is_string($ref) ) $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
-    if( is_string($comp) ) $comp = \Moment\Moment::fromDateTime(\Date::parse($comp)['datetime']);
+    if( is_string($ref) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($ref)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+
+    }
+    if( is_string($comp) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($comp)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $comp = \Moment\Moment::fromDateTime(\Date::parse($comp)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $comp = \Moment\Moment::fromDateTime(new DateTime(strtotime($comp)));
+
+    }
 
     // Set the default unit.
     $unit = (!isset($unit) or is_array($unit)) ? 'seconds' : $unit;
@@ -96,8 +174,34 @@ trait DateHelpers {
     \Moment\Moment::setLocale("en_US");
 
     // Covert reference and comparison dates to moments.
-    if( is_string($ref) ) $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
-    if( is_string($comp) ) $comp = \Moment\Moment::fromDateTime(\Date::parse($comp)['datetime']);
+    if( is_string($ref) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($ref)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+
+    }
+    if( is_string($comp) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($comp)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $comp = \Moment\Moment::fromDateTime(\Date::parse($comp)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $comp = \Moment\Moment::fromDateTime(new DateTime(strtotime($comp)));
+
+    }
 
     // Set the default unit.
     $unit = (!isset($unit) or is_array($unit)) ? 'seconds' : $unit;
@@ -122,8 +226,34 @@ trait DateHelpers {
     \Moment\Moment::setLocale("en_US");
 
     // Covert reference and comparison dates to moments.
-    if( is_string($ref) ) $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
-    if( is_string($comp) ) $comp = \Moment\Moment::fromDateTime(\Date::parse($comp)['datetime']);
+    if( is_string($ref) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($ref)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+
+    }
+    if( is_string($comp) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($comp)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $comp = \Moment\Moment::fromDateTime(\Date::parse($comp)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $comp = \Moment\Moment::fromDateTime(new DateTime(strtotime($comp)));
+
+    }
 
     // Set the default unit.
     $unit = (!isset($unit) or is_array($unit)) ? 'seconds' : $unit;
@@ -148,9 +278,48 @@ trait DateHelpers {
     \Moment\Moment::setLocale("en_US");
 
     // Covert reference and comparison dates to moments.
-    if( is_string($ref) ) $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
-    if( is_string($compA) ) $compA = \Moment\Moment::fromDateTime(\Date::parse($compA)['datetime']);
-    if( is_string($compB) ) $compB = \Moment\Moment::fromDateTime(\Date::parse($compB)['datetime']);
+    if( is_string($ref) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($ref)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $ref = \Moment\Moment::fromDateTime(\Date::parse($ref)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $ref = \Moment\Moment::fromDateTime(new DateTime(strtotime($ref)));
+
+    }
+    if( is_string($compA) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($compA)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $compA = \Moment\Moment::fromDateTime(\Date::parse($compA)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $compA = \Moment\Moment::fromDateTime(new DateTime(strtotime($compA)));
+
+    }
+    if( is_string($compB) ) {
+
+      // Try to parse using the date class.
+      if( \Date::parse($compB)['datetime'] !== null ) {
+
+        // If it can be parsed using the date class, then use it.
+        $compB = \Moment\Moment::fromDateTime(\Date::parse($compB)['datetime']);
+
+      }
+
+      // Otherwise, just parse it using datetime.
+      else $compB = \Moment\Moment::fromDateTime(new DateTime(strtotime($compB)));
+
+    }
 
      // Set the default unit.
     $unit = (!isset($unit) or is_array($unit)) ? 'seconds' : $unit;
@@ -173,6 +342,14 @@ trait DateHelpers {
 
   }
 
+  // Create a moment from the given string in a given format.
+  public static function momentFrom( $string, $formats, array $options ) {
+
+    // Create the moment from the given format(s).
+    return (in_array($string, ['now', 'today']) ? new \Moment\Moment() : \Moment\Moment::createFromFormat(is_array($formats) ? $formats[0] : $formats, $string, null, new \Moment\CustomFormats\MomentJs()));
+
+  }
+
   // Modify a moment using the native moment API.
   public static function momentAPI( $moment, $options = null ) {
 
@@ -190,10 +367,10 @@ trait DateHelpers {
     if( in_array($moment, ['now', 'today']) ) $moment = new \Moment\Moment();
 
     // If a moment was not given, then try to convert the given thing to a moment.
-    if( !is($moment, 'Moment') ) $moment = new \Moment\Moment($moment ?? $settings['date'], $settings['fromFormat']);
+    if( ($moment instanceof \Moment\Moment) === false ) $moment = array_get($settings, 'fromFormat', false) ? forward_static_call('\CustomHelpers\DateHelpers::momentFrom', $moment ?? array_get($settings, 'date', 'now'), $settings['fromFormat'], []) : new \Moment\Moment($moment ?? array_get($settings, 'date', 'now'));
 
     // Only continue if a valid moment exists.
-    if( !$moment->isValidDate() ) return;
+    if( strpos($moment->format('Y-m-d H:i'), 'invalid') !== false ) return;
 
     // Get a list of operations.
     $operations = array_values(array_filter(array_keys($settings), function($key) {
@@ -614,7 +791,7 @@ trait DateHelpers {
     foreach( $order as $method ) {
 
       // Only continue modifying the moment if it's still in moment form.
-      if( !is($moment, 'Moment') ) continue;
+      if( ($moment instanceof \Moment\Moment) === false ) continue;
 
       // Skip the method if a matching method setting was not given or if the method doesn't exist.
       if( !array_key_exists($method, $settings) or !isset($api[$method]) ) continue;

@@ -103,7 +103,7 @@ trait StringHelpers {
       'start' => STR_PAD_LEFT,
       'end' => STR_PAD_RIGHT,
       'both' => STR_PAD_BOTH
-    ];
+    ][$position];
 
     // Pad the string.
     return str_pad($string, $length, $chars, $direction);
