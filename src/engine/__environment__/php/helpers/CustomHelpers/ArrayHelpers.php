@@ -162,11 +162,19 @@ trait ArrayHelpers {
 
   }
 
-  // Group items within an array of objects by a given key.
+  // Extract items by key, assigning them to the given key.
   public static function keyBy( array $collection, $key, array $options ) {
 
-    // Return the filtered collection grouped based on the given key.
+    // Return the keyed collection.
     return array_key_by($collection, $key);
+
+  }
+
+  // Group items by key.
+  public static function groupBy( array $collection, $key, array $options ) {
+
+    // Return the grouped collection.
+    return array_group_by($collection, $key);
 
   }
 
@@ -237,23 +245,44 @@ trait ArrayHelpers {
 
   }
 
-  // Push an item onto the end of an array.
-  // FIXME: This `push` helper will not work because of the current limitations LightnCandy places on custom helpers. See issue [#167](https://github.com/zordius/lightncandy/issues/167).
-  /*public static function push( $value, &$array, array $options ) {
+  // Concatenate two or more arrays.
+  public static function concat( ...$arrays ) {
+
+    // Remove the options from the arrays set.
+    $arrays = array_head($arrays);
+
+    // Concatenate the arrays.
+    return array_merge(...$arrays);
+
+  }
+
+  // Push one or more items onto the end of an array.
+  public static function push( array $array, ...$values ) {
+
+    // Remove the options from the values.
+    $values = array_head($values);
 
     // Push the item to the array.
-    array_push($array, $value);
+    foreach( $values as $value ) { array_push($array, $value); }
 
-  }*/
+    // Return the array with the values added.
+    return $values;
 
-  // Push an item onto the beginning of an array.
-  // FIXME: This `unshift` helper will not work because of the current limitations LightnCandy places on custom helpers. See issue [#167](https://github.com/zordius/lightncandy/issues/167).
-  /*public static function unshift( $value, array &$array, array $options ) {
+  }
 
-    // Push the item to the array.
-    array_unshift($array, $value);
+  // Push one or more items onto the beginning of an array.
+  public static function unshift( array $array, ...$values ) {
 
-  }*/
+    // Remove the options from the values.
+    $values = array_head($values);
+
+    // Unshift the item to the array.
+    foreach( $values as $value ) { array_unshift($array, $value); }
+
+    // Return the array with the values added.
+    return $values;
+
+  }
 
 }
 

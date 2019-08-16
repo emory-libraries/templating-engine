@@ -1,3 +1,6 @@
+{{! Use search metadata if detecteed. }}
+{{#if __meta__.search}}{{assign 'intro.search' __meta__.search}}{{/if}}
+
 {{! Reformat the intro. }}
 {{#with intro}}
 

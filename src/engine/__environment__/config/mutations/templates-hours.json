@@ -1,0 +1,21 @@
+{
+  "alias": {
+    "system.title": "title"
+  },
+  "rename": {
+    "subtitle": "introduction"
+  },
+  "replace": {},
+  "remove": [],
+  "add": {},
+  "merge": {},
+  "evaluate": [],
+  "repeatable": [],
+  "checkbox": [],
+  "radio": [],
+  "timestamp": [],
+  "text": [
+    "introduction"
+  ],
+  "html": []
+}

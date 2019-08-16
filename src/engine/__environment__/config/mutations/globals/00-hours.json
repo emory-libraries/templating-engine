@@ -1,11 +1,278 @@
 {
   "alias": {},
-  "rename": {},
+  "rename": {
+    "__shared__.hours.@.location": "__shared__.hours.@.title",
+    "__shared__.hours.@.semesters": "__shared__.hours.@.semester-hours",
+    "__shared__.hours.@.semesters.@.date.start": "__shared__.hours.@.semesters.@.start-date",
+    "__shared__.hours.@.semesters.@.date.end": "__shared__.hours.@.semesters.@.end-date",
+    "__shared__.hours.@.semesters.@.sunday.status": "__shared__.hours.@.semesters.@.sunday.open-closed",
+    "__shared__.hours.@.semesters.@.monday.status": "__shared__.hours.@.semesters.@.monday.open-closed",
+    "__shared__.hours.@.semesters.@.tuesday.status": "__shared__.hours.@.semesters.@.tuesday.open-closed",
+    "__shared__.hours.@.semesters.@.wednesday.status": "__shared__.hours.@.semesters.@.wednesday.open-closed",
+    "__shared__.hours.@.semesters.@.thursday.status": "__shared__.hours.@.semesters.@.thursday.open-closed",
+    "__shared__.hours.@.semesters.@.friday.status": "__shared__.hours.@.semesters.@.friday.open-closed",
+    "__shared__.hours.@.semesters.@.saturday.status": "__shared__.hours.@.semesters.@.saturday.open-closed",
+    "__shared__.hours.@.semesters.@._exceptions": "__shared__.hours.@.semesters.@.exceptions.exception",
+    "__shared__.hours.@.semesters.@.exceptions": "__shared__.hours.@.semesters.@._exceptions",
+    "__shared__.hours.@.semesters.@.exceptions.@.status": "__shared__.hours.@.semesters.@.exceptions.@.type",
+    "__shared__.hours.@.semesters.@.exceptions.@.date.start": "__shared__.hours.@.semesters.@.exceptions.@.start-date",
+    "__shared__.hours.@.semesters.@.exceptions.@.date.end": "__shared__.hours.@.semesters.@.exceptions.@.end-date"
+  },
   "replace": {},
   "remove": [],
   "add": {},
   "merge": {},
-  "evaluate": [],
+  "evaluate": [
+    {
+      "target": "__shared__.hours.@.semesters.@.sunday.open.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.sunday.open.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.sunday.close.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.sunday.close.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.sunday.status",
+      "condition": [
+        "{__this__} !== null",
+        "{__this__} === null and (&{sunday.open.hour} !== null or &{sunday.close.hour} !== null)",
+        "{__this__} === null and (&{sunday.open.hour} === null and &{sunday.close.hour} === null)"
+      ],
+      "value": [
+        "strtolower({__this__})",
+        "open",
+        "closed"
+      ],
+      "eval": true
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.monday.open.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.monday.open.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.monday.close.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.monday.close.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.monday.status",
+      "condition": [
+        "{__this__} !== null",
+        "{__this__} === null and (&{monday.open.hour} !== null or &{monday.close.hour} !== null)",
+        "{__this__} === null and (&{monday.open.hour} === null and &{monday.close.hour} === null)"
+      ],
+      "value": [
+        "strtolower({__this__})",
+        "open",
+        "closed"
+      ],
+      "eval": true
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.tuesday.open.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.tuesday.open.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.tuesday.close.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.tuesday.close.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.tuesday.status",
+      "condition": [
+        "{__this__} !== null",
+        "{__this__} === null and (&{tuesday.open.hour} !== null or &{tuesday.close.hour} !== null)",
+        "{__this__} === null and (&{tuesday.open.hour} === null and &{tuesday.close.hour} === null)"
+      ],
+      "value": [
+        "strtolower({__this__})",
+        "open",
+        "closed"
+      ],
+      "eval": true
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.wednesday.open.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.wednesday.open.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.wednesday.close.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.wednesday.close.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.wednesday.status",
+      "condition": [
+        "{__this__} !== null",
+        "{__this__} === null and (&{wednesday.open.hour} !== null or &{wednesday.close.hour} !== null)",
+        "{__this__} === null and (&{wednesday.open.hour} === null and &{wednesday.close.hour} === null)"
+      ],
+      "value": [
+        "strtolower({__this__})",
+        "open",
+        "closed"
+      ],
+      "eval": true
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.thursday.open.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.thursday.open.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.thursday.close.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.thursday.close.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.thursday.status",
+      "condition": [
+        "{__this__} !== null",
+        "{__this__} === null and (&{thursday.open.hour} !== null or &{thursday.close.hour} !== null)",
+        "{__this__} === null and (&{thursday.open.hour} === null and &{thursday.close.hour} === null)"
+      ],
+      "value": [
+        "strtolower({__this__})",
+        "open",
+        "closed"
+      ],
+      "eval": true
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.friday.open.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.friday.open.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.friday.close.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.friday.close.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.friday.status",
+      "condition": [
+        "{__this__} !== null",
+        "{__this__} === null and (&{friday.open.hour} !== null or &{friday.close.hour} !== null)",
+        "{__this__} === null and (&{friday.open.hour} === null and &{friday.close.hour} === null)"
+      ],
+      "value": [
+        "strtolower({__this__})",
+        "open",
+        "closed"
+      ],
+      "eval": true
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.saturday.open.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.saturday.open.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.saturday.close.hour",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.saturday.close.minute",
+      "condition": "{__this__} === ''",
+      "value": null
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.saturday.status",
+      "condition": [
+        "{__this__} !== null",
+        "{__this__} === null and (&{saturday.open.hour} !== null or &{saturday.close.hour} !== null)",
+        "{__this__} === null and (&{saturday.open.hour} === null and &{saturday.close.hour} === null)"
+      ],
+      "value": [
+        "strtolower({__this__})",
+        "open",
+        "closed"
+      ],
+      "eval": true
+    },
+    {
+      "target": "__shared__.hours.@.semesters.@.exceptions.@.status",
+      "condition": [
+        "in_array({__this__}, ['Alternative Hours', 'Open'])",
+        "in_array({__this__}, ['Closed'])"
+      ],
+      "value": [
+        "open",
+        "closed"
+      ]
+    }
+  ],
   "repeatable": [
     "__shared__.hours",
     "__shared__.hours.@.semester-hours",
