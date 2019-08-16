@@ -1,0 +1,395 @@
+{{! Set date and time format(s). }}
+{{assign 'format.date' (makeArray 'MM-DD-YYYY')}}
+{{assign 'format.time' (makeArray 'HH:mm A' 'H:mm A' 'HH:m A' 'H:m A')}}
+
+{{! Set the number of days the date range should include. }}
+{{assign 'days' 7}}
+
+{{! Get today's date. }}
+{{assign 'today' (momentAPI (default __datetime__ 'today') format='YYYY-MM-DD')}}
+
+{{! Set the start and end date for the hours display's date range. }}
+{{assign 'startDate' (momentAPI today format='YYYY-MM-DD')}}
+{{assign 'endDate' (momentAPI today add=(combine (minus days 1) ' days') format='YYYY-MM-DD' order='add.format')}}
+
+{{! Reformat the hours accordingly. }}
+{{#each hours}}
+
+  {{! Reformat the hours' semester data. }}
+  {{#each semesters}}
+
+    {{! Save the location name to the semester data. }}
+    {{assign 'location' ../location}}
+
+    {{! Set location and semester IDs. }}
+    {{assign 'semesterID' (dashcase (lowercase semester))}}
+    {{assign 'locationID' (default ../id (dashcase (lowercase location)))}}
+
+    {{! Parse the dates into moments. }}
+    {{assign 'date.start' (momentAPI date.start fromFormat='MM-DD-YYYY' format='YYYY-MM-DD')}}
+    {{assign 'date.end' (momentAPI date.end fromFormat='MM-DD-YYYY' format="YYYY-MM-DD")}}
+
+    {{! Extract the weekday data into an array. }}
+    {{assign 'hours' (arrayify null)}}
+    {{assign 'hours.0' sunday}}
+    {{assign 'hours.1' monday}}
+    {{assign 'hours.2' tuesday}}
+    {{assign 'hours.3' wednesday}}
+    {{assign 'hours.4' thursday}}
+    {{assign 'hours.5' friday}}
+    {{assign 'hours.6' saturday}}
+
+    {{! Unset the original weekday data. }}
+    {{unassign 'sunday'}}
+    {{unassign 'monday'}}
+    {{unassign 'tuesday'}}
+    {{unassign 'wednesday'}}
+    {{unassign 'thursday'}}
+    {{unassign 'friday'}}
+    {{unassign 'saturday'}}
+
+    {{! Convert hours to moments. }}
+    {{#each hours}}
+
+      {{! Parse the open time. }}
+      {{#if (eq open.hour null)}}{{assign 'open.hour' 12}}{{/if}}
+      {{#if (eq open.minute null)}}{{assign 'open.minute' 0}}{{/if}}
+      {{#if (eq open.am-pm null)}}{{assign 'open.am-pm' 'AM'}}{{/if}}
+      {{assign 'open' (combine (pad open.hour 2 '0') ':' (pad open.minute 2 '0') ' ' open.am-pm)}}
+
+      {{! Parse the close time. }}
+      {{#if (eq close.hour null)}}{{assign 'close.hour' 12}}{{/if}}
+      {{#if (eq close.minute null)}}{{assign 'close.minute' 0}}{{/if}}
+      {{#if (eq close.am-pm null)}}{{assign 'close.am-pm' 'AM'}}{{/if}}
+      {{assign 'close' (combine (pad close.hour 2 '0') ':' (pad close.minute 2 '0') ' ' close.am-pm)}}
+
+      {{! Save the updated weekday's hours. }}
+      {{storagePush 'weekdayHours' this}}
+
+    {{/each}}
+
+    {{! Save the updated hours. }}
+    {{assign 'hours' (storageGet 'weekdayHours')}}
+
+    {{! Convert exceptions to moments. }}
+    {{#each exceptions}}
+
+      {{! Look for valid expections, and parse them. }}
+      {{#if (and date.start (not (eq date.start '')) date.end (not (eq date.end '')))}}
+
+        {{! Convert the exception dates to moments. }}
+        {{assign 'date.start' (momentFrom date.start 'MM-DD-YYYY')}}
+        {{assign 'date.end' (momentFrom date.end 'MM-DD-YYYY')}}
+
+        {{! For closed hours exceptions, don't require open or close times. }}
+        {{#if (eq status 'closed')}}
+
+          {{! Set open and close times to closed. }}
+          {{assign 'open' 'CLOSED'}}
+          {{assign 'close' 'CLOSED'}}
+
+        {{! Otherwise, for open hours exceptions, parse the open and close times. }}
+        {{else}}
+
+          {{! Parse the open time. }}
+          {{#if (eq open.hour null)}}{{assign 'open.hour' 12}}{{/if}}
+          {{#if (eq open.minute null)}}{{assign 'open.minute' 0}}{{/if}}
+          {{#if (eq open.am-pm null)}}{{assign 'open.am-pm' 'AM'}}{{/if}}
+          {{assign 'open' (combine (pad open.hour 2 '0') ':' (pad open.minute 2 '0') ' ' open.am-pm)}}
+
+          {{! Parse the close time. }}
+          {{#if (eq close.hour null)}}{{assign 'close.hour' 12}}{{/if}}
+          {{#if (eq close.minute null)}}{{assign 'close.minute' 0}}{{/if}}
+          {{#if (eq close.am-pm null)}}{{assign 'close.am-pm' 'AM'}}{{/if}}
+          {{assign 'close' (combine (pad close.hour 2 '0') ':' (pad close.minute 2 '0') ' ' close.am-pm)}}
+
+        {{/if}}
+
+      {{! Otherwise, set the date to false because it can't be parsed. }}
+      {{else}}
+
+        {{! Set the date to false. }}
+        {{assign 'date' false}}
+
+      {{/if}}
+
+      {{! Save the updated exception only if its valid. }}
+      {{#if (not (eq date false))}}{{storagePush 'exceptions' this}}{{/if}}
+
+    {{/each}}
+
+    {{! Save updated exceptions. }}
+    {{assign 'exceptions' (storageGet 'exceptions')}}
+
+    {{! Save the updated semester data. }}
+    {{storagePush 'semesters' this}}
+
+  {{/each}}
+
+  {{! Update the hours' semester data. }}
+  {{assign 'semesters' (storageGet 'semesters')}}
+
+  {{! Save the updated hours. }}
+  {{storagePush 'hours' this}}
+
+{{/each}}
+
+{{! Update the hours and semesters. }}
+{{assign 'hours' (storageGet 'hours')}}
+
+{{! Reorganize the hours by grouping like semester data together. }}
+{{assign 'hours' (groupBy (condense (pluck hours 'semesters')) 'semesterID')}}
+
+{{! Initialize a set of hours for the current date range. }}
+{{storageSet 'current' (arrayify null)}}
+
+{{! Initialize a set of hours for the given date range. }}
+{{#each hours as |locations semesterID|}}
+
+  {{! Initialize a data set for the semester's current date range. }}
+  {{storageSet 'range' (objectify id=semesterID name=(get 'semester' (itemAt locations 0)) hours=(arrayify null)) dates=(arrayify null)}}
+
+  {{! Initialize a set of location data for each day within the date range. }}
+  {{#repeat ../days}}
+
+    {{! Get a date for the given day. }}
+    {{storageSet (combine 'range.dates.' @index) (momentAPI ../startDate add=(combine @index ' days') format='YYYY-MM-DD' order='add.format')}}
+
+    {{! Initialize an empty collection of hours. }}
+    {{storageSet (combine 'range.hours.' @index) (arrayify null)}}
+
+  {{/repeat}}
+
+  {{! Extract the date range data for each location. }}
+  {{#each locations}}
+
+    {{! Build current hours from the start date through the end date. }}
+    {{#repeat ../../days}}
+
+      {{! Capture the current location's information. }}
+      {{assign 'current.name' location}}
+      {{assign 'current.id' locationID}}
+
+      {{! Get a moment for the current date. }}
+      {{assign 'current.date' (momentAPI ../../startDate add=(combine @index ' days'))}}
+
+      {{! If the current date is within the semester's date range, then get its current hours. }}
+      {{#if (momentIsBetween current.date date.start date.end 'day' '[]')}}
+
+        {{! Initialize the current date's hours using the default for the current weekday. }}
+        {{storageSet 'currentHours' (itemAt hours (momentAPI current.date day=true))}}
+
+        {{! Determine if the current date falls within an exception range. }}
+        {{#each exceptions}}
+
+          {{! If the exception date matches the current date, then use the exception hours instead. }}
+          {{#if (momentIsBetween ../current.date date.start date.end 'day' '[]')}}
+
+            {{! Override the current hours. }}
+            {{storageSet 'currentHours' (objectify open=open close=close status=status)}}
+
+          {{/if}}
+
+        {{/each}}
+
+        {{! Save the current date's final hours. }}
+        {{assign 'current.hours' (storageGet 'currentHours')}}
+
+      {{! Otherwise, indicate that no hours are available for the current date within this semester. }}
+      {{else}}
+
+        {{! Set the hours to false to indicate that the hours are not valid. }}
+        {{assign 'current.hours' false}}
+
+      {{/if}}
+
+      {{! Save the current date's hours to the current date range's only if the hours are valid. }}
+      {{#unless (eq current.hours false)}}{{storagePush (combine 'range.hours.' @index) current}}{{/unless}}
+
+      {{! Unset the temporary data. }}
+      {{unassign 'current'}}
+
+    {{/repeat}}
+
+  {{/each}}
+
+  {{! Save the semester's data for the current date range. }}
+  {{storagePush 'current' (storageGet 'range')}}
+
+{{/each}}
+
+{{! Save the current date range's data. }}
+{{assign 'current' (storageGet 'current')}}
+
+{{#unless (eq noscript true)}}
+
+  {{! Initilaize an hours component for each semester. }}
+  {{#each current as |semester|}}
+
+    <eul-hours inline-template v-cloak :today="'{{../today}}'"
+                                       :hours="{{JSONstringify (get semester.id ../hours)}}"
+                                       :defaults="{
+                                         days: {{../days}},
+                                         date: {
+                                           start: '{{../startDate}}',
+                                           end: '{{../endDate}}'
+                                         },
+                                         current: {{JSONstringify semester}},
+                                         active: '{{../startDate}}'
+                                       }">
+
+      <div class="hours">
+
+        <input v-for="(date, i) in current.dates"
+               type="radio"
+               class="input -toggle hours-toggle"
+               name="hours--{{semester.id}}"
+               :id="'hours--{{semester.id}}--day-' + i"
+               :value="date"
+               v-model="active"
+               :checked="active === date"
+               ref="input">
+
+        {{> tokens-heading level=5 alt=true classes='hours-title' icon=false heading=semester.name}}
+
+        <div class="hours-subtitle">
+          Displaying hours for
+          <input type="date"
+                 class="input -date -inline"
+                 v-model="date.start"
+                 @change="validate">
+          to
+          <input type="date"
+                 class="input -date -inline"
+                 v-model="date.end"
+                 @change="validate">.
+        </div>
+
+        <div class="hours-content" :style="{'--days': days}">
+
+          <div class="hours-group" v-for="(date, i) in current.dates">
+
+            <div class="hours-day">
+              <label class="hours-day-previous"
+                     :disabled="i === 0"
+                     :for="'hours--{{semester.id}}--day-' + (i - 1)">
+              </label>
+              <label class="hours-day-current"
+                     :for="'hours--{{semester.id}}--day-' + i">
+                     <% date | format('dddd, MMMM D, YYYY') %>
+              </label>
+              <label class="hours-day-next"
+                     :disabled="i === (days - 1)"
+                     :for="'hours--{{semester.id}}--day-' + (i + 1)">
+              </label>
+            </div>
+
+            <table class="table hours-table">
+              <thead class="table-header">
+                <tr class="table-row">
+                  <th class="table-cell -heading" scope="col"></th>
+                  <th class="table-cell -heading" scope="col">Opens</th>
+                  <th class="table-cell -heading" scope="col">Closes</th>
+                </tr>
+              </thead>
+              <tbody class="table-body">
+                <template v-if="available(current.hours)">
+                  <tr class="table-row" v-for="location in current.hours[i]">
+                    <th class="table-cell -heading" scope="row"><% location.name %></th>
+                    <td class="table-cell"><% location.hours.open %></td>
+                    <td class="table-cell"><% location.hours.close %></td>
+                  </tr>
+                </template>
+                <template v-else>
+                  <tr class="table-row">
+                    <td class="table-cell" colspan="3">No hours are available for the this date.</td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </eul-hours>
+
+  {{/each}}
+
+{{/unless}}
+
+{{#unless (eq noscript true)}}<noscript>{{/unless}}
+
+  {{! Initilaize an hours component for each semester. }}
+  {{#each current as |semester|}}
+  <div class="hours">
+
+    {{#each semester.dates}}
+      <input type="radio"
+             class="input -toggle hours-toggle"
+             name="hours--{{../semester.id}}"
+             id="hours--{{../semester.id}}--day-{{@index}}"
+             {{#if @first}}checked{{/if}}>
+    {{/each}}
+
+    {{> tokens-heading level=5 alt=true classes='hours-title' icon=false heading=semester.name}}
+
+    <div class="hours-subtitle">
+      Displaying hours for <strong>{{momentAPI ../startDate format='dddd, MMMM D, YYYY'}}</strong> to <strong>{{momentAPI ../endDate format='dddd, MMMM D, YYYY'}}</strong>.
+    </div>
+
+    <div class="hours-content">
+
+      {{#each semester.dates as |date|}}
+      <div class="hours-group">
+
+        <div class="hours-day">
+          <label class="hours-day-previous"{{#if @first}} disabled{{else}} for="hours--{{../semester.id}}--day-{{minus @index 1}}"{{/if}}></label>
+          <label class="hours-day-current" for="hours--{{../semester.id}}--day-{{@index}}">{{momentAPI date format='dddd, MMMM D, YYYY'}}</label>
+          <label class="hours-day-next"{{#if @last}} disabled{{else}} for="hours--{{../semester.id}}--day-{{plus @index 1}}"{{/if}}></label>
+        </div>
+
+        <table class="table hours-table">
+          <thead class="table-header">
+            <tr class="table-row">
+              <th class="table-cell -heading" scope="col"></th>
+              <th class="table-cell -heading" scope="col">Opens</th>
+              <th class="table-cell -heading" scope="col">Closes</th>
+            </tr>
+          </thead>
+          <tbody class="table-body">
+
+            {{! Display hours data if available. }}
+            {{#if (gt (length (itemAt ../hours @index)) 0)}}
+
+              {{#each (itemAt ../hours @index) as |location|}}
+                <tr class="table-row">
+                  <th class="table-cell -heading" scope="row">{{location.name}}</th>
+                  <td class="table-cell">{{location.hours.open}}</td>
+                  <td class="table-cell">{{location.hours.close}}</td>
+                </tr>
+              {{/each}}
+
+            {{! Otherwise, display a message indicating that no data is available. }}
+            {{else}}
+
+              <tr class="table-row">
+                <td class="table-cell" colspan="3">No hours are available for the this date.</td>
+              </tr>
+
+            {{/if}}
+
+          </tbody>
+        </table>
+
+      </div>
+      {{/each}}
+
+    </div>
+
+  </div>
+  {{/each}}
+
+{{#unless (eq noscript true)}}</noscript>{{/unless}}
