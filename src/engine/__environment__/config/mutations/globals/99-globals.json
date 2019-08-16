@@ -1,10 +1,6 @@
 {
-  "alias": {
-    "system.title": "title"
-  },
-  "rename": {
-    "subtitle": "introduction"
-  },
+  "alias": {},
+  "rename": {},
   "replace": {},
   "remove": [],
   "add": {},
@@ -14,8 +10,6 @@
   "checkbox": [],
   "radio": [],
   "timestamp": [],
-  "text": [
-    "introduction"
-  ],
+  "text": [],
   "html": []
 }
