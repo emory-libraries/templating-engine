@@ -2111,27 +2111,30 @@ Components.register('hours', {
             id: location.locationID,
             date: date,
             hours: false
-          }; // Only capture the hours if the current date falls within the location's date range.
+          }; // Only save the date and continue parsing hours if the current date falls within the semester.
 
           if (date.isBetween(location.date.start, location.date.end, 'day', '[]')) {
-            // Capture the default hours of operation for the current date.
-            current.hours = location.hours[date.day()]; // Then, determine if the date falls within a range of exceptions.
+            // Only capture the hours if the current date falls within the location's date range.
+            if (date.isBetween(location.date.start, location.date.end, 'day', '[]')) {
+              // Capture the default hours of operation for the current date.
+              current.hours = location.hours[date.day()]; // Then, determine if the date falls within a range of exceptions.
 
-            _.each(location.exceptions, function (exception) {
-              // If the current date is an exception, then use the exception hours instead.
-              if (date.isBetween(exception.date.start, exception.date.end, 'day', '[]')) {
-                // Use the exception hours as the current date's hours.
-                current.hours = {
-                  open: exception.open,
-                  close: exception.close,
-                  status: exception.status
-                };
-              }
-            });
-          } // Save the location's hours for the given date only if the hours are valid.
+              _.each(location.exceptions, function (exception) {
+                // If the current date is an exception, then use the exception hours instead.
+                if (date.isBetween(exception.date.start, exception.date.end, 'day', '[]')) {
+                  // Use the exception hours as the current date's hours.
+                  current.hours = {
+                    open: exception.open,
+                    close: exception.close,
+                    status: exception.status
+                  };
+                }
+              });
+            } // Save the location's hours for the given date only if the hours are valid.
 
 
-          if (current.hours !== false) hours[i].push(current);
+            if (current.hours !== false) hours[i].push(current);
+          }
         });
       }); // Update the current dates and hours that are being displayed.
 
@@ -2140,6 +2143,18 @@ Components.register('hours', {
       this.$set(this.current, 'dates', dates); // Set the active date back to the first date in the new date range.
 
       this.active = dates[0];
+    },
+    // Determine if hours for any given day are available.
+    available: function available(hours) {
+      var _ref;
+
+      return (_ref = []).concat.apply(_ref, _toConsumableArray(hours)).length > 0;
+    },
+    // Determine if hours for any given day are unavailable.
+    unavailable: function unavailable(hours) {
+      var _ref2;
+
+      return (_ref2 = []).concat.apply(_ref2, _toConsumableArray(hours)).length === 0;
     }
   },
   filters: {

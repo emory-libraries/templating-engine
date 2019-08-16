@@ -293,14 +293,18 @@
                 </tr>
               </thead>
               <tbody class="table-body">
-                <tr class="table-row" v-if="current.hours.length > 0" v-for="location in current.hours[i]">
-                  <th class="table-cell -heading" scope="row"><% location.name %></th>
-                  <td class="table-cell"><% location.hours.open %></td>
-                  <td class="table-cell"><% location.hours.close %></td>
-                </tr>
-                <tr class="table-row" v-else>
-                  <td class="table-cell" colspan="3">No hours are available for the this date.</td>
-                </tr>
+                <template v-if="available(current.hours)">
+                  <tr class="table-row" v-for="location in current.hours[i]">
+                    <th class="table-cell -heading" scope="row"><% location.name %></th>
+                    <td class="table-cell"><% location.hours.open %></td>
+                    <td class="table-cell"><% location.hours.close %></td>
+                  </tr>
+                </template>
+                <template v-else>
+                  <tr class="table-row">
+                    <td class="table-cell" colspan="3">No hours are available for the this date.</td>
+                  </tr>
+                </template>
               </tbody>
             </table>
 
