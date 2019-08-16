@@ -23,7 +23,7 @@
 
     {{! Set location and semester IDs. }}
     {{assign 'semesterID' (dashcase (lowercase semester))}}
-    {{assign 'locationID' (dashcase (lowercase location))}}
+    {{assign 'locationID' (default ../id (dashcase (lowercase location)))}}
 
     {{! Parse the dates into moments. }}
     {{assign 'date.start' (momentAPI date.start fromFormat='MM-DD-YYYY' format='YYYY-MM-DD')}}
@@ -69,41 +69,52 @@
     {{/each}}
 
     {{! Save the updated hours. }}
-    {{assign 'weekdayHours' (storageGet 'weekdayHours')}}
+    {{assign 'hours' (storageGet 'weekdayHours')}}
 
     {{! Convert exceptions to moments. }}
     {{#each exceptions}}
 
-      {{! Convert the exception dates to moments. }}
-      {{assign 'date.start' (momentFrom date.start 'MM-DD-YYYY')}}
-      {{assign 'date.end' (momentFrom date.end 'MM-DD-YYYY')}}
+      {{! Look for valid expections, and parse them. }}
+      {{#if (and date.start (not (eq date.start '')) date.end (not (eq date.end '')))}}
 
-      {{! For closed hours exceptions, don't require open or close times. }}
-      {{#if (eq status 'closed')}}
+        {{! Convert the exception dates to moments. }}
+        {{assign 'date.start' (momentFrom date.start 'MM-DD-YYYY')}}
+        {{assign 'date.end' (momentFrom date.end 'MM-DD-YYYY')}}
 
-        {{! Set open and close times to closed. }}
-        {{assign 'open' 'CLOSED'}}
-        {{assign 'close' 'CLOSED'}}
+        {{! For closed hours exceptions, don't require open or close times. }}
+        {{#if (eq status 'closed')}}
 
-      {{! Otherwise, for open hours exceptions, parse the open and close times. }}
+          {{! Set open and close times to closed. }}
+          {{assign 'open' 'CLOSED'}}
+          {{assign 'close' 'CLOSED'}}
+
+        {{! Otherwise, for open hours exceptions, parse the open and close times. }}
+        {{else}}
+
+          {{! Parse the open time. }}
+          {{#if (eq open.hour null)}}{{assign 'open.hour' 12}}{{/if}}
+          {{#if (eq open.minute null)}}{{assign 'open.minute' 0}}{{/if}}
+          {{#if (eq open.am-pm null)}}{{assign 'open.am-pm' 'AM'}}{{/if}}
+          {{assign 'open' (combine (pad open.hour 2 '0') ':' (pad open.minute 2 '0') ' ' open.am-pm)}}
+
+          {{! Parse the close time. }}
+          {{#if (eq close.hour null)}}{{assign 'close.hour' 12}}{{/if}}
+          {{#if (eq close.minute null)}}{{assign 'close.minute' 0}}{{/if}}
+          {{#if (eq close.am-pm null)}}{{assign 'close.am-pm' 'AM'}}{{/if}}
+          {{assign 'close' (combine (pad close.hour 2 '0') ':' (pad close.minute 2 '0') ' ' close.am-pm)}}
+
+        {{/if}}
+
+      {{! Otherwise, set the date to false because it can't be parsed. }}
       {{else}}
 
-        {{! Parse the open time. }}
-        {{#if (eq open.hour null)}}{{assign 'open.hour' 12}}{{/if}}
-        {{#if (eq open.minute null)}}{{assign 'open.minute' 0}}{{/if}}
-        {{#if (eq open.am-pm null)}}{{assign 'open.am-pm' 'AM'}}{{/if}}
-        {{assign 'open' (combine (pad open.hour 2 '0') ':' (pad open.minute 2 '0') ' ' open.am-pm)}}
-
-        {{! Parse the close time. }}
-        {{#if (eq close.hour null)}}{{assign 'close.hour' 12}}{{/if}}
-        {{#if (eq close.minute null)}}{{assign 'close.minute' 0}}{{/if}}
-        {{#if (eq close.am-pm null)}}{{assign 'close.am-pm' 'AM'}}{{/if}}
-        {{assign 'close' (combine (pad close.hour 2 '0') ':' (pad close.minute 2 '0') ' ' close.am-pm)}}
+        {{! Set the date to false. }}
+        {{assign 'date' false}}
 
       {{/if}}
 
-      {{! Save the updated exception. }}
-      {{storagePush 'exceptions' this}}
+      {{! Save the updated exception only if its valid. }}
+      {{#if (not (eq date false))}}{{storagePush 'exceptions' this}}{{/if}}
 
     {{/each}}
 
@@ -236,7 +247,8 @@
                :id="'hours--{{semester.id}}--day-' + i"
                :value="date"
                v-model="active"
-               :checked="date == active">
+               :checked="active === date"
+               ref="input">
 
         {{> tokens-heading level=5 alt=true classes='hours-title' icon=false heading=semester.name}}
 

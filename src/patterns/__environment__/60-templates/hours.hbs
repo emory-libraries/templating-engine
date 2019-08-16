@@ -1,3 +1,6 @@
+{{! Use hours metadata if detecteed. }}
+{{#if __shared__.hours}}{{assign 'hours' __shared__.hours}}{{/if}}
+
 <div class="hours-page">
 
   {{> organisms-header classes='hours-page-header'}}
@@ -6,7 +9,7 @@
     {{#content 'section-main-body'}}
 
       {{> organisms-hours}}
-      
+
     {{/content}}
   {{/extend}}
 

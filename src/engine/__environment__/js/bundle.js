@@ -2151,6 +2151,10 @@ Components.register('hours', {
     // Capture previous start and end date values.
     this.previous.start = this.date.start;
     this.previous.end = this.date.end;
+  },
+  mounted: function mounted() {
+    // Set the initially checked input.
+    $(this.$refs['input'][0]).prop('checked', true);
   }
 }); // Initialize the Vue.
 
