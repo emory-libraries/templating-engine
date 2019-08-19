@@ -1,8 +1,19 @@
+    {{__global__.notifications.is-dismissable.value}}
+    {{!-- {{storageSet 'dismissable' is-dismissable.value}}
+    {{unassign 'is-dismissable'}}
+    {{assign 'is-dismissable' (storageGet 'dismissable')}} --}}
+
 {{#with header}}
 
 <header class="header{{#if ../classes}} {{../classes}}{{/if}}">
 
-  <div class="header-notifications"></div>
+  <div class="notifications">
+
+    <div data-label="Notice" class="notification -caution is-dismissible">
+      <p class="notification-message">Welcome to a preview of the new Emory Libraries web site. We are currently conducting internal testing of pages and features of the site. <a href="https://docs.google.com/forms/d/1tUTu-lJMwm_Nzn5nrl75V7IzYgJkHKKNbQerV6mX7fk/viewform?ts=5d543f40&edit_requested=true" target="_blank">Leave us feedback via our online form.</a></p>
+    </div>
+
+  </div>
 
   <div class="header-main">
 
