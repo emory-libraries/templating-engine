@@ -62,10 +62,10 @@ define('CONFIG', array_merge((include ENGINE_ROOT.'/php/config.global.php'), [
     'logos' => ENGINE_ROOT.'/logos',
     'cache' => [
       'root' => CACHE_ROOT,
-      'pages' => CACHE_ROOT.'/pages/'.(PREVIEW ? SITE : DOMAIN),
-      'index' => CACHE_ROOT.'/index/'.(PREVIEW ? SITE : DOMAIN),
-      'tmp' => CACHE_ROOT.'/tmp/'.(PREVIEW ? SITE : DOMAIN),
-      'cache' => CACHE_ROOT.'/'.(PREVIEW ? SITE : DOMAIN)
+      'pages' => CACHE_ROOT.'/pages/'.DOMAIN,
+      'index' => CACHE_ROOT.'/index/'.DOMAIN,
+      'tmp' => CACHE_ROOT.'/tmp/'.DOMAIN,
+      'cache' => CACHE_ROOT.'/'.DOMAIN
     ]
   ],
 
