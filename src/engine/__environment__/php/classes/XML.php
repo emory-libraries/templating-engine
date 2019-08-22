@@ -28,6 +28,14 @@ class XML {
           // Escape the HTML.
           $result = str_replace($match[0], "<{$tag}>".htmlspecialchars($match[1])."</{$tag}>", $result);
 
+          // If result contains a .xml file extension, strip it.
+          if (strpos($result, '.xml') !== false) {
+ 
+            // Strip '.xml' extensions from hyperlinks.
+            $result = str_replace('.xml','',$result);
+
+          }
+
         }
 
       }
