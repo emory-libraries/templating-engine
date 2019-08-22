@@ -3,19 +3,18 @@
                                                     }">
 
   <transition name="fade">
-
-    <div class="notification -{{default type 'caution'}}{{#unless (eq dismissible false)}} is-dismissible{{/unless}}"
+    <div class="notification -{{default type 'caution'}}{{#if dismissible}} is-dismissible{{/if}}"
          data-label="{{default label 'Alert'}}"
          v-show="showing"
          v-cloak>
-      <p class="notification-message">{{message}}</p>
-      {{#unless (eq dismissible false)}}
+      {{{message}}}
+      {{#if dismissible}}
       <button class="notification-dismiss"
               @click="dismiss"
               @keypress.native.enter="dismiss">
         {{> tokens-icon id='material-close'}}
       </button>
-      {{/unless}}
+      {{/if}}
     </div>
 
   </transition>

@@ -1,8 +1,10 @@
-{{#with header}}
 
 <header class="header{{#if ../classes}} {{../classes}}{{/if}}">
+{{#with header}}
 
-  <div class="header-notifications"></div>
+  <div class="notifications">
+    {{>compounds-notification notification=notifications.notification}}
+  </div>
 
   <div class="header-main">
 

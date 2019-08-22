@@ -1,7 +1,8 @@
 {
   "alias": {
     "header.navigation": "__global__.navigation",
-    "header.search": "__meta__.search"
+    "header.search": "__meta__.search",
+    "header.notifications": "__global__.notifications"
   },
   "rename": {},
   "replace": {},
@@ -13,10 +14,20 @@
     "header.navigation.sites": "__shared__.sites"
   },
   "evaluate": [],
-  "repeatable": [],
-  "checkbox": [],
+  "repeatable": [
+    "__global__.notifications.notification"
+  ],
+  "checkbox": [
+    "__global__.notifications.notification.@.disabled",
+    "__global__.notifications.notification.@.dismissible"
+],
   "radio": [],
   "timestamp": [],
-  "text": [],
-  "html": []
+  "text": [
+    "__global__.notifications.notification.@.type",
+    "__global__.notifications.notification.@.label"
+  ],
+  "html": [
+    "__global__.notifications.notification.@.wysiwyg"
+  ]
 }

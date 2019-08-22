@@ -1,3 +1,6 @@
 <div class="notifications">
-  {{#each notifications}}{{> molecules-notification}}{{/each}}
+  {{#each notification}}
+  {{assign 'message' wysiwyg}}
+  {{#unless disabled}}{{> molecules-notification}}{{/unless}}
+  {{/each}}
 </div>
