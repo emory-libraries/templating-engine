@@ -1,3 +1,5 @@
 <div class="notifications">
-  {{#each notifications}}{{> molecules-notification}}{{/each}}
+  {{#each notification}}
+  {{#unless disabled}}{{> molecules-notification}}{{/unless}}
+  {{/each}}
 </div>

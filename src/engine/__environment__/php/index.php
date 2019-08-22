@@ -45,34 +45,67 @@ if( DEBUGGING ) {
   ini_set('display_errors', 1);
 
 }
+if( isset( $_SERVER['HTTP_HOST'])){
 
-// Configure environment directories.
-define('ENVDIRS', [
-  'development' => [
-    'data' => 'dev',
-    'engine' => 'dev',
-    'patterns' => 'dev',
-    'cache' => 'dev'
-  ],
-  'qa' => [
-    'data' => 'qa',
-    'engine' => 'qa',
-    'patterns' => 'qa',
-    'cache' => 'qa'
-  ],
-  'staging' => [
-    'data' => 'staging',
-    'engine' => 'prod',
-    'patterns' => 'prod',
-    'cache' => 'staging'
-  ],
-  'production' => [
-    'data' => 'prod',
-    'engine' => 'prod',
-    'patterns' => 'prod',
-    'cache' => 'prod'
-  ]
-]);
+  // Configure environment directories.
+  define('ENVDIRS', [
+    'development' => [
+      'data' => 'dev',
+      'engine' => 'dev',
+      'patterns' => 'dev',
+      'cache' => 'dev'
+    ],
+    'qa' => [
+      'data' => 'qa',
+      'engine' => 'qa',
+      'patterns' => 'qa',
+      'cache' => 'qa'
+    ],
+    'staging' => [
+      'data' => 'staging',
+      'engine' => 'prod',
+      'patterns' => 'prod',
+      'cache' => 'staging'
+    ],
+    'production' => [
+      'data' => 'prod',
+      'engine' => 'prod',
+      'patterns' => 'prod',
+      'cache' => 'prod'
+    ]
+  ]);
+
+} else {
+
+  // Configure environment directories.
+  define('ENVDIRS', [
+    'development' => [
+      'data' => 'dev',
+      'engine' => 'dev',
+      'patterns' => 'dev',
+      'cache' => 'dev'
+    ],
+    'qa' => [
+      'data' => 'qa',
+      'engine' => 'qa',
+      'patterns' => 'qa',
+      'cache' => 'qa'
+    ],
+    'staging' => [
+      'data' => 'staging',
+      'engine' => 'staging',
+      'patterns' => 'staging',
+      'cache' => 'staging'
+    ],
+    'production' => [
+      'data' => 'prod',
+      'engine' => 'prod',
+      'patterns' => 'prod',
+      'cache' => 'prod'
+    ]
+  ]);
+
+};
 
 // Set environment constants.
 if( !defined('ENVIRONMENT') ) define('ENVIRONMENT', $options->environment);
@@ -84,6 +117,7 @@ if( !defined('SERVER_ROOT') ) define('SERVER_ROOT', dirname(dirname(dirname(__DI
 if( !defined('SERVER_PATH') ) define('SERVER_PATH', str_replace(DOCUMENT_ROOT.'/', '', SERVER_ROOT));
 if( !defined('DATA_ROOT') ) define('DATA_ROOT', SERVER_ROOT.'/data/'.ENVDIR['data']);
 if( !defined('PATTERNS_ROOT') ) define('PATTERNS_ROOT', SERVER_ROOT.'/patterns/'.ENVDIR['patterns']);
+// define('ENGINE_ROOT', SERVER_ROOT.'/engine/'.'staging');
 if( !defined('ENGINE_ROOT') ) define('ENGINE_ROOT', SERVER_ROOT.'/engine/'.ENVDIR['engine']);
 if( !defined('CACHE_ROOT') ) define('CACHE_ROOT', SERVER_ROOT.'/engine/'.ENVDIR['cache'].'/php/cache');
 
@@ -98,18 +132,36 @@ if( !defined('SITES') ) define('SITES', array_values(array_filter(scandir(DATA_R
 
 })));
 
-// Determine if a preview subdomain was used.
-if( !defined('PREVIEW') ) define('PREVIEW', explode('.', $_SERVER['HTTP_HOST'])[0] === 'preview');
 
-// Set site constants.
-if( !defined('SUBDOMAIN') ) define('SUBDOMAIN', PREVIEW ? 'preview' : [
-  'production' => '',
-  'staging' => 'staging',
-  'qa' => 'qa',
-  'development' => 'dev'
-][ENVIRONMENT]);
+// Determine if a preview subdomain was used.
+if( isset( $_SERVER['HTTP_HOST'])){
+
+  if( !defined('PREVIEW') ) define('PREVIEW', explode('.', $_SERVER['HTTP_HOST'])[0] === 'preview');
+
+  // Set site constants.
+  if( !defined('SUBDOMAIN') ) define('SUBDOMAIN', PREVIEW ? 'preview' : [
+    'production' => '',
+    'staging' => 'staging',
+    'qa' => 'qa',
+    'development' => 'dev'
+  ][ENVIRONMENT]);
+
+} else {
+  // Set site constants.
+  if( !defined('SUBDOMAIN') ) define('SUBDOMAIN', [
+    'production' => '',
+    'staging' => 'staging',
+    'qa' => 'qa',
+    'development' => 'dev'
+  ][ENVIRONMENT]);
+
+}
+
 if( !defined('SITE') ) define('SITE', $options->site);
 if( !defined('DOMAIN') ) define('DOMAIN', (SUBDOMAIN !== '' ? SUBDOMAIN.'.' : '').SITE);
+
+
+
 if( !defined('SITE_DATA') ) define('SITE_DATA', DATA_ROOT.'/'.SITE);
 if( !defined('SITE_ROOT') ) define('SITE_ROOT', SERVER_ROOT.'/'.DOMAIN);
 
