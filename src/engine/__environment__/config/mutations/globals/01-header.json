@@ -1,10 +1,12 @@
 {
   "alias": {
     "header.navigation": "__global__.navigation",
-    "header.search": "__meta__.search",
-    "header.notifications": "__global__.notifications"
+    "header.search": "__meta__.search"
   },
-  "rename": {},
+  "rename": {
+    "header.notifications": "__global__.notifications",
+    "header.notifications.notification.@.message": "header.notifications.notification.@.wysiwyg"
+  },
   "replace": {},
   "remove": [],
   "add": {
