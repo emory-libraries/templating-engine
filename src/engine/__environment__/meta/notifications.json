@@ -1,0 +1,20 @@
+{
+  "notification": [
+    {
+      "disabled": false,
+      "label": "Update",
+      "type": "info",
+      "dismissable": true,
+      "uid": "notification-1",
+      "message": "<p>Ipsum deserunt ita nulla velit, ea quibusdam est probant eu occaecat si enim litteris, vidisse fugiat voluptate, duis laboris se exercitation.<\/p>"
+    },
+    {
+      "disabled": false,
+      "label": "Alert",
+      "type": "caution",
+      "dismissable": false,
+      "uid": "notification-2",
+      "message": "<p>Ipsum deserunt ita nulla velit, ea quibusdam est probant eu occaecat si enim litteris, vidisse fugiat voluptate, duis laboris se exercitation.<\/p>"
+    }
+  ]
+}

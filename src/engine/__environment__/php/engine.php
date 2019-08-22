@@ -1,7 +1,7 @@
 <?php
 
 // Increase memory limit for large pages.
-ini_set('memory_limit', '300M');
+ini_set('memory_limit', '512M');
 
 // Autoload dependencies.
 require __DIR__.'/engine.autoload.php';
