@@ -21,7 +21,7 @@
     "grunt-cypress": "^1.1.2",
     "grunt-phplint": "^0.1.0",
     "load-grunt-tasks": "^4.0.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.13",
     "path": "^0.12.7"
   },
   "dependencies": {
